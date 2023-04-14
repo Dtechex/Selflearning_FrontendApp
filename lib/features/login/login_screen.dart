@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:formz/formz.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:self_learning_app/features/dashboard/dashboard_screen.dart';
 import 'package:self_learning_app/features/registration/registration_screen.dart';
 import 'package:self_learning_app/utilities/colors.dart';
@@ -26,16 +25,17 @@ class _LoginScreenState extends State<LoginScreen> {
       child: BlocListener<MyFormBloc, MyFormState>(
           listener: (context, state) {
             if (state.status.isSubmissionSuccess) {
+              print('inside succes');
               ScaffoldMessenger.of(context).hideCurrentSnackBar();
-              Navigator.push(context, MaterialPageRoute(
-                builder: (context) {
-                  return DashBoardScreen();
-                },
-              ));
-              // showDialog<void>(
-              //   context: context,
-              //   builder: (_) => const SuccessDialog(dailogText: 'Form Submitted Successfully!'),
-              // );
+              Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(
+                  builder: (context) {
+                    return const DashBoardScreen();
+                  },
+                ),
+                (route) => false,
+              );
             }
             if (state.status.isSubmissionInProgress) {
               ScaffoldMessenger.of(context)
@@ -217,7 +217,7 @@ class PasswordInput extends StatelessWidget {
                     size: context.screenWidth * 0.08,
                   ),
                   errorText: state.password.invalid
-                      ? 'Please ensure the email entered is valid'
+                      ? 'Please ensure the Phone Number is valid'
                       : null,
                 ),
                 keyboardType: TextInputType.name,
@@ -250,10 +250,16 @@ class SubmitButton extends StatelessWidget {
                 shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                     RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(18.0),
-                        side: BorderSide(color: Colors.grey)))),
-            onPressed: state.status.isValidated
-                ? () => context.read<MyFormBloc>().add(FormSubmitted())
-                : null,
+                        side: const BorderSide(color: Colors.grey)))),
+            onPressed: () {
+              if (state.password.invalid) {
+                context
+                    .showSnackBar(SnackBar(content: Text('Invalid password')));
+              } else if (state.password.invalid) {
+                context.showSnackBar(SnackBar(content: Text('Invalid Email')));
+              }
+              context.read<MyFormBloc>().add(FormSubmitted());
+            },
             child: const Text(
               'Login',
               style: TextStyle(fontSize: 22),
