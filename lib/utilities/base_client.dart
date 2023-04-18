@@ -19,6 +19,8 @@ class Api with ChangeNotifier
       const int TIME_OUT_DURATION = 50;
       String base = DEVELOPMENT_BASE_URL;
       var url = Uri.parse(base + endPoint);
+      print(url);
+
       final response = await http.get(url,headers: {
         'Authorization': 'bearer' + ' ' + token.toString(),
       },).timeout(const Duration(seconds: TIME_OUT_DURATION));
@@ -32,51 +34,26 @@ class Api with ChangeNotifier
 
   // post api client
 
-  Future<http.Response> post(
-      {required BuildContext context ,required String endPoint,
+  Future<http.Response> post({required String endPoint,
         required Map<String, dynamic> payload}) async {
-    try{
       var token = await SharedPref().getToken();
       String base = DEVELOPMENT_BASE_URL;
       var uri = Uri.parse(base + endPoint);
-
       var response = await http.post(uri,headers: {
         'Authorization': 'bearer' + ' ' + token.toString(),
       }, body: payload);
       return response;
-    }on SocketException {
-      context.showSnackBar(SnackBar(content: Text('No Internet')));
-    }
-      throw ('No Internet Connection');
-  }
-
-
-
-  dynamic _processResponse(http.Response response) {
-    switch (response.statusCode) {
-      case 200:
-        final decoderesponse =
-        json.decode(response.body) as Map<String, dynamic>;
-        return decoderesponse;
-      case 201:
-        final responsejson = json.decode(response.body) as Map<String, dynamic>;
-        return responsejson;
-      case 400:
-      // throw BadRequestException(
-      //     utf8.decode(response.bodyBytes), response.request.url.toString());
-      case 401:
-
-      case 403:
-      // throw UnAuthroizedExcpetion(
-      //     utf8.decode(response.bodyBytes), response.request.url.toString());
-      case 500:
-        final decoderesponse =
-        json.decode(response.body) as Map<String, dynamic>;
-        return decoderesponse;
-
-      default:
-      // throw FetchDataException('Error occured with code :${response.statusCode}',
-      //     response.request.url.toString());
     }
   }
+
+Future<http.Response> post({required String endPoint,
+  required Map<String, dynamic> payload}) async {
+  var token = await SharedPref().getToken();
+  String base = DEVELOPMENT_BASE_URL;
+  var uri = Uri.parse(base + endPoint);
+  var response = await http.patch(uri,headers: {
+    'Authorization': 'bearer' + ' ' + token.toString(),
+  }, body: payload);
+  return response;
 }
+

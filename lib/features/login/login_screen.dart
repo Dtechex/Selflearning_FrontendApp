@@ -25,7 +25,6 @@ class _LoginScreenState extends State<LoginScreen> {
       child: BlocListener<MyFormBloc, MyFormState>(
           listener: (context, state) {
             if (state.status.isSubmissionSuccess) {
-              print('inside succes');
               ScaffoldMessenger.of(context).hideCurrentSnackBar();
               Navigator.pushAndRemoveUntil(
                 context,
@@ -157,6 +156,7 @@ class EmailInput extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<MyFormBloc, MyFormState>(
       builder: (context, state) {
+        print('email state');
         return Container(
             padding: const EdgeInsets.only(left: 10, right: 5),
             height: context.screenHeight * 0.105,
@@ -197,8 +197,10 @@ class PasswordInput extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
     return BlocBuilder<MyFormBloc, MyFormState>(
       builder: (context, state) {
+
         return Container(
             padding: const EdgeInsets.only(left: 10, right: 5),
             height: context.screenHeight * 0.105,

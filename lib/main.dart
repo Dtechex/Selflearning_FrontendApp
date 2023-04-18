@@ -4,6 +4,8 @@ import 'package:self_learning_app/features/dashboard/dashboard_screen.dart';
 import 'package:self_learning_app/features/login/data/repo/login_repo.dart';
 import 'package:self_learning_app/features/login/login_screen.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:self_learning_app/features/search_category/bloc/search_cat_bloc.dart';
+import 'package:self_learning_app/features/subcategory/bloc/sub_cate_bloc.dart';
 import 'package:self_learning_app/utilities/colors.dart';
 import 'package:self_learning_app/utilities/shared_pref.dart';
 import 'features/dashboard/bloc/dashboard_bloc.dart';
@@ -24,12 +26,27 @@ class MyApp extends StatelessWidget {
           BlocProvider<MyFormBloc>(
               create: (context) => MyFormBloc(loginRepo: LoginRepo())),
           BlocProvider<DashboardBloc>(create: (context) => DashboardBloc()),
-          BlocProvider<CategoryBloc>(create: (context) => CategoryBloc()..add(CategoryLoadEvent())),
+          BlocProvider<CategoryBloc>(
+              create: (context) => CategoryBloc()..add(CategoryLoadEvent())),
+          BlocProvider<SearchCategoryBloc>(
+              create: (context) => SearchCategoryBloc()),
+          BlocProvider<SubCategoryBloc>(create: (context) => SubCategoryBloc()),
         ],
         child: MaterialApp(
+
             title: 'Self Learing',
             theme: ThemeData(
-              snackBarTheme: SnackBarThemeData(
+              iconTheme: IconThemeData(
+                color: primaryColor,
+                weight: 2
+              ),
+              listTileTheme: ListTileThemeData(
+                iconColor: primaryColor
+              ),
+              elevatedButtonTheme: const ElevatedButtonThemeData(
+                  style: ButtonStyle(
+                      backgroundColor: MaterialStatePropertyAll(primaryColor))),
+              snackBarTheme: const SnackBarThemeData(
                 backgroundColor: primaryColor,
               ),
               appBarTheme: const AppBarTheme(

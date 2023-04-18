@@ -35,39 +35,38 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   final _formKey = GlobalKey<FormState>();
   bool isfirsttime = false;
 
-  Future<void> registerUser() async {
-    try {
-      setState(() {
-        _isLoading = true;
-      });
-      Response decodedresponse = await Api()
-          .post(context: context, endPoint: 'user/register', payload: {
-        "name": _nameEditingController.text,
-        "email": _emailEditingController.text,
-        "mobile": "+91${_phoneNumberEditingController.text}",
-        "password": _passwordEditingController.text,
-      });
-      print(decodedresponse.body);
-      if (decodedresponse.statusCode == 201) {
-        context.showSnackBar(
-            const SnackBar(content: Text('Register Successfully')));
-        Navigator.push(context, MaterialPageRoute(
-          builder: (context) {
-            return LoginScreen();
-          },
-        ));
-      } else {
-        context.showSnackBar(
-            const SnackBar(content: Text('Email already exists!')));
-      }
-    } catch (e) {
-      context.showSnackBar(SnackBar(content: Text(e.toString())));
-    } finally {
-      setState(() {
-        _isLoading = false;
-      });
-    }
-  }
+  // Future<void> registerUser() async {
+  //   try {
+  //     setState(() {
+  //       _isLoading = true;
+  //     });
+  //     Response decodedresponse = await Api().post(endPoint: 'user/register', payload: {
+  //       "name": _nameEditingController.text,
+  //       "email": _emailEditingController.text,
+  //       "mobile": "+91${_phoneNumberEditingController.text}",
+  //       "password": _passwordEditingController.text,
+  //     });
+  //     print(decodedresponse.body);
+  //     if (decodedresponse.statusCode == 201) {
+  //       context.showSnackBar(
+  //           const SnackBar(content: Text('Register Successfully')));
+  //       Navigator.push(context, MaterialPageRoute(
+  //         builder: (context) {
+  //           return LoginScreen();
+  //         },
+  //       ));
+  //     } else {
+  //       context.showSnackBar(
+  //           const SnackBar(content: Text('Email already exists!')));
+  //     }
+  //   } catch (e) {
+  //     context.showSnackBar(SnackBar(content: Text(e.toString())));
+  //   } finally {
+  //     setState(() {
+  //       _isLoading = false;
+  //     });
+  //   }
+  // }
 
   @override
   void dispose() {
@@ -195,7 +194,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                               title: 'Register',
                               onPressed: () {
                                 if (_formKey.currentState!.validate()) {
-                                  registerUser();
+                               //   registerUser();
                                 } else {
                                   // context.showSnackBar(const SnackBar(
                                   //     content:

@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:self_learning_app/features/subcategory/sub_cate_model.dart';
 
 import '../data/model/category_model.dart';
 
@@ -10,7 +11,7 @@ class CategoryInitial extends CategoryState {}
 class CategoryLoading extends CategoryState {}
 
 class CategoryLoaded extends CategoryState {
-  final List<Record> cateList;
+  final List<CategoryModel> cateList;
 
   CategoryLoaded({required this.cateList});
 }
@@ -20,3 +21,12 @@ class CategoryFailed extends CategoryState {
 
   CategoryFailed({required this.errorText});
 }
+
+class CategoryAdded extends CategoryState {}
+
+class CategoryColor extends CategoryState {
+  final Color cateBgColor;
+
+  CategoryColor({required this.cateBgColor});
+}
+

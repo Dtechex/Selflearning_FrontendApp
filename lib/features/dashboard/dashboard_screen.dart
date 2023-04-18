@@ -4,6 +4,7 @@ import 'package:self_learning_app/features/login/login_screen.dart';
 import 'package:self_learning_app/utilities/colors.dart';
 import 'package:self_learning_app/utilities/shared_pref.dart';
 
+import '../add_category/add_cate_screen.dart';
 import '../category/category_screen.dart';
 import '../login/bloc/login_event.dart';
 import 'bloc/dashboard_bloc.dart';
@@ -55,7 +56,7 @@ class DashBoardScreen extends StatelessWidget {
                   icon: const Icon(Icons.logout))
             ],
             centerTitle: true,
-            title: Text('DashBoard'),
+            title: const Text('DashBoard'),
           ),
           bottomNavigationBar: BottomNavigationBar(
             type: BottomNavigationBarType.shifting,
@@ -68,14 +69,15 @@ class DashBoardScreen extends StatelessWidget {
               context.read<DashboardBloc>().ChangeIndex(value);
             },
             unselectedItemColor: Colors.white,
-            items: const [
-              BottomNavigationBarItem(
-                  icon: Icon(Icons.format_indent_decrease, color: Colors.white),
-                  label: '     Create \n   Categories',
+            items:  [
+              BottomNavigationBarItem( icon: Icon(Icons.home),
+                  label: 'Home',
                   backgroundColor: primaryColor),
               BottomNavigationBarItem(
-                  icon: Icon(Icons.create),
-                  label: '       Create \n   Subcategories',
+                  icon: GestureDetector(child: Icon(Icons.create),onTap: () {
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => AddCateScreen(),));
+                  },),
+                  label: 'Create \ncategories',
                   backgroundColor: primaryColor),
               BottomNavigationBarItem(
                   icon: Icon(Icons.message),

@@ -1,23 +1,50 @@
 import 'dart:convert';
+import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart';
 import 'package:self_learning_app/features/category/data/model/category_model.dart';
+import 'package:self_learning_app/features/subcategory/sub_cate_model.dart';
 import '../../../../utilities/base_client.dart';
 
 class CategoryRepo {
-  static Future<List<Record>> getAllCategory() async {
+
+  static Future<List<CategoryModel>> getAllCategory() async {
     Response res = await Api().get(
       endPoint: 'category',
     );
     var data = await jsonDecode(res.body);
     List<dynamic> recordata = data['data']['record'];
-    List<Record> recordList = [];
+    List<CategoryModel> recordList = [];
     if (recordata.isEmpty) {
       return recordList;
     } else {
       for (var element in recordata) {
-        recordList.add(Record.fromJson(element));
+        recordList.add(CategoryModel.fromJson(element));
       }
     }
     return recordList;
   }
+
+
+  static Future<List<SubCategoryModel>> getAllSubCategory(String? rootId) async {
+    Response res = await Api().get(
+      endPoint: 'category/?rootId=$rootId',
+    );
+    print(res.body);
+    print('subcategory body');
+    var data = await jsonDecode(res.body);
+    List<dynamic> recordata = data['data']['record'];
+    List<SubCategoryModel> recordList = [];
+    if (recordata.isEmpty) {
+      return recordList;
+    } else {
+      for (var element in recordata) {
+        recordList.add(SubCategoryModel.fromJson(element));
+      }
+    }
+    return recordList;
+  }
+
+  //Search Category
+
+
 }

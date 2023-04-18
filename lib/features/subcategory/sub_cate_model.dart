@@ -1,4 +1,4 @@
-class CategoryModel {
+class SubCategoryModel {
   String? sId;
   String? userId;
   String? name;
@@ -8,17 +8,17 @@ class CategoryModel {
   String? updatedAt;
   int? iV;
 
-  CategoryModel(
+  SubCategoryModel(
       {this.sId,
-      this.userId,
-      this.name,
-      this.keywords,
-      this.styles,
-      this.createdAt,
-      this.updatedAt,
-      this.iV});
+        this.userId,
+        this.name,
+        this.keywords,
+        this.styles,
+        this.createdAt,
+        this.updatedAt,
+        this.iV});
 
-  CategoryModel.fromJson(Map<String, dynamic> json) {
+  SubCategoryModel.fromJson(Map<String, dynamic> json) {
     sId = json['_id'];
     userId = json['userId'];
     name = json['name'];
