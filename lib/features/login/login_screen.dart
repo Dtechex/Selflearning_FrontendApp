@@ -40,7 +40,7 @@ class _LoginScreenState extends State<LoginScreen> {
               ScaffoldMessenger.of(context)
                 ..hideCurrentSnackBar()
                 ..showSnackBar(
-                  const SnackBar(content: Text('Submitting...')),
+                  const SnackBar(content: Text('Loging you in...')),
                 );
             }
             if (state.status.isSubmissionFailure) {
@@ -116,7 +116,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                       context,
                                       MaterialPageRoute(
                                         builder: (context) =>
-                                            RegistrationScreen(),
+                                            SignUpScreen(),
                                       )),
                                   child: const Text('Sign up')),
                             ],
@@ -257,7 +257,7 @@ class SubmitButton extends StatelessWidget {
               if (state.password.invalid) {
                 context
                     .showSnackBar(SnackBar(content: Text('Invalid password')));
-              } else if (state.password.invalid) {
+              } else if (state.email.invalid) {
                 context.showSnackBar(SnackBar(content: Text('Invalid Email')));
               }
               context.read<MyFormBloc>().add(FormSubmitted());

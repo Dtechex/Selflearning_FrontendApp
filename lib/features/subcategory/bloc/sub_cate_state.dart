@@ -1,5 +1,5 @@
 import 'package:flutter/cupertino.dart';
-import 'package:self_learning_app/features/subcategory/sub_cate_model.dart';
+import 'package:self_learning_app/features/subcategory/model/sub_cate_model.dart';
 
 @immutable
 abstract class SubCategoryState {}

@@ -43,13 +43,15 @@ class _AllCateScreenState extends State<AllCateScreen> {
                     height: 20,
                   ),
                   SizedBox(
-                    height: context.screenHeight*0.06,
+                    height: context.screenHeight * 0.06,
                     width: context.screenWidth,
                     child: CupertinoSearchTextField(
                       onChanged: (value) {
-                        context.read<SearchCategoryBloc>().add(SearcCategoryLoadEvent(query: value));
+                        context
+                            .read<SearchCategoryBloc>()
+                            .add(SearcCategoryLoadEvent(query: value));
                       },
-                      onTap: () async{
+                      onTap: () async {
                         await showSearch(
                           context: context,
                           delegate: CustomSearchDelegate(),
@@ -60,7 +62,7 @@ class _AllCateScreenState extends State<AllCateScreen> {
                         borderRadius: BorderRadius.circular(10),
                         color: Colors.grey.withOpacity(0.1),
                       ),
-                      style: const TextStyle(fontSize: 16,color: Colors.grey),
+                      style: const TextStyle(fontSize: 16, color: Colors.grey),
                     ),
                   ),
                   SizedBox(
@@ -69,9 +71,8 @@ class _AllCateScreenState extends State<AllCateScreen> {
                   Align(
                     alignment: Alignment.centerRight,
                     child: SizedBox(
-                      height: context.screenHeight*0.05,
+                      height: context.screenHeight * 0.05,
                       child: ListView.builder(
-
                         scrollDirection: Axis.horizontal,
                         itemCount: titles.length,
                         shrinkWrap: true,
@@ -82,14 +83,15 @@ class _AllCateScreenState extends State<AllCateScreen> {
                                 style: TextStyle(
                                     fontWeight: FontWeight.w500,
                                     color: index == selectedIndex
-                                        ? primaryColor:Colors.grey
-                                )),
+                                        ? primaryColor
+                                        : Colors.grey)),
                           );
                         },
-                      ),),
+                      ),
+                    ),
                   ),
-                  Expanded(child: GridView.builder(
-
+                  Expanded(
+                      child: GridView.builder(
                     shrinkWrap: true,
                     // padding: EdgeInsets.all(15),
                     itemCount: state.cateList.length,
@@ -99,32 +101,46 @@ class _AllCateScreenState extends State<AllCateScreen> {
                         mainAxisExtent: context.screenHeight * 0.15,
                         crossAxisCount: 2),
                     itemBuilder: (context, index) {
+                      Color currentColor=primaryColor;
+
+                      if(state.cateList[index].styles!.isNotEmpty){
+                        if (
+                        state.cateList[index].styles![1].value!.length !=10) {
+                          currentColor = primaryColor;
+                        } else {
+                          print('else color');
+                          currentColor = Color(int.parse(state.cateList[index].styles![1].value!));
+                        }
+                      }
+
                       return GestureDetector(
                         child: Container(
                           width: context.screenWidth / 2,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(10),
                             color: Colors.transparent,
-
-                            border: Border.all(color: Colors.blueAccent,width: 3),),
+                            border: Border.all(
+                                color: currentColor,
+                                width: 3),
+                          ),
                           child: Center(
-                            child: Text(state.cateList[index].name.toString(),style: TextStyle(
-                                color: primaryColor
-                            )),
+                            child: Text(state.cateList[index].name.toString(),
+                                style: const TextStyle(color: primaryColor)),
                           ),
                         ),
                         onTap: () {
-                          context.read<SubCategoryBloc>().add(SubCategoryLoadEvent(rootId: state.cateList[index].sId));
+                          context.read<SubCategoryBloc>().add(
+                              SubCategoryLoadEvent(
+                                  rootId: state.cateList[index].sId));
                           Navigator.push(context, MaterialPageRoute(
                             builder: (context) {
                               return SubCategoryScreen(
+                                color: Color(int.parse(state.cateList[index].styles![1].value!),),
                                 rootId: state.cateList[index].sId,
                                 categoryName: state.cateList[index].name,
                               );
                             },
                           ));
-                          print(state.cateList[index].sId);
-                          print(state.cateList[index].createdAt);
                         },
                       );
                     },

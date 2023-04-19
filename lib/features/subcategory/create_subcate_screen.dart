@@ -3,23 +3,26 @@ import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
+import 'package:self_learning_app/features/subcategory/bloc/sub_cate_bloc.dart';
 import 'package:self_learning_app/utilities/extenstion.dart';
 import 'package:self_learning_app/utilities/shared_pref.dart';
 
 import '../category/bloc/category_bloc.dart';
 import '../dashboard/dashboard_screen.dart';
 
-class AddCateScreen extends StatefulWidget {
-  const AddCateScreen({Key? key}) : super(key: key);
+class CreateSubCateScreen extends StatefulWidget {
+  final String? rootId;
+
+  const CreateSubCateScreen({Key? key, this.rootId}) : super(key: key);
 
   @override
-  State<AddCateScreen> createState() => _AddCateScreenState();
+  State<CreateSubCateScreen> createState() => _CreateSubCateScreenState();
 }
 
-class _AddCateScreenState extends State<AddCateScreen> {
+class _CreateSubCateScreenState extends State<CreateSubCateScreen> {
+  Color? pickedColor = Colors.green;
   TextEditingController categoryNameController = TextEditingController();
 
-  Color? pickedColor = Colors.green;
   bool? isLoading = false;
 
   void pickColor({required BuildContext context}) {
@@ -29,32 +32,13 @@ class _AddCateScreenState extends State<AddCateScreen> {
         content: SingleChildScrollView(
           child: ColorPicker(
             portraitOnly: true,
-            pickerColor: Colors.green,
+            pickerColor: pickedColor!,
             onColorChanged: (value) {
               setState(() {
                 pickedColor = value;
               });
             },
           ),
-          // Use Material color picker:
-          //
-          // child: MaterialPicker(
-          //   pickerColor: pickerColor,
-          //   onColorChanged: changeColor,
-          //   showLabel: true, // only on portrait mode
-          // ),
-          //
-          // Use Block color picker:
-          //
-          // child: BlockPicker(
-          //   pickerColor: currentColor,
-          //   onColorChanged: changeColor,
-          // ),
-          //
-          // child: MultipleChoiceBlockPicker(
-          //   pickerColors: currentColors,
-          //   onColorsChanged: changeColors,
-          // ),
         ),
         actions: <Widget>[
           ElevatedButton(
@@ -70,17 +54,20 @@ class _AddCateScreenState extends State<AddCateScreen> {
 
   Future<int?> addCategory() async {
     isLoading = true;
-    List<String> keywords = ['test,test1'];
+    Map<String, dynamic> payload = {};
+    List<String> keywords = [];
     List<Map<String, String>> styles = [
       {"key": "font-size", "value": "2rem"},
       {"key": "background-color", "value": pickedColor!.value.toString()}
     ];
-    Map<String, dynamic> payload = {};
     payload.addAll({
       "name": categoryNameController.text,
     });
     payload.addAll({"keywords": keywords});
     payload.addAll({"styles": styles});
+    payload.addAll({
+      "rootId": widget.rootId,
+    });
     var token = await SharedPref().getToken();
     try {
       var res = await http.post(
@@ -93,16 +80,14 @@ class _AddCateScreenState extends State<AddCateScreen> {
       );
       if (res.statusCode == 201) {
         context.showSnackBar(
-            SnackBar(content: Text('Category added Successfully')));
-        context.read<CategoryBloc>().add(CategoryLoadEvent());
-        Navigator.pushReplacement(context, MaterialPageRoute(
-          builder: (context) {
-            return DashBoardScreen();
-          },
-        ));
-      } else {
+            SnackBar(content: Text('Subcategory created successfully')));
         context
-            .showSnackBar(SnackBar(content: Text('opps something went worng')));
+            .read<SubCategoryBloc>()
+            .add(SubCategoryLoadEvent(rootId: widget.rootId));
+        Navigator.pop(context);
+      } else {
+        context.showSnackBar(
+            const SnackBar(content: Text('opps something went worng')));
       }
       print(res.body);
       print('data');
@@ -115,8 +100,9 @@ class _AddCateScreenState extends State<AddCateScreen> {
 
   @override
   Widget build(BuildContext context) {
+    print('inside update');
     return Scaffold(
-        appBar: AppBar(title: const Text('Category Title')),
+        appBar: AppBar(title: const Text('Create SubCategory')),
         body: Container(
           padding: const EdgeInsets.only(left: 10, right: 10),
           child: Column(
@@ -150,7 +136,7 @@ class _AddCateScreenState extends State<AddCateScreen> {
                         controller: categoryNameController,
                         onChanged: (value) {},
                         decoration: InputDecoration(
-                          hintText: 'Category Name',
+                          hintText: 'SubCategory Name',
                           border: InputBorder.none,
                           icon: Icon(
                             Icons.add,
@@ -174,10 +160,8 @@ class _AddCateScreenState extends State<AddCateScreen> {
                       onTap: () {
                         pickColor(context: context);
                       },
-                      child: Container(
-                          height: 25,
-                          width: 25,
-                          color: pickedColor ?? Colors.green)),
+                      child:
+                          Container(height: 25, width: 25, color: pickedColor)),
                   const Text('  Choose Color ')
                 ],
               ),
@@ -199,8 +183,13 @@ class _AddCateScreenState extends State<AddCateScreen> {
                     },
                     child: isLoading == true
                         ? const CircularProgressIndicator()
-                        : Text('Add Category')),
-              )
+                        : Center(
+                            child: Text('      Create\n SubCategory'),
+                          )),
+              ),
+              SizedBox(
+                height: 20,
+              ),
             ],
           ),
         ));

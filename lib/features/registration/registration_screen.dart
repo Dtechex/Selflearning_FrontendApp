@@ -1,212 +1,416 @@
-import 'dart:convert';
-import 'dart:io';
-
-import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:formz/formz.dart';
+import 'package:self_learning_app/features/dashboard/dashboard_screen.dart';
 import 'package:self_learning_app/features/login/login_screen.dart';
+import 'package:self_learning_app/features/registration/bloc/signup_bloc.dart';
+import 'package:self_learning_app/features/registration/bloc/signup_event.dart';
+import 'package:self_learning_app/features/registration/bloc/signup_state.dart';
+import 'package:self_learning_app/features/registration/registration_screen.dart';
+import 'package:self_learning_app/utilities/colors.dart';
 import 'package:self_learning_app/utilities/extenstion.dart';
-import 'package:self_learning_app/widgets/auth_button.dart';
 
-import '../../utilities/base_client.dart';
+import '../login/bloc/login_event.dart';
 
-class RegistrationScreen extends StatefulWidget {
-  static const routeName = "/registrationscreen";
-
-  const RegistrationScreen({Key? key}) : super(key: key);
+class SignUpScreen extends StatefulWidget {
+  const SignUpScreen({super.key});
 
   @override
-  State<RegistrationScreen> createState() => _RegistrationScreenState();
+  State<SignUpScreen> createState() => _SignUpScreenState();
 }
 
-class _RegistrationScreenState extends State<RegistrationScreen> {
-  final TextEditingController _nameEditingController = TextEditingController();
-
-  final TextEditingController _emailEditingController = TextEditingController();
-
-  final TextEditingController _phoneNumberEditingController =
-      TextEditingController();
-
-  final TextEditingController _passwordEditingController =
-      TextEditingController();
-  final TextEditingController _confirmPasswordController =
-      TextEditingController();
-  bool _isLoading = false;
-  final _formKey = GlobalKey<FormState>();
-  bool isfirsttime = false;
-
-  // Future<void> registerUser() async {
-  //   try {
-  //     setState(() {
-  //       _isLoading = true;
-  //     });
-  //     Response decodedresponse = await Api().post(endPoint: 'user/register', payload: {
-  //       "name": _nameEditingController.text,
-  //       "email": _emailEditingController.text,
-  //       "mobile": "+91${_phoneNumberEditingController.text}",
-  //       "password": _passwordEditingController.text,
-  //     });
-  //     print(decodedresponse.body);
-  //     if (decodedresponse.statusCode == 201) {
-  //       context.showSnackBar(
-  //           const SnackBar(content: Text('Register Successfully')));
-  //       Navigator.push(context, MaterialPageRoute(
-  //         builder: (context) {
-  //           return LoginScreen();
-  //         },
-  //       ));
-  //     } else {
-  //       context.showSnackBar(
-  //           const SnackBar(content: Text('Email already exists!')));
-  //     }
-  //   } catch (e) {
-  //     context.showSnackBar(SnackBar(content: Text(e.toString())));
-  //   } finally {
-  //     setState(() {
-  //       _isLoading = false;
-  //     });
-  //   }
-  // }
-
+class _SignUpScreenState extends State<SignUpScreen> {
   @override
-  void dispose() {
-    _nameEditingController.dispose();
-    _emailEditingController.dispose();
-    _passwordEditingController.dispose();
-    _confirmPasswordController.dispose();
-    super.dispose();
+  Widget build(BuildContext context) {
+    return Scaffold(
+      //  appBar: AppBar(title: const Text('Login')),
+        body: SingleChildScrollView(
+          child: BlocListener<SignUpBloc, SignUpState>(
+              listener: (context, state) {
+                if (state.status.isSubmissionSuccess) {
+                  ScaffoldMessenger.of(context)
+                    ..hideCurrentSnackBar()
+                    ..showSnackBar(
+                      const SnackBar(content: Text('SignUp Successfully....')),
+                    );
+                  Navigator.pushAndRemoveUntil(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) {
+                        return const LoginScreen();
+                      },
+                    ),
+                        (route) => false,
+                  );
+                }
+                if (state.status.isSubmissionInProgress) {
+                  ScaffoldMessenger.of(context)
+                    ..hideCurrentSnackBar()
+                    ..showSnackBar(
+                      const SnackBar(content: Text('Please wait....')),
+                    );
+                }
+                if (state.status.isSubmissionFailure) {
+                  ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                  showDialog<void>(
+                    context: context,
+                    builder: (_) => SuccessDialog(dailogText: state.statusText),
+                  );
+                }
+              },
+              child: Container(
+                color: primaryColor,
+                child: Stack(
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Container(
+                          color: primaryColor,
+                          height: context.screenHeight * 0.18,
+                        ),
+                        Container(
+                          padding: const EdgeInsets.only(left: 15, right: 15),
+                          decoration: const BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.only(
+                                  topRight: Radius.circular(20),
+                                  topLeft: Radius.circular(20))),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              SizedBox(
+                                height: context.screenHeight * 0.1,
+                              ),
+                              const Text(
+                                'Login with Email ID',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 20,
+                                ),
+                              ),
+                              SizedBox(
+                                height: context.screenHeight * 0.02,
+                              ),
+                              const Text(
+                                'Please login to continue using our app.',
+                                style: TextStyle(
+                                    color: Colors.black,
+                                    // height: 1.5,
+                                    fontSize: 15),
+                              ),
+                              SizedBox(
+                                height: context.screenHeight * 0.025,
+                              ),
+                              const NameInput(),
+                              SizedBox(
+                                height: context.screenHeight * 0.025,
+                              ),
+                              const EmailInput(),
+                              SizedBox(
+                                height: context.screenHeight * 0.025,
+                              ),
+                              const PasswordInput(),
+                              SizedBox(
+                                height: context.screenHeight * 0.025,
+                              ),
+                              const ConfirmPasswordInput(),
+                              SizedBox(
+                                height: context.screenHeight * 0.05,
+                              ),
+                              const SubmitButton(),
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  const Text('Already have an Account?'),
+                                  TextButton(
+                                      onPressed: () => Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                LoginScreen(),
+                                          )),
+                                      child: const Text('Sign In')),
+                                ],
+                              ),
+                            ],
+                          ),
+                        )
+                      ],
+                    ),
+                    Positioned(
+                        left: context.screenWidth / 2.75,
+                        top: context.screenHeight * 0.12,
+                        child: Container(
+                            height: context.screenHeight * 0.14,
+                            width: context.screenWidth / 3.5,
+                            decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(20)),
+                            child: const Center(
+                              child: Text('    Self \nLearning',
+                                  style: TextStyle(
+                                      fontSize: 20,
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.bold)),
+                            ))),
+                  ],
+                ),
+              )),
+        ));
   }
+}
+
+class NameInput extends StatelessWidget {
+  const NameInput({super.key});
 
   @override
   Widget build(BuildContext context) {
-    var h = MediaQuery.of(context).size.height -
-        MediaQuery.of(context).padding.top -
-        AppBar().preferredSize.height;
-    var w = MediaQuery.of(context).size.width;
-    return IgnorePointer(
-      ignoring: _isLoading,
-      child: Scaffold(
-          appBar: AppBar(
-            title: Text('Registration'),
-          ),
-          body: SingleChildScrollView(
-            child: Container(
-              height: h,
-              width: w,
-              child: SafeArea(
-                  child: Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 20),
-                      child: Form(
-                        key: _formKey,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            Text(
-                              'New here !',
-                              style: TextStyle(
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 18),
-                            ),
-                            Text(
-                              'Register to continue',
-                              style: TextStyle(
-                                  color: Colors.grey,
-                                  fontWeight: FontWeight.normal,
-                                  fontSize: 15),
-                            ),
-                            SizedBox(
-                              width: w,
-                              child: TextFormField(
-                                textInputAction: TextInputAction.next,
-                                keyboardType: TextInputType.visiblePassword,
-                                validator: (value) {
-                                  if (value!.isEmpty) {
-                                    return 'Enter valid Name';
-                                  }
-                                },
-                                controller: _nameEditingController,
-                                decoration: InputDecoration(hintText: 'Name*'),
-                              ),
-                            ),
-                            SizedBox(
-                              width: w,
-                              child: TextFormField(
-                                textInputAction: TextInputAction.next,
-                                keyboardType: TextInputType.emailAddress,
-                                validator: (v) {
-                                  bool isValid = EmailValidator.validate(v!);
-                                  if (isValid == true) {
-                                    return null;
-                                  } else {
-                                    return 'Enter Valid Email Address';
-                                  }
-                                },
-                                controller: _emailEditingController,
-                                decoration: InputDecoration(
-                                  hintText: 'Email Address*',
-                                  errorStyle: TextStyle(color: Colors.red),
-                                ),
-                              ),
-                            ),
-                            SizedBox(
-                              width: w,
-                              child: TextFormField(
-                                textInputAction: TextInputAction.done,
-                                obscureText: false,
-                                validator: (v) {
-                                  if (v!.isEmpty) {
-                                    return "password can't be empty";
-                                  }
-                                  if (v.length < 6) {
-                                    return 'Must be more than 6 character';
-                                  }
-                                },
-                                controller: _passwordEditingController,
-                                decoration: InputDecoration(
-                                    errorStyle: TextStyle(color: Colors.red),
-                                    hintText: "Password*",
-                                    fillColor: Colors.white),
-                              ),
-                            ),
-                            SizedBox(
-                              width: w,
-                              child: TextFormField(
-                                textInputAction: TextInputAction.done,
-                                obscureText: false,
-                                validator: (v) {
-                                  if (v!.isEmpty) {
-                                    return "Phone Number can't be empty";
-                                  }
-                                  if (v.length < 10) {
-                                    return 'Must 10 digit number';
-                                  }
-                                },
-                                controller: _phoneNumberEditingController,
-                                decoration: const InputDecoration(
-                                    errorStyle: TextStyle(color: Colors.red),
-                                    hintText: "Phone Number",
-                                    fillColor: Colors.white),
-                              ),
-                            ),
-                            AuthButton(
-                              title: 'Register',
-                              onPressed: () {
-                                if (_formKey.currentState!.validate()) {
-                               //   registerUser();
-                                } else {
-                                  // context.showSnackBar(const SnackBar(
-                                  //     content:
-                                  //         Text('Please fill correct detail')));
-                                }
-                              },
-                            ),
-                          ],
-                        ),
-                      ))),
-            ),
-          )),
+    return BlocBuilder<SignUpBloc, SignUpState>(
+      builder: (context, state) {
+        return Container(
+            padding: const EdgeInsets.only(left: 10, right: 5),
+            height: context.screenHeight * 0.105,
+            decoration: BoxDecoration(
+                color: Colors.grey.withOpacity(0.4),
+                borderRadius: BorderRadius.circular(20)),
+            child: Align(
+              alignment: Alignment.centerLeft,
+              child: TextFormField(
+                initialValue: state.email.value,
+                decoration: InputDecoration(
+                  hintText: 'Name',
+                  border: InputBorder.none,
+                  icon: Icon(
+                    Icons.account_circle_outlined,
+                    size: context.screenWidth * 0.08,
+                  ),
+                  errorText: state.email.invalid
+                      ? 'Please ensure the name entered is valid'
+                      : null,
+                ),
+                keyboardType: TextInputType.emailAddress,
+                onChanged: (value) {
+                  context.read<SignUpBloc>().add(SignUpNameChanged(name: value));
+                },
+                textInputAction: TextInputAction.next,
+              ),
+            ));
+      },
     );
   }
 }
+
+class EmailInput extends StatelessWidget {
+  const EmailInput({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<SignUpBloc, SignUpState>(
+      builder: (context, state) {
+        print('email state');
+        return Container(
+            padding: const EdgeInsets.only(left: 10, right: 5),
+            height: context.screenHeight * 0.105,
+            decoration: BoxDecoration(
+                color: Colors.grey.withOpacity(0.4),
+                borderRadius: BorderRadius.circular(20)),
+            child: Align(
+              alignment: Alignment.centerLeft,
+              child: TextFormField(
+                initialValue: state.email.value,
+                decoration: InputDecoration(
+                  hintText: 'david@gmail.com',
+                  border: InputBorder.none,
+                  icon: Icon(
+                    Icons.email,
+                    size: context.screenWidth * 0.08,
+                  ),
+                  errorText: state.email.invalid
+                      ? 'Please ensure the email entered is valid'
+                      : null,
+                ),
+                keyboardType: TextInputType.emailAddress,
+                onChanged: (value) {
+                  context.read<SignUpBloc>().add(SignUpEmailChanged(email: value));
+                },
+                textInputAction: TextInputAction.next,
+              ),
+            ));
+      },
+    );
+  }
+}
+
+class PasswordInput extends StatelessWidget {
+  const PasswordInput({
+    super.key,
+  });
+  @override
+  Widget build(BuildContext context) {
+
+    return BlocBuilder<SignUpBloc, SignUpState>(
+      builder: (context, state) {
+
+        return Container(
+            padding: const EdgeInsets.only(left: 10, right: 5),
+            height: context.screenHeight * 0.105,
+            decoration: BoxDecoration(
+                color: Colors.grey.withOpacity(0.4),
+                borderRadius: BorderRadius.circular(20)),
+            child: Align(
+              alignment: Alignment.centerLeft,
+              child: TextFormField(
+                initialValue: state.password.value,
+                decoration: InputDecoration(
+                  hintText: 'Password',
+                  border: InputBorder.none,
+                  icon: Icon(
+                    Icons.lock,
+                    size: context.screenWidth * 0.08,
+                  ),
+                  errorText: state.password.invalid
+                      ? 'Please ensure password is valid'
+                      : null,
+                ),
+                keyboardType: TextInputType.name,
+                onChanged: (value) {
+                  context
+                      .read<SignUpBloc>()
+                      .add(SignUpPasswordChanged(password: value));
+                },
+                textInputAction: TextInputAction.next,
+              ),
+            ));
+      },
+    );
+  }
+}
+
+class ConfirmPasswordInput extends StatelessWidget {
+  const ConfirmPasswordInput({
+    super.key,
+  });
+  @override
+  Widget build(BuildContext context) {
+
+    return BlocBuilder<SignUpBloc, SignUpState>(
+      builder: (context, state) {
+
+        return Container(
+            padding: const EdgeInsets.only(left: 10, right: 5),
+            height: context.screenHeight * 0.105,
+            decoration: BoxDecoration(
+                color: Colors.grey.withOpacity(0.4),
+                borderRadius: BorderRadius.circular(20)),
+            child: Align(
+              alignment: Alignment.centerLeft,
+              child: TextFormField(
+                initialValue: state.password.value,
+                decoration: InputDecoration(
+                  hintText: 'Confrim Password',
+                  border: InputBorder.none,
+                  icon: Icon(
+                    Icons.lock,
+                    size: context.screenWidth * 0.08,
+                  ),
+                  errorText: state.password.invalid
+                      ? 'password and confrim password must be same'
+                      : null,
+                ),
+                keyboardType: TextInputType.name,
+                onChanged: (value) {
+                  context
+                      .read<SignUpBloc>()
+                      .add(SignUpPasswordChanged(password: value));
+                },
+                textInputAction: TextInputAction.next,
+              ),
+            ));
+      },
+    );
+  }
+}
+
+class SubmitButton extends StatelessWidget {
+  const SubmitButton({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<SignUpBloc, SignUpState>(
+      buildWhen: (previous, current) => previous.status != current.status,
+      builder: (context, state) {
+        return SizedBox(
+          height: context.screenHeight * 0.08,
+          width: context.screenWidth,
+          child: ElevatedButton(
+            style: ButtonStyle(
+                shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                    RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(18.0),
+                        side: const BorderSide(color: Colors.grey)))),
+            onPressed: () {
+              if (state.password.invalid) {
+                context
+                    .showSnackBar(SnackBar(content: Text('Invalid password')));
+              } else if (state.email.invalid) {
+                context.showSnackBar(SnackBar(content: Text('Invalid Email')));
+              }
+              context.read<SignUpBloc>().add(SignUpFormSubmitted());
+            },
+            child: const Text(
+              'Login',
+              style: TextStyle(fontSize: 22),
+            ),
+          ),
+        );
+      },
+    );
+  }
+}
+
+class SuccessDialog extends StatelessWidget {
+  final String dailogText;
+
+  const SuccessDialog({super.key, required this.dailogText});
+
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(8),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            Row(
+              children: <Widget>[
+                const Icon(Icons.info),
+                Flexible(
+                  child: Padding(
+                    padding: const EdgeInsets.all(10),
+                    child: Text(
+                      dailogText,
+                      softWrap: true,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            ElevatedButton(
+              child: const Text('OK'),
+              onPressed: () => Navigator.of(context).pop(),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// 008869

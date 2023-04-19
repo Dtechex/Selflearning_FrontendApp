@@ -4,6 +4,8 @@ import 'package:self_learning_app/features/dashboard/dashboard_screen.dart';
 import 'package:self_learning_app/features/login/data/repo/login_repo.dart';
 import 'package:self_learning_app/features/login/login_screen.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:self_learning_app/features/registration/bloc/signup_bloc.dart';
+import 'package:self_learning_app/features/registration/data/repo/signup_repo.dart';
 import 'package:self_learning_app/features/search_category/bloc/search_cat_bloc.dart';
 import 'package:self_learning_app/features/subcategory/bloc/sub_cate_bloc.dart';
 import 'package:self_learning_app/utilities/colors.dart';
@@ -31,11 +33,18 @@ class MyApp extends StatelessWidget {
           BlocProvider<SearchCategoryBloc>(
               create: (context) => SearchCategoryBloc()),
           BlocProvider<SubCategoryBloc>(create: (context) => SubCategoryBloc()),
+          BlocProvider<SignUpBloc>(create: (context) => SignUpBloc(singUpRepo: SignUpRepo())),
+
         ],
         child: MaterialApp(
 
+
+
             title: 'Self Learing',
-            theme: ThemeData(
+            theme: ThemeData(floatingActionButtonTheme: FloatingActionButtonThemeData(
+              backgroundColor: primaryColor
+            ),
+
               iconTheme: IconThemeData(
                 color: primaryColor,
                 weight: 2

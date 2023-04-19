@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart';
 import 'package:self_learning_app/features/category/data/model/category_model.dart';
-import 'package:self_learning_app/features/subcategory/sub_cate_model.dart';
+import 'package:self_learning_app/features/subcategory/model/sub_cate_model.dart';
 import '../../../../utilities/base_client.dart';
 
 class CategoryRepo {
