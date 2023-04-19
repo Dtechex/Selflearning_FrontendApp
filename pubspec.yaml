@@ -44,6 +44,7 @@ dependencies:
   flutter_sound: ^9.2.13
   camera: ^0.10.4
   image_picker: ^0.8.7+3
+  path_provider:
 
 
   # The following adds the Cupertino Icons font to your application.

@@ -1,3 +1,4 @@
+import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:self_learning_app/features/category/bloc/category_bloc.dart';
 import 'package:self_learning_app/features/dashboard/dashboard_screen.dart';
@@ -10,11 +11,15 @@ import 'package:self_learning_app/features/search_category/bloc/search_cat_bloc.
 import 'package:self_learning_app/features/subcategory/bloc/sub_cate_bloc.dart';
 import 'package:self_learning_app/utilities/colors.dart';
 import 'package:self_learning_app/utilities/shared_pref.dart';
+import 'features/camera/bloc/camera_bloc.dart';
 import 'features/dashboard/bloc/dashboard_bloc.dart';
 import 'features/login/bloc/login_bloc.dart';
 
+
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
   runApp(const MyApp());
 }
 
@@ -34,6 +39,7 @@ class MyApp extends StatelessWidget {
               create: (context) => SearchCategoryBloc()),
           BlocProvider<SubCategoryBloc>(create: (context) => SubCategoryBloc()),
           BlocProvider<SignUpBloc>(create: (context) => SignUpBloc(singUpRepo: SignUpRepo())),
+          BlocProvider<CameraBloc>(create: (context) => CameraBloc()),
 
         ],
         child: MaterialApp(

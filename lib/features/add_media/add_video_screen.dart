@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
+
 import 'package:self_learning_app/utilities/extenstion.dart';
 
+import '../camera/camera_screen.dart';
+
 class AddVideo extends StatefulWidget {
-  const AddVideo({Key? key}) : super(key: key);
+  final String rootId;
+  const AddVideo({Key? key, required this.rootId}) : super(key: key);
 
   @override
   State<AddVideo> createState() => _AddVideoState();
@@ -35,7 +39,14 @@ class _AddVideoState extends State<AddVideo> {
               child: Center(
                 child: Icon(Icons.video_call_outlined,size: context.screenWidth/2.5),
               ),
-            )
+
+            ),
+
+            ElevatedButton(onPressed: () {
+              Navigator.push(context, MaterialPageRoute(builder: (context) {
+                return CameraApp(rootId: widget.rootId,);
+              },));
+            } , child: Text('Create '))
           ],
         ),
       )

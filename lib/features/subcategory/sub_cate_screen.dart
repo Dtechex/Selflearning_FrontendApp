@@ -1,13 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:self_learning_app/features/category/bloc/category_bloc.dart';
 import 'package:self_learning_app/features/category/bloc/category_state.dart';
 import 'package:self_learning_app/features/subcategory/create_subcate_screen.dart';
-import 'package:self_learning_app/features/subcategory/sub_category_1.1_screen.dart';
+import 'package:self_learning_app/subcate1.1/sub_category_1.1_screen.dart';
 import 'package:self_learning_app/utilities/colors.dart';
 import 'package:self_learning_app/utilities/extenstion.dart';
-
 import '../update_category/update_cate_screen.dart';
 import 'bloc/sub_cate_bloc.dart';
 import 'bloc/sub_cate_state.dart';
@@ -73,7 +71,7 @@ class _SubCategoryScreenState extends State<SubCategoryScreen> {
                return const CircularProgressIndicator();
              }else if( state is SubCategoryLoaded){
                return
-               state.cateList.isEmpty? Center(child: Text('No Subcategory added'),):
+               state.cateList.isEmpty? const Center(child: Text('No Subcategory added'),):
                Expanded(child: ListView.builder(
                  itemCount: state.cateList.length,
                  shrinkWrap: true,
@@ -81,7 +79,7 @@ class _SubCategoryScreenState extends State<SubCategoryScreen> {
                    return GestureDetector(
                      onTap: () {
                        Navigator.push(context, MaterialPageRoute(builder: (context) {
-                         return SubCategory1(subCateTitle: state.cateList[index].name,);
+                         return SubCategory1(subCateTitle: state.cateList[index].name,rootId: state.cateList[index].sId!,);
                        },));
                      },
                      child: Padding(
@@ -97,11 +95,12 @@ class _SubCategoryScreenState extends State<SubCategoryScreen> {
                                color: primaryColor
                            ),)),
                          )),
+                     
                    );
                  },));
              }
-             return SizedBox();
-            },)
+             return const SizedBox();
+            },),
           ],
         ),
       )

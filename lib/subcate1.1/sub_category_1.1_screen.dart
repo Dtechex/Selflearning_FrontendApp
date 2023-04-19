@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:self_learning_app/utilities/extenstion.dart';
-import 'package:self_learning_app/widgets/add_media_widget.dart';
-
-import '../add_media/add_video_screen.dart';
+import '../features/add_media/add_video_screen.dart';
+import '../features/subcategory/update_subcategory.dart';
 
 class SubCategory1 extends StatefulWidget {
   final String? subCateTitle;
+  final String rootId;
 
-  const SubCategory1({Key? key, this.subCateTitle}) : super(key: key);
+  const SubCategory1({Key? key, this.subCateTitle, required this.rootId}) : super(key: key);
 
   @override
   State<SubCategory1> createState() => _SubCategory1State();
@@ -15,29 +15,30 @@ class SubCategory1 extends StatefulWidget {
 
 class _SubCategory1State extends State<SubCategory1> {
   List<String> mediaTitle = [
+    'Take Picture',
     'Record Video',
     'Record Audio',
-    'Take Picture',
     'Enter Text'
   ];
 
   List<IconData> mediaIcons = [
+    Icons.camera,
     Icons.video_call_outlined,
     Icons.audio_file_outlined,
-    Icons.camera,
     Icons.text_increase
   ];
 
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(title: Text(widget.subCateTitle!)),
+        appBar: AppBar(title: Text(widget.subCateTitle!),actions: [
+          IconButton(onPressed: () {
+            Navigator.push(context, MaterialPageRoute(builder: (context) {
+              return UpdateSubCateScreen();
+            },));
+          },icon: Icon(Icons.edit),)
+        ]),
         body: ListView.builder(
           itemCount: mediaTitle.length,
           shrinkWrap: true,
@@ -49,7 +50,7 @@ class _SubCategory1State extends State<SubCategory1> {
                   case 0:
                     {
                       Navigator.push(context, MaterialPageRoute(builder: (context) {
-                        return AddVideo();
+                        return AddVideo(rootId: widget.rootId,);
                       },));
 
                     }
