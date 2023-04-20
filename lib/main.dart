@@ -5,6 +5,7 @@ import 'package:self_learning_app/features/dashboard/dashboard_screen.dart';
 import 'package:self_learning_app/features/login/data/repo/login_repo.dart';
 import 'package:self_learning_app/features/login/login_screen.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:self_learning_app/features/quick_add/data/bloc/quick_add_bloc.dart';
 import 'package:self_learning_app/features/registration/bloc/signup_bloc.dart';
 import 'package:self_learning_app/features/registration/data/repo/signup_repo.dart';
 import 'package:self_learning_app/features/search_category/bloc/search_cat_bloc.dart';
@@ -40,6 +41,7 @@ class MyApp extends StatelessWidget {
           BlocProvider<SubCategoryBloc>(create: (context) => SubCategoryBloc()),
           BlocProvider<SignUpBloc>(create: (context) => SignUpBloc(singUpRepo: SignUpRepo())),
           BlocProvider<CameraBloc>(create: (context) => CameraBloc()),
+          BlocProvider<QuickAddBloc>(create: (context) => QuickAddBloc()),
 
         ],
         child: MaterialApp(

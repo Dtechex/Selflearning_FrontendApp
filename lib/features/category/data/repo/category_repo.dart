@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart';
 import 'package:self_learning_app/features/category/data/model/category_model.dart';
 import 'package:self_learning_app/features/subcategory/model/sub_cate_model.dart';
@@ -12,6 +11,7 @@ class CategoryRepo {
       endPoint: 'category',
     );
     var data = await jsonDecode(res.body);
+    print(data);
     List<dynamic> recordata = data['data']['record'];
     List<CategoryModel> recordList = [];
     if (recordata.isEmpty) {

@@ -11,12 +11,13 @@ import 'bloc/sub_cate_bloc.dart';
 import 'bloc/sub_cate_state.dart';
 
 class SubCategoryScreen extends StatefulWidget {
+  final List<String>? tags;
   final Color? color;
   final String? categoryName;
   final String? rootId;
 
 
-  const SubCategoryScreen({Key? key, this.categoryName, this.rootId, this.color,}) : super(key: key);
+  const SubCategoryScreen({Key? key, this.categoryName, this.rootId, this.color, this.tags,}) : super(key: key);
 
   @override
   State<SubCategoryScreen> createState() => _SubCategoryScreenState();
@@ -33,17 +34,30 @@ class _SubCategoryScreenState extends State<SubCategoryScreen> {
           },));
 
         },
-        child: Icon(Icons.add),
+        child: Row(
+          children: const [
+            Text('   Add\n SubCa',style: TextStyle(fontSize: 12),),
+
+          ],
+        ),
       ),
       appBar: AppBar(
           title: Text(widget.categoryName!),actions: [
         IconButton(
             onPressed: () {
           Navigator.push(context, MaterialPageRoute(builder: (context) {
-            return UpdateCateScreen(rootId: widget.rootId,selectedColor: widget.color,categoryTitle: widget.categoryName,);
+            return UpdateCateScreen(rootId: widget.rootId,selectedColor: widget.color,categoryTitle: widget.categoryName,tags: widget.tags,);
           },));
 
-        }, icon: Icon(Icons.edit))
+        }, icon: Row(
+          children: [
+            Text('Edit',style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 18
+            ),),
+
+          ],
+        ))
       ]),
       body: Container(
         padding: const EdgeInsets.only(left: 10,right: 10),
@@ -79,7 +93,7 @@ class _SubCategoryScreenState extends State<SubCategoryScreen> {
                    return GestureDetector(
                      onTap: () {
                        Navigator.push(context, MaterialPageRoute(builder: (context) {
-                         return SubCategory1(subCateTitle: state.cateList[index].name,rootId: state.cateList[index].sId!,);
+                         return SubCategory1(subCateTitle: state.cateList[index].name,rootId: state.cateList[index].sId!,color: widget.color,);
                        },));
                      },
                      child: Padding(

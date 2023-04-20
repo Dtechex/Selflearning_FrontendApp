@@ -6,8 +6,9 @@ import '../features/subcategory/update_subcategory.dart';
 class SubCategory1 extends StatefulWidget {
   final String? subCateTitle;
   final String rootId;
+  final Color? color;
 
-  const SubCategory1({Key? key, this.subCateTitle, required this.rootId}) : super(key: key);
+  const SubCategory1({Key? key, this.subCateTitle, required this.rootId, this.color}) : super(key: key);
 
   @override
   State<SubCategory1> createState() => _SubCategory1State();
@@ -31,13 +32,15 @@ class _SubCategory1State extends State<SubCategory1> {
 
   @override
   Widget build(BuildContext context) {
+    print(widget.rootId);
+    print('screen 1.1');
     return Scaffold(
         appBar: AppBar(title: Text(widget.subCateTitle!),actions: [
           IconButton(onPressed: () {
             Navigator.push(context, MaterialPageRoute(builder: (context) {
-              return UpdateSubCateScreen();
+              return UpdateSubCateScreen(rootId: widget.rootId,categoryTitle: widget.subCateTitle,selectedColor: widget.color,);
             },));
-          },icon: Icon(Icons.edit),)
+          },icon: const Icon(Icons.edit),)
         ]),
         body: ListView.builder(
           itemCount: mediaTitle.length,

@@ -4,11 +4,13 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:self_learning_app/features/category/bloc/category_bloc.dart';
 import 'package:self_learning_app/features/category/bloc/category_state.dart';
+import 'package:self_learning_app/features/quick_add/data/bloc/quick_add_bloc.dart';
 import 'package:self_learning_app/features/search_category/bloc/search_cat_bloc.dart';
 import 'package:self_learning_app/features/subcategory/sub_cate_screen.dart';
 import 'package:self_learning_app/utilities/colors.dart';
 import 'package:self_learning_app/utilities/extenstion.dart';
 
+import '../quick_add/quick_add_screen.dart';
 import '../search_category/bloc/search_cate_event.dart';
 import '../search_category/cate_search_delegate.dart';
 import '../subcategory/bloc/sub_cate_bloc.dart';
@@ -22,8 +24,61 @@ class AllCateScreen extends StatefulWidget {
 
 class _AllCateScreenState extends State<AllCateScreen> {
   int selectedIndex = 0;
-  List<String> titles = ['All', 'Categories', 'Dialogs'];
+  List<String> titles = ['All', 'Categories', 'Dialogs','QuickAdd'];
   TextEditingController controller = TextEditingController(text: "  Search");
+  TextEditingController quickaddcontroller = TextEditingController();
+
+  Future<void> _displayTextInputDialog(BuildContext context) async {
+    return showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text('Create Quick Type'),
+            content: TextField(
+              onChanged: (value) {
+                setState(() {
+                  // valueText = value;
+                });
+              },
+              controller: quickaddcontroller,
+              decoration: const InputDecoration(hintText: "Title"),
+            ),
+            actions: <Widget>[
+              MaterialButton(
+                color: Colors.green,
+                textColor: Colors.white,
+                child: BlocConsumer<QuickAddBloc, QuickAddState>(
+                  builder: (context, state) {
+                    if (state is QuickAddInitial) {
+                      return Text('Add');
+                    } else if (state is QuickAddLoadingState) {
+                      return CircularProgressIndicator();
+                    } else if (state is QuickAddLoadedState) {
+                      return Text('Add');
+                    }
+                    return Text('Add');
+                  },
+                  listener: (context, state) {
+                    if (state is QuickAddLoadedState) {
+                      ScaffoldMessenger.of(context)
+                        ..hideCurrentSnackBar()
+                        ..showSnackBar(
+                          const SnackBar(content: Text('Qick Type Added')),
+                        );
+                      quickaddcontroller.text='';
+                      Navigator.pop(context);
+
+                    }
+                  },
+                ),
+                onPressed: () {
+                  context.read<QuickAddBloc>().add(ButtonPressedEvent(title: quickaddcontroller.text));
+                },
+              )
+            ],
+          );
+        });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -42,28 +97,39 @@ class _AllCateScreenState extends State<AllCateScreen> {
                   const SizedBox(
                     height: 20,
                   ),
-                  SizedBox(
-                    height: context.screenHeight * 0.06,
-                    width: context.screenWidth,
-                    child: CupertinoSearchTextField(
-                      onChanged: (value) {
-                        context
-                            .read<SearchCategoryBloc>()
-                            .add(SearcCategoryLoadEvent(query: value));
-                      },
-                      onTap: () async {
-                        await showSearch(
-                          context: context,
-                          delegate: CustomSearchDelegate(),
-                        );
-                      },
-                      controller: controller,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        color: Colors.grey.withOpacity(0.1),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: SizedBox(
+                          height: context.screenHeight * 0.06,
+                          child: CupertinoSearchTextField(
+                            onChanged: (value) {
+                              context
+                                  .read<SearchCategoryBloc>()
+                                  .add(SearcCategoryLoadEvent(query: value));
+                            },
+                            onTap: () async {
+                              await showSearch(
+                                context: context,
+                                delegate: CustomSearchDelegate(),
+                              );
+                            },
+                            controller: controller,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              color: Colors.grey.withOpacity(0.1),
+                            ),
+                            style: const TextStyle(
+                                fontSize: 16, color: Colors.grey),
+                          ),
+                        ),
                       ),
-                      style: const TextStyle(fontSize: 16, color: Colors.grey),
-                    ),
+                      IconButton(
+                          onPressed: () {
+                            _displayTextInputDialog(context);
+                          },
+                          icon: Icon(Icons.add)),
+                    ],
                   ),
                   SizedBox(
                     height: 10,
@@ -78,7 +144,17 @@ class _AllCateScreenState extends State<AllCateScreen> {
                         shrinkWrap: true,
                         itemBuilder: (context, index) {
                           return GestureDetector(
-                            onTap: () => print(index),
+                            onTap: (){
+                             setState(() {
+                               selectedIndex=index;
+                               if(index==3) {
+                                 context.read<QuickAddBloc>().add(LoadQuickTypeEvent());
+                                 Navigator.push(context, MaterialPageRoute(builder: (context) {
+                                   return const QuickTypeScreen();
+                                 },));
+                               }
+                             });
+                            },
                             child: Text('   ${titles[index]}',
                                 style: TextStyle(
                                     fontWeight: FontWeight.w500,
@@ -101,15 +177,16 @@ class _AllCateScreenState extends State<AllCateScreen> {
                         mainAxisExtent: context.screenHeight * 0.15,
                         crossAxisCount: 2),
                     itemBuilder: (context, index) {
-                      Color currentColor=primaryColor;
+                      Color currentColor = primaryColor;
 
-                      if(state.cateList[index].styles!.isNotEmpty){
-                        if (
-                        state.cateList[index].styles![1].value!.length !=10) {
+                      if (state.cateList[index].styles!.isNotEmpty) {
+                        if (state.cateList[index].styles![1].value!.length !=
+                            10) {
                           currentColor = primaryColor;
                         } else {
                           print('else color');
-                          currentColor = Color(int.parse(state.cateList[index].styles![1].value!));
+                          currentColor = Color(int.parse(
+                              state.cateList[index].styles![1].value!));
                         }
                       }
 
@@ -119,9 +196,7 @@ class _AllCateScreenState extends State<AllCateScreen> {
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(10),
                             color: Colors.transparent,
-                            border: Border.all(
-                                color: currentColor,
-                                width: 3),
+                            border: Border.all(color: currentColor, width: 3),
                           ),
                           child: Center(
                             child: Text(state.cateList[index].name.toString(),
@@ -129,13 +204,19 @@ class _AllCateScreenState extends State<AllCateScreen> {
                           ),
                         ),
                         onTap: () {
+                          print(state.cateList[index].keywords);
+                          print('state.cateList[index].keywords');
                           context.read<SubCategoryBloc>().add(
                               SubCategoryLoadEvent(
                                   rootId: state.cateList[index].sId));
                           Navigator.push(context, MaterialPageRoute(
                             builder: (context) {
                               return SubCategoryScreen(
-                                color: Color(int.parse(state.cateList[index].styles![1].value!),),
+                                tags: state.cateList[index].keywords,
+                                color: Color(
+                                  int.parse(
+                                      state.cateList[index].styles![1].value!),
+                                ),
                                 rootId: state.cateList[index].sId,
                                 categoryName: state.cateList[index].name,
                               );

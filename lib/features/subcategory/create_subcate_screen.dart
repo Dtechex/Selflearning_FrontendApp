@@ -12,8 +12,9 @@ import '../dashboard/dashboard_screen.dart';
 
 class CreateSubCateScreen extends StatefulWidget {
   final String? rootId;
+  final String? subCatName;
 
-  const CreateSubCateScreen({Key? key, this.rootId}) : super(key: key);
+  const CreateSubCateScreen({Key? key, this.rootId, this.subCatName}) : super(key: key);
 
   @override
   State<CreateSubCateScreen> createState() => _CreateSubCateScreenState();

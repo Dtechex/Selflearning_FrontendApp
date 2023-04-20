@@ -17,13 +17,12 @@ class UploadResRepo {
       'Content-Type': 'application/json',
       'Authorization': 'Bearer $token'
     },);
-  
     request.fields['type'] = 'image';
     request.fields['rootId'] = rootId!;
     request.files.add(http.MultipartFile.fromBytes(
         'content', await File.fromUri(Uri.parse(file!.path)).readAsBytes(),
         contentType: MediaType('image', 'jpeg')));
-
+    
     request.send().then((response) {
       response.stream.transform(utf8.decoder).listen((value) {
         print(value);

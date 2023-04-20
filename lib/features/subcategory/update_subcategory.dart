@@ -25,17 +25,18 @@ class _UpdateSubCateScreenState extends State<UpdateSubCateScreen> {
   @override
   void initState() {
     pickedColor=widget.selectedColor;
-    categoryNameController.text=widget.categoryTitle!;
     super.initState();
   }
 
 
   TextEditingController categoryNameController = TextEditingController();
 
-
   bool? isLoading = false;
 
   void pickColor({required BuildContext context}) {
+
+    print(widget.rootId);
+    print(widget.rootId);
     context.showNewDialog(
       AlertDialog(
         title: const Text('Pick a color!'),
@@ -143,6 +144,8 @@ class _UpdateSubCateScreenState extends State<UpdateSubCateScreen> {
 
   @override
   Widget build(BuildContext context) {
+    print(widget.categoryTitle);
+    print('subcateg .11. edit');
 
     return Scaffold(
         appBar: AppBar(title: const Text('Update SubCategory')),
@@ -176,6 +179,7 @@ class _UpdateSubCateScreenState extends State<UpdateSubCateScreen> {
                   child: Align(
                       alignment: Alignment.centerLeft,
                       child: TextFormField(
+                        initialValue: widget.categoryTitle,
 
                         controller: categoryNameController,
                         onChanged: (value) {},
