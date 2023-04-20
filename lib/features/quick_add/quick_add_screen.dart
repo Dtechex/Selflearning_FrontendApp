@@ -20,7 +20,7 @@ class QuickTypeScreen extends StatelessWidget {
             shrinkWrap: true,
             itemCount: state.list!.length,
             itemBuilder: (context, index) {
-              return Card(child: Padding(padding: EdgeInsets.all(10),child: Text(state.list![index].content!),),);
+              return Card(child: Padding(padding: const EdgeInsets.all(10),child: Text(state.list![index].content??'Image Type'),),);
             },
           );
         }

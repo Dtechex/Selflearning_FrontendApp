@@ -4,11 +4,12 @@ import '../features/add_media/add_video_screen.dart';
 import '../features/subcategory/update_subcategory.dart';
 
 class SubCategory1 extends StatefulWidget {
-  final String? subCateTitle;
+  final String subCateTitle;
+  final List<String>  keyWords;
   final String rootId;
   final Color? color;
 
-  const SubCategory1({Key? key, this.subCateTitle, required this.rootId, this.color}) : super(key: key);
+  const SubCategory1({Key? key, required this.subCateTitle, required this.rootId, this.color, required this.keyWords}) : super(key: key);
 
   @override
   State<SubCategory1> createState() => _SubCategory1State();
@@ -35,10 +36,11 @@ class _SubCategory1State extends State<SubCategory1> {
     print(widget.rootId);
     print('screen 1.1');
     return Scaffold(
-        appBar: AppBar(title: Text(widget.subCateTitle!),actions: [
+        appBar: AppBar(title: Text(''),actions: [
+
           IconButton(onPressed: () {
             Navigator.push(context, MaterialPageRoute(builder: (context) {
-              return UpdateSubCateScreen(rootId: widget.rootId,categoryTitle: widget.subCateTitle,selectedColor: widget.color,);
+              return UpdateSubCateScreen(rootId: widget.rootId,categoryTitle: widget.subCateTitle!,selectedColor: widget.color!,keyWords: widget.keyWords,);
             },));
           },icon: const Icon(Icons.edit),)
         ]),

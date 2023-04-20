@@ -85,15 +85,22 @@ class _SubCategoryScreenState extends State<SubCategoryScreen> {
                return const CircularProgressIndicator();
              }else if( state is SubCategoryLoaded){
                return
-               state.cateList.isEmpty? const Center(child: Text('No Subcategory added'),):
+               state.cateList.isEmpty?  SizedBox(
+                 height: context.screenHeight/2,
+                 child: Center(child: Text('No Subcategory added',style: TextStyle(
+                   fontSize: 19,fontWeight: FontWeight.bold
+               ),),),):
                Expanded(child: ListView.builder(
                  itemCount: state.cateList.length,
                  shrinkWrap: true,
                  itemBuilder: (context, index) {
                    return GestureDetector(
                      onTap: () {
+                       print(state.cateList[index].keywords!);
+                       print(state.cateList[index].name);
+                       print(state.cateList[index].sId);
                        Navigator.push(context, MaterialPageRoute(builder: (context) {
-                         return SubCategory1(subCateTitle: state.cateList[index].name,rootId: state.cateList[index].sId!,color: widget.color,);
+                         return SubCategory1(subCateTitle: state.cateList[index].name!,rootId: state.cateList[index].sId!,color: widget.color,keyWords: state.cateList[index].keywords!,);
                        },));
                      },
                      child: Padding(

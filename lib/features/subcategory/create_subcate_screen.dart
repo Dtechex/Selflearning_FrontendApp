@@ -6,6 +6,7 @@ import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:self_learning_app/features/subcategory/bloc/sub_cate_bloc.dart';
 import 'package:self_learning_app/utilities/extenstion.dart';
 import 'package:self_learning_app/utilities/shared_pref.dart';
+import 'package:textfield_tags/textfield_tags.dart';
 
 import '../category/bloc/category_bloc.dart';
 import '../dashboard/dashboard_screen.dart';
@@ -23,6 +24,7 @@ class CreateSubCateScreen extends StatefulWidget {
 class _CreateSubCateScreenState extends State<CreateSubCateScreen> {
   Color? pickedColor = Colors.green;
   TextEditingController categoryNameController = TextEditingController();
+  final TextfieldTagsController _controller = TextfieldTagsController();
 
   bool? isLoading = false;
 
@@ -56,7 +58,7 @@ class _CreateSubCateScreenState extends State<CreateSubCateScreen> {
   Future<int?> addCategory() async {
     isLoading = true;
     Map<String, dynamic> payload = {};
-    List<String> keywords = [];
+    List<String> keywords = _controller.getTags!;
     List<Map<String, String>> styles = [
       {"key": "font-size", "value": "2rem"},
       {"key": "background-color", "value": pickedColor!.value.toString()}
@@ -103,7 +105,7 @@ class _CreateSubCateScreenState extends State<CreateSubCateScreen> {
   Widget build(BuildContext context) {
     print('inside update');
     return Scaffold(
-        appBar: AppBar(title: const Text('Create SubCategory')),
+        appBar: AppBar(title: const Text('Create subcategory')),
         body: Container(
           padding: const EdgeInsets.only(left: 10, right: 10),
           child: Column(
@@ -115,7 +117,7 @@ class _CreateSubCateScreenState extends State<CreateSubCateScreen> {
               const Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
-                  'Create Categories',
+                  'Create subcategory',
                   style: TextStyle(
                       fontWeight: FontWeight.bold,
                       color: Colors.grey,
@@ -137,7 +139,7 @@ class _CreateSubCateScreenState extends State<CreateSubCateScreen> {
                         controller: categoryNameController,
                         onChanged: (value) {},
                         decoration: InputDecoration(
-                          hintText: 'SubCategory Name',
+                          hintText: 'Title',
                           border: InputBorder.none,
                           icon: Icon(
                             Icons.add,
@@ -151,8 +153,110 @@ class _CreateSubCateScreenState extends State<CreateSubCateScreen> {
                         onFieldSubmitted: (value) {},
                         textInputAction: TextInputAction.next,
                       ))),
-              const SizedBox(
-                height: 50,
+               SizedBox(
+                height: context.screenHeight*0.05,
+              ),
+              TextFieldTags(
+                textfieldTagsController: _controller,
+                initialTags: const ['tags'],
+                textSeparators: const ['', ','],
+                letterCase: LetterCase.normal,
+                validator: (String tag) {
+                  if (tag == 'php') {
+                    return 'No, please just no';
+                  } else if (_controller!.getTags!.contains(tag)) {
+                    return 'you already entered that';
+                  }
+                  return null;
+                },
+                inputfieldBuilder:
+                    (context, tec, fn, error, onChanged, onSubmitted) {
+                  return ((context, sc, tags, onTagDelete) {
+                    return Padding(
+                      padding: const EdgeInsets.all(10.0),
+                      child: TextField(
+                        controller: tec,
+                        focusNode: fn,
+                        decoration: InputDecoration(
+                          isDense: true,
+                          border: const OutlineInputBorder(
+                            borderSide: BorderSide(
+                              color: Color.fromARGB(255, 74, 137, 92),
+                              width: 3.0,
+                            ),
+                          ),
+                          focusedBorder: const OutlineInputBorder(
+                            borderSide: BorderSide(
+                              color: Color.fromARGB(255, 74, 137, 92),
+                              width: 3.0,
+                            ),
+                          ),
+                          helperStyle: const TextStyle(
+                            color: Color.fromARGB(255, 74, 137, 92),
+                          ),
+                          hintText: _controller!.hasTags ? '' : "Enter tag...(Optional)",
+                          errorText: error,
+                          prefixIconConstraints: BoxConstraints(
+                              maxWidth: context.screenWidth * 0.74),
+                          prefixIcon: tags.isNotEmpty
+                              ? SingleChildScrollView(
+                            controller: sc,
+                            scrollDirection: Axis.horizontal,
+                            child: Row(
+                                children: tags.map((String tag) {
+                                  return Container(
+                                    decoration: const BoxDecoration(
+                                      borderRadius: BorderRadius.all(
+                                        Radius.circular(20.0),
+                                      ),
+                                      color: Color.fromARGB(255, 74, 137, 92),
+                                    ),
+                                    margin: const EdgeInsets.symmetric(
+                                        horizontal: 5.0),
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 10.0, vertical: 5.0),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        InkWell(
+                                          child: Text(
+                                            '#$tag',
+                                            style: const TextStyle(
+                                                color: Colors.white),
+                                          ),
+                                          onTap: () {
+                                            print("$tag selected");
+                                          },
+                                        ),
+                                        const SizedBox(width: 4.0),
+                                        InkWell(
+                                          child: const Icon(
+                                            Icons.cancel,
+                                            size: 14.0,
+                                            color: Color.fromARGB(
+                                                255, 233, 233, 233),
+                                          ),
+                                          onTap: () {
+                                            onTagDelete(tag);
+                                          },
+                                        )
+                                      ],
+                                    ),
+                                  );
+                                }).toList()),
+                          )
+                              : null,
+                        ),
+                        onChanged: onChanged,
+                        onSubmitted: onSubmitted,
+                      ),
+                    );
+                  });
+                },
+              ),
+              SizedBox(
+                height: context.screenHeight*0.05,
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
@@ -184,8 +288,8 @@ class _CreateSubCateScreenState extends State<CreateSubCateScreen> {
                     },
                     child: isLoading == true
                         ? const CircularProgressIndicator()
-                        : Center(
-                            child: Text('      Create\n SubCategory'),
+                        : const Center(
+                            child: Text('Create'),
                           )),
               ),
               SizedBox(
