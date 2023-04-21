@@ -16,7 +16,6 @@ class SubCategoryScreen extends StatefulWidget {
   final String? categoryName;
   final String? rootId;
 
-
   const SubCategoryScreen({Key? key, this.categoryName, this.rootId, this.color, this.tags,}) : super(key: key);
 
   @override
@@ -50,7 +49,7 @@ class _SubCategoryScreenState extends State<SubCategoryScreen> {
           },));
 
         }, icon: Row(
-          children: [
+          children: const [
             Text('Edit',style: TextStyle(
               fontWeight: FontWeight.bold,
               fontSize: 18
@@ -72,8 +71,6 @@ class _SubCategoryScreenState extends State<SubCategoryScreen> {
               child:  CupertinoSearchTextField(
                 backgroundColor: Colors.grey.withOpacity(0.2),
                 placeholder: 'Search',
-                style: TextStyle(),
-
               ),
             ),
             const SizedBox(
@@ -87,7 +84,7 @@ class _SubCategoryScreenState extends State<SubCategoryScreen> {
                return
                state.cateList.isEmpty?  SizedBox(
                  height: context.screenHeight/2,
-                 child: Center(child: Text('No Subcategory added',style: TextStyle(
+                 child: const Center(child: Text('No Subcategory added',style: TextStyle(
                    fontSize: 19,fontWeight: FontWeight.bold
                ),),),):
                Expanded(child: ListView.builder(
@@ -96,15 +93,12 @@ class _SubCategoryScreenState extends State<SubCategoryScreen> {
                  itemBuilder: (context, index) {
                    return GestureDetector(
                      onTap: () {
-                       print(state.cateList[index].keywords!);
-                       print(state.cateList[index].name);
-                       print(state.cateList[index].sId);
                        Navigator.push(context, MaterialPageRoute(builder: (context) {
                          return SubCategory1(subCateTitle: state.cateList[index].name!,rootId: state.cateList[index].sId!,color: widget.color,keyWords: state.cateList[index].keywords!,);
                        },));
                      },
                      child: Padding(
-                         padding: EdgeInsets.all(10),
+                         padding: const EdgeInsets.all(10),
                          child: Container(
                            decoration: BoxDecoration(
                                borderRadius: BorderRadius.circular(10),

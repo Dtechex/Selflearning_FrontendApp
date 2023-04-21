@@ -26,15 +26,8 @@ class _LoginScreenState extends State<LoginScreen> {
           listener: (context, state) {
             if (state.status.isSubmissionSuccess) {
               ScaffoldMessenger.of(context).hideCurrentSnackBar();
-              Navigator.pushAndRemoveUntil(
-                context,
-                MaterialPageRoute(
-                  builder: (context) {
-                    return const DashBoardScreen();
-                  },
-                ),
-                (route) => false,
-              );
+              Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) =>
+                  const DashBoardScreen()), (Route<dynamic> route) => false);
             }
             if (state.status.isSubmissionInProgress) {
               ScaffoldMessenger.of(context)
@@ -161,12 +154,13 @@ class EmailInput extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print(context.screenWidth);
     return BlocBuilder<MyFormBloc, MyFormState>(
       builder: (context, state) {
         print('email state');
         return Container(
             padding: const EdgeInsets.only(left: 10, right: 5),
-            height: context.screenHeight * 0.105,
+            height: context.screenHeight * 0.1,
             decoration: BoxDecoration(
                 color: Colors.grey.withOpacity(0.4),
                 borderRadius: BorderRadius.circular(20)),
@@ -179,7 +173,7 @@ class EmailInput extends StatelessWidget {
                   border: InputBorder.none,
                   icon: Icon(
                     Icons.email,
-                    size: context.screenWidth * 0.08,
+                    size: context.screenWidth>1280?50:context.screenWidth * 0.08,
                   ),
                   errorText: state.email.invalid
                       ? 'Please ensure the email entered is valid'
@@ -210,7 +204,7 @@ class PasswordInput extends StatelessWidget {
 
         return Container(
             padding: const EdgeInsets.only(left: 10, right: 5),
-            height: context.screenHeight * 0.105,
+            height: context.screenHeight * 0.1,
             decoration: BoxDecoration(
                 color: Colors.grey.withOpacity(0.4),
                 borderRadius: BorderRadius.circular(20)),
@@ -231,7 +225,7 @@ class PasswordInput extends StatelessWidget {
                   border: InputBorder.none,
                   icon: Icon(
                     Icons.lock,
-                    size: context.screenWidth * 0.08,
+                    size:context.screenWidth>1280?50:context.screenWidth * 0.08,
                   ),
                   errorText: state.password.invalid
                       ? 'Please ensure the Phone Number is valid'
@@ -271,9 +265,9 @@ class SubmitButton extends StatelessWidget {
             onPressed: () {
               if (state.password.invalid) {
                 context
-                    .showSnackBar(SnackBar(content: Text('Invalid password')));
+                    .showSnackBar(const SnackBar(content: Text('Invalid password')));
               } else if (state.email.invalid) {
-                context.showSnackBar(SnackBar(content: Text('Invalid Email')));
+                context.showSnackBar(const SnackBar(content: Text('Invalid Email')));
               }
               context.read<MyFormBloc>().add(FormSubmitted());
             },

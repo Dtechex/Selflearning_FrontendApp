@@ -65,6 +65,17 @@ class SignUpBloc extends Bloc<SignUpEvent, SignUpState> {
   }
 
 
+  // void _onConfrimPasswordChanged(Confrim event, Emitter<SignUpState> emit) {
+  //   final password = Password.dirty(event.password);
+  //   emit(
+  //     state.copyWith(
+  //       password: password.valid ? password : Password.pure(event.password),
+  //       status: Formz.validate([state.email, password]),
+  //     ),
+  //   );
+  // }
+
+
   Future<void> _onFormSubmitted(SignUpFormSubmitted event,
       Emitter<SignUpState> emit,) async {
     final email = Email.dirty(state.email.value);

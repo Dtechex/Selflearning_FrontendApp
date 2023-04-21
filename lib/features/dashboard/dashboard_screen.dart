@@ -3,10 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:self_learning_app/features/login/login_screen.dart';
 import 'package:self_learning_app/utilities/colors.dart';
 import 'package:self_learning_app/utilities/shared_pref.dart';
-
 import '../add_category/add_cate_screen.dart';
 import '../category/category_screen.dart';
-import '../login/bloc/login_event.dart';
 import 'bloc/dashboard_bloc.dart';
 
 class DashBoardScreen extends StatelessWidget {
@@ -34,7 +32,7 @@ class DashBoardScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<DashboardBloc, int>(
+    return WillPopScope(child: BlocBuilder<DashboardBloc, int>(
       builder: (context, state) {
         return Scaffold(
           appBar: AppBar(
@@ -66,7 +64,7 @@ class DashBoardScreen extends StatelessWidget {
               context.read<DashboardBloc>().ChangeIndex(value);
             },
             unselectedItemColor: Colors.white,
-            items:  [
+            items:  const [
               BottomNavigationBarItem( icon: Icon(Icons.home),
                   label: 'Home',
                   backgroundColor: primaryColor),
@@ -92,6 +90,8 @@ class DashBoardScreen extends StatelessWidget {
           ),
         );
       },
-    );
+    ), onWillPop: () {
+      return Future.value(true);
+    },);
   }
 }

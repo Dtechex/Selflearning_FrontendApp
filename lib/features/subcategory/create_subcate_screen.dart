@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -94,8 +95,12 @@ class _CreateSubCateScreenState extends State<CreateSubCateScreen> {
       }
       print(res.body);
       print('data');
-    } finally {
-      isLoading = true;
+    } on SocketException catch(e){
+      context.showSnackBar(
+          const SnackBar(content: Text('No internet connection...')));
+    }
+    finally {
+      isLoading = false;
     }
 
     return null;

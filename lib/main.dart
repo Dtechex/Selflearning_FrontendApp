@@ -1,4 +1,5 @@
-import 'package:camera/camera.dart';
+import 'package:device_preview/device_preview.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:self_learning_app/features/category/bloc/category_bloc.dart';
 import 'package:self_learning_app/features/dashboard/dashboard_screen.dart';
@@ -18,11 +19,12 @@ import 'features/login/bloc/login_bloc.dart';
 
 
 
-void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-
-  runApp(const MyApp());
-}
+void main() => runApp(
+  DevicePreview(
+    enabled: !kReleaseMode,
+    builder: (context) => const MyApp(), // Wrap your app
+  ),
+);
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -45,19 +47,20 @@ class MyApp extends StatelessWidget {
 
         ],
         child: MaterialApp(
-
-
-
+            useInheritedMediaQuery: true,
+            locale: DevicePreview.locale(context),
+            builder: DevicePreview.appBuilder,
+          debugShowCheckedModeBanner: false,
             title: 'Self Learing',
-            theme: ThemeData(floatingActionButtonTheme: FloatingActionButtonThemeData(
+            theme: ThemeData(floatingActionButtonTheme: const FloatingActionButtonThemeData(
               backgroundColor: primaryColor
             ),
 
-              iconTheme: IconThemeData(
+              iconTheme: const IconThemeData(
                 color: primaryColor,
                 weight: 2
               ),
-              listTileTheme: ListTileThemeData(
+              listTileTheme: const ListTileThemeData(
                 iconColor: primaryColor
               ),
               elevatedButtonTheme: const ElevatedButtonThemeData(

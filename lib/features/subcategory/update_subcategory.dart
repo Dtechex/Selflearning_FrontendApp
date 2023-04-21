@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -33,8 +34,6 @@ class _UpdateSubCateScreenState extends State<UpdateSubCateScreen> {
   }
 
   void pickColor({required BuildContext context}) {
-    print(widget.rootId);
-    print(widget.rootId);
     context.showNewDialog(
       AlertDialog(
         title: const Text('Pick a color!'),
@@ -86,7 +85,7 @@ class _UpdateSubCateScreenState extends State<UpdateSubCateScreen> {
       );
       if (res.statusCode == 200) {
         context.showSnackBar(
-            SnackBar(content: Text('Category update Successfully')));
+            SnackBar(content: Text('Subcategory update Successfully')));
         context.read<CategoryBloc>().add(CategoryLoadEvent());
         Navigator.pushReplacement(context, MaterialPageRoute(
           builder: (context) {
@@ -99,10 +98,12 @@ class _UpdateSubCateScreenState extends State<UpdateSubCateScreen> {
       }
       print(res.body);
       print('data');
-    } finally {
-      isLoading = true;
+    } on SocketException catch(e){
+      context.showSnackBar(const SnackBar(content: Text('No internet Connection...')));
     }
-
+    finally {
+      isLoading = false;
+    }
     return null;
   }
 
@@ -120,7 +121,7 @@ class _UpdateSubCateScreenState extends State<UpdateSubCateScreen> {
       );
       if (res.statusCode == 200) {
         context.showSnackBar(
-            SnackBar(content: Text('Category deleted Successfully')));
+            SnackBar(content: Text('Subcategory deleted Successfully')));
         context.read<CategoryBloc>().add(CategoryLoadEvent());
         Navigator.pushReplacement(context, MaterialPageRoute(
           builder: (context) {
@@ -133,10 +134,13 @@ class _UpdateSubCateScreenState extends State<UpdateSubCateScreen> {
       }
       print(res.body);
       print('data');
-    } finally {
-      isLoading = true;
+    }on SocketException catch(e){
+      context
+          .showSnackBar(const SnackBar(content: Text('No internet Connection')));
     }
-
+    finally {
+      isLoading = false;
+    }
     return null;
   }
 
@@ -144,7 +148,6 @@ class _UpdateSubCateScreenState extends State<UpdateSubCateScreen> {
   Widget build(BuildContext context) {
     print(widget.categoryTitle);
     print('subcateg .11. edit');
-
     return Scaffold(
         appBar: AppBar(title: Text(widget.categoryTitle)),
         body: SingleChildScrollView(

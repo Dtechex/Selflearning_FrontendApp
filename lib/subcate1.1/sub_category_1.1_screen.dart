@@ -33,16 +33,14 @@ class _SubCategory1State extends State<SubCategory1> {
 
   @override
   Widget build(BuildContext context) {
-    print(widget.rootId);
-    print('screen 1.1');
     return Scaffold(
-        appBar: AppBar(title: Text(''),actions: [
+        appBar: AppBar(title: Text(widget.subCateTitle),actions: [
 
           IconButton(onPressed: () {
             Navigator.push(context, MaterialPageRoute(builder: (context) {
               return UpdateSubCateScreen(rootId: widget.rootId,categoryTitle: widget.subCateTitle!,selectedColor: widget.color!,keyWords: widget.keyWords,);
             },));
-          },icon: const Icon(Icons.edit),)
+          },icon: const Text('Edit'))
         ]),
         body: ListView.builder(
           itemCount: mediaTitle.length,
@@ -93,7 +91,7 @@ class _SubCategory1State extends State<SubCategory1> {
                   trailing: SizedBox(
                     width: context.screenWidth / 3.5,
                     child: Row(
-                      children: [
+                      children: const [
                         Icon(
                           Icons.add,
                         ),

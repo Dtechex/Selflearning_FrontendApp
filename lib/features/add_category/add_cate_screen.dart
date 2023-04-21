@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -81,21 +82,25 @@ class _AddCateScreenState extends State<AddCateScreen> {
         context.showSnackBar(
             SnackBar(content: Text('Category added Successfully')));
         context.read<CategoryBloc>().add(CategoryLoadEvent());
-        Navigator.pushReplacement(context, MaterialPageRoute(
-          builder: (context) {
-            return DashBoardScreen();
-          },
-        ));
+        // Navigator.pushReplacement(context, MaterialPageRoute(
+        //   builder: (context) {
+        //     return DashBoardScreen();
+        //   },
+        // ));
       } else {
         context
             .showSnackBar(SnackBar(content: Text('opps something went worng')));
       }
       print(res.body);
       print('data');
-    } finally {
-      isLoading = true;
-    }
+    } on SocketException catch(e){
+      context
+          .showSnackBar(const SnackBar(content: Text('No Internet')));
 
+    }
+    finally {
+      isLoading = false;
+    }
     return null;
   }
 

@@ -33,15 +33,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     ..showSnackBar(
                       const SnackBar(content: Text('SignUp Successfully....')),
                     );
-                  Navigator.pushAndRemoveUntil(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) {
-                        return const LoginScreen();
-                      },
-                    ),
-                        (route) => false,
-                  );
+                  Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) =>
+                      const LoginScreen()), (Route<dynamic> route) => false);
                 }
                 if (state.status.isSubmissionInProgress) {
                   ScaffoldMessenger.of(context)
@@ -129,18 +122,18 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   const Text('Already have an Account?',style: TextStyle(
-                                    fontSize: 16
+                                      fontSize: 16
                                   ),),
                                   TextButton(
                                       child: const Text('Sign In',style: TextStyle(
-                                        fontWeight: FontWeight.bold,
+                                          fontWeight: FontWeight.bold,
                                           fontSize: 16
                                       ),),
                                       onPressed: () {
                                         Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) =>
                                             LoginScreen()), (Route<dynamic> route) => false);
                                       }
-                                     ),
+                                  ),
                                 ],
                               ),
                               SizedBox(
@@ -183,7 +176,7 @@ class NameInput extends StatelessWidget {
       builder: (context, state) {
         return Container(
             padding: const EdgeInsets.only(left: 10, right: 5),
-            height: context.screenHeight * 0.105,
+            height: context.screenHeight * 0.1,
             decoration: BoxDecoration(
                 color: Colors.grey.withOpacity(0.4),
                 borderRadius: BorderRadius.circular(20)),
@@ -196,7 +189,7 @@ class NameInput extends StatelessWidget {
                   border: InputBorder.none,
                   icon: Icon(
                     Icons.account_circle_outlined,
-                    size: context.screenWidth * 0.08,
+                    size: context.screenWidth>1280?50:context.screenWidth * 0.08,
                   ),
                   errorText: state.email.invalid
                       ? 'Please ensure the name entered is valid'
@@ -223,7 +216,7 @@ class EmailInput extends StatelessWidget {
       builder: (context, state) {
         return Container(
             padding: const EdgeInsets.only(left: 10, right: 5),
-            height: context.screenHeight * 0.105,
+            height: context.screenHeight * 0.1,
             decoration: BoxDecoration(
                 color: Colors.grey.withOpacity(0.4),
                 borderRadius: BorderRadius.circular(20)),
@@ -236,7 +229,7 @@ class EmailInput extends StatelessWidget {
                   border: InputBorder.none,
                   icon: Icon(
                     Icons.email,
-                    size: context.screenWidth * 0.08,
+                    size: context.screenWidth>1280?50:context.screenWidth * 0.08,
                   ),
                   errorText: state.email.invalid
                       ? 'Please ensure the email entered is valid'
@@ -264,10 +257,10 @@ class PasswordInput extends StatelessWidget {
     return BlocBuilder<SignUpBloc, SignUpState>(
       builder: (context, state) {
 
-          print(state.password);
+        print(state.password);
         return Container(
             padding: const EdgeInsets.only(left: 10, right: 5),
-            height: context.screenHeight * 0.105,
+            height: context.screenHeight * 0.1,
             decoration: BoxDecoration(
                 color: Colors.grey.withOpacity(0.4),
                 borderRadius: BorderRadius.circular(20)),
@@ -279,7 +272,7 @@ class PasswordInput extends StatelessWidget {
                 decoration: InputDecoration(
                   suffixIcon: IconButton(
                       onPressed: () {
-                       context.read<SignUpBloc>().add(PassObsecure(passwordObsecure: state.passwordObsecure));
+                        context.read<SignUpBloc>().add(PassObsecure(passwordObsecure: state.passwordObsecure));
                       },
                       icon: state.passwordObsecure == false
                           ? const Icon(Icons.visibility_off)
@@ -288,7 +281,7 @@ class PasswordInput extends StatelessWidget {
                   border: InputBorder.none,
                   icon: Icon(
                     Icons.lock,
-                    size: context.screenWidth * 0.08,
+                    size: context.screenWidth>1280?50:context.screenWidth * 0.08,
                   ),
                   errorText: state.password.invalid
                       ? 'Please ensure password is valid'
@@ -320,7 +313,7 @@ class ConfirmPasswordInput extends StatelessWidget {
 
         return Container(
             padding: const EdgeInsets.only(left: 10, right: 5),
-            height: context.screenHeight * 0.105,
+            height: context.screenHeight * 0.1,
             decoration: BoxDecoration(
                 color: Colors.grey.withOpacity(0.4),
                 borderRadius: BorderRadius.circular(20)),
@@ -341,7 +334,7 @@ class ConfirmPasswordInput extends StatelessWidget {
                   border: InputBorder.none,
                   icon: Icon(
                     Icons.lock,
-                    size: context.screenWidth * 0.08,
+                    size: context.screenWidth>1280?50:context.screenWidth * 0.08,
                   ),
                   errorText: state.password.invalid
                       ? 'password and confrim password must be same'

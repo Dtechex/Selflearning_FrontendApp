@@ -9,7 +9,6 @@ import 'package:self_learning_app/features/search_category/bloc/search_cat_bloc.
 import 'package:self_learning_app/features/subcategory/sub_cate_screen.dart';
 import 'package:self_learning_app/utilities/colors.dart';
 import 'package:self_learning_app/utilities/extenstion.dart';
-
 import '../quick_add/quick_add_screen.dart';
 import '../search_category/bloc/search_cate_event.dart';
 import '../search_category/cate_search_delegate.dart';
@@ -33,13 +32,8 @@ class _AllCateScreenState extends State<AllCateScreen> {
         context: context,
         builder: (context) {
           return AlertDialog(
-            title: Text('Create Quick Type'),
+            title: const Text('Create Quick Type'),
             content: TextField(
-              onChanged: (value) {
-                setState(() {
-                  // valueText = value;
-                });
-              },
               controller: quickaddcontroller,
               decoration: const InputDecoration(hintText: "Title"),
             ),
@@ -50,13 +44,13 @@ class _AllCateScreenState extends State<AllCateScreen> {
                 child: BlocConsumer<QuickAddBloc, QuickAddState>(
                   builder: (context, state) {
                     if (state is QuickAddInitial) {
-                      return Text('Add');
+                      return const Text('Add');
                     } else if (state is QuickAddLoadingState) {
-                      return CircularProgressIndicator();
+                      return const CircularProgressIndicator();
                     } else if (state is QuickAddLoadedState) {
-                      return Text('Add');
+                      return const Text('Add');
                     }
-                    return Text('Add');
+                    return const Text('Add');
                   },
                   listener: (context, state) {
                     if (state is QuickAddLoadedState) {
@@ -68,6 +62,12 @@ class _AllCateScreenState extends State<AllCateScreen> {
                       quickaddcontroller.text='';
                       Navigator.pop(context);
 
+                    } else if (state is QuickAddErrorState) {
+                      ScaffoldMessenger.of(context)
+                        ..hideCurrentSnackBar()
+                        ..showSnackBar(
+                          const SnackBar(content: Text('Oops something went wrong..')),
+                        );
                     }
                   },
                 ),
@@ -101,37 +101,40 @@ class _AllCateScreenState extends State<AllCateScreen> {
                     children: [
                       Expanded(
                         child: SizedBox(
-                          height: context.screenHeight * 0.06,
-                          child: CupertinoSearchTextField(
-                            onChanged: (value) {
-                              context
-                                  .read<SearchCategoryBloc>()
-                                  .add(SearcCategoryLoadEvent(query: value));
-                            },
-                            onTap: () async {
+
+                          child: GestureDetector(
+
+                            onTap: () async{
                               await showSearch(
-                                context: context,
-                                delegate: CustomSearchDelegate(),
-                              );
+                                        context: context,
+                                        delegate: CustomSearchDelegate(),
+                                      );
                             },
-                            controller: controller,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
-                              color: Colors.grey.withOpacity(0.1),
+                            child: Container(
+                              height:   context.screenHeight * 0.058,
+                              decoration: BoxDecoration(
+                                  color: Colors.grey.withOpacity(0.5),
+                                  borderRadius: BorderRadius.circular(10)
+                              ),
+
+                              child: Align(
+                                alignment: Alignment.centerLeft,
+                                child: Text('    Search..',style: TextStyle(
+                                    color: Colors.black.withOpacity(0.5)
+                                ),),
+                              ),
                             ),
-                            style: const TextStyle(
-                                fontSize: 16, color: Colors.grey),
-                          ),
+                          )
                         ),
                       ),
                       IconButton(
                           onPressed: () {
                             _displayTextInputDialog(context);
                           },
-                          icon: Icon(Icons.add)),
+                          icon: const Icon(Icons.add)),
                     ],
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 10,
                   ),
                   Align(
@@ -184,7 +187,6 @@ class _AllCateScreenState extends State<AllCateScreen> {
                             10) {
                           currentColor = primaryColor;
                         } else {
-                          print('else color');
                           currentColor = Color(int.parse(
                               state.cateList[index].styles![1].value!));
                         }
@@ -204,8 +206,6 @@ class _AllCateScreenState extends State<AllCateScreen> {
                           ),
                         ),
                         onTap: () {
-                          print(state.cateList[index].keywords);
-                          print('state.cateList[index].keywords');
                           context.read<SubCategoryBloc>().add(
                               SubCategoryLoadEvent(
                                   rootId: state.cateList[index].sId));

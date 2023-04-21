@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -34,7 +35,7 @@ class _UpdateCateScreenState extends State<UpdateCateScreen> {
 
 
   TextEditingController categoryNameController = TextEditingController();
-  final TextfieldTagsController? _controller = TextfieldTagsController();
+  final TextfieldTagsController _controller = TextfieldTagsController();
 
 
   bool? isLoading = false;
@@ -104,8 +105,12 @@ class _UpdateCateScreenState extends State<UpdateCateScreen> {
       }
       print(res.body);
       print('data');
-    } finally {
-      isLoading = true;
+    } on SocketException catch(_){
+      context
+          .showSnackBar(const SnackBar(content: Text('No internet available')));
+    }
+    finally {
+      isLoading = false;
     }
 
     return null;
@@ -138,8 +143,12 @@ class _UpdateCateScreenState extends State<UpdateCateScreen> {
       }
       print(res.body);
       print('data');
-    } finally {
-      isLoading = true;
+    } on SocketException catch(_){
+      context
+          .showSnackBar(const SnackBar(content: Text('No internet available')));
+    }
+    finally {
+      isLoading = false;
     }
 
     return null;
@@ -147,8 +156,6 @@ class _UpdateCateScreenState extends State<UpdateCateScreen> {
 
   @override
   Widget build(BuildContext context) {
-
-    print('inside update');
     return Scaffold(
         appBar: AppBar(title: Text(widget.categoryTitle!)),
         body: SingleChildScrollView(

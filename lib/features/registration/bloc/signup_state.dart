@@ -2,6 +2,7 @@ import 'package:equatable/equatable.dart';
 import 'package:formz/formz.dart';
 
 import '../../login/data/model/email.dart';
+import '../data/model/confrim_password.dart';
 import '../data/model/name.dart';
 import '../../login/data/model/password.dart';
 
@@ -10,6 +11,7 @@ class SignUpState extends Equatable {
       {this.name = const Name.pure(),
       this.email = const Email.pure(),
       this.password = const Password.pure(),
+      this.confrimPassword = const ConfirmPassword.pure(),
       this.status = FormzStatus.pure,
       this.statusText = '',
       this.passwordObsecure = false,
@@ -18,6 +20,7 @@ class SignUpState extends Equatable {
   final Name name;
   final Email email;
   final Password password;
+  final ConfirmPassword confrimPassword;
   final FormzStatus status;
   final String statusText;
   final bool passwordObsecure;
@@ -29,11 +32,12 @@ class SignUpState extends Equatable {
       Name? name,
       Email? email,
       Password? password,
+      ConfirmPassword? confirmPassword,
       FormzStatus? status,
       String? statusText}) {
     return SignUpState(
-        confrimpasswordObsecure:
-            confrimpasswordObsecure ?? this.confrimpasswordObsecure,
+      confrimPassword: confrimPassword??this.confrimPassword,
+        confrimpasswordObsecure: confrimpasswordObsecure ?? this.confrimpasswordObsecure,
         passwordObsecure: passwordObsecure ?? this.passwordObsecure,
         name: name ?? this.name,
         email: email ?? this.email,
@@ -43,6 +47,14 @@ class SignUpState extends Equatable {
   }
 
   @override
-  List<Object> get props =>
-      [name, email, password, status, statusText, passwordObsecure,confrimpasswordObsecure];
+  List<Object> get props => [
+        name,
+        email,
+        password,
+        confrimPassword,
+        status,
+        statusText,
+        passwordObsecure,
+        confrimpasswordObsecure
+      ];
 }
