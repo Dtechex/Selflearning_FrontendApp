@@ -11,10 +11,11 @@ import 'login_state.dart';
 class MyFormBloc extends Bloc<MyFormEvent, MyFormState> {
   final LoginRepo loginRepo;
 
-  MyFormBloc({required this.loginRepo}) : super(const MyFormState()) {
+  MyFormBloc({required this.loginRepo}) : super(MyFormState()) {
     on<EmailChanged>(_onEmailChanged);
     on<PasswordChanged>(_onPasswordChanged);
     on<FormSubmitted>(_onFormSubmitted);
+    on<ChangeObsecure>(_onChangeObsecure);
   }
 
   void _onEmailChanged(EmailChanged event, Emitter<MyFormState> emit) {
@@ -36,6 +37,11 @@ class MyFormBloc extends Bloc<MyFormEvent, MyFormState> {
         status: Formz.validate([state.email, password]),
       ),
     );
+  }
+
+  void _onChangeObsecure(ChangeObsecure event, Emitter<MyFormState> emit) {
+    emit(
+      state.copyWith(isObsecure: !event.isObsecure),);
   }
 
 

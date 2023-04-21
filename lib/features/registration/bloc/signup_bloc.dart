@@ -17,7 +17,18 @@ class SignUpBloc extends Bloc<SignUpEvent, SignUpState> {
     on<SignUpNameChanged>(_onNameChanged);
     on<SignUpEmailChanged>(_onEmailChanged);
     on<SignUpPasswordChanged>(_onPasswordChanged);
+    on<ConfrimPassObsecure>(_onConfirmPassObsecure);
+    on<PassObsecure>(_onPassObsecure);
     on<SignUpFormSubmitted>(_onFormSubmitted);
+  }
+
+
+  void _onPassObsecure(PassObsecure event, Emitter<SignUpState> emit) {
+    emit(state.copyWith(passwordObsecure: !event.passwordObsecure));
+  }
+
+  void _onConfirmPassObsecure(ConfrimPassObsecure event, Emitter<SignUpState> emit) {
+    emit(state.copyWith(confrimpasswordObsecure: !event.confirmpassword));
   }
 
   void _onNameChanged(SignUpNameChanged event, Emitter<SignUpState> emit) {

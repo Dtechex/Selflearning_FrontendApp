@@ -102,7 +102,7 @@ class _AddCateScreenState extends State<AddCateScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(title: const Text('Category Title')),
+      //  appBar: AppBar(title: const Text('Category Title')),
         body: SingleChildScrollView(
           child:  Padding(
             padding: const EdgeInsets.only(left: 10, right: 10),
@@ -157,7 +157,7 @@ class _AddCateScreenState extends State<AddCateScreen> {
                 TextFieldTags(
                   textfieldTagsController: _controller,
                   initialTags: const ['tags'],
-                  textSeparators: const ['', ','],
+                  textSeparators: const [' ', ','],
                   letterCase: LetterCase.normal,
                   validator: (String tag) {
                     if (tag == 'php') {

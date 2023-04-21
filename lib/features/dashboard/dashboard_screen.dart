@@ -17,20 +17,17 @@ class DashBoardScreen extends StatelessWidget {
 
   static const List<Widget> _widgetOptions = <Widget>[
     AllCateScreen(),
+   AddCateScreen(),
     Text(
-      'Index 1: Create Categ',
+      'Create Dailogs',
       style: optionStyle,
     ),
     Text(
-      'Index 2: Create SubCategory',
+      'Create Flow',
       style: optionStyle,
     ),
     Text(
-      'Index 3: Create Flow',
-      style: optionStyle,
-    ),
-    Text(
-      'Index 3: Schedule',
+      'Schedule',
       style: optionStyle,
     ),
   ];
@@ -73,11 +70,8 @@ class DashBoardScreen extends StatelessWidget {
               BottomNavigationBarItem( icon: Icon(Icons.home),
                   label: 'Home',
                   backgroundColor: primaryColor),
-              BottomNavigationBarItem(
-                  icon: GestureDetector(child: Icon(Icons.create),onTap: () {
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => AddCateScreen(),));
-                  },),
-                  label: 'Create \ncategories',
+              BottomNavigationBarItem( icon: Icon(Icons.create),
+                  label: 'create Cate',
                   backgroundColor: primaryColor),
               BottomNavigationBarItem(
                   icon: Icon(Icons.message),

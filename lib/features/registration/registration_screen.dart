@@ -121,20 +121,30 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                 height: context.screenHeight * 0.05,
                               ),
                               const SubmitButton(),
+                              SizedBox(
+                                height: context.screenHeight * 0.03,
+                              ),
                               Row(
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  const Text('Already have an Account?'),
+                                  const Text('Already have an Account?',style: TextStyle(
+                                    fontSize: 16
+                                  ),),
                                   TextButton(
-                                      onPressed: () => Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (context) =>
-                                                LoginScreen(),
-                                          )),
-                                      child: const Text('Sign In')),
+                                      child: const Text('Sign In',style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                          fontSize: 16
+                                      ),),
+                                      onPressed: () {
+                                        Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) =>
+                                            LoginScreen()), (Route<dynamic> route) => false);
+                                      }
+                                     ),
                                 ],
+                              ),
+                              SizedBox(
+                                height: context.screenHeight * 0.07,
                               ),
                             ],
                           ),
@@ -211,7 +221,6 @@ class EmailInput extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<SignUpBloc, SignUpState>(
       builder: (context, state) {
-        print('email state');
         return Container(
             padding: const EdgeInsets.only(left: 10, right: 5),
             height: context.screenHeight * 0.105,
@@ -255,6 +264,7 @@ class PasswordInput extends StatelessWidget {
     return BlocBuilder<SignUpBloc, SignUpState>(
       builder: (context, state) {
 
+          print(state.password);
         return Container(
             padding: const EdgeInsets.only(left: 10, right: 5),
             height: context.screenHeight * 0.105,
@@ -264,8 +274,16 @@ class PasswordInput extends StatelessWidget {
             child: Align(
               alignment: Alignment.centerLeft,
               child: TextFormField(
+                obscureText: !state.passwordObsecure,
                 initialValue: state.password.value,
                 decoration: InputDecoration(
+                  suffixIcon: IconButton(
+                      onPressed: () {
+                       context.read<SignUpBloc>().add(PassObsecure(passwordObsecure: state.passwordObsecure));
+                      },
+                      icon: state.passwordObsecure == false
+                          ? const Icon(Icons.visibility_off)
+                          : const Icon(Icons.visibility)),
                   hintText: 'Password',
                   border: InputBorder.none,
                   icon: Icon(
@@ -309,8 +327,16 @@ class ConfirmPasswordInput extends StatelessWidget {
             child: Align(
               alignment: Alignment.centerLeft,
               child: TextFormField(
+                obscureText: !state.confrimpasswordObsecure,
                 initialValue: state.password.value,
                 decoration: InputDecoration(
+                  suffixIcon: IconButton(
+                      onPressed: () {
+                        context.read<SignUpBloc>().add(ConfrimPassObsecure(confirmpassword : state.confrimpasswordObsecure));
+                      },
+                      icon: state.confrimpasswordObsecure == false
+                          ? const Icon(Icons.visibility_off)
+                          : const Icon(Icons.visibility)),
                   hintText: 'Confrim Password',
                   border: InputBorder.none,
                   icon: Icon(

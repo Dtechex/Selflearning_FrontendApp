@@ -75,7 +75,7 @@ class MyApp extends StatelessWidget {
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
                   print(snapshot.data);
-                  return DashBoardScreen();
+                  return const DashBoardScreen();
                 } else {
                   return const LoginScreen();
                 }

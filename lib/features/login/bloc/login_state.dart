@@ -6,20 +6,24 @@ import '../data/model/password.dart';
 
 class MyFormState extends Equatable {
   const MyFormState({this.email = const Email.pure(), this.password = const Password.pure(), this.status = FormzStatus.pure,
-      this.statusText = ''});
+      this.statusText = '', this.isObsecure=false});
 
   final Email email;
   final Password password;
   final FormzStatus status;
   final String statusText;
+  final bool isObsecure;
 
   MyFormState copyWith({
     Email? email,
     Password? password,
     FormzStatus? status,
-    String? statusText
+    String? statusText,
+    bool? isObsecure
+
   }) {
     return MyFormState(
+      isObsecure:isObsecure??this.isObsecure,
       email: email ?? this.email,
       password: password ?? this.password,
       status: status ?? this.status,
@@ -28,5 +32,5 @@ class MyFormState extends Equatable {
   }
 
   @override
-  List<Object> get props => [email, password, status,statusText];
+  List<Object> get props => [email, password, status,statusText,isObsecure];
 }

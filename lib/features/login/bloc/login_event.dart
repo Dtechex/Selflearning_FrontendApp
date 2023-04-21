@@ -28,3 +28,11 @@ class PasswordChanged extends MyFormEvent {
 }
 
 class FormSubmitted extends MyFormEvent {}
+
+class ChangeObsecure extends MyFormEvent{
+  final bool isObsecure ;
+
+  ChangeObsecure({required this.isObsecure});
+
+
+}

@@ -106,11 +106,16 @@ class _LoginScreenState extends State<LoginScreen> {
                             height: context.screenHeight * 0.05,
                           ),
                           const SubmitButton(),
+                          SizedBox(
+                            height: context.screenHeight * 0.03,
+                          ),
                           Row(
                             crossAxisAlignment: CrossAxisAlignment.center,
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              const Text('Do not have Account?'),
+                              const Text("Don't have an Account?",style: TextStyle(
+                                fontSize: 16
+                              ),),
                               TextButton(
                                   onPressed: () => Navigator.push(
                                       context,
@@ -118,7 +123,9 @@ class _LoginScreenState extends State<LoginScreen> {
                                         builder: (context) =>
                                             SignUpScreen(),
                                       )),
-                                  child: const Text('Sign up')),
+                                  child: const Text('Sign up',style: TextStyle(
+                                      fontSize: 16,fontWeight: FontWeight.bold
+                                  ),)),
                             ],
                           ),
                         ],
@@ -210,8 +217,16 @@ class PasswordInput extends StatelessWidget {
             child: Align(
               alignment: Alignment.centerLeft,
               child: TextFormField(
+                obscureText: !state.isObsecure,
                 initialValue: state.password.value,
                 decoration: InputDecoration(
+                  suffixIcon: IconButton(
+                      onPressed: () {
+                        context.read<MyFormBloc>().add(ChangeObsecure(isObsecure: state.isObsecure));
+                      },
+                      icon: state.isObsecure == false
+                          ? Icon(Icons.visibility_off)
+                          : Icon(Icons.visibility)),
                   hintText: 'Password',
                   border: InputBorder.none,
                   icon: Icon(
