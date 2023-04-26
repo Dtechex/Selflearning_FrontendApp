@@ -6,6 +6,7 @@ import 'package:self_learning_app/features/subcategory/create_subcate_screen.dar
 import 'package:self_learning_app/subcate1.1/sub_category_1.1_screen.dart';
 import 'package:self_learning_app/utilities/colors.dart';
 import 'package:self_learning_app/utilities/extenstion.dart';
+import 'package:self_learning_app/utilities/shared_pref.dart';
 import '../../subcate1.1/bloc/sub_cate1_bloc.dart';
 import '../../subcate1.1/bloc/sub_cate1_event.dart';
 import '../../subcate1.1/bloc/sub_cate1_state.dart';
@@ -135,8 +136,10 @@ class _SubCategoryScreenState extends State<SubCategoryScreen> {
                             shrinkWrap: true,
                             itemBuilder: (context, index) {
                               return GestureDetector(
-                                onTap: () {
+                                onTap: () async{
+
                                   print('dfgd');
+
                                   context.read<SubCategory1Bloc>().add(
                                       SubCategory1LoadEvent(
                                           rootId: state.cateList[index].sId));
