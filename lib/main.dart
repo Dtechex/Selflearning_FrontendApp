@@ -11,19 +11,16 @@ import 'package:self_learning_app/features/registration/bloc/signup_bloc.dart';
 import 'package:self_learning_app/features/registration/data/repo/signup_repo.dart';
 import 'package:self_learning_app/features/search_category/bloc/search_cat_bloc.dart';
 import 'package:self_learning_app/features/subcategory/bloc/sub_cate_bloc.dart';
+import 'package:self_learning_app/subcate1.1/bloc/sub_cate1_bloc.dart';
 import 'package:self_learning_app/utilities/colors.dart';
 import 'package:self_learning_app/utilities/shared_pref.dart';
-import 'features/camera/bloc/camera_bloc.dart';
 import 'features/dashboard/bloc/dashboard_bloc.dart';
 import 'features/login/bloc/login_bloc.dart';
-
-
+import 'features/subcate1.2/bloc/sub_cate2_bloc.dart';
 
 void main() => runApp(
-  DevicePreview(
-    enabled: !kReleaseMode,
-    builder: (context) => const MyApp(), // Wrap your app
-  ),
+  const MyApp(), // Wrap your app
+
 );
 
 class MyApp extends StatelessWidget {
@@ -38,12 +35,14 @@ class MyApp extends StatelessWidget {
           BlocProvider<DashboardBloc>(create: (context) => DashboardBloc()),
           BlocProvider<CategoryBloc>(
               create: (context) => CategoryBloc()..add(CategoryLoadEvent())),
+          BlocProvider<SignUpBloc>(create: (context) => SignUpBloc(singUpRepo: SignUpRepo())),
           BlocProvider<SearchCategoryBloc>(
               create: (context) => SearchCategoryBloc()),
           BlocProvider<SubCategoryBloc>(create: (context) => SubCategoryBloc()),
-          BlocProvider<SignUpBloc>(create: (context) => SignUpBloc(singUpRepo: SignUpRepo())),
-          BlocProvider<CameraBloc>(create: (context) => CameraBloc()),
+          //BlocProvider<CameraBloc>(create: (context) => CameraBloc()),
           BlocProvider<QuickAddBloc>(create: (context) => QuickAddBloc()),
+          BlocProvider<SubCategory1Bloc>(create: (context) => SubCategory1Bloc()),
+          BlocProvider<SubCategory2Bloc>(create: (context) => SubCategory2Bloc()),
 
         ],
         child: MaterialApp(

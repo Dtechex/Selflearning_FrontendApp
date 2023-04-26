@@ -14,13 +14,12 @@ class QuickTypeScreen extends StatelessWidget {
           if (state is QuickAddLoadingState) {
             return const Center(child: CircularProgressIndicator(),);
           } else if (state is QuickAddLoadedState) {
-            print(state.list![0].type);
-            print('state.list');
+            var list=state.list!.reversed.toList();
             return ListView.builder(
               shrinkWrap: true,
               itemCount: state.list!.length,
               itemBuilder: (context, index) {
-                return Card(child: Padding(padding: const EdgeInsets.all(10),child: Text(state.list![index].content??'Image Type'),),);
+                return Card(child: Padding(padding: const EdgeInsets.all(10),child: Text(list[index].content??'Image Type'),),);
               },
             );
           }

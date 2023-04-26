@@ -1,4 +1,4 @@
-class SubCategory1Model {
+class SubCategory2Model {
   String? sId;
   String? userId;
   String? name;
@@ -8,7 +8,7 @@ class SubCategory1Model {
   String? updatedAt;
   int? iV;
 
-  SubCategory1Model(
+  SubCategory2Model(
       {this.sId,
         this.userId,
         this.name,
@@ -18,7 +18,7 @@ class SubCategory1Model {
         this.updatedAt,
         this.iV});
 
-  SubCategory1Model.fromJson(Map<String, dynamic> json) {
+  SubCategory2Model.fromJson(Map<String, dynamic> json) {
     sId = json['_id'];
     userId = json['userId'];
     name = json['name'];

@@ -9,6 +9,7 @@ import 'package:self_learning_app/utilities/shared_pref.dart';
 import 'package:textfield_tags/textfield_tags.dart';
 
 import '../category/bloc/category_bloc.dart';
+import '../dashboard/bloc/dashboard_bloc.dart';
 import '../dashboard/dashboard_screen.dart';
 
 class AddCateScreen extends StatefulWidget {
@@ -82,6 +83,7 @@ class _AddCateScreenState extends State<AddCateScreen> {
         context.showSnackBar(
             SnackBar(content: Text('Category added Successfully')));
         context.read<CategoryBloc>().add(CategoryLoadEvent());
+        context.read<DashboardBloc>().ChangeIndex(0);
         // Navigator.pushReplacement(context, MaterialPageRoute(
         //   builder: (context) {
         //     return DashBoardScreen();
@@ -297,7 +299,7 @@ class _AddCateScreenState extends State<AddCateScreen> {
                       },
                       child: isLoading == true
                           ? const CircularProgressIndicator()
-                          : Text('Add Category')),
+                          : Text('Save Category')),
                 )
               ],
             ),

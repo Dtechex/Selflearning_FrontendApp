@@ -3,27 +3,24 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:self_learning_app/features/subcategory/create_subcate_screen.dart';
 import 'package:self_learning_app/utilities/extenstion.dart';
-
-import '../features/update_category/update_cate_screen.dart';
-import '../utilities/colors.dart';
-import 'bloc/sub_cate1_bloc.dart';
-import 'bloc/sub_cate1_state.dart';
-import 'create_subcate1_screen.dart';
+import '../../utilities/colors.dart';
+import 'bloc/sub_cate2_bloc.dart';
+import 'bloc/sub_cate2_state.dart';
 
 
-class SubCategory1Screen extends StatefulWidget {
+class SubCategory2Screen extends StatefulWidget {
   final String subCateTitle;
   final List<String>  keyWords;
   final String rootId;
   final Color? color;
 
-  const SubCategory1Screen({Key? key, required this.subCateTitle, required this.rootId, this.color, required this.keyWords}) : super(key: key);
+  const SubCategory2Screen({Key? key, required this.subCateTitle, required this.rootId, this.color, required this.keyWords}) : super(key: key);
 
   @override
-  State<SubCategory1Screen> createState() => _SubCategory1ScreenState();
+  State<SubCategory2Screen> createState() => _SubCategory2ScreenState();
 }
 
-class _SubCategory1ScreenState extends State<SubCategory1Screen> {
+class _SubCategory2ScreenState extends State<SubCategory2Screen> {
   List<String> mediaTitle = [
     'Take Picture',
     'Record Video',
@@ -47,15 +44,14 @@ class _SubCategory1ScreenState extends State<SubCategory1Screen> {
             child: FloatingActionButton(
 
               onPressed: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) {
-                  return CreateSubCate1Screen(rootId: widget.rootId,);
-                },));
+                // Navigator.push(context, MaterialPageRoute(builder: (context) {
+                //   return CreateSubCate2Screen(rootId: widget.rootId,);
+                // },));
 
               },
               child: Row(
                 children: const [
                   Text('    Create\n Subcatgory',style: TextStyle(fontSize: 7),),
-
                 ],
               ),
             ),
@@ -65,9 +61,9 @@ class _SubCategory1ScreenState extends State<SubCategory1Screen> {
             title: Text(widget.subCateTitle),actions: [
           IconButton(
               onPressed: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) {
-                  return UpdateCateScreen(rootId: widget.rootId,selectedColor: widget.color,categoryTitle: widget.subCateTitle,tags: widget.keyWords,);
-                },));
+                // Navigator.push(context, MaterialPageRoute(builder: (context) {
+                //   return UpdateCateScreen(rootId: widget.rootId,selectedColor: widget.color,categoryTitle: widget.subCateTitle,tags: widget.keyWords,);
+                // },));
 
               }, icon: Row(
             children: const [
@@ -79,7 +75,7 @@ class _SubCategory1ScreenState extends State<SubCategory1Screen> {
           ))
         ]),
         body: Container(
-          padding: const EdgeInsets.only(left: 10,right: 10),
+          padding: const EdgeInsets.only(left: 20,right: 20),
           child: Column(
             children: [
               const SizedBox(
@@ -96,16 +92,16 @@ class _SubCategory1ScreenState extends State<SubCategory1Screen> {
               const SizedBox(
                 height: 20,
               ),
-              BlocBuilder<SubCategory1Bloc,SubCategory1State>(
+              BlocBuilder<SubCategory2Bloc,SubCategory2State>(
                 builder: (context, state) {
-                  if(state is SubCategory1Loading){
+                  if(state is SubCategory2Loading){
                     return const CircularProgressIndicator();
-                  }else if( state is SubCategory1Loaded){
+                  }else if( state is SubCategory2Loaded){
                     return
                       state.cateList.isEmpty?  SizedBox(
                         height: context.screenHeight/2,
                         child: const Center(child: Text('No Subcategory added',style: TextStyle(
-                            fontSize: 19,fontWeight: FontWeight.bold
+                            fontSize: 29,fontWeight: FontWeight.bold
                         ),),),):
                       Expanded(child: ListView.builder(
                         itemCount: state.cateList.length,
@@ -114,18 +110,18 @@ class _SubCategory1ScreenState extends State<SubCategory1Screen> {
                           return GestureDetector(
                             onTap: () {
                               // Navigator.push(context, MaterialPageRoute(builder: (context) {
-                              //   return SubCategory1Screen(subCateTitle: state.cateList[index].name!,rootId: state.cateList[index].sId!,color: widget.color,keyWords: state.cateList[index].keywords!,);
+                              //   return SubCategory2Screen(subCateTitle: state.cateList[index].name!,rootId: state.cateList[index].sId!,color: widget.color,keyWords: state.cateList[index].keywords!,);
                               // },));
                             },
                             child: Padding(
-                                padding: const EdgeInsets.all(10),
+                                padding: const EdgeInsets.all(20),
                                 child: Container(
                                   decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(10),
-                                      border: Border.all(color: Color(int.parse(state.cateList[index].styles![1].value!)),width: 3),
+                                      borderRadius: BorderRadius.circular(20),
+                                      border: Border.all(color: Color(int.parse(state.cateList[index].styles![2].value!)),width: 3),
                                       color: Colors.transparent
                                   ),
-                                  padding: const EdgeInsets.only(left: 10),
+                                  padding: const EdgeInsets.only(left: 20),
                                   child: ListTile(title: Text(state.cateList[index].name.toString(),style: const TextStyle(
                                       color: primaryColor
                                   ),)),

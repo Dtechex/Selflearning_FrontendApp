@@ -9,6 +9,8 @@ import 'package:self_learning_app/utilities/extenstion.dart';
 import 'package:self_learning_app/utilities/shared_pref.dart';
 import 'package:textfield_tags/textfield_tags.dart';
 
+import '../../subcate1.1/bloc/sub_cate1_bloc.dart';
+import '../../subcate1.1/bloc/sub_cate1_event.dart';
 import '../category/bloc/category_bloc.dart';
 import '../dashboard/dashboard_screen.dart';
 
@@ -85,6 +87,9 @@ class _CreateSubCateScreenState extends State<CreateSubCateScreen> {
       if (res.statusCode == 201) {
         context.showSnackBar(
             SnackBar(content: Text('Subcategory created successfully')));
+        context
+            .read<SubCategory1Bloc>()
+            .add(SubCategory1LoadEvent(rootId: widget.rootId));
         context
             .read<SubCategoryBloc>()
             .add(SubCategoryLoadEvent(rootId: widget.rootId));
@@ -295,7 +300,7 @@ class _CreateSubCateScreenState extends State<CreateSubCateScreen> {
                       child: isLoading == true
                           ? const CircularProgressIndicator()
                           : const Center(
-                        child: Text('Create'),
+                        child: Text('        Save\n Subcategory'),
                       )),
                 ),
                 SizedBox(

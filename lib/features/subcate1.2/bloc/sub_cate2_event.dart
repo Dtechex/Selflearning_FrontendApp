@@ -1,15 +1,15 @@
 
-abstract class SubCategory1Event {}
+abstract class SubCategory2Event {}
 
 
-class SubCategory1LoadEvent extends SubCategory1Event{
+class SubCategory2LoadEvent extends SubCategory2Event{
   final String? rootId;
 
-  SubCategory1LoadEvent({this.rootId});
+  SubCategory2LoadEvent({this.rootId});
 }
 
-class SubCategory1LoadingEvent extends SubCategory1Event{
-  SubCategory1LoadingEvent();
+class SubCategory2LoadingEvent extends SubCategory2Event{
+  SubCategory2LoadingEvent();
 }
 
 

@@ -69,15 +69,15 @@ class DashBoardScreen extends StatelessWidget {
                   label: 'Home',
                   backgroundColor: primaryColor),
               BottomNavigationBarItem( icon: Icon(Icons.create),
-                  label: 'create Cate',
+                  label: '   Create \n Category',
                   backgroundColor: primaryColor),
               BottomNavigationBarItem(
                   icon: Icon(Icons.message),
-                  label: 'Create Dailogs',
+                  label: '  Create \n Dailogs',
                   backgroundColor: primaryColor),
               BottomNavigationBarItem(
                   icon: Icon(Icons.add),
-                  label: 'Create Flow',
+                  label: 'Create \n Flow',
                   backgroundColor: primaryColor),
               BottomNavigationBarItem(
                   icon: Icon(Icons.calendar_month_sharp),
