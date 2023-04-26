@@ -23,7 +23,7 @@ class AllCateScreen extends StatefulWidget {
 
 class _AllCateScreenState extends State<AllCateScreen> {
   int selectedIndex = 0;
-  List<String> titles = ['All', 'Categories', 'Dialogs','QuickAdd'];
+  List<String> titles = ['All', 'Categories', 'Dialogs','QuickAdd List'];
   TextEditingController controller = TextEditingController(text: "  Search");
   TextEditingController quickaddcontroller = TextEditingController();
 
@@ -78,6 +78,12 @@ class _AllCateScreenState extends State<AllCateScreen> {
             ],
           );
         });
+  }
+
+  @override
+  void initState() {
+    context.read<CategoryBloc>().add(CategoryLoadEvent());
+    super.initState();
   }
 
   @override
@@ -206,9 +212,7 @@ class _AllCateScreenState extends State<AllCateScreen> {
                           ),
                         ),
                         onTap: () {
-                          context.read<SubCategoryBloc>().add(
-                              SubCategoryLoadEvent(
-                                  rootId: state.cateList[index].sId));
+
                           Navigator.push(context, MaterialPageRoute(
                             builder: (context) {
                               return SubCategoryScreen(

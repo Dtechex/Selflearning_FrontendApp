@@ -33,6 +33,16 @@ class SubCategoryScreen extends StatefulWidget {
 }
 
 class _SubCategoryScreenState extends State<SubCategoryScreen> {
+
+
+  @override
+  void initState() {
+    print('subcategory screen${ widget.rootId}');
+    context.read<SubCategoryBloc>().add(
+        SubCategoryLoadEvent(rootId: widget.rootId));
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -60,7 +70,7 @@ class _SubCategoryScreenState extends State<SubCategoryScreen> {
             ),
           ),
         ),
-        appBar: AppBar(title: Text(widget.categoryName!), actions: [
+        appBar: AppBar(title: Text(widget.categoryName??"Subcategory"), actions: [
           IconButton(
               onPressed: () {
                 Navigator.push(context, MaterialPageRoute(

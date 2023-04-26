@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:self_learning_app/features/login/login_screen.dart';
 import 'package:self_learning_app/utilities/colors.dart';
+import 'package:self_learning_app/utilities/extenstion.dart';
 import 'package:self_learning_app/utilities/shared_pref.dart';
 import '../add_category/add_cate_screen.dart';
 import '../category/category_screen.dart';
@@ -40,13 +41,23 @@ class DashBoardScreen extends StatelessWidget {
             actions: [
               IconButton(
                   onPressed: () async {
-                    await SharedPref().clear().then((value) {
-                      Navigator.pushAndRemoveUntil(context, MaterialPageRoute(
-                        builder: (context) {
-                          return const LoginScreen();
-                        },
-                      ), (route) => true);
-                    });
+                    context.showNewDialog(
+                      AlertDialog(title: Text('Are you Sure you want to logout.',),actions: [
+                        ElevatedButton(onPressed: () async{
+                          await SharedPref().clear().then((value) {
+                            Navigator.pushAndRemoveUntil(context, MaterialPageRoute(
+                              builder: (context) {
+                                return const LoginScreen();
+                              },
+                            ), (route) => true);
+                          });
+                        } , child: Text('Logout')),
+                        ElevatedButton(onPressed: () async{
+                        Navigator.pop(context);
+                        } , child: Text('Cancel'))
+                      ],)
+                    );
+
                   },
                   icon: const Icon(Icons.logout))
             ],
@@ -95,3 +106,5 @@ class DashBoardScreen extends StatelessWidget {
     },);
   }
 }
+
+

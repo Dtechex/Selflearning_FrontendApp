@@ -10,19 +10,21 @@ import 'package:self_learning_app/utilities/shared_pref.dart';
 import 'package:textfield_tags/textfield_tags.dart';
 import '../../subcate1.1/bloc/sub_cate1_bloc.dart';
 import '../../subcate1.1/bloc/sub_cate1_event.dart';
+import 'bloc/sub_cate2_bloc.dart';
+import 'bloc/sub_cate2_event.dart';
 
 
-class CreateSubCate1Screen extends StatefulWidget {
+class CreateSubCate2Screen extends StatefulWidget {
   final String? rootId;
   final String? subCatName;
 
-  const CreateSubCate1Screen({Key? key, this.rootId, this.subCatName}) : super(key: key);
+  const CreateSubCate2Screen({Key? key, this.rootId, this.subCatName}) : super(key: key);
 
   @override
-  State<CreateSubCate1Screen> createState() => _CreateSubCate1ScreenState();
+  State<CreateSubCate2Screen> createState() => _CreateSubCate2ScreenState();
 }
 
-class _CreateSubCate1ScreenState extends State<CreateSubCate1Screen> {
+class _CreateSubCate2ScreenState extends State<CreateSubCate2Screen> {
   Color? pickedColor = Colors.green;
   TextEditingController categoryNameController = TextEditingController();
   final TextfieldTagsController _controller = TextfieldTagsController();
@@ -86,8 +88,8 @@ class _CreateSubCate1ScreenState extends State<CreateSubCate1Screen> {
         context.showSnackBar(
             SnackBar(content: Text('Subcategory created successfully')));
         context
-            .read<SubCategory1Bloc>()
-            .add(SubCategory1LoadEvent(rootId: widget.rootId));
+            .read<SubCategory2Bloc>()
+            .add(SubCategory2LoadEvent(rootId: widget.rootId));
         Navigator.pop(context);
       } else {
         context.showSnackBar(

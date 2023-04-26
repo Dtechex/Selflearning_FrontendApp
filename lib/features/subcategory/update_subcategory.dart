@@ -4,6 +4,8 @@ import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
+import 'package:self_learning_app/features/subcategory/bloc/sub_cate_bloc.dart';
+import 'package:self_learning_app/features/subcategory/sub_cate_screen.dart';
 import 'package:self_learning_app/utilities/extenstion.dart';
 import 'package:self_learning_app/utilities/shared_pref.dart';
 
@@ -15,7 +17,14 @@ class UpdateSubCateScreen extends StatefulWidget {
   final Color selectedColor;
   final String categoryTitle;
   final List<String> keyWords;
-  const UpdateSubCateScreen({Key? key, required this.rootId, required this.selectedColor, required this.categoryTitle, required this.keyWords}) : super(key: key);
+
+  const UpdateSubCateScreen(
+      {Key? key,
+      required this.rootId,
+      required this.selectedColor,
+      required this.categoryTitle,
+      required this.keyWords})
+      : super(key: key);
 
   @override
   State<UpdateSubCateScreen> createState() => _UpdateSubCateScreenState();
@@ -28,8 +37,8 @@ class _UpdateSubCateScreenState extends State<UpdateSubCateScreen> {
 
   @override
   void initState() {
-    categoryNameController.text=widget.categoryTitle;
-    pickedColor=widget.selectedColor;
+    categoryNameController.text = widget.categoryTitle;
+    pickedColor = widget.selectedColor;
     super.initState();
   }
 
@@ -60,7 +69,7 @@ class _UpdateSubCateScreenState extends State<UpdateSubCateScreen> {
     );
   }
 
-  Future<int?> addCategory() async {
+  Future<int?> updateCategory() async {
     isLoading = true;
     List<String> keywords = ['test,test1'];
     List<Map<String, String>> styles = [
@@ -85,28 +94,34 @@ class _UpdateSubCateScreenState extends State<UpdateSubCateScreen> {
       );
       if (res.statusCode == 200) {
         context.showSnackBar(
-            SnackBar(content: Text('Subcategory update Successfully')));
-        context.read<CategoryBloc>().add(CategoryLoadEvent());
+            SnackBar(content: Text('Subcategory update Successfully..')));
+        context
+            .read<SubCategoryBloc>()
+            .add(SubCategoryLoadEvent(rootId: widget.rootId));
         Navigator.pushReplacement(context, MaterialPageRoute(
           builder: (context) {
             return DashBoardScreen();
           },
         ));
+        // Navigator.pushReplacement(context, MaterialPageRoute(
+        //   builder: (context) {
+        //     return DashBoardScreen();
+        //   },
+        // ));
       } else {
-        context
-            .showSnackBar(const SnackBar(content: Text('opps something went worng')));
+        context.showSnackBar(
+            const SnackBar(content: Text('opps something went worng')));
       }
       print(res.body);
       print('data');
-    } on SocketException catch(e){
-      context.showSnackBar(const SnackBar(content: Text('No internet Connection...')));
-    }
-    finally {
+    } on SocketException catch (e) {
+      context.showSnackBar(
+          const SnackBar(content: Text('No internet Connection...')));
+    } finally {
       isLoading = false;
     }
     return null;
   }
-
 
   Future<int?> deleteCategory() async {
     isLoading = true;
@@ -122,23 +137,21 @@ class _UpdateSubCateScreenState extends State<UpdateSubCateScreen> {
       if (res.statusCode == 200) {
         context.showSnackBar(
             SnackBar(content: Text('Subcategory deleted Successfully')));
-        context.read<CategoryBloc>().add(CategoryLoadEvent());
-        Navigator.pushReplacement(context, MaterialPageRoute(
-          builder: (context) {
-            return DashBoardScreen();
-          },
-        ));
-      } else {
         context
-            .showSnackBar(const SnackBar(content: Text('opps something went worng')));
+            .read<SubCategoryBloc>().add(SubCategoryLoadEvent(rootId: widget.rootId));
+        Navigator.pushReplacement(context,MaterialPageRoute(builder: (context) {
+          return SubCategoryScreen();
+        },));
+      } else {
+        context.showSnackBar(
+            const SnackBar(content: Text('opps something went worng')));
       }
       print(res.body);
       print('data');
-    }on SocketException catch(e){
-      context
-          .showSnackBar(const SnackBar(content: Text('No internet Connection')));
-    }
-    finally {
+    } on SocketException catch (e) {
+      context.showSnackBar(
+          const SnackBar(content: Text('No internet Connection')));
+    } finally {
       isLoading = false;
     }
     return null;
@@ -181,14 +194,11 @@ class _UpdateSubCateScreenState extends State<UpdateSubCateScreen> {
                     child: Align(
                         alignment: Alignment.centerLeft,
                         child: TextFormField(
-
                           controller: categoryNameController,
                           onChanged: (value) {},
                           decoration: InputDecoration(
                             hintText: 'Title',
-                            hintStyle: TextStyle(
-                                fontSize: 18
-                            ),
+                            hintStyle: TextStyle(fontSize: 18),
                             border: InputBorder.none,
                             icon: Icon(
                               Icons.add,
@@ -213,9 +223,7 @@ class _UpdateSubCateScreenState extends State<UpdateSubCateScreen> {
                           pickColor(context: context);
                         },
                         child: Container(
-                            height: 25,
-                            width: 25,
-                            color:pickedColor)),
+                            height: 25, width: 25, color: pickedColor)),
                     const Text('  Choose Color ')
                   ],
                 ),
@@ -232,7 +240,7 @@ class _UpdateSubCateScreenState extends State<UpdateSubCateScreen> {
                           context.showSnackBar(const SnackBar(
                               content: Text('SubCategory Name is Requried')));
                         } else {
-                          addCategory();
+                          updateCategory();
                         }
                       },
                       child: isLoading == true
@@ -242,7 +250,6 @@ class _UpdateSubCateScreenState extends State<UpdateSubCateScreen> {
                 SizedBox(
                   height: 20,
                 ),
-
                 SizedBox(
                   width: context.screenWidth * 0.35,
                   height: context.screenHeight * 0.068,
@@ -263,7 +270,6 @@ class _UpdateSubCateScreenState extends State<UpdateSubCateScreen> {
               ],
             ),
           ),
-        )
-    );
+        ));
   }
 }

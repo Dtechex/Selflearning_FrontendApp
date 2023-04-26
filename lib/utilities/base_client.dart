@@ -8,7 +8,7 @@ import 'package:self_learning_app/utilities/shared_pref.dart';
 import 'constants.dart';
 
 
-class Api with ChangeNotifier
+class Api
 {
   // get client helper
   Future<Response> get({required String endPoint}) async {

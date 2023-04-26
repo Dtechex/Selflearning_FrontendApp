@@ -10,6 +10,7 @@ class LoginRepo {
         body: {"email": email, "password": password});
     if (response.statusCode == 201) {
       var res = jsonDecode(response.body);
+      SharedPref().clear();
       SharedPref().saveToken(res['data']['token']);
     }
     return response.statusCode;

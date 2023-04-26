@@ -1,9 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:self_learning_app/features/subcate1.2/bloc/sub_cate2_bloc.dart';
 import 'package:self_learning_app/features/subcategory/create_subcate_screen.dart';
+import 'package:self_learning_app/features/subcategory/update_subcategory.dart';
 import 'package:self_learning_app/utilities/extenstion.dart';
 
+import '../features/subcate1.2/bloc/sub_cate2_event.dart';
 import '../features/subcate1.2/sub_category_1.2_screen.dart';
 import '../features/update_category/update_cate_screen.dart';
 import '../utilities/colors.dart';
@@ -67,7 +70,7 @@ class _SubCategory1ScreenState extends State<SubCategory1Screen> {
           IconButton(
               onPressed: () {
                 Navigator.push(context, MaterialPageRoute(builder: (context) {
-                  return UpdateCateScreen(rootId: widget.rootId,selectedColor: widget.color,categoryTitle: widget.subCateTitle,tags: widget.keyWords,);
+                  return UpdateSubCateScreen(rootId: widget.rootId,selectedColor: widget.color!,categoryTitle: widget.subCateTitle,keyWords: widget.keyWords,);
                 },));
 
               }, icon: Row(
@@ -114,6 +117,9 @@ class _SubCategory1ScreenState extends State<SubCategory1Screen> {
                         itemBuilder: (context, index) {
                           return GestureDetector(
                             onTap: () {
+                              print(state.cateList[index].sId);
+                              print('state.cateList[index].sId');
+
                               Navigator.push(context, MaterialPageRoute(builder: (context) {
                                 return SubCategory2Screen(subCateTitle: state.cateList[index].name!,rootId: state.cateList[index].sId!,color: widget.color,keyWords: state.cateList[index].keywords!,);
                               },));

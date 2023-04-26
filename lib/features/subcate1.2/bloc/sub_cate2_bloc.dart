@@ -15,7 +15,11 @@ class SubCategory2Bloc extends Bloc<SubCategory2Event, SubCategory2State> {
       SubCategory2LoadEvent event, Emitter<SubCategory2State> emit) async {
     emit(SubCategory2Loading());
     try {
-      await SubCategory2Repo.getAllCategory(event.rootId).then((value) => emit(SubCategory2Loaded(cateList: value)));
+      print(event.rootId);
+      print('event.rootId');
+      await SubCategory2Repo.getAllCategory(event.rootId).then((value) {
+        emit(SubCategory2Loaded(cateList: value));
+      });
     } catch (e) {
       print(e);
       emit(SubCategory2Failed(errorText: 'Oops Something went wrong'));
