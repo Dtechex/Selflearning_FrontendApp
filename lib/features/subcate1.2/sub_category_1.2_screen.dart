@@ -1,11 +1,14 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:self_learning_app/features/subcategory/create_subcate_screen.dart';
 import 'package:self_learning_app/utilities/extenstion.dart';
 
+import '../features/update_category/update_cate_screen.dart';
 import '../utilities/colors.dart';
 import 'bloc/sub_cate1_bloc.dart';
 import 'bloc/sub_cate1_state.dart';
+import 'create_subcate1_screen.dart';
 
 
 class SubCategory1Screen extends StatefulWidget {
@@ -44,9 +47,9 @@ class _SubCategory1ScreenState extends State<SubCategory1Screen> {
             child: FloatingActionButton(
 
               onPressed: () {
-                // Navigator.push(context, MaterialPageRoute(builder: (context) {
-                //   return CreateSubCateScreen(rootId: widget.rootId,);
-                // },));
+                Navigator.push(context, MaterialPageRoute(builder: (context) {
+                  return CreateSubCate1Screen(rootId: widget.rootId,);
+                },));
 
               },
               child: Row(
@@ -62,9 +65,9 @@ class _SubCategory1ScreenState extends State<SubCategory1Screen> {
             title: Text(widget.subCateTitle),actions: [
           IconButton(
               onPressed: () {
-                // Navigator.push(context, MaterialPageRoute(builder: (context) {
-                //   return UpdateCateScreen(rootId: widget.rootId,selectedColor: widget.color,categoryTitle: widget.categoryName,tags: widget.tags,);
-                // },));
+                Navigator.push(context, MaterialPageRoute(builder: (context) {
+                  return UpdateCateScreen(rootId: widget.rootId,selectedColor: widget.color,categoryTitle: widget.subCateTitle,tags: widget.keyWords,);
+                },));
 
               }, icon: Row(
             children: const [
@@ -110,9 +113,9 @@ class _SubCategory1ScreenState extends State<SubCategory1Screen> {
                         itemBuilder: (context, index) {
                           return GestureDetector(
                             onTap: () {
-                              Navigator.push(context, MaterialPageRoute(builder: (context) {
-                                return SubCategory1Screen(subCateTitle: state.cateList[index].name!,rootId: state.cateList[index].sId!,color: widget.color,keyWords: state.cateList[index].keywords!,);
-                              },));
+                              // Navigator.push(context, MaterialPageRoute(builder: (context) {
+                              //   return SubCategory1Screen(subCateTitle: state.cateList[index].name!,rootId: state.cateList[index].sId!,color: widget.color,keyWords: state.cateList[index].keywords!,);
+                              // },));
                             },
                             child: Padding(
                                 padding: const EdgeInsets.all(10),
