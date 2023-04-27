@@ -93,6 +93,8 @@ class _UpdateSubCateScreenState extends State<UpdateSubCateScreen> {
         },
       );
       if (res.statusCode == 200) {
+
+
         context.showSnackBar(
             SnackBar(content: Text('Subcategory update Successfully..')));
         context
@@ -139,9 +141,11 @@ class _UpdateSubCateScreenState extends State<UpdateSubCateScreen> {
             SnackBar(content: Text('Subcategory deleted Successfully')));
         context
             .read<SubCategoryBloc>().add(SubCategoryLoadEvent(rootId: widget.rootId));
-        Navigator.pushReplacement(context,MaterialPageRoute(builder: (context) {
-          return SubCategoryScreen();
-        },));
+        Navigator.pushReplacement(context, MaterialPageRoute(
+          builder: (context) {
+            return DashBoardScreen();
+          },
+        ));
       } else {
         context.showSnackBar(
             const SnackBar(content: Text('opps something went worng')));

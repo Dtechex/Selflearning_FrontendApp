@@ -7,6 +7,7 @@ import 'package:self_learning_app/subcate1.1/sub_category_1.1_screen.dart';
 import 'package:self_learning_app/utilities/colors.dart';
 import 'package:self_learning_app/utilities/extenstion.dart';
 import 'package:self_learning_app/utilities/shared_pref.dart';
+import 'package:self_learning_app/widgets/add_resources_screen.dart';
 import '../../subcate1.1/bloc/sub_cate1_bloc.dart';
 import '../../subcate1.1/bloc/sub_cate1_event.dart';
 import '../../subcate1.1/bloc/sub_cate1_state.dart';
@@ -41,7 +42,12 @@ class _SubCategoryScreenState extends State<SubCategoryScreen> {
     print('subcategory screen${ widget.rootId}');
     context.read<SubCategoryBloc>().add(
         SubCategoryLoadEvent(rootId: widget.rootId));
+    savecatid();
     super.initState();
+  }
+
+  Future<void>savecatid()async{
+    SharedPref().savesubcateId(widget.rootId!);
   }
 
   @override
@@ -96,97 +102,97 @@ class _SubCategoryScreenState extends State<SubCategoryScreen> {
                 ],
               ))
         ]),
-        body: Container(
-          padding: const EdgeInsets.only(left: 10, right: 10),
-          child: Column(
-            children: [
-              const SizedBox(
-                height: 20,
-              ),
-              SizedBox(
-                width: context.screenWidth,
-                height: context.screenHeight * 0.08,
-                child: CupertinoSearchTextField(
-                  backgroundColor: Colors.grey.withOpacity(0.2),
-                  placeholder: 'Search',
+        body: SingleChildScrollView(
+          child: Container(
+            padding: const EdgeInsets.only(left: 10, right: 10),
+            child: Column(
+
+              children: [
+                //Text('Add Media'),
+                AddResourceScreen(),
+                const SizedBox(
+                  height: 20,
                 ),
-              ),
-              const SizedBox(
-                height: 20,
-              ),
-              BlocBuilder<SubCategoryBloc, SubCategoryState>(
-                builder: (context, state) {
-                  if (state is CategoryLoading) {
-                    return const CircularProgressIndicator();
-                  } else if (state is SubCategoryLoaded) {
-                    return state.cateList.isEmpty
-                        ? SizedBox(
-                            height: context.screenHeight / 2,
-                            child: const Center(
-                              child: Text(
-                                'No Subcategory added',
-                                style: TextStyle(
-                                    fontSize: 19, fontWeight: FontWeight.bold),
+                SizedBox(
+                  width: context.screenWidth,
+                  height: context.screenHeight * 0.08,
+                  child: CupertinoSearchTextField(
+                    backgroundColor: Colors.grey.withOpacity(0.2),
+                    placeholder: 'Search',
+                  ),
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                BlocBuilder<SubCategoryBloc, SubCategoryState>(
+                  builder: (context, state) {
+                    if (state is CategoryLoading) {
+                      return const CircularProgressIndicator();
+                    } else if (state is SubCategoryLoaded) {
+                      return state.cateList.isEmpty
+                          ? SizedBox(
+                              height: context.screenHeight / 2,
+                              child: const Center(
+                                child: Text(
+                                  'No Subcategory added',
+                                  style: TextStyle(
+                                      fontSize: 19, fontWeight: FontWeight.bold),
+                                ),
                               ),
-                            ),
-                          )
-                        : Expanded(
-                            child: ListView.builder(
-                            itemCount: state.cateList.length,
-                            shrinkWrap: true,
-                            itemBuilder: (context, index) {
-                              return GestureDetector(
-                                onTap: () async{
-
-                                  print('dfgd');
-
-                                  context.read<SubCategory1Bloc>().add(
-                                      SubCategory1LoadEvent(
-                                          rootId: state.cateList[index].sId));
-                                  Navigator.push(context, MaterialPageRoute(
-                                    builder: (context) {
-                                      return SubCategory1Screen(
-                                        subCateTitle:
-                                            state.cateList[index].name!,
-                                        rootId: state.cateList[index].sId!,
-                                        color: widget.color,
-                                        keyWords:
-                                            state.cateList[index].keywords!,
-                                      );
+                            )
+                          : ListView.builder(
+                          itemCount: state.cateList.length,
+                          shrinkWrap: true,
+                          itemBuilder: (context, index) {
+                            return GestureDetector(
+                              onTap: () async{
+                                print('subcate inside');
+                           //   await SharedPref().savesubcateId(state.cateList[index].sId!);
+                                Navigator.push(context, MaterialPageRoute(
+                                  builder: (context) {
+                                    return SubCategory1Screen(
+                                      subCateTitle:
+                                          state.cateList[index].name!,
+                                      rootId: state.cateList[index].sId!,
+                                      color: widget.color,
+                                      keyWords:
+                                          state.cateList[index].keywords!,
+                                    );
 
 
-                                    },
-                                  ));
-                                },
-                                child: Padding(
-                                    padding: const EdgeInsets.all(10),
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(10),
-                                          border: Border.all(
-                                              color: Color(int.parse(state
-                                                  .cateList[index]
-                                                  .styles![1]
-                                                  .value!)),
-                                              width: 3),
-                                          color: Colors.transparent),
-                                      padding: const EdgeInsets.only(left: 10),
-                                      child: ListTile(
-                                          title: Text(
-                                        state.cateList[index].name.toString(),
-                                        style: const TextStyle(
-                                            color: primaryColor),
-                                      )),
+                                  },
+                                ));
+                              },
+                              child: Padding(
+                                  padding: const EdgeInsets.all(10),
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                        borderRadius:
+                                            BorderRadius.circular(10),
+                                        border: Border.all(
+                                            color: Color(int.parse(state
+                                                .cateList[index]
+                                                .styles![1]
+                                                .value!)),
+                                            width: 3),
+                                        color: Colors.transparent),
+                                    padding: const EdgeInsets.only(left: 10),
+                                    child: ListTile(
+                                        title: Text(
+                                      state.cateList[index].name.toString(),
+                                      style: const TextStyle(
+                                          color: primaryColor),
                                     )),
-                              );
-                            },
-                          ));
-                  }
-                  return const SizedBox();
-                },
-              ),
-            ],
+                                  )),
+                            );
+                          },
+                            );
+                    }
+                    return const SizedBox();
+                  },
+                ),
+              ],
+            ),
           ),
         ));
   }

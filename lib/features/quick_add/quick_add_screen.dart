@@ -22,10 +22,12 @@ class QuickTypeScreen extends StatelessWidget {
           } else if (state is QuickAddLoadedState) {
             var list=state.list!.reversed.toList();
             return ListView.builder(
+              padding: EdgeInsets.only(left: 5,right: 5,top: 10,bottom: 5),
               shrinkWrap: true,
-              itemCount: state.list!.length,
+              itemCount: list.length,
               itemBuilder: (context, index) {
                 return  Slidable(
+
                   // Specify a key if the Slidable is dismissible.
                   key: const ValueKey(0),
 
@@ -35,14 +37,21 @@ class QuickTypeScreen extends StatelessWidget {
                     motion: const ScrollMotion(),
 
                     // A pane can dismiss the Slidable.
-                    dismissible: DismissiblePane(onDismissed: () {}),
+                    dismissible: DismissiblePane(
+
+                        onDismissed: () {
+                      QuickAddRepo.deletequickAdd(id: list[index].sId!, context: context);
+                      context.read<QuickAddBloc>().add(LoadQuickTypeEvent());
+
+                    }),
 
                     // All actions are defined in the children parameter.
                     children:  [
                       // A SlidableAction can have an icon and/or a label.
                       SlidableAction(
                         onPressed: (context) {
-                          QuickAddRepo.deletequickAdd(id: state.list![index].rootId!, context: context);
+                          QuickAddRepo.deletequickAdd(id: list[index].sId!, context: context);
+                          context.read<QuickAddBloc>().add(LoadQuickTypeEvent());
                         },
                         backgroundColor: Color(0xFFFE4A49),
                         foregroundColor: Colors.white,
@@ -90,7 +99,24 @@ class QuickTypeScreen extends StatelessWidget {
 
                   // The child of the Slidable is what the user sees when the
                   // component is not dragged.
-                  child:  ListTile(title: Text(list[index].content??'Image Type')),
+                  child:  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Container(
+                      padding: EdgeInsets.only(top: 7,bottom: 7),
+                      decoration: BoxDecoration(
+                          color: Colors.blue[50],
+                        borderRadius: BorderRadius.circular(10)
+                      ),
+                      //height: context.screenHeight*0.08,
+                        child: Center(
+                          child: ListTile(title: Text(list[index].content??'Image Type'),trailing:  Column(
+                      children: [
+                          Icon(Icons.arrow_right_alt),
+                          Icon(Icons.delete),
+                      ],
+                    )),
+                        ),),
+                  ),
                 );
                   //Card(child: Padding(padding: const EdgeInsets.all(10),child: Text(list[index].content??'Image Type'),),);
               },

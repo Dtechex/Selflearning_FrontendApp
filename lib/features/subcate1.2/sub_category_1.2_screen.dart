@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:self_learning_app/features/subcate1.2/update_subcate1.2.dart';
 import 'package:self_learning_app/features/subcategory/create_subcate_screen.dart';
 import 'package:self_learning_app/utilities/extenstion.dart';
+import 'package:self_learning_app/widgets/add_resources_screen.dart';
 import '../../subcate1.1/update_subcate1.1_screen.dart';
 import '../../utilities/colors.dart';
 import '../update_category/update_cate_screen.dart';
@@ -54,30 +55,30 @@ class _SubCategory2ScreenState extends State<SubCategory2Screen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        floatingActionButton: SizedBox(
-          height: context.screenHeight * 0.1,
-          child: FittedBox(
-            child: FloatingActionButton(
-              onPressed: () {
-                Navigator.push(context, MaterialPageRoute(
-                  builder: (context) {
-                    return CreateSubCate2Screen(
-                      rootId: widget.rootId,
-                    );
-                  },
-                ));
-              },
-              child: Row(
-                children: const [
-                  Text(
-                    '    Create\n Subcatgory',
-                    style: TextStyle(fontSize: 7),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
+        // floatingActionButton: SizedBox(
+        //   height: context.screenHeight * 0.1,
+        //   child: FittedBox(
+        //     child: FloatingActionButton(
+        //       onPressed: () {
+        //         Navigator.push(context, MaterialPageRoute(
+        //           builder: (context) {
+        //             return CreateSubCate2Screen(
+        //               rootId: widget.rootId,
+        //             );
+        //           },
+        //         ));
+        //       },
+        //       child: Row(
+        //         children: const [
+        //           Text(
+        //             '    Create\n Subcatgory',
+        //             style: TextStyle(fontSize: 7),
+        //           ),
+        //         ],
+        //       ),
+        //     ),
+        //   ),
+        // ),
         appBar: AppBar(title: Text(widget.subCateTitle), actions: [
           IconButton(
               onPressed: () {
@@ -103,76 +104,79 @@ class _SubCategory2ScreenState extends State<SubCategory2Screen> {
                 ],
               ))
         ]),
-        body: Container(
-          padding: const EdgeInsets.only(left: 20, right: 20),
-          child: Column(
-            children: [
-              const SizedBox(
-                height: 20,
-              ),
-              SizedBox(
-                width: context.screenWidth,
-                height: context.screenHeight * 0.08,
-                child: CupertinoSearchTextField(
-                  backgroundColor: Colors.grey.withOpacity(0.2),
-                  placeholder: 'Search',
+        body: SingleChildScrollView(
+          child: Container(
+            padding: const EdgeInsets.only(left: 20, right: 20),
+            child: Column(
+              children: [
+                AddResourceScreen(),
+                const SizedBox(
+                  height: 20,
                 ),
-              ),
-              const SizedBox(
-                height: 20,
-              ),
-              BlocBuilder<SubCategory2Bloc, SubCategory2State>(
-                builder: (context, state) {
-                  if (state is SubCategory2Loading) {
-                    return const CircularProgressIndicator();
-                  } else if (state is SubCategory2Loaded) {
-                    return state.cateList.isEmpty
-                        ? SizedBox(
-                            height: context.screenHeight / 2,
-                            child: const Center(
-                              child: Text(
-                                'No Subcategory added',
-                                style: TextStyle(
-                                    fontSize: 20, fontWeight: FontWeight.bold),
+                SizedBox(
+                  width: context.screenWidth,
+                  height: context.screenHeight * 0.08,
+                  child: CupertinoSearchTextField(
+                    backgroundColor: Colors.grey.withOpacity(0.2),
+                    placeholder: 'Search',
+                  ),
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                BlocBuilder<SubCategory2Bloc, SubCategory2State>(
+                  builder: (context, state) {
+                    if (state is SubCategory2Loading) {
+                      return const CircularProgressIndicator();
+                    } else if (state is SubCategory2Loaded) {
+                      return state.cateList.isEmpty
+                          ? SizedBox(
+                              height: context.screenHeight / 2,
+                              child: const Center(
+                                child: Text(
+                                  'No Subcategory added',
+                                  style: TextStyle(
+                                      fontSize: 20, fontWeight: FontWeight.bold),
+                                ),
                               ),
-                            ),
-                          )
-                        : Expanded(
-                            child: ListView.builder(
-                            itemCount: state.cateList.length,
-                            shrinkWrap: true,
-                            itemBuilder: (context, index) {
-                              return GestureDetector(
-                                onTap: () {},
-                                child: Padding(
-                                    padding: const EdgeInsets.all(10),
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(10),
-                                          border: Border.all(
-                                              color: Color(int.parse(state
-                                                  .cateList[index]
-                                                  .styles![1]
-                                                  .value!)),
-                                              width: 3),
-                                          color: Colors.transparent),
-                                      padding: const EdgeInsets.only(left: 20),
-                                      child: ListTile(
-                                          title: Text(
-                                        state.cateList[index].name.toString(),
-                                        style: const TextStyle(
-                                            color: primaryColor),
+                            )
+                          : Expanded(
+                              child: ListView.builder(
+                              itemCount: state.cateList.length,
+                              shrinkWrap: true,
+                              itemBuilder: (context, index) {
+                                return GestureDetector(
+                                  onTap: () {},
+                                  child: Padding(
+                                      padding: const EdgeInsets.all(10),
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(10),
+                                            border: Border.all(
+                                                color: Color(int.parse(state
+                                                    .cateList[index]
+                                                    .styles![1]
+                                                    .value!)),
+                                                width: 3),
+                                            color: Colors.transparent),
+                                        padding: const EdgeInsets.only(left: 20),
+                                        child: ListTile(
+                                            title: Text(
+                                          state.cateList[index].name.toString(),
+                                          style: const TextStyle(
+                                              color: primaryColor),
+                                        )),
                                       )),
-                                    )),
-                              );
-                            },
-                          ));
-                  }
-                  return const SizedBox();
-                },
-              ),
-            ],
+                                );
+                              },
+                            ));
+                    }
+                    return const SizedBox();
+                  },
+                ),
+              ],
+            ),
           ),
         ));
   }

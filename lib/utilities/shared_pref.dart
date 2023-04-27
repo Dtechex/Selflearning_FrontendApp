@@ -8,6 +8,21 @@ class SharedPref {
     prefs.setString(tokenkey, getToken);
   }
 
+  Future<void> savesubcateId(String subcatid) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString('subcatid', subcatid);
+  }
+
+  Future<void> savesubcate1Id(String savesubcate1Id) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString('subcate1id', savesubcate1Id);
+  }
+
+  Future<void> savesubcate2Id(String savesubcate2Id) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString('subcate2id', savesubcate2Id);
+  }
+
   Future<String?> getToken() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     var token = prefs.getString(tokenkey);
@@ -18,4 +33,24 @@ class SharedPref {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.clear();
   }
+
+  Future<String?> getsubcateid() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    var token = prefs.getString('subcatid');
+    return token;
+  }
+
+  Future<String?> getsubcate1id() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    var token = prefs.getString('subcate1id');
+    return token;
+  }
+
+  Future<String?> getsubcate2id() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    var token = prefs.getString('subcate2id');
+    return token;
+  }
+
 }
+

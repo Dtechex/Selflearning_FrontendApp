@@ -21,24 +21,28 @@ class QuickAddRepo {
       endPoint: 'resource/quickAdd',
     );
     var data = await jsonDecode(res.body);
-    print(data);
     return res.statusCode;
   }
 
   static Future<int?> deletequickAdd({required String id,required BuildContext context}) async {
     print('deletee category');
     var token = await SharedPref().getToken();
-    Response res = await http.delete(Uri.parse('http://3.110.219.9:8000/web/resource/$id'), headers: {
+    var url= Uri.parse('http://3.110.219.9:8000/web/resource/$id');
+    print(url);
+    Response res = await http.delete(url, headers: {
     'Content-Type': 'application/json',
     'Authorization': 'Bearer $token'
     },);
+
    print(res.body);
    print('res.body');
-    context.read<QuickAddBloc>().add(LoadQuickTypeEvent());
+
     //'resource/quickAdd'
     var data = await jsonDecode(res.body);
     print(data);
+
     return res.statusCode;
+
   }
 
 

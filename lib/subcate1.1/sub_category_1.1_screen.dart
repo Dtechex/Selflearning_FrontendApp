@@ -10,7 +10,9 @@ import '../features/subcate1.2/bloc/sub_cate2_event.dart';
 import '../features/subcate1.2/sub_category_1.2_screen.dart';
 import '../features/update_category/update_cate_screen.dart';
 import '../utilities/colors.dart';
+import '../widgets/add_resources_screen.dart';
 import 'bloc/sub_cate1_bloc.dart';
+import 'bloc/sub_cate1_event.dart';
 import 'bloc/sub_cate1_state.dart';
 import 'create_subcate1_screen.dart';
 
@@ -42,6 +44,12 @@ class _SubCategory1ScreenState extends State<SubCategory1Screen> {
     Icons.text_increase
   ];
 
+
+  @override
+  void initState() {
+    context.read<SubCategory1Bloc>().add(SubCategory1LoadEvent(rootId: widget.rootId));
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -82,68 +90,71 @@ class _SubCategory1ScreenState extends State<SubCategory1Screen> {
             ],
           ))
         ]),
-        body: Container(
-          padding: const EdgeInsets.only(left: 10,right: 10),
-          child: Column(
-            children: [
-              const SizedBox(
-                height: 20,
-              ),
-              SizedBox(
-                width: context.screenWidth,
-                height: context.screenHeight*0.08,
-                child:  CupertinoSearchTextField(
-                  backgroundColor: Colors.grey.withOpacity(0.2),
-                  placeholder: 'Search',
+        body: SingleChildScrollView(
+          child: Container(
+            padding: const EdgeInsets.only(left: 10,right: 10),
+            child: Column(
+              children: [
+                AddResourceScreen(),
+                const SizedBox(
+                  height: 20,
                 ),
-              ),
-              const SizedBox(
-                height: 20,
-              ),
-              BlocBuilder<SubCategory1Bloc,SubCategory1State>(
-                builder: (context, state) {
-                  if(state is SubCategory1Loading){
-                    return const CircularProgressIndicator();
-                  }else if( state is SubCategory1Loaded){
-                    return
-                      state.cateList.isEmpty?  SizedBox(
-                        height: context.screenHeight/2,
-                        child: const Center(child: Text('No Subcategory added',style: TextStyle(
-                            fontSize: 19,fontWeight: FontWeight.bold
-                        ),),),):
-                      Expanded(child: ListView.builder(
-                        itemCount: state.cateList.length,
-                        shrinkWrap: true,
-                        itemBuilder: (context, index) {
-                          return GestureDetector(
-                            onTap: () {
-                              print(state.cateList[index].sId);
-                              print('state.cateList[index].sId');
+                SizedBox(
+                  width: context.screenWidth,
+                  height: context.screenHeight*0.08,
+                  child:  CupertinoSearchTextField(
+                    backgroundColor: Colors.grey.withOpacity(0.2),
+                    placeholder: 'Search',
+                  ),
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                BlocBuilder<SubCategory1Bloc,SubCategory1State>(
+                  builder: (context, state) {
+                    if(state is SubCategory1Loading){
+                      return const CircularProgressIndicator();
+                    }else if( state is SubCategory1Loaded){
+                      return
+                        state.cateList.isEmpty?  SizedBox(
+                          height: context.screenHeight/2,
+                          child: const Center(child: Text('No Subcategory added',style: TextStyle(
+                              fontSize: 19,fontWeight: FontWeight.bold
+                          ),),),):
+                        ListView.builder(
+                          itemCount: state.cateList.length,
+                          shrinkWrap: true,
+                          itemBuilder: (context, index) {
+                            return GestureDetector(
+                              onTap: () {
+                                print(state.cateList[index].sId);
+                                print('state.cateList[index].sId');
 
-                              Navigator.push(context, MaterialPageRoute(builder: (context) {
-                                return SubCategory2Screen(subCateTitle: state.cateList[index].name!,rootId: state.cateList[index].sId!,color: widget.color,keyWords: state.cateList[index].keywords!,);
-                              },));
-                            },
-                            child: Padding(
-                                padding: const EdgeInsets.all(10),
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(10),
-                                      border: Border.all(color: Color(int.parse(state.cateList[index].styles![1].value!)),width: 3),
-                                      color: Colors.transparent
-                                  ),
-                                  padding: const EdgeInsets.only(left: 10),
-                                  child: ListTile(title: Text(state.cateList[index].name.toString(),style: const TextStyle(
-                                      color: primaryColor
-                                  ),)),
-                                )),
+                                Navigator.push(context, MaterialPageRoute(builder: (context) {
+                                  return SubCategory2Screen(subCateTitle: state.cateList[index].name!,rootId: state.cateList[index].sId!,color: widget.color,keyWords: state.cateList[index].keywords!,);
+                                },));
+                              },
+                              child: Padding(
+                                  padding: const EdgeInsets.all(10),
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(10),
+                                        border: Border.all(color: Color(int.parse(state.cateList[index].styles![1].value!)),width: 3),
+                                        color: Colors.transparent
+                                    ),
+                                    padding: const EdgeInsets.only(left: 10),
+                                    child: ListTile(title: Text(state.cateList[index].name.toString(),style: const TextStyle(
+                                        color: primaryColor
+                                    ),)),
+                                  )),
 
-                          );
-                        },));
-                  }
-                  return const SizedBox();
-                },),
-            ],
+                            );
+                          },);
+                    }
+                    return const SizedBox();
+                  },),
+              ],
+            ),
           ),
         )
     );
