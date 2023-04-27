@@ -78,7 +78,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                 height: context.screenHeight * 0.1,
                               ),
                               const Text(
-                                'Login with Email ID',
+                                'Signup with Email ID',
                                 style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontSize: 20,
@@ -88,7 +88,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                 height: context.screenHeight * 0.02,
                               ),
                               const Text(
-                                'Please login to continue using our app.',
+                                'Please Sign up to continue using our app.',
                                 style: TextStyle(
                                     color: Colors.black,
                                     // height: 1.5,
@@ -381,7 +381,7 @@ class SubmitButton extends StatelessWidget {
               context.read<SignUpBloc>().add(SignUpFormSubmitted());
             },
             child: const Text(
-              'Login',
+              'Sign Up',
               style: TextStyle(fontSize: 22),
             ),
           ),

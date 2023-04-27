@@ -37,7 +37,10 @@ class _AddCateScreenState extends State<AddCateScreen> {
             pickerColor: Colors.green,
             onColorChanged: (value) {
               setState(() {
+
                 pickedColor = value;
+                print(pickedColor!.value);
+                print('pickedColor');
               });
             },
           ),
@@ -67,8 +70,6 @@ class _AddCateScreenState extends State<AddCateScreen> {
     });
     payload.addAll({"keywords": keywords});
     payload.addAll({"styles": styles});
-    print(payload);
-    print('payload');
     var token = await SharedPref().getToken();
     try {
       var res = await http.post(
@@ -84,11 +85,6 @@ class _AddCateScreenState extends State<AddCateScreen> {
             SnackBar(content: Text('Category added Successfully')));
         context.read<CategoryBloc>().add(CategoryLoadEvent());
         context.read<DashboardBloc>().ChangeIndex(0);
-        // Navigator.pushReplacement(context, MaterialPageRoute(
-        //   builder: (context) {
-        //     return DashBoardScreen();
-        //   },
-        // ));
       } else {
         context
             .showSnackBar(SnackBar(content: Text('opps something went worng')));
@@ -109,7 +105,6 @@ class _AddCateScreenState extends State<AddCateScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      //  appBar: AppBar(title: const Text('Category Title')),
         body: SingleChildScrollView(
           child:  Padding(
             padding: const EdgeInsets.only(left: 10, right: 10),

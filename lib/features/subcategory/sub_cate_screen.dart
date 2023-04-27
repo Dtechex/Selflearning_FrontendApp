@@ -126,8 +126,8 @@ class _SubCategoryScreenState extends State<SubCategoryScreen> {
                 ),
                 BlocBuilder<SubCategoryBloc, SubCategoryState>(
                   builder: (context, state) {
-                    if (state is CategoryLoading) {
-                      return const CircularProgressIndicator();
+                    if (state is SubCategoryLoading) {
+                      return const Center(child: CircularProgressIndicator());
                     } else if (state is SubCategoryLoaded) {
                       return state.cateList.isEmpty
                           ? SizedBox(
@@ -158,8 +158,6 @@ class _SubCategoryScreenState extends State<SubCategoryScreen> {
                                       keyWords:
                                           state.cateList[index].keywords!,
                                     );
-
-
                                   },
                                 ));
                               },
@@ -186,9 +184,9 @@ class _SubCategoryScreenState extends State<SubCategoryScreen> {
                                   )),
                             );
                           },
-                            );
+                      );
                     }
-                    return const SizedBox();
+                    return const SizedBox(child: Text('Something went wrong'),);
                   },
                 ),
               ],

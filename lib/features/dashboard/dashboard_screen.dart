@@ -17,10 +17,7 @@ class DashBoardScreen extends StatelessWidget {
   static const List<Widget> _widgetOptions = <Widget>[
     AllCateScreen(),
    AddCateScreen(),
-    Text(
-      'Create Dailogs',
-      style: optionStyle,
-    ),
+    Text('Create Dailogs', style: optionStyle,),
     Text(
       'Create Flow',
       style: optionStyle,
@@ -42,7 +39,7 @@ class DashBoardScreen extends StatelessWidget {
               IconButton(
                   onPressed: () async {
                     context.showNewDialog(
-                      AlertDialog(title: Text('Are you Sure you want to logout.',),actions: [
+                      AlertDialog(title: const Text('Are you sure you want to logout.',),actions: [
                         ElevatedButton(onPressed: () async{
                           await SharedPref().clear().then((value) {
                             Navigator.pushAndRemoveUntil(context, MaterialPageRoute(

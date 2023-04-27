@@ -49,6 +49,7 @@ dependencies:
   flutter_native_splash: ^2.2.19
   flutter_launcher_icons: ^0.13.1
   flutter_slidable: ^3.0.0
+  dropdown_button2: ^2.1.0
 
 
 

@@ -7,8 +7,8 @@ part 'category_event.dart';
 
 class CategoryBloc extends Bloc<CategoryEvent, CategoryState> {
   CategoryBloc() : super(CategoryLoading()) {
-
     on<CategoryLoadEvent>(_onGetCategoryList);
+    on<CategoryImportEvent>(_oncategoryImportEvent);
   //  on<SubCategoryLoadEvent>(_onGetSubCategoryList);
 
   }
@@ -24,6 +24,12 @@ class CategoryBloc extends Bloc<CategoryEvent, CategoryState> {
       print(e);
       emit(CategoryFailed(errorText: 'Oops Something went wrong'));
     }
+  }
+
+
+  void _oncategoryImportEvent(
+      CategoryImportEvent event, Emitter<CategoryState> emit) async {
+    emit(CategoryChanged(category: event.dropDownValue!));
   }
 
   // void _onGetSubCategoryList(

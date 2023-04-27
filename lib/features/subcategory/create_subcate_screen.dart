@@ -98,8 +98,6 @@ class _CreateSubCateScreenState extends State<CreateSubCateScreen> {
         context.showSnackBar(
             const SnackBar(content: Text('opps something went worng')));
       }
-      print(res.body);
-      print('data');
     } on SocketException catch(e){
       context.showSnackBar(
           const SnackBar(content: Text('No internet connection...')));
@@ -113,7 +111,7 @@ class _CreateSubCateScreenState extends State<CreateSubCateScreen> {
 
   @override
   Widget build(BuildContext context) {
-    print('inside update');
+
     return Scaffold(
         appBar: AppBar(title: const Text('Create subcategory')),
         body: SingleChildScrollView(
@@ -237,7 +235,6 @@ class _CreateSubCateScreenState extends State<CreateSubCateScreen> {
                                                   color: Colors.white),
                                             ),
                                             onTap: () {
-                                              print("$tag selected");
                                             },
                                           ),
                                           const SizedBox(width: 4.0),

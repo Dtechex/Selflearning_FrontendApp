@@ -189,8 +189,7 @@ class _AllCateScreenState extends State<AllCateScreen> {
                       Color currentColor = primaryColor;
 
                       if (state.cateList[index].styles!.isNotEmpty) {
-                        if (state.cateList[index].styles![1].value!.length !=
-                            10) {
+                        if (state.cateList[index].styles![1].value!.length != 10) {
                           currentColor = primaryColor;
                         } else {
                           currentColor = Color(int.parse(

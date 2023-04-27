@@ -22,6 +22,13 @@ class CategoryFailed extends CategoryState {
   CategoryFailed({required this.errorText});
 }
 
+
+class CategoryChanged extends CategoryState {
+  final String category;
+
+  CategoryChanged({required this.category});
+}
+
 class CategoryAdded extends CategoryState {}
 
 class CategoryColor extends CategoryState {
