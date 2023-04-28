@@ -14,6 +14,7 @@ import '../../subcate1.1/bloc/sub_cate1_state.dart';
 import '../category/bloc/category_bloc.dart';
 import '../update_category/update_cate_screen.dart';
 import 'bloc/sub_cate_bloc.dart';
+import 'bloc/sub_cate_event.dart';
 import 'bloc/sub_cate_state.dart';
 
 class SubCategoryScreen extends StatefulWidget {
@@ -39,10 +40,7 @@ class _SubCategoryScreenState extends State<SubCategoryScreen> {
 
   @override
   void initState() {
-    print('subcategory screen${ widget.rootId}');
-    context.read<SubCategoryBloc>().add(
-        SubCategoryLoadEvent(rootId: widget.rootId));
-    savecatid();
+    context.read<SubCategoryBloc>().add(SubCategoryLoadEvent(rootId: widget.rootId));
     super.initState();
   }
 
@@ -52,146 +50,167 @@ class _SubCategoryScreenState extends State<SubCategoryScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        floatingActionButton: SizedBox(
-          height: context.screenHeight * 0.1,
-          child: FittedBox(
-            child: FloatingActionButton(
-              onPressed: () {
-                Navigator.push(context, MaterialPageRoute(
-                  builder: (context) {
-                    return CreateSubCateScreen(
-                      rootId: widget.rootId,
-                    );
-                  },
-                ));
-              },
-              child: Row(
-                children: const [
-                  Text(
-                    '    Create\n Subcatgory',
-                    style: TextStyle(fontSize: 7),
-                  ),
-                ],
+    return DefaultTabController(
+      length: 2,
+      child: Scaffold(
+          floatingActionButton: SizedBox(
+            height: context.screenHeight * 0.1,
+            child: FittedBox(
+              child: FloatingActionButton(
+                onPressed: () {
+                  Navigator.push(context, MaterialPageRoute(
+                    builder: (context) {
+                      return CreateSubCateScreen(
+                        rootId: widget.rootId,
+                      );
+                    },
+                  ));
+                },
+                child: Row(
+                  children: const [
+                    Text(
+                      '    Create\n Subcatgory',
+                      style: TextStyle(fontSize: 7),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
-        ),
-        appBar: AppBar(title: Text(widget.categoryName??"Subcategory"), actions: [
-          IconButton(
-              onPressed: () {
-                Navigator.push(context, MaterialPageRoute(
-                  builder: (context) {
-                    return UpdateCateScreen(
-                      rootId: widget.rootId,
-                      selectedColor: widget.color,
-                      categoryTitle: widget.categoryName,
-                      tags: widget.tags,
-                    );
-                  },
-                ));
-              },
-              icon: Row(
-                children: const [
-                  Text(
-                    'Edit',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                    ),
+          appBar: AppBar(
+              bottom:  TabBar(
+                tabs: [
+                Column(
+                  children: [
+                    Tab(icon: Icon(Icons.list_alt,)),
+                    Text('Subcategory list')
+                  ],
+                ),
+                  Column(
+                    children: [
+                      Tab(icon: Icon(Icons.perm_media,)),
+                      Text('Resources')
+                    ],
                   ),
                 ],
-              ))
-        ]),
-        body: SingleChildScrollView(
-          child: Container(
-            padding: const EdgeInsets.only(left: 10, right: 10),
-            child: Column(
-
-              children: [
-                //Text('Add Media'),
-                AddResourceScreen(),
-                const SizedBox(
-                  height: 20,
-                ),
-                SizedBox(
-                  width: context.screenWidth,
-                  height: context.screenHeight * 0.08,
-                  child: CupertinoSearchTextField(
-                    backgroundColor: Colors.grey.withOpacity(0.2),
-                    placeholder: 'Search',
-                  ),
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
-                BlocBuilder<SubCategoryBloc, SubCategoryState>(
-                  builder: (context, state) {
-                    if (state is SubCategoryLoading) {
-                      return const Center(child: CircularProgressIndicator());
-                    } else if (state is SubCategoryLoaded) {
-                      return state.cateList.isEmpty
-                          ? SizedBox(
-                              height: context.screenHeight / 2,
-                              child: const Center(
-                                child: Text(
-                                  'No Subcategory added',
-                                  style: TextStyle(
-                                      fontSize: 19, fontWeight: FontWeight.bold),
-                                ),
-                              ),
-                            )
-                          : ListView.builder(
-                          itemCount: state.cateList.length,
-                          shrinkWrap: true,
-                          itemBuilder: (context, index) {
-                            return GestureDetector(
-                              onTap: () async{
-                                print('subcate inside');
-                           //   await SharedPref().savesubcateId(state.cateList[index].sId!);
-                                Navigator.push(context, MaterialPageRoute(
-                                  builder: (context) {
-                                    return SubCategory1Screen(
-                                      subCateTitle:
-                                          state.cateList[index].name!,
-                                      rootId: state.cateList[index].sId!,
-                                      color: widget.color,
-                                      keyWords:
-                                          state.cateList[index].keywords!,
-                                    );
-                                  },
-                                ));
-                              },
-                              child: Padding(
-                                  padding: const EdgeInsets.all(10),
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                        borderRadius:
-                                            BorderRadius.circular(10),
-                                        border: Border.all(
-                                            color: Color(int.parse(state
-                                                .cateList[index]
-                                                .styles![1]
-                                                .value!)),
-                                            width: 3),
-                                        color: Colors.transparent),
-                                    padding: const EdgeInsets.only(left: 10),
-                                    child: ListTile(
-                                        title: Text(
-                                      state.cateList[index].name.toString(),
-                                      style: const TextStyle(
-                                          color: primaryColor),
-                                    )),
-                                  )),
-                            );
-                          },
+              ),
+              title: Text(widget.categoryName??"Subcategory"), actions: [
+            IconButton(
+                onPressed: () {
+                  Navigator.push(context, MaterialPageRoute(
+                    builder: (context) {
+                      return UpdateCateScreen(
+                        rootId: widget.rootId,
+                        selectedColor: widget.color,
+                        categoryTitle: widget.categoryName,
+                        tags: widget.tags,
                       );
-                    }
-                    return const SizedBox(child: Text('Something went wrong'),);
-                  },
+                    },
+                  ));
+                },
+                icon: Row(
+                  children: const [
+                    Text(
+                      'Edit',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ))
+          ]),
+          body: Container(
+            padding: const EdgeInsets.only(left: 10, right: 10),
+            child: TabBarView(
+              children: [
+                Column(
+                  children: [  const SizedBox(
+                    height: 20,
+                  ),
+                    SizedBox(
+                      width: context.screenWidth,
+                      height: context.screenHeight * 0.08,
+                      child: CupertinoSearchTextField(
+                        backgroundColor: Colors.grey.withOpacity(0.2),
+                        placeholder: 'Search',
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    BlocBuilder<SubCategoryBloc, SubCategoryState>(
+                      builder: (context, state) {
+                        print(state);
+                        print('state');
+                        if (state is SubCategoryLoading) {
+                          return const Center(child: CircularProgressIndicator());
+                        } else if (state is SubCategoryLoaded) {
+                          return state.cateList.isEmpty
+                              ? SizedBox(
+                            height: context.screenHeight / 2,
+                            child: const Center(
+                              child: Text(
+                                'No Subcategory added',
+                                style: TextStyle(
+                                    fontSize: 19, fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                          )
+                              : ListView.builder(
+                            itemCount: state.cateList.length,
+                            shrinkWrap: true,
+                            itemBuilder: (context, index) {
+                              return GestureDetector(
+                                onTap: () async{
+                                  print('subcate inside');
+                                  //   await SharedPref().savesubcateId(state.cateList[index].sId!);
+                                  Navigator.push(context, MaterialPageRoute(
+                                    builder: (context) {
+                                      return SubCategory1Screen(
+                                        subCateTitle:
+                                        state.cateList[index].name!,
+                                        rootId: state.cateList[index].sId!,
+                                        color: widget.color,
+                                        keyWords:
+                                        state.cateList[index].keywords!,
+                                      );
+                                    },
+                                  ));
+                                },
+                                child: Padding(
+                                    padding: const EdgeInsets.all(10),
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                          borderRadius:
+                                          BorderRadius.circular(10),
+                                          border: Border.all(
+                                              color: Color(int.parse(state
+                                                  .cateList[index]
+                                                  .styles![1]
+                                                  .value!)),
+                                              width: 3),
+                                          color: Colors.transparent),
+                                      padding: const EdgeInsets.only(left: 10),
+                                      child: ListTile(
+                                          title: Text(
+                                            state.cateList[index].name.toString(),
+                                            style: const TextStyle(
+                                                color: primaryColor),
+                                          )),
+                                    )),
+                              );
+                            },
+                          );
+                        }
+                        return const SizedBox(child: Text('Something went wrong'),);
+                      },
+                    ),],
                 ),
+                AddResourceScreen(),
+
               ],
             ),
-          ),
-        ));
+          )),
+    );
   }
 }

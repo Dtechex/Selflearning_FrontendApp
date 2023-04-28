@@ -9,7 +9,7 @@ class CategoryBloc extends Bloc<CategoryEvent, CategoryState> {
   CategoryBloc() : super(CategoryLoading()) {
     on<CategoryLoadEvent>(_onGetCategoryList);
     on<CategoryImportEvent>(_oncategoryImportEvent);
-  //  on<SubCategoryLoadEvent>(_onGetSubCategoryList);
+  // on<SubCategoryLoadEvent>(_onGetSubCategoryList);
 
   }
 

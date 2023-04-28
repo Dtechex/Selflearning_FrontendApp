@@ -1,4 +1,6 @@
 
+import '../model/sub_cate_model.dart';
+
 abstract class SubCategory1Event {}
 
 
@@ -8,9 +10,17 @@ class SubCategory1LoadEvent extends SubCategory1Event{
   SubCategory1LoadEvent({this.rootId});
 }
 
-class SubCategory1LoadingEvent extends SubCategory1Event{
-  SubCategory1LoadingEvent();
+class SubCategory1LoadingEvent extends SubCategory1Event{}
+
+class DDValueSubCategoryChanged extends SubCategory1Event {
+  final String? ddValue;
+  final List<SubCategory1Model>? cateList;
+
+  DDValueSubCategoryChanged({this.ddValue,this.cateList});
 }
+
+class SubCategory1LoadEmptyEvent extends SubCategory1Event{}
+
 
 
 

@@ -11,6 +11,7 @@ import 'package:self_learning_app/utilities/shared_pref.dart';
 
 import '../category/bloc/category_bloc.dart';
 import '../dashboard/dashboard_screen.dart';
+import 'bloc/sub_cate_event.dart';
 
 class UpdateSubCateScreen extends StatefulWidget {
   final String rootId;

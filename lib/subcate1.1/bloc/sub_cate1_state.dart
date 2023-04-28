@@ -10,9 +10,9 @@ class SubCategory1Initial extends SubCategory1State {}
 class SubCategory1Loading extends SubCategory1State {}
 
 class SubCategory1Loaded extends SubCategory1State {
+  final String? ddValue;
   final List<SubCategory1Model> cateList;
-
-  SubCategory1Loaded({required this.cateList});
+  SubCategory1Loaded({required this.cateList,this.ddValue});
 }
 
 class SubCategory1Failed extends SubCategory1State {
@@ -25,7 +25,9 @@ class SubCategory1Added extends SubCategory1State {}
 
 class SubCategory1Color extends SubCategory1State {
   final Color cateBgColor;
-
   SubCategory1Color({required this.cateBgColor});
 }
+
+
+
 

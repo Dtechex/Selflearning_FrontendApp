@@ -27,9 +27,27 @@ class QuickImportLoadedState extends QuickImportState {
       );
 
   @override
-  // TODO: implement props
   List<Object?> get props => [list,value];
 }
+
+class QASubLoadedState extends QuickImportState {
+  final String? value;
+  final List<QuickImportModel>? list;
+  QASubLoadedState({this.value,this.list});
+
+  QuickImportLoadedState copyWith({
+    String? value,
+    List<QuickImportModel>? list,
+  })=>
+      QuickImportLoadedState(
+          list: list??this.list,
+          value:value??this.value
+      );
+  @override
+  List<Object?> get props => [list,value];
+}
+
+
 
 class QuickImportErrorState extends QuickImportState {
   @override

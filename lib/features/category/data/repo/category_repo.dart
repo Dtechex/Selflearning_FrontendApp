@@ -26,6 +26,7 @@ class CategoryRepo {
 
 
   static Future<List<SubCategoryModel>> getAllSubCategory(String? rootId) async {
+    print('subcategory api called');
     Response res = await Api().get(
       endPoint: 'category/?rootId=$rootId',
     );

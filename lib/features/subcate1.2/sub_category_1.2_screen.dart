@@ -54,94 +54,89 @@ class _SubCategory2ScreenState extends State<SubCategory2Screen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        // floatingActionButton: SizedBox(
-        //   height: context.screenHeight * 0.1,
-        //   child: FittedBox(
-        //     child: FloatingActionButton(
-        //       onPressed: () {
-        //         Navigator.push(context, MaterialPageRoute(
-        //           builder: (context) {
-        //             return CreateSubCate2Screen(
-        //               rootId: widget.rootId,
-        //             );
-        //           },
-        //         ));
-        //       },
-        //       child: Row(
-        //         children: const [
-        //           Text(
-        //             '    Create\n Subcatgory',
-        //             style: TextStyle(fontSize: 7),
-        //           ),
-        //         ],
-        //       ),
-        //     ),
-        //   ),
-        // ),
-        appBar: AppBar(title: Text(widget.subCateTitle), actions: [
-          IconButton(
-              onPressed: () {
-                Navigator.push(context, MaterialPageRoute(
-                  builder: (context) {
-                    return UpdateSubCate1Screen(
-                      rootId: widget.rootId,
-                      selectedColor: widget.color!,
-                      categoryTitle: widget.subCateTitle,
-                      keyWords: widget.keyWords,
-                    );
-                  },
-                ));
-              },
-              icon: Row(
-                children: const [
-                  Text(
-                    'Edit',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                    ),
+    return DefaultTabController(
+      length: 2,
+      child: Scaffold(
+          appBar: AppBar(
+              bottom:  TabBar(
+                tabs: [
+                  Column(
+                    children: [
+                      Tab(icon: Icon(Icons.list_alt,)),
+                      Text('Subcategory list')
+                    ],
+                  ),
+                  Column(
+                    children: [
+                      Tab(icon: Icon(Icons.perm_media,)),
+                      Text('Resources')
+                    ],
                   ),
                 ],
-              ))
-        ]),
-        body: SingleChildScrollView(
-          child: Container(
+              ),
+              title: Text(widget.subCateTitle), actions: [
+            IconButton(
+                onPressed: () {
+                  Navigator.push(context, MaterialPageRoute(
+                    builder: (context) {
+                      return UpdateSubCate1Screen(
+                        rootId: widget.rootId,
+                        selectedColor: widget.color!,
+                        categoryTitle: widget.subCateTitle,
+                        keyWords: widget.keyWords,
+                      );
+                    },
+                  ));
+                },
+                icon: Row(
+                  children: const [
+                    Text(
+                      'Edit',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ))
+          ]),
+          body: Container(
             padding: const EdgeInsets.only(left: 20, right: 20),
-            child: Column(
+            child: TabBarView(
               children: [
-                AddResourceScreen(),
-                const SizedBox(
-                  height: 20,
-                ),
-                SizedBox(
-                  width: context.screenWidth,
-                  height: context.screenHeight * 0.08,
-                  child: CupertinoSearchTextField(
-                    backgroundColor: Colors.grey.withOpacity(0.2),
-                    placeholder: 'Search',
-                  ),
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
-                BlocBuilder<SubCategory2Bloc, SubCategory2State>(
-                  builder: (context, state) {
-                    if (state is SubCategory2Loading) {
-                      return const CircularProgressIndicator();
-                    } else if (state is SubCategory2Loaded) {
-                      return state.cateList.isEmpty
-                          ? SizedBox(
-                              height: context.screenHeight / 2,
-                              child: const Center(
-                                child: Text(
-                                  'No Subcategory added',
-                                  style: TextStyle(
-                                      fontSize: 20, fontWeight: FontWeight.bold),
-                                ),
+                Column(
+                  children: [
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    SizedBox(
+                      width: context.screenWidth,
+                      height: context.screenHeight * 0.08,
+                      child: CupertinoSearchTextField(
+                        backgroundColor: Colors.grey.withOpacity(0.2),
+                        placeholder: 'Search',
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    BlocBuilder<SubCategory2Bloc, SubCategory2State>(
+                      builder: (context, state) {
+                        if (state is SubCategory2Loading) {
+                          return const CircularProgressIndicator();
+                        } else if (state is SubCategory2Loaded) {
+                          return state.cateList.isEmpty
+                              ? SizedBox(
+                            height: context.screenHeight / 2,
+                            child: const Center(
+                              child: Text(
+                                'No Subcategory added',
+                                style: TextStyle(
+                                    fontSize: 20, fontWeight: FontWeight.bold),
                               ),
-                            )
-                          : Expanded(
-                              child: ListView.builder(
+                            ),
+                          )
+                              : Expanded(
+                            child: ListView.builder(
                               itemCount: state.cateList.length,
                               shrinkWrap: true,
                               itemBuilder: (context, index) {
@@ -152,7 +147,7 @@ class _SubCategory2ScreenState extends State<SubCategory2Screen> {
                                       child: Container(
                                         decoration: BoxDecoration(
                                             borderRadius:
-                                                BorderRadius.circular(10),
+                                            BorderRadius.circular(10),
                                             border: Border.all(
                                                 color: Color(int.parse(state
                                                     .cateList[index]
@@ -163,21 +158,26 @@ class _SubCategory2ScreenState extends State<SubCategory2Screen> {
                                         padding: const EdgeInsets.only(left: 20),
                                         child: ListTile(
                                             title: Text(
-                                          state.cateList[index].name.toString(),
-                                          style: const TextStyle(
-                                              color: primaryColor),
-                                        )),
+                                              state.cateList[index].name.toString(),
+                                              style: const TextStyle(
+                                                  color: primaryColor),
+                                            )),
                                       )),
                                 );
                               },
-                            ));
-                    }
-                    return const SizedBox();
-                  },
+                            ),
+                          );
+                        }
+                        return const SizedBox();
+                      },
+                    ),
+                  ],
                 ),
+                AddResourceScreen(),
+
               ],
             ),
-          ),
-        ));
+          )),
+    );
   }
 }

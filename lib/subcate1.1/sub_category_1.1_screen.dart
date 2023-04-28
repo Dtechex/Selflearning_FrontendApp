@@ -53,110 +53,131 @@ class _SubCategory1ScreenState extends State<SubCategory1Screen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        floatingActionButton: SizedBox(height: context.screenHeight*0.1,
-          child: FittedBox(
-            child: FloatingActionButton(
+    return DefaultTabController(
 
-              onPressed: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) {
-                  return CreateSubCate1Screen(rootId: widget.rootId,);
-                },));
+      length: 2,
+      child: Scaffold(
+          floatingActionButton: SizedBox(height: context.screenHeight*0.1,
+            child: FittedBox(
+              child: FloatingActionButton(
 
-              },
-              child: Row(
-                children: const [
-                  Text('    Create\n Subcatgory',style: TextStyle(fontSize: 7),),
+                onPressed: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) {
+                    return CreateSubCate1Screen(rootId: widget.rootId,);
+                  },));
 
-                ],
+                },
+                child: Row(
+                  children: const [
+                    Text('    Create\n Subcatgory',style: TextStyle(fontSize: 7),),
+
+                  ],
+                ),
               ),
             ),
           ),
-        ),
-        appBar: AppBar(
-            title: Text(widget.subCateTitle),actions: [
-          IconButton(
-              onPressed: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) {
-                  return UpdateSubCateScreen(rootId: widget.rootId,selectedColor: widget.color!,categoryTitle: widget.subCateTitle,keyWords: widget.keyWords,);
-                },));
+          appBar: AppBar(
+              bottom:  TabBar(
+                tabs: [
+                  Column(
+                    children: [
+                      Tab(icon: Icon(Icons.list_alt,)),
+                      Text('Subcategory list')
+                    ],
+                  ),
+                  Column(
+                    children: [
+                      Tab(icon: Icon(Icons.perm_media,)),
+                      Text('Resources')
+                    ],
+                  ),
+                ],
+              ),
+              title: Text(widget.subCateTitle),actions: [
+            IconButton(
+                onPressed: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) {
+                    return UpdateSubCateScreen(rootId: widget.rootId,selectedColor: widget.color!,categoryTitle: widget.subCateTitle,keyWords: widget.keyWords,);
+                  },));
 
-              }, icon: Row(
-            children: const [
-              Text('Edit',style: TextStyle(
-                fontWeight: FontWeight.bold,
-              ),),
+                }, icon: Row(
+              children: const [
+                Text('Edit',style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                ),),
+
+              ],
+            ))
+          ]),
+          body: TabBarView(
+            children: [
+              Container(
+                padding: EdgeInsets.only(left: 10,right: 10),
+                child: Column(children: [
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  SizedBox(
+                    width: context.screenWidth,
+                    height: context.screenHeight*0.08,
+                    child:  CupertinoSearchTextField(
+                      backgroundColor: Colors.grey.withOpacity(0.2),
+                      placeholder: 'Search',
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  BlocBuilder<SubCategory1Bloc,SubCategory1State>(
+                    builder: (context, state) {
+                      if(state is SubCategory1Loading){
+                        return const CircularProgressIndicator();
+                      }else if( state is SubCategory1Loaded){
+                        return
+                          state.cateList.isEmpty?  SizedBox(
+                            height: context.screenHeight/2,
+                            child: const Center(child: Text('No Subcategory added',style: TextStyle(
+                                fontSize: 19,fontWeight: FontWeight.bold
+                            ),),),):
+                          ListView.builder(
+                            itemCount: state.cateList.length,
+                            shrinkWrap: true,
+                            itemBuilder: (context, index) {
+                              return GestureDetector(
+                                onTap: () {
+                                  print(state.cateList[index].sId);
+                                  print('state.cateList[index].sId');
+
+                                  Navigator.push(context, MaterialPageRoute(builder: (context) {
+                                    return SubCategory2Screen(subCateTitle: state.cateList[index].name!,rootId: state.cateList[index].sId!,color: widget.color,keyWords: state.cateList[index].keywords!,);
+                                  },));
+                                },
+                                child: Padding(
+                                    padding: const EdgeInsets.all(10),
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.circular(10),
+                                          border: Border.all(color: Color(int.parse(state.cateList[index].styles![1].value!)),width: 3),
+                                          color: Colors.transparent
+                                      ),
+                                      padding: const EdgeInsets.only(left: 10),
+                                      child: ListTile(title: Text(state.cateList[index].name.toString(),style: const TextStyle(
+                                          color: primaryColor
+                                      ),)),
+                                    )),
+
+                              );
+                            },);
+                      }
+                      return const SizedBox();
+                    },),
+                ],),
+              ),
+              AddResourceScreen(),
 
             ],
-          ))
-        ]),
-        body: SingleChildScrollView(
-          child: Container(
-            padding: const EdgeInsets.only(left: 10,right: 10),
-            child: Column(
-              children: [
-                AddResourceScreen(),
-                const SizedBox(
-                  height: 20,
-                ),
-                SizedBox(
-                  width: context.screenWidth,
-                  height: context.screenHeight*0.08,
-                  child:  CupertinoSearchTextField(
-                    backgroundColor: Colors.grey.withOpacity(0.2),
-                    placeholder: 'Search',
-                  ),
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
-                BlocBuilder<SubCategory1Bloc,SubCategory1State>(
-                  builder: (context, state) {
-                    if(state is SubCategory1Loading){
-                      return const CircularProgressIndicator();
-                    }else if( state is SubCategory1Loaded){
-                      return
-                        state.cateList.isEmpty?  SizedBox(
-                          height: context.screenHeight/2,
-                          child: const Center(child: Text('No Subcategory added',style: TextStyle(
-                              fontSize: 19,fontWeight: FontWeight.bold
-                          ),),),):
-                        ListView.builder(
-                          itemCount: state.cateList.length,
-                          shrinkWrap: true,
-                          itemBuilder: (context, index) {
-                            return GestureDetector(
-                              onTap: () {
-                                print(state.cateList[index].sId);
-                                print('state.cateList[index].sId');
-
-                                Navigator.push(context, MaterialPageRoute(builder: (context) {
-                                  return SubCategory2Screen(subCateTitle: state.cateList[index].name!,rootId: state.cateList[index].sId!,color: widget.color,keyWords: state.cateList[index].keywords!,);
-                                },));
-                              },
-                              child: Padding(
-                                  padding: const EdgeInsets.all(10),
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(10),
-                                        border: Border.all(color: Color(int.parse(state.cateList[index].styles![1].value!)),width: 3),
-                                        color: Colors.transparent
-                                    ),
-                                    padding: const EdgeInsets.only(left: 10),
-                                    child: ListTile(title: Text(state.cateList[index].name.toString(),style: const TextStyle(
-                                        color: primaryColor
-                                    ),)),
-                                  )),
-
-                            );
-                          },);
-                    }
-                    return const SizedBox();
-                  },),
-              ],
-            ),
-          ),
-        )
+          )
+      ),
     );
   }
 }

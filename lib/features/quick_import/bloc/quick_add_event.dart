@@ -4,8 +4,8 @@ part of 'quick_add_bloc.dart';
 abstract class QuickImportEvent {}
 
 class LoadQuickTypeEvent extends QuickImportEvent {
-  final String? ddValue;
-  LoadQuickTypeEvent({this.ddValue});
+  final String? rootId;
+  LoadQuickTypeEvent({this.rootId});
 }
 
 class ButtonPressedEvent extends QuickImportEvent {

@@ -37,7 +37,7 @@ class QuickImportBloc extends Bloc<QuickImportEvent, QuickImportState> {
       LoadQuickTypeEvent event, Emitter<QuickImportState> emit) async {
     emit(QuickImportLoadingState());
     try {
-      await QuickImportRepo.getAllCategory().then((cateList) {
+      await QuickImportRepo.getAllCategory(rootId: event.rootId).then((cateList) {
         emit(QuickImportLoadedState(list: cateList,value: cateList.first.sId));
       });
     } catch (e) {
@@ -45,6 +45,8 @@ class QuickImportBloc extends Bloc<QuickImportEvent, QuickImportState> {
     }
   }
 }
+
+
 
 
 void _onChangeDropValue(
