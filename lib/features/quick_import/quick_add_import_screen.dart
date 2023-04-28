@@ -163,6 +163,7 @@ class _QuickAddImportScreenState extends State<QuickAddImportScreen> {
                                   ElevatedButton(onPressed: () => Navigator.pop(context), child: Text('Cancel'))
                                 ],));
                               },)
+
                             ],
                           ),
 
