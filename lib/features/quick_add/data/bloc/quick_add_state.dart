@@ -12,4 +12,6 @@ class QuickAddLoadedState extends QuickAddState{
   QuickAddLoadedState({this.list});
 }
 
+class QuickAddedState extends QuickAddState{}
+
 class QuickAddErrorState extends QuickAddState{}

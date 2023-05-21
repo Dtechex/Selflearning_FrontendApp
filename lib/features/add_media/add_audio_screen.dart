@@ -1,8 +1,5 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:self_learning_app/features/add_media/bloc/add_media_bloc.dart';
 
 import 'package:self_learning_app/utilities/extenstion.dart';
 
@@ -10,24 +7,24 @@ import '../camera/camera_screen.dart';
 import '../quick_add/data/bloc/quick_add_bloc.dart';
 import '../quick_add/quick_add_screen.dart';
 
-class AddVideoScreen extends StatefulWidget {
+class AddAudioScreen extends StatefulWidget {
   final String rootId;
-  const AddVideoScreen({Key? key, required this.rootId}) : super(key: key);
+  const AddAudioScreen({Key? key, required this.rootId}) : super(key: key);
 
   @override
-  State<AddVideoScreen> createState() => _AddVideoScreenState();
+  State<AddAudioScreen> createState() => _AddAudioScreenState();
 }
 
 final TextEditingController textEditingController = TextEditingController();
 
-class _AddVideoScreenState extends State<AddVideoScreen> {
+class _AddAudioScreenState extends State<AddAudioScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(title: const Text('Create Video')),
+        appBar: AppBar(title: Text('Create Audio')),
         body: Container(
-          padding: const EdgeInsets.only(left: 20, right: 20),
-          child: BlocConsumer<AddMediaBloc, AddMediaInitial>(
+          padding: EdgeInsets.only(left: 20, right: 20),
+          child: BlocConsumer<QuickAddBloc, QuickAddState>(
             listener: (context, state) {
               if (state is QuickAddedState) {
                 Navigator.pushAndRemoveUntil(
@@ -39,6 +36,8 @@ class _AddVideoScreenState extends State<AddVideoScreen> {
               }
             },
             builder: (context, state) {
+              print(state);
+              print("state");
               return Column(
                 children: [
                   Container(
@@ -50,7 +49,7 @@ class _AddVideoScreenState extends State<AddVideoScreen> {
                       decoration: InputDecoration(hintText: 'title'),
                     ),
                   ),
-                 state.file==null? Container(
+                  Container(
                     decoration: BoxDecoration(
                         color: Colors.grey,
                         borderRadius: BorderRadius.circular(10)),
@@ -59,19 +58,8 @@ class _AddVideoScreenState extends State<AddVideoScreen> {
                     child: Center(
                       child: Icon(Icons.image, size: context.screenWidth / 2.5),
                     ),
-                  ):
-                     Stack(children: [
-                       Container(
-                         decoration: BoxDecoration(
-                             color: Colors.grey,
-                             borderRadius: BorderRadius.circular(10)),
-                         height: context.screenHeight * 0.24,
-                         width: context.screenWidth,
-                         child: Image.file(File(state.file!.path))
-                       )
-                     ],),
-
-                  const SizedBox(
+                  ),
+                  SizedBox(
                     height: 30,
                   ),
                   ElevatedButton(
@@ -90,7 +78,6 @@ class _AddVideoScreenState extends State<AddVideoScreen> {
                       child: const Text('Create '))
                 ],
               );
-
             },
           ),
         ));

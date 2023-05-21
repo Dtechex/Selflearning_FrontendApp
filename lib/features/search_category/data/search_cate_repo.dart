@@ -12,7 +12,7 @@ class SearchCategoryRepo {
   static Future<List<SearchCategoryModel>> searchCategories(String? query) async {
     print('inside srarch ctegory');
     Response res = await Api().get(
-      endPoint: 'category/search/$query',
+      endPoint: 'category/search?keyword=$query',
     );
     print(res.body);
     print('res.body');

@@ -9,6 +9,7 @@ import 'package:self_learning_app/features/search_category/bloc/search_cat_bloc.
 import 'package:self_learning_app/features/subcategory/sub_cate_screen.dart';
 import 'package:self_learning_app/utilities/colors.dart';
 import 'package:self_learning_app/utilities/extenstion.dart';
+import 'package:self_learning_app/widgets/add_resources_screen.dart';
 import '../quick_add/quick_add_screen.dart';
 import '../search_category/bloc/search_cate_event.dart';
 import '../search_category/cate_search_delegate.dart';
@@ -135,7 +136,10 @@ class _AllCateScreenState extends State<AllCateScreen> {
                       ),
                       IconButton(
                           onPressed: () {
-                            _displayTextInputDialog(context);
+                            Navigator.push(context, MaterialPageRoute(builder: (context) {
+                              return AddResourceScreen();
+                            },));
+                            //_displayTextInputDialog(context);
                           },
                           icon: const Icon(Icons.add)),
                     ],

@@ -1,4 +1,7 @@
+import 'dart:developer';
+
 import 'package:device_preview/device_preview.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:self_learning_app/features/category/bloc/category_bloc.dart';
 import 'package:self_learning_app/features/dashboard/dashboard_screen.dart';
@@ -19,11 +22,34 @@ import 'features/dashboard/bloc/dashboard_bloc.dart';
 import 'features/login/bloc/login_bloc.dart';
 import 'features/subcate1.2/bloc/sub_cate2_bloc.dart';
 
-void main() => runApp(
-  const MyApp(), // Wrap your app
-
+BaseOptions baseOptions = BaseOptions(
+  baseUrl: 'http://3.110.219.9:8000/',
+  receiveTimeout: const Duration(seconds: 90),
+  sendTimeout: const Duration(seconds: 90),
+  connectTimeout: const Duration(seconds: 90),
+  responseType: ResponseType.json,
+  maxRedirects: 3,
 );
+Dio dio = Dio(baseOptions);
 
+
+
+
+void main() {
+  dio.interceptors.add(LogInterceptor(
+      responseBody: true,
+      responseHeader: false,
+      requestBody: true,
+      request: true,
+      requestHeader: true,
+      error: true,
+      logPrint: (text) {
+        log(text.toString());
+      }));
+  runApp(
+    const MyApp(), // Wrap your app
+  );
+}
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 

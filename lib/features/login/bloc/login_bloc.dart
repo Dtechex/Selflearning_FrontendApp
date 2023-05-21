@@ -41,7 +41,7 @@ class MyFormBloc extends Bloc<MyFormEvent, MyFormState> {
 
   void _onChangeObsecure(ChangeObsecure event, Emitter<MyFormState> emit) {
     emit(
-      state.copyWith(isObsecure: !event.isObsecure),);
+      state.copyWith(isObsecure: !event.isObsecure,status: FormzStatus.pure,),);
   }
 
 

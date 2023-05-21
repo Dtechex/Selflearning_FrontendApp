@@ -9,6 +9,7 @@ class LoginRepo {
         Uri.parse('http://3.110.219.9:8000/web/user/login'),
         body: {"email": email, "password": password});
     if (response.statusCode == 201) {
+      print(response.body);
       var res = jsonDecode(response.body);
       SharedPref().clear();
       SharedPref().saveToken(res['data']['token']);
