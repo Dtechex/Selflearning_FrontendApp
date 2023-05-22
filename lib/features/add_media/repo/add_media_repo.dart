@@ -1,33 +1,32 @@
-import 'package:dio/dio.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:self_learning_app/utilities/shared_pref.dart';
-import '../../../main.dart';
+import 'package:http/http.dart' as http;
+
+import '../../../utilities/shared_pref.dart';
 
 class AddMediaRepo {
 
-  static Future<String?> uploadImage({required String filePath,required XFile file}) async {
-    try {
-      final token = await SharedPref().getToken();
-      dio.options.headers['Authorization'] = 'Bearer $token';
-      dio.options.headers['Content-Type'] = 'multipart/form-data';
-        FormData formData = FormData.fromMap({'content': await MultipartFile.fromFile(filePath),
-        "type":"QUICKADD",
-        "title":"title"});
-        print(formData.files);
-        print(formData.fields);
-        print('formData.fields');
-        Response response = await dio.post('web/resource/quickAdd', data: formData);
-        print(response.statusCode);
-        print('response.statusCode');
-        String imageUrl = response.data['image'];
-        return null;
-      } catch (e) {
-      print('errore here');
-        // if (kDebugMode) {
-        //   print(e.toString());
+  static Future <String?> uploadFileToServer({String? imagePath}) async {
+    print(imagePath);
+    final token = await SharedPref().getToken();
+    var request = http.MultipartRequest(
+        "POST", Uri.parse('http://3.110.219.9:8000/web/resource/quickAdd'));
+    request.headers['Authorization'] = 'Bearer $token';
+    request.fields['type'] = 'QUICKADD';
+    request.fields['title'] = 'My first image';
+   // request.fields['content'] = 'My first image';
+    request.files.add(await http.MultipartFile.fromPath('content', imagePath!));
+    request.send().then((response) {
+      http.Response.fromStream(response).then((onValue) {
+        try {
+          print(onValue.body);
+          // get your response here...
+        } catch (e) {
+          print(e);
+          print('error');
+          // handle exeption
         }
-        return null;
-      }
+      });
+    });
+  }
       // var response = await dio.post(
       //   'web/resource/quickAdd',
       //   data: data,);

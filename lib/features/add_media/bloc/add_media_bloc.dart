@@ -39,7 +39,7 @@ class AddMediaBloc extends Bloc<AddMediaEvent, AddMediaInitial> {
   _onSubmitButtonEvent(SubmitButtonEvent event, Emitter<AddMediaInitial> emit)async {
     emit(state.copyWith(apiState: ApiState.submitting));
     try {
-     await  AddMediaRepo.uploadImage(filePath: state.file!.path,file: state.file!).then((value) {
+     await  AddMediaRepo.uploadFileToServer(imagePath: state.file!.path).then((value) {
         if (value != null) {
           emit(state.copyWith(apiState: ApiState.submitted));
         }

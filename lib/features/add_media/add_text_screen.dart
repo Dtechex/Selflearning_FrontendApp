@@ -36,8 +36,6 @@ class _AddTextScreenState extends State<AddTextScreen> {
               }
             },
             builder: (context, state) {
-              print(state);
-              print("state");
               return Column(
                 children: [
                   Container(

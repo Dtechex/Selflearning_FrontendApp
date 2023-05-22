@@ -137,7 +137,7 @@ class _AllCateScreenState extends State<AllCateScreen> {
                       IconButton(
                           onPressed: () {
                             Navigator.push(context, MaterialPageRoute(builder: (context) {
-                              return AddResourceScreen();
+                              return AddResourceScreen(rootId: '',);
                             },));
                             //_displayTextInputDialog(context);
                           },

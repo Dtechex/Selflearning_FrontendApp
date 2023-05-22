@@ -140,8 +140,6 @@ class _SubCategoryScreenState extends State<SubCategoryScreen> {
                     ),
                     BlocBuilder<SubCategoryBloc, SubCategoryState>(
                       builder: (context, state) {
-                        print(state);
-                        print('state');
                         if (state is SubCategoryLoading) {
                           return const Center(child: CircularProgressIndicator());
                         } else if (state is SubCategoryLoaded) {
@@ -162,7 +160,6 @@ class _SubCategoryScreenState extends State<SubCategoryScreen> {
                             itemBuilder: (context, index) {
                               return GestureDetector(
                                 onTap: () async{
-                                  print('subcate inside');
                                   //   await SharedPref().savesubcateId(state.cateList[index].sId!);
                                   Navigator.push(context, MaterialPageRoute(
                                     builder: (context) {
@@ -206,7 +203,7 @@ class _SubCategoryScreenState extends State<SubCategoryScreen> {
                       },
                     ),],
                 ),
-                AddResourceScreen(),
+                AddResourceScreen(rootId: '',),
 
               ],
             ),
