@@ -5,17 +5,17 @@ abstract class AddMediaEvent {}
 
 class ImagePickEvent extends AddMediaEvent{
 
-  final XFile? image;
+  final String? image;
   ImagePickEvent({this.image});
 }
 
 class AudioPickEvent extends AddMediaEvent{
-  final FilePickerResult? audio;
+  final String ? audio;
   AudioPickEvent({this.audio});
 }
 
 class VideoPickEvent extends AddMediaEvent{
-  final FilePickerResult? video;
+  final String? video;
   VideoPickEvent({this.video});
 }
 
@@ -23,13 +23,15 @@ class TextPickEvent extends AddMediaEvent{
   final String? title;
   TextPickEvent({this.title});
 }
+class RemoveMedia extends AddMediaEvent{}
+
+class GetUploadPercentage extends AddMediaEvent{}
 
 class SubmitButtonEvent extends AddMediaEvent{
-  final String mediaType;
-
-  // final FilePickerResult? media;
-  // final XFile? image;
+  final int  whichResources;
+  final String? resourcesId;
+  final String? rootId;
   final String? title;
 
-  SubmitButtonEvent({this.title,required this.mediaType});
+  SubmitButtonEvent( {this.rootId,this.title,required this.whichResources,this.resourcesId});
 }

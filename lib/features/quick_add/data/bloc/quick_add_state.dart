@@ -8,7 +8,7 @@ class QuickAddInitial extends QuickAddState {}
 class QuickAddLoadingState extends QuickAddState{}
 
 class QuickAddLoadedState extends QuickAddState{
-  final List<QuickTypeModel>? list;
+  final QuickTypeModel ? list;
   QuickAddLoadedState({this.list});
 }
 

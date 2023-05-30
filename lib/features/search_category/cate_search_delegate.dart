@@ -84,6 +84,7 @@ class CustomSearchDelegate extends SearchDelegate
                               Navigator.push(context, MaterialPageRoute(
                                 builder: (context) {
                                   return SubCategoryScreen(
+
                                     categoryName: state.cateList[index].name,
                                   );
                                 },

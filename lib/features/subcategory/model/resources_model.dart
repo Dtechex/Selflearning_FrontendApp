@@ -20,29 +20,69 @@ class AllResourcesModel {
 }
 
 class Data {
-  List<Record>? record;
+  Record? record;
 
   Data({this.record});
 
   Data.fromJson(Map<String, dynamic> json) {
-    if (json['record'] != null) {
-      record = <Record>[];
-      json['record'].forEach((v) {
-        record!.add(new Record.fromJson(v));
-      });
-    }
+    record =
+    json['record'] != null ? new Record.fromJson(json['record']) : null;
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     if (this.record != null) {
-      data['record'] = this.record!.map((v) => v.toJson()).toList();
+      data['record'] = this.record!.toJson();
     }
     return data;
   }
 }
 
 class Record {
+  List<Records>? records;
+  int? imageCount;
+  int? videoCount;
+  int? audioCount;
+  int? textCount;
+  int? totalCount;
+
+  Record(
+      {this.records,
+        this.imageCount,
+        this.videoCount,
+        this.audioCount,
+        this.textCount,
+        this.totalCount});
+
+  Record.fromJson(Map<String, dynamic> json) {
+    if (json['records'] != null) {
+      records = <Records>[];
+      json['records'].forEach((v) {
+        records!.add(new Records.fromJson(v));
+      });
+    }
+    imageCount = json['imageCount'];
+    videoCount = json['videoCount'];
+    audioCount = json['audioCount'];
+    textCount = json['textCount'];
+    totalCount = json['totalCount'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    if (this.records != null) {
+      data['records'] = this.records!.map((v) => v.toJson()).toList();
+    }
+    data['imageCount'] = this.imageCount;
+    data['videoCount'] = this.videoCount;
+    data['audioCount'] = this.audioCount;
+    data['textCount'] = this.textCount;
+    data['totalCount'] = this.totalCount;
+    return data;
+  }
+}
+
+class Records {
   String? sId;
   String? type;
   String? content;
@@ -51,7 +91,7 @@ class Record {
   String? updatedAt;
   int? iV;
 
-  Record(
+  Records(
       {this.sId,
         this.type,
         this.content,
@@ -60,7 +100,7 @@ class Record {
         this.updatedAt,
         this.iV});
 
-  Record.fromJson(Map<String, dynamic> json) {
+  Records.fromJson(Map<String, dynamic> json) {
     sId = json['_id'];
     type = json['type'];
     content = json['content'];

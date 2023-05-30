@@ -173,7 +173,7 @@ class _SubCategory2ScreenState extends State<SubCategory2Screen> {
                     ),
                   ],
                 ),
-                AddResourceScreen(rootId: '',),
+                AddResourceScreen(rootId: widget.rootId??'',whichResources: 1),
 
               ],
             ),

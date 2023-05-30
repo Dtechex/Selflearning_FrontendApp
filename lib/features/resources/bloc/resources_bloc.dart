@@ -17,7 +17,7 @@ class ResourcesBloc extends Bloc<ResourcesEvent, ResourcesState> {
       LoadResourcesEvent event, Emitter<ResourcesState> emit) async {
     emit(ResourcesLoading());
     try {
-      ResourcesRepo.getResources(rootId: event.rootId).then((value) {
+     await  ResourcesRepo.getResources(rootId: event.rootId).then((value) {
         emit(ResourcesLoaded(allResourcesModel: value!));
       });
     } catch (e) {

@@ -81,13 +81,13 @@ class _SubCategoryScreenState extends State<SubCategoryScreen> {
               bottom:  TabBar(
                 tabs: [
                 Column(
-                  children: [
+                  children: const [
                     Tab(icon: Icon(Icons.list_alt,)),
                     Text('Subcategory list')
                   ],
                 ),
                   Column(
-                    children: [
+                    children: const [
                       Tab(icon: Icon(Icons.perm_media,)),
                       Text('Resources')
                     ],
@@ -203,7 +203,7 @@ class _SubCategoryScreenState extends State<SubCategoryScreen> {
                       },
                     ),],
                 ),
-                AddResourceScreen(rootId: '',),
+                AddResourceScreen(rootId: widget.rootId??'',whichResources: 1,),
 
               ],
             ),

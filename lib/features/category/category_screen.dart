@@ -137,7 +137,7 @@ class _AllCateScreenState extends State<AllCateScreen> {
                       IconButton(
                           onPressed: () {
                             Navigator.push(context, MaterialPageRoute(builder: (context) {
-                              return AddResourceScreen(rootId: '',);
+                              return AddResourceScreen2(resourceId: '',whichResources: 0,);
                             },));
                             //_displayTextInputDialog(context);
                           },
@@ -161,7 +161,7 @@ class _AllCateScreenState extends State<AllCateScreen> {
                              setState(() {
                                selectedIndex=index;
                                if(index==3) {
-                                 context.read<QuickAddBloc>().add(LoadQuickTypeEvent());
+
                                  Navigator.push(context, MaterialPageRoute(builder: (context) {
                                    return const QuickTypeScreen();
                                  },));
@@ -203,7 +203,7 @@ class _AllCateScreenState extends State<AllCateScreen> {
 
                       return GestureDetector(
                         child: Container(
-                          width: context.screenWidth / 2,
+                          padding: const EdgeInsets.all(8),
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(10),
                             color: Colors.transparent,
@@ -211,11 +211,11 @@ class _AllCateScreenState extends State<AllCateScreen> {
                           ),
                           child: Center(
                             child: Text(state.cateList[index].name.toString(),
+                                maxLines: 1,
                                 style: const TextStyle(color: primaryColor)),
                           ),
                         ),
                         onTap: () {
-
                           Navigator.push(context, MaterialPageRoute(
                             builder: (context) {
                               return SubCategoryScreen(

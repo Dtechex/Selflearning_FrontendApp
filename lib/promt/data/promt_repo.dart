@@ -1,0 +1,32 @@
+import 'dart:convert';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:http/http.dart';
+import 'package:self_learning_app/features/quick_add/data/bloc/quick_add_bloc.dart';
+import 'package:self_learning_app/features/quick_add/data/repo/model/quick_type_model.dart';
+import 'package:self_learning_app/promt/data/model/promt_model.dart';
+import 'package:self_learning_app/utilities/constants.dart';
+import '../../../../utilities/base_client.dart';
+import 'package:http/http.dart' as http;
+
+import '../../../../utilities/shared_pref.dart';
+
+class PromtRepo {
+
+  static Future<List<PromtModel>> getPromts({required String promtId}) async {
+    Response res = await Api().get(
+      endPoint: 'prompt?q=$promtId',);
+    var data = await jsonDecode(res.body);
+
+    final List<PromtModel> list=[];
+   final  List<dynamic> mylist=data['data']['record'];
+    if(mylist.isNotEmpty){
+      for(var l in mylist){
+        list.add(PromtModel.fromJson(l));
+      }
+    }
+    return list;
+  }
+
+
+}

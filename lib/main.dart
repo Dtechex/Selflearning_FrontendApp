@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:device_preview/device_preview.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:loader_overlay/loader_overlay.dart';
 import 'package:self_learning_app/features/category/bloc/category_bloc.dart';
 import 'package:self_learning_app/features/dashboard/dashboard_screen.dart';
 import 'package:self_learning_app/features/login/data/repo/login_repo.dart';
@@ -67,28 +68,27 @@ class MyApp extends StatelessWidget {
               create: (context) => SearchCategoryBloc()),
           BlocProvider<SubCategoryBloc>(create: (context) => SubCategoryBloc()),
           //BlocProvider<CameraBloc>(create: (context) => CameraBloc()),
-          BlocProvider<QuickAddBloc>(create: (context) => QuickAddBloc()),
           BlocProvider<SubCategory1Bloc>(create: (context) => SubCategory1Bloc()),
           BlocProvider<SubCategory2Bloc>(create: (context) => SubCategory2Bloc()),
           BlocProvider<QuickImportBloc>(create: (context) => QuickImportBloc()),
 
         ],
-        child: MaterialApp(
+        child: GlobalLoaderOverlay(child: MaterialApp(
             useInheritedMediaQuery: true,
             locale: DevicePreview.locale(context),
             builder: DevicePreview.appBuilder,
-          debugShowCheckedModeBanner: false,
+            debugShowCheckedModeBanner: false,
             title: 'Self Learing',
             theme: ThemeData(floatingActionButtonTheme: const FloatingActionButtonThemeData(
-              backgroundColor: primaryColor
+                backgroundColor: primaryColor
             ),
 
               iconTheme: const IconThemeData(
-                color: primaryColor,
-                weight: 2
+                  color: primaryColor,
+                  weight: 2
               ),
               listTileTheme: const ListTileThemeData(
-                iconColor: primaryColor
+                  iconColor: primaryColor
               ),
               elevatedButtonTheme: const ElevatedButtonThemeData(
                   style: ButtonStyle(
@@ -110,6 +110,6 @@ class MyApp extends StatelessWidget {
                   return const LoginScreen();
                 }
               },
-            )));
+            )),));
   }
 }

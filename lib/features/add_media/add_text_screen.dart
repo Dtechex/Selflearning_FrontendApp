@@ -1,15 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:loader_overlay/loader_overlay.dart';
 
 import 'package:self_learning_app/utilities/extenstion.dart';
 
+import '../../promt/promts_screen.dart';
 import '../camera/camera_screen.dart';
 import '../quick_add/data/bloc/quick_add_bloc.dart';
 import '../quick_add/quick_add_screen.dart';
+import '../resources/resources_screen.dart';
+import 'bloc/add_media_bloc.dart';
 
 class AddTextScreen extends StatefulWidget {
   final String rootId;
-  const AddTextScreen({Key? key, required this.rootId}) : super(key: key);
+  final int whichResources;
+  final String? resourceId;
+  const AddTextScreen({Key? key, required this.rootId,required this.whichResources,this.resourceId}) : super(key: key);
 
   @override
   State<AddTextScreen> createState() => _AddTextScreenState();
@@ -18,21 +24,71 @@ class AddTextScreen extends StatefulWidget {
 final TextEditingController textEditingController = TextEditingController();
 
 class _AddTextScreenState extends State<AddTextScreen> {
+  AddMediaBloc addMediaBloc= AddMediaBloc();
+
+
+  @override
+  void initState() {
+
+    super.initState();
+    textEditingController.text='';
+  }
+
+  @override
+  void dispose() {
+    context.loaderOverlay.hide();
+    super.dispose();
+    print('dispose');
+    addMediaBloc.close();
+  }
+
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return BlocProvider(create: (context) => addMediaBloc,child: Scaffold(
         appBar: AppBar(title: Text('Create Text')),
-        body: Container(
+        body: SingleChildScrollView(
           padding: const EdgeInsets.only(left: 20, right: 20),
-          child: BlocConsumer<QuickAddBloc, QuickAddState>(
+          child: BlocConsumer<AddMediaBloc, AddMediaInitial>(
             listener: (context, state) {
-              if (state is QuickAddedState) {
-                Navigator.pushAndRemoveUntil(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const QuickTypeScreen(),
-                    ),
-                        (route) => false);
+              if (state.apiState==ApiState.submitted ) {
+                context.loaderOverlay.hide();
+                print(state.wichResources);
+                print('state.wichResources');
+                switch(state.wichResources){
+                  case 0: {
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const QuickTypeScreen(),
+                      ),
+                    );
+                  }break;
+                  case 1: {
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => AllResourcesList(rootId: widget.rootId),
+                      ),
+                    );
+                  }break;
+                  case 2: {
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => PromtsScreen(promtId: widget.rootId),
+                      ),
+                    );
+
+                  }break;
+                }
+              }
+              else if  (state.apiState==ApiState.submitting) {
+                context.loaderOverlay.show();
+                context.showSnackBar(const SnackBar(duration: Duration(seconds: 1),content: Text('Adding resources...')));
+              } else if  (state.apiState==ApiState.submitError) {
+                context.loaderOverlay.hide();
+                context.showSnackBar(const SnackBar(duration: Duration(seconds: 1),content: Text('Something went wrong.')));
               }
             },
             builder: (context, state) {
@@ -47,37 +103,22 @@ class _AddTextScreenState extends State<AddTextScreen> {
                       decoration: InputDecoration(hintText: 'title'),
                     ),
                   ),
-                  Container(
-                    decoration: BoxDecoration(
-                        color: Colors.grey,
-                        borderRadius: BorderRadius.circular(10)),
-                    height: context.screenHeight * 0.24,
-                    width: context.screenWidth,
-                    child: Center(
-                      child: Icon(Icons.image, size: context.screenWidth / 2.5),
-                    ),
-                  ),
-                  SizedBox(
-                    height: 30,
-                  ),
+
                   ElevatedButton(
                       onPressed: () {
-                        context.read<QuickAddBloc>().add(ButtonPressedEvent(
+                        addMediaBloc.add(SubmitButtonEvent(
+                          //  resourcesId: widget.resourceId,
+                           whichResources: widget.whichResources,
+                            rootId: widget.rootId,
                             title: textEditingController.text.isEmpty
                                 ? 'Untitled'
                                 : textEditingController.text));
-                        // Navigator.pushAndRemoveUntil(
-                        //     context,
-                        //     MaterialPageRoute(
-                        //       builder: (context) => QuickTypeScreen(),
-                        //     ),
-                        //     (route) => false);
                       },
                       child: const Text('Create '))
                 ],
               );
             },
           ),
-        ));
+        )),);
   }
 }

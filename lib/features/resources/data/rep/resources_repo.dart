@@ -8,9 +8,21 @@ import 'package:http/http.dart';
 class ResourcesRepo{
 
   static Future<AllResourcesModel?> getResources({required String rootId})async {
-    Response res = await Api().get(
-      endPoint: 'resource',);
-    if(res.statusCode==201){
+    Response res = await Api().get(endPoint: 'resource?rootId=$rootId',);
+    print('rood id');
+    print(rootId);
+
+    if(res.statusCode==200){
+      var data = await jsonDecode(res.body);
+      return AllResourcesModel.fromJson(data);
+    }
+    print(res.body);
+  }
+
+
+  static Future<AllResourcesModel?> addResources({required String rootId,required String type, required String mediaPath})async {
+    Response res = await Api().get(endPoint: 'resource',);
+    if(res.statusCode==200){
       var data = await jsonDecode(res.body);
       return AllResourcesModel.fromJson(data);
     }

@@ -9,17 +9,17 @@ abstract class AddMediaState {}
 
 class AddMediaInitial extends AddMediaState {
   final ApiState apiState;
-  final XFile? file;
+  final String? selectedFilepath;
   final String? name;
-  final FilePickerResult? result;
-  AddMediaInitial( {this.file, this.name, this.result,required this.apiState});
+  final int ?  wichResources;
+  AddMediaInitial( { this.name,required this.apiState,this.selectedFilepath='', this.wichResources});
 
   AddMediaInitial copyWith(
-      {XFile? file, String? name, FilePickerResult? result,ApiState? apiState}) {
+      {String? name, String? selectedFilepath,ApiState? apiState, int ?  wichResources}) {
     return AddMediaInitial(
       apiState: apiState??this.apiState,
         name: name ?? this.name,
-        file: file ?? this.file,
-        result: result ?? this.result);
+        selectedFilepath: selectedFilepath??this.selectedFilepath ,
+        wichResources: wichResources??this.wichResources);
   }
 }

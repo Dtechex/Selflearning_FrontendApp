@@ -37,9 +37,13 @@ class QuickAddBloc extends Bloc<QuickAddEvent, QuickAddState> {
     emit(QuickAddLoadingState());
     try {
       await QuickAddRepo.getAllQuickTypes().then((value) {
+        print(value.data!.record!.records);
+        print('valuessss');
         emit(QuickAddLoadedState(list: value));
       });
     } catch (e) {
+      print(e);
+      print('errorr');
       emit((QuickAddErrorState()));
     }
   }

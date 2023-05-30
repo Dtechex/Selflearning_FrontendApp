@@ -1,121 +1,121 @@
-import 'package:http/http.dart' as http;
+import 'dart:convert';
 
+import 'package:http/http.dart' as http;
+import 'package:mime/mime.dart';
+import 'dart:io';
 import '../../../utilities/shared_pref.dart';
+import 'package:http_parser/http_parser.dart';
 
 class AddMediaRepo {
+  static Future<String?> addQuickAddwithResources(
+      {String? imagePath, required String title}) async {
+    print('quickadd');
+    try {
+      final token = await SharedPref().getToken();
+      var request = http.MultipartRequest(
+        "POST",
+        Uri.parse('http://3.110.219.9:8000/web/resource/quickAdd/'),
+      );
 
-  static Future <String?> uploadFileToServer({String? imagePath}) async {
-    print(imagePath);
+      request.headers['Authorization'] = 'Bearer $token';
+      request.fields['type'] = 'QUICKADD';
+      request.fields['title'] = title;
+      print(imagePath!.length);
+
+
+      if (imagePath.isNotEmpty) {
+        print('inide');
+        var file = File(imagePath);
+        var mimeType = lookupMimeType(file.path);
+        request.files.add(http.MultipartFile.fromBytes(
+          'content',
+          await file.readAsBytes(),
+          filename: file.path
+              .split('/')
+              .last,
+          contentType: MediaType.parse(mimeType!),
+        ));
+      }
+
+      var streamedResponse = await request.send();
+      var response = await http.Response.fromStream(streamedResponse);
+      return response.body;
+    } catch (e) {
+      print(e);
+      print('erroeer');
+      return null;
+    }
+  }
+
+  static Future<String?> addPrompt({String? imagePath,required String resourcesId,required String name}) async {
+    print('addpromt');
+    try{
+      final token = await SharedPref().getToken();
+      var request = http.MultipartRequest(
+        "POST",
+        Uri.parse('http://3.110.219.9:8000/web/prompt/'),
+      );
+
+      request.headers['Authorization'] = 'Bearer $token';
+      request.fields['resourceId'] = resourcesId;
+      request.fields['name'] = name;
+
+      if (imagePath != null) {
+        var file = File(imagePath);
+        var mimeType = lookupMimeType(file.path);
+
+        request.files.add(http.MultipartFile(
+          'content',
+          file.openRead(),
+          await file.length(),
+          filename: file.path
+              .split('/')
+              .last,
+          contentType: MediaType.parse(mimeType!),
+        ));
+      }
+
+      var streamedResponse = await request.send();
+      var response = await http.Response.fromStream(streamedResponse);
+      final data=jsonDecode(response.body);
+      print(data);
+      print('gg');
+      return data[''];
+
+    }catch(e){
+      print(e);
+    }
+  }
+
+  static Future<String?> addResources(
+      {String? imagePath, required String resourceId}) async {
+    print(resourceId);
+    print('resource inside add reouse' );
+    print('add resources');
     final token = await SharedPref().getToken();
     var request = http.MultipartRequest(
-        "POST", Uri.parse('http://3.110.219.9:8000/web/resource/quickAdd'));
-    request.headers['Authorization'] = 'Bearer $token';
-    request.fields['type'] = 'QUICKADD';
-    request.fields['title'] = 'My first image';
-   // request.fields['content'] = 'My first image';
-    request.files.add(await http.MultipartFile.fromPath('content', imagePath!));
-    request.send().then((response) {
-      http.Response.fromStream(response).then((onValue) {
-        try {
-          print(onValue.body);
-          // get your response here...
-        } catch (e) {
-          print(e);
-          print('error');
-          // handle exeption
-        }
-      });
-    });
-  }
-      // var response = await dio.post(
-      //   'web/resource/quickAdd',
-      //   data: data,);
-      // print(response);
+      "POST", Uri.parse('http://3.110.219.9:8000/web/resource/'),
+    );
 
-      // final data = response.data;
-      // print(data);
-      //
-      // String imageUrl = data['image'];
-     // return imageUrl;
+    request.headers['Authorization'] = 'Bearer $token';
+    request.fields['rootId'] = resourceId;
+    request.fields['type'] = 'image';
+    print(imagePath!.isEmpty);
+    print('imagePath');
+
+    if (imagePath.isNotEmpty) {
+      print('inside multitpart');
+      var file = File(imagePath);
+      var mimeType = lookupMimeType(file.path);
+      request.files.add(http.MultipartFile.fromBytes('content', await file.readAsBytes(), filename: file.path.split('/').last, contentType: MediaType.parse(mimeType!),
+      ));
     }
 
-// final token= await SharedPref().getToken();
-// http.MultipartRequest request = http.MultipartRequest("POST", Uri.parse('http://3.110.219.9:8000/web/resource/quickAdd'));
-// request.headers['Authorization'] = 'Bearer $token';
-// request.fields['title'] = 'dfgdfgdsf';
-// request.fields['type'] = 'QUICKADD';
+    var streamedResponse = await request.send();
+    var response = await http.Response.fromStream(streamedResponse);
 
 
-  // Future<void> postJob(context) async {
-  //   try{
-  //     var latitude = await SharedPref().getLat();
-  //     var longitude = await SharedPref().getLong();
-  //     String fbid = await SharedPref().getfbId();
-  //     String token = await SharedPref().getToken();
-  //     setState(() {
-  //       _isloading = true;
-  //     });
-  //     List<File> _image = []; //=   File( imageArray[0].path);
-  //     for (int i = 0; i < imageArray.length; i++) {
-  //
-  //       File img = File(imageArray[i].path);
-  //       _image.add(img);
-  //     }
-  //     Map<String, String> headers = {"Authorization": 'bearer' + ' ' + token,
-  //       'socialId':fbid==null?'':fbid};
-  //     final uri = Uri.parse(DEVELOPMENT_BASE_URL+endPoints.postJob);
-  //     var request = http.MultipartRequest('POST', uri);
-  //     for (var file in _image) {
-  //       String fileName = file.path.split("/").last;
-  //       var stream = http.ByteStream(DelegatingStream.typed(file.openRead()));
-  //       // get file length
-  //       var length = await file.length(); //imageFile is your image file
-  //       // multipart that takes file
-  //       var multipartFileSign = new http.MultipartFile(
-  //           'image[]', stream, length,
-  //           filename: fileName);
-  //       request.files.add(multipartFileSign);
-  //     }
-  //     request.headers.addAll(headers);
-  //     request.fields["address"] = _locationController.text;
-  //     request.fields["title"] = _titleController.text;
-  //     request.fields["contact_person"] = _contactPersonController.text;
-  //     request.fields["phone_no"] = _phoneNumberController.text;
-  //     request.fields["email"] = _emailController.text;
-  //     request.fields["latitude"] = latitude.toString();
-  //     request.fields["longitude"] = longitude.toString();
-  //     request.fields["job_cat_ids"] = selectedjobcatid;
-  //     request.fields["job_type"] = '1';
-  //     request.fields["description"] = _descriptionController.text;
-  //
-  //     var response = await request.send();
-  //     response.stream.transform(utf8.decoder).listen((value) {
-  //       setState(() {
-  //         _isloading = false;
-  //         var res = jsonDecode(value);
-  //         if (response.statusCode == 200) {
-  //           CustomSnackbar.ShowSnackBar(context, 'Job added successfully', '');
-  //           Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => MyHomePage(index: 1),), (route) => false).then((value){
-  //             Provider.of<ChatProvider>(context,listen: false).fetchchatCount(context);
-  //           });
-  //         } else {
-  //           res['data'] == null
-  //               ? CustomSnackbar.ShowSnackBar(
-  //               context, res['error'].toString(), '')
-  //               : CustomSnackbar.ShowSnackBar(
-  //               context, res['error']['message'].toString(), "");
-  //         }
-  //       });
-  //     });
-  //   }catch(e){
-  //   }finally{
-  //     setState(() {
-  //       _isloading = false;
-  //     });
-  //   }
-  //
-  //
-  // }
-  //
-
-
+      print(response.body);
+      return response.body;
+    }
+  }
