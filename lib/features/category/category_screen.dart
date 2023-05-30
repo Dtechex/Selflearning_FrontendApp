@@ -73,7 +73,7 @@ class _AllCateScreenState extends State<AllCateScreen> {
                   },
                 ),
                 onPressed: () {
-                  context.read<QuickAddBloc>().add(ButtonPressedEvent(title: quickaddcontroller.text));
+                 // context.read<QuickAddBloc>().add(ButtonPressedEvent(title: quickaddcontroller.text));
                 },
               )
             ],

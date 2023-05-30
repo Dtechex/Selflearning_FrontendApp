@@ -180,6 +180,7 @@ class _AddVideoScreenState extends State<AddVideoScreen> {
                   ElevatedButton(
                       onPressed: () {
                         addMediaBloc.add(SubmitButtonEvent(
+                          MediaType: 3,
                       //    resourcesId: widget.resourceId,
                             whichResources: widget.whichResources,
                             rootId: widget.rootId,

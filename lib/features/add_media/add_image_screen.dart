@@ -155,6 +155,7 @@ class _AddImageScreenState extends State<AddImageScreen> {
                   ElevatedButton(
                       onPressed: () {
                         addMediaBloc.add(SubmitButtonEvent(
+                          MediaType: 1,
                             whichResources: widget.whichResources,
                             rootId: widget.rootId,
                             title: textEditingController.text.isEmpty

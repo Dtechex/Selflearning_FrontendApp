@@ -32,6 +32,7 @@ class SubmitButtonEvent extends AddMediaEvent{
   final String? resourcesId;
   final String? rootId;
   final String? title;
+  final int MediaType;
 
-  SubmitButtonEvent( {this.rootId,this.title,required this.whichResources,this.resourcesId});
+  SubmitButtonEvent( {this.rootId,this.title,required this.whichResources,this.resourcesId,required this.MediaType});
 }

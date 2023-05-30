@@ -8,7 +8,7 @@ import 'package:http_parser/http_parser.dart';
 
 class AddMediaRepo {
   static Future<String?> addQuickAddwithResources(
-      {String? imagePath, required String title}) async {
+      {String? imagePath, required String title,required int contenttype}) async {
     print('quickadd');
     try {
       final token = await SharedPref().getToken();
@@ -18,7 +18,23 @@ class AddMediaRepo {
       );
 
       request.headers['Authorization'] = 'Bearer $token';
-      request.fields['type'] = 'QUICKADD';
+     switch(contenttype){
+       case 0:{
+         request.fields['type'] = 'QUICKADD-text';
+       }
+       break;
+       case 1:{
+         request.fields['type'] = 'QUICKADD-image';
+       }
+       break;
+       case 2:{
+         request.fields['type'] = 'QUICKADD-audio';
+       }
+       break;
+       case 3:{
+         request.fields['type'] = 'QUICKADD-video';
+       }
+     }
       request.fields['title'] = title;
       print(imagePath!.length);
 
@@ -39,6 +55,8 @@ class AddMediaRepo {
 
       var streamedResponse = await request.send();
       var response = await http.Response.fromStream(streamedResponse);
+      print(response.body);
+      print('response of quick add');
       return response.body;
     } catch (e) {
       print(e);
@@ -47,7 +65,7 @@ class AddMediaRepo {
     }
   }
 
-  static Future<String?> addPrompt({String? imagePath,required String resourcesId,required String name}) async {
+  static Future<String?> addPrompt({String? imagePath,required String resourcesId,required String name,}) async {
     print('addpromt');
     try{
       final token = await SharedPref().getToken();

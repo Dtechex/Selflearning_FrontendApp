@@ -19,7 +19,7 @@ class QuickAddBloc extends Bloc<QuickAddEvent, QuickAddState> {
       ButtonPressedEvent event, Emitter<QuickAddState> emit) async {
     emit(QuickAddLoadingState());
     try {
-      await QuickAddRepo.quickAdd(title: event.title!).then((value) {
+      await QuickAddRepo.quickAdd(title: event.title!, contentType: event.contentType).then((value) {
         if (value == 201) {
           emit(QuickAddLoadedState());
         } else {

@@ -11,7 +11,7 @@ import 'package:http/http.dart' as http;
 import '../../../../utilities/shared_pref.dart';
 
 class QuickAddRepo {
-  static Future<int?> quickAdd({required String title}) async {
+  static Future<int?> quickAdd({required String title,required int  contentType}) async {
     print('add category');
     Response res = await Api().post(
       payload: {

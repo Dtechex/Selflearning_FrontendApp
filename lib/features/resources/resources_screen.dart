@@ -1,13 +1,21 @@
+import 'dart:convert';
+
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:self_learning_app/features/add_media/bloc/add_media_bloc.dart';
 import 'package:self_learning_app/features/resources/bloc/resources_bloc.dart';
 import 'package:self_learning_app/features/subcategory/model/resources_model.dart';
 import 'package:self_learning_app/promt/promts_screen.dart';
 import 'package:self_learning_app/utilities/extenstion.dart';
 import 'package:mime/mime.dart';
+import '../../utilities/shared_pref.dart';
 import '../../widgets/add_resources_screen.dart';
 import '../../widgets/play_music.dart';
+import '../../widgets/pop_up_menu.dart';
+import 'package:http/http.dart' as http;
+import 'dart:io';
 
 class AllResourcesList extends StatefulWidget {
   final String rootId;
@@ -20,11 +28,41 @@ class AllResourcesList extends StatefulWidget {
 
 class _AllResourcesListState extends State<AllResourcesList> {
   final ResourcesBloc resourcesBloc = ResourcesBloc();
+  TextEditingController textEditingController= TextEditingController();
 
   @override
   void initState() {
     resourcesBloc.add(LoadResourcesEvent(rootId: widget.rootId));
     super.initState();
+  }
+
+  static Future<String?> addPrompt({required String resourcesId,required String name,context,promtId}) async {
+    print('addpromt');
+    try{
+      final token = await SharedPref().getToken();
+      final res = await http.post(Uri.parse('http://3.110.219.9:8000/web/prompt/'),body: {
+        "name" : name,
+        "resourceId": promtId
+      },headers: {
+        'Authorization': "Bearer $token"
+      });
+      print(res.statusCode);
+     // final response =jsonDecode(res.body);
+     // print(response.body);
+      if(res.statusCode==200 ||res.statusCode==201){
+        Navigator.push(context, MaterialPageRoute(
+          builder: (context) {
+            return PromtsScreen(
+                promtId: promtId);
+          },
+        ));
+      }
+      final data=jsonDecode(res.body);
+      return data[''];
+
+    }catch(e){
+      print(e);
+    }
   }
 
   @override
@@ -107,15 +145,36 @@ class _AllResourcesListState extends State<AllResourcesList> {
                               onPressed: () {
                                 print(state.allResourcesModel.data!.record!
                                     .records![index].sId);
-                                Navigator.push(context, MaterialPageRoute(
-                                  builder: (context) {
-                                    return AddResourceScreen2(
-                                      resourceId: state.allResourcesModel.data!
-                                          .record!.records![index].sId,
-                                      whichResources: 2,
-                                    );
-                                  },
+                                context.showNewDialog(AlertDialog(
+                                  title: Text('Add Question'),
+                                  content: TextField(
+                                    controller: textEditingController,
+                                    decoration: InputDecoration(hintText: 'Enter your question'),
+                                  ),
+                                  actions: <Widget>[
+                                    ElevatedButton(
+                                      child: Text('Cancel'),
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                      },
+                                    ),
+                                    ElevatedButton(
+                                      child: Text('Add'),
+                                      onPressed: () {
+                                        String question = textEditingController.text;
+                                        // You can handle the entered question here, e.g., add it to a list
+                                        // or perform any other required operation.
+                                        print('Entered question: $question');
+                                        Navigator.of(context).pop();
+                                        addPrompt(name: textEditingController.text,context: context,promtId: state.allResourcesModel.data!.record!.records![index].sId, resourcesId: state.allResourcesModel.data!.record!.records![index].iV.toString());
+
+                                      },
+                                    ),
+                                  ],
                                 ));
+                               //  Navigator.push(context, MaterialPageRoute(builder: (context) {
+                               // return   AddQuestionDialog();
+                               //  },));
                               },
                             )),
                       );

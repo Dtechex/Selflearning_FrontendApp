@@ -186,6 +186,8 @@ class _AddAudioScreenState extends State<AddAudioScreen> {
                     onPressed: () {
                       addMediaBloc.add(
                         SubmitButtonEvent(
+                          MediaType: 2,
+
                           //resourcesId: widget.resourceId,
                           rootId: widget.rootId,
                           whichResources: widget.whichResources,

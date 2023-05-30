@@ -107,6 +107,7 @@ class _AddTextScreenState extends State<AddTextScreen> {
                   ElevatedButton(
                       onPressed: () {
                         addMediaBloc.add(SubmitButtonEvent(
+                          MediaType: 0,
                           //  resourcesId: widget.resourceId,
                            whichResources: widget.whichResources,
                             rootId: widget.rootId,
