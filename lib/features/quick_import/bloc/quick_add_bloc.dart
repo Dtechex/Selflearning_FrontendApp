@@ -34,20 +34,14 @@ class QuickImportBloc extends Bloc<QuickImportEvent, QuickImportState> {
   void _onButtonPressed(
       ButtonPressedEvent event, Emitter<QuickImportState> emit) async {
     emit(QuickImportLoadingState());
-    try {
       await QuickImportRepo.addCategory(title: event.title!,rootId: event.rootId).then((value)async {
-        await QuickImportRepo.deletequickAdd(id: event.quickAddId!);
-        if (value == 201) {
+        await QuickImportRepo.updateResources(rootId: value,resourceId: event.quickAddId!,mediaType: event.mediaType!);
           emit(QuickImportSuccessfullyState());
-        }
       });
-    } catch (e) {
-      emit((QuickImportErrorState()));
     }
   }
 
 
-}
 
 
 

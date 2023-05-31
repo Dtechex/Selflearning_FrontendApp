@@ -68,7 +68,7 @@ class _AddTextScreenState extends State<AddTextScreen> {
                     Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => AllResourcesList(rootId: widget.rootId),
+                        builder: (context) => AllResourcesList(rootId: widget.rootId,mediaType: ''),
                       ),
                     );
                   }break;

@@ -18,8 +18,9 @@ import 'bloc/quick_add_bloc.dart';
 class QuickAddImportScreen extends StatefulWidget {
   final String title;
   final String quickAddId;
+  final String  mediaType;
   const QuickAddImportScreen(
-      {Key? key, required this.title, required this.quickAddId})
+      {Key? key, required this.title, required this.quickAddId,required this.mediaType})
       : super(key: key);
 
   @override
@@ -61,14 +62,15 @@ class _QuickAddImportScreenState extends State<QuickAddImportScreen> {
               alignment: Alignment.center,
               child: ElevatedButton(
                   onPressed: () {
-                    context.showNewDialog(AlertDialog(title: Text('Are you sure you want to save as category.'),actions: [
+                    context.showNewDialog(AlertDialog(title: const Text('Are you sure you want to save as category.'),actions: [
                       ElevatedButton(onPressed: () {
                         context.read<QuickImportBloc>().add(
                             ButtonPressedEvent(
+                              mediaType: widget.mediaType,
                                 title: widget.title,
                                 quickAddId: widget.quickAddId));
                         context.read<CategoryBloc>().add(CategoryLoadEvent());
-                      }, child: Text('Save')),
+                      }, child: const Text('Save')),
                       ElevatedButton(onPressed: () => Navigator.pop(context), child: Text('Cancel'))
                     ],));
 
@@ -150,13 +152,16 @@ class _QuickAddImportScreenState extends State<QuickAddImportScreen> {
                                 ),
                               ),
                               GestureDetector(child: Icon(Icons.add_circle,size: 30,),onTap: () {
-                                context.showNewDialog(AlertDialog(title: Text('Are you sure you want to save as Subcategory.'),actions: [
+                                print(state.value??state.list!.first.sId??'');
+                                context.showNewDialog(AlertDialog(title: const Text('Are you sure you want to save as Subcategory.'),actions: [
                                   ElevatedButton(onPressed: () {
+
                                     context.read<QuickImportBloc>().add(
                                         ButtonPressedEvent(
-                                            title: widget.title,
                                             quickAddId: widget.quickAddId,
-                                            rootId: state.value));
+                                          mediaType: widget.mediaType,
+                                            title: widget.title,
+                                            rootId: state.value??state.list!.first.sId??''));
                                     context.read<CategoryBloc>()
                                         .add(CategoryLoadEvent());
                                   }, child: const Text('Save')),
@@ -223,13 +228,15 @@ class _QuickAddImportScreenState extends State<QuickAddImportScreen> {
                                                 ),
                                               ),
                                               GestureDetector(child: Icon(Icons.add_circle,size: 30),onTap: () {
+                                                print(Subcatestate.ddValue??state.list!.first.sId);
                                                 context.showNewDialog(AlertDialog(title: Text('Are you sure you want to save as Subcategory.'),actions: [
                                                   ElevatedButton(onPressed: () {
                                                     context.read<QuickImportBloc>().add(
                                                         ButtonPressedEvent(
-                                                            title: widget.title,
                                                             quickAddId: widget.quickAddId,
-                                                            rootId: Subcatestate.ddValue));
+                                                            mediaType: widget.mediaType,
+                                                            title: widget.title,
+                                                            rootId: Subcatestate.ddValue??state.list!.first.sId));
                                                     context.read<CategoryBloc>()
                                                         .add(CategoryLoadEvent());
                                                   }, child: const Text('Save')),
@@ -298,13 +305,15 @@ class _QuickAddImportScreenState extends State<QuickAddImportScreen> {
                                             ),
                                           ),
                                           GestureDetector(child: Icon(Icons.add_circle,size: 30),onTap: () {
+                                          print( subState1.ddValue??state.list!.first.sId);
                                             context.showNewDialog(AlertDialog(title: Text('Are you sure you want to save as Subcategory.'),actions: [
                                               ElevatedButton(onPressed: () {
                                                 context.read<QuickImportBloc>().add(
                                                     ButtonPressedEvent(
-                                                        title: widget.title,
                                                         quickAddId: widget.quickAddId,
-                                                        rootId: subState1.ddValue));
+                                                        mediaType: widget.mediaType,
+                                                        title: widget.title,
+                                                        rootId: subState1.ddValue??state.list!.first.sId));
                                                 context.read<CategoryBloc>()
                                                     .add(CategoryLoadEvent());
                                               }, child: const Text('Save')),

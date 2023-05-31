@@ -12,15 +12,12 @@ class SubCategoryBloc extends Bloc<SubCategoryEvent, SubCategoryState> {
   void _onGetSubCategoryList(
       SubCategoryLoadEvent event, Emitter<SubCategoryState> emit) async {
     emit(SubCategoryLoading());
-    try {
+
       await CategoryRepo.getAllSubCategory(event.rootId).then((value) {
         emit(SubCategoryLoaded(cateList: value,ddValue: value.isNotEmpty?value.first.sId:''));
       });
-    } catch (e) {
-      print(e);
-      emit(SubCategoryFailed(errorText: 'Oops Something went wrong'));
     }
-  }
+
 
   void _onSubCateChangeDropValueEvent(
       SubCateChangeDropValueEvent event, Emitter<SubCategoryState> emit) async {

@@ -83,7 +83,7 @@ class _AddAudioScreenState extends State<AddAudioScreen> {
                     Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => AllResourcesList(rootId: widget.rootId),
+                        builder: (context) => AllResourcesList(rootId: widget.rootId,mediaType: ''),
                       ),
                     );
                   }break;

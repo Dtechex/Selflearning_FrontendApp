@@ -75,7 +75,7 @@ class CustomSearchDelegate extends SearchDelegate
 
                                 border: Border.all(color: Colors.blueAccent,width: 3),),
                               child: Center(
-                                child: Text(state.cateList[index].name.toString(),style: TextStyle(
+                                child: Text(state.cateList[index].name.toString(),style: const TextStyle(
                                     color: primaryColor
                                 )),
                               ),
@@ -84,7 +84,12 @@ class CustomSearchDelegate extends SearchDelegate
                               Navigator.push(context, MaterialPageRoute(
                                 builder: (context) {
                                   return SubCategoryScreen(
-
+                                    tags: state.cateList[index].keywords,
+                                    color: Color(
+                                      int.parse(
+                                          state.cateList[index].styles![1].value!),
+                                    ),
+                                    rootId: state.cateList[index].sId,
                                     categoryName: state.cateList[index].name,
                                   );
                                 },
@@ -168,7 +173,13 @@ class CustomSearchDelegate extends SearchDelegate
                             onTap: () {
                               Navigator.push(context, MaterialPageRoute(
                                 builder: (context) {
-                                  return SubCategoryScreen(
+                                  return  SubCategoryScreen(
+                                    tags: state.cateList[index].keywords,
+                                    color: Color(
+                                      int.parse(
+                                          state.cateList[index].styles![1].value!),
+                                    ),
+                                    rootId: state.cateList[index].sId,
                                     categoryName: state.cateList[index].name,
                                   );
                                 },

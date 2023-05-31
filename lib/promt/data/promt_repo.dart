@@ -16,8 +16,9 @@ class PromtRepo {
   static Future<List<PromtModel>> getPromts({required String promtId}) async {
     Response res = await Api().get(
       endPoint: 'prompt?q=$promtId',);
+    print(res.body);
+    print('res.body');
     var data = await jsonDecode(res.body);
-
     final List<PromtModel> list=[];
    final  List<dynamic> mylist=data['data']['record'];
     if(mylist.isNotEmpty){

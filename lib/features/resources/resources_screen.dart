@@ -19,8 +19,9 @@ import 'dart:io';
 
 class AllResourcesList extends StatefulWidget {
   final String rootId;
+  final String mediaType;
 
-  const AllResourcesList({Key? key, required this.rootId}) : super(key: key);
+  const AllResourcesList({Key? key, required this.rootId,required this.mediaType}) : super(key: key);
 
   @override
   State<AllResourcesList> createState() => _AllResourcesListState();
@@ -32,11 +33,13 @@ class _AllResourcesListState extends State<AllResourcesList> {
 
   @override
   void initState() {
-    resourcesBloc.add(LoadResourcesEvent(rootId: widget.rootId));
+    resourcesBloc.add(LoadResourcesEvent(rootId: widget.rootId,mediaType: widget.mediaType));
     super.initState();
   }
 
   static Future<String?> addPrompt({required String resourcesId,required String name,context,promtId}) async {
+    print(name);
+    print('name');
     print('addpromt');
     try{
       final token = await SharedPref().getToken();
@@ -47,15 +50,17 @@ class _AllResourcesListState extends State<AllResourcesList> {
         'Authorization': "Bearer $token"
       });
       print(res.statusCode);
+      print(res.statusCode);
      // final response =jsonDecode(res.body);
      // print(response.body);
       if(res.statusCode==200 ||res.statusCode==201){
-        Navigator.push(context, MaterialPageRoute(
-          builder: (context) {
-            return PromtsScreen(
-                promtId: promtId);
-          },
-        ));
+        Navigator.pop(context);
+        // Navigator.push(context, MaterialPageRoute(
+        //   builder: (context) {
+        //     return PromtsScreen(
+        //         promtId: promtId);
+        //   },
+        // ));
       }
       final data=jsonDecode(res.body);
       return data[''];
@@ -81,7 +86,7 @@ class _AllResourcesListState extends State<AllResourcesList> {
             }
             if (state is ResourcesLoaded) {
               if (state.allResourcesModel.data!.record!.records!.isEmpty) {
-                return Center(
+                return const Center(
                   child: Text('No Resources found.'),
                 );
               } else {
@@ -103,9 +108,13 @@ class _AllResourcesListState extends State<AllResourcesList> {
                             trailing: ElevatedButton(
                               child: Text('View Prompts'),
                               onPressed: () {
+                                print(state.allResourcesModel.data!.record!.records![index].content);
+
                                 Navigator.push(context, MaterialPageRoute(
                                   builder: (context) {
                                     return PromtsScreen(
+                                      content: state.allResourcesModel.data!.record!.records![index].content??state.allResourcesModel.data!.record!.records![index].title,
+                                      mediaType: state.allResourcesModel.data!.record!.records![index].type!,
                                         promtId: state.allResourcesModel.data!
                                             .record!.records![index].sId!);
                                   },
@@ -165,6 +174,7 @@ class _AllResourcesListState extends State<AllResourcesList> {
                                         // You can handle the entered question here, e.g., add it to a list
                                         // or perform any other required operation.
                                         print('Entered question: $question');
+                                        print(textEditingController.text);
                                         Navigator.of(context).pop();
                                         addPrompt(name: textEditingController.text,context: context,promtId: state.allResourcesModel.data!.record!.records![index].sId, resourcesId: state.allResourcesModel.data!.record!.records![index].iV.toString());
 

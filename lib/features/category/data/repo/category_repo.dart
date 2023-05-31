@@ -30,6 +30,7 @@ class CategoryRepo {
     Response res = await Api().get(
       endPoint: 'category/?rootId=$rootId',
     );
+    print(rootId);
     print(res.body);
     print('subcategory body');
     var data = await jsonDecode(res.body);

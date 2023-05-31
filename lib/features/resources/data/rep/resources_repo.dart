@@ -7,10 +7,8 @@ import 'package:http/http.dart';
 
 class ResourcesRepo{
 
-  static Future<AllResourcesModel?> getResources({required String rootId})async {
-    Response res = await Api().get(endPoint: 'resource?rootId=$rootId',);
-    print('rood id');
-    print(rootId);
+  static Future<AllResourcesModel?> getResources({required String rootId,required String mediaType})async {
+    Response res = await Api().get(endPoint: 'resource?rootId=$rootId&type=$mediaType',);
 
     if(res.statusCode==200){
       var data = await jsonDecode(res.body);

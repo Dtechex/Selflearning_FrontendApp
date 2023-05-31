@@ -2,13 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
 
 class AudioPlayerPage extends StatefulWidget {
+  final String audioUrl;
+  AudioPlayerPage({required this.audioUrl});
+
   @override
   _AudioPlayerPageState createState() => _AudioPlayerPageState();
 }
 
 class _AudioPlayerPageState extends State<AudioPlayerPage> {
   late AudioPlayer audioPlayer;
-  String audioUrl = 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3';
+
+ // String audioUrl = 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3';
   PlayerState playerState = PlayerState.STOPPED;
 
   @override
@@ -40,7 +44,8 @@ class _AudioPlayerPageState extends State<AudioPlayerPage> {
   }
 
   void playAudio() async {
-    await audioPlayer.setUrl(audioUrl);
+    print(widget.audioUrl);
+    await audioPlayer.setUrl(widget.audioUrl);
     await audioPlayer.play();
   }
 
@@ -54,36 +59,31 @@ class _AudioPlayerPageState extends State<AudioPlayerPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Audio Player'),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            if (playerState == PlayerState.STOPPED) ...[
-              ElevatedButton(
-                onPressed: playAudio,
-                child: Text('Play'),
-              ),
-            ] else if (playerState == PlayerState.PLAYING) ...[
-              ElevatedButton(
-                onPressed: pauseAudio,
-                child: Text('Pause'),
-              ),
-            ] else if (playerState == PlayerState.PAUSED) ...[
-              ElevatedButton(
-                onPressed: playAudio,
-                child: Text('Resume'),
-              ),
-            ],
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          if (playerState == PlayerState.STOPPED) ...[
             ElevatedButton(
-              onPressed: stopAudio,
-              child: Text('Stop'),
+              onPressed: playAudio,
+              child: Text('Play'),
+            ),
+          ] else if (playerState == PlayerState.PLAYING) ...[
+            ElevatedButton(
+              onPressed: pauseAudio,
+              child: Text('Pause'),
+            ),
+          ] else if (playerState == PlayerState.PAUSED) ...[
+            ElevatedButton(
+              onPressed: playAudio,
+              child: Text('Resume'),
             ),
           ],
-        ),
+          ElevatedButton(
+            onPressed: stopAudio,
+            child: Text('Stop'),
+          ),
+        ],
       ),
     );
   }

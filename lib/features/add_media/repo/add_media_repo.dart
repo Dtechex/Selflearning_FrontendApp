@@ -106,7 +106,7 @@ class AddMediaRepo {
   }
 
   static Future<String?> addResources(
-      {String? imagePath, required String resourceId}) async {
+      {String? imagePath, required String resourceId,required int mediaType }) async {
     print(resourceId);
     print('resource inside add reouse' );
     print('add resources');
@@ -117,7 +117,23 @@ class AddMediaRepo {
 
     request.headers['Authorization'] = 'Bearer $token';
     request.fields['rootId'] = resourceId;
-    request.fields['type'] = 'image';
+    switch(mediaType){
+      case 0:{
+        request.fields['type'] = 'text';
+      }
+      break;
+      case 1:{
+        request.fields['type'] = 'image';
+      }
+      break;
+      case 2:{
+        request.fields['type'] = 'audio';
+      }
+      break;
+      case 3:{
+        request.fields['type'] = 'video';
+      }
+    }
     print(imagePath!.isEmpty);
     print('imagePath');
 

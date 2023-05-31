@@ -48,13 +48,14 @@ class _QuickTypeScreenState extends State<QuickTypeScreen> {
                 child: CircularProgressIndicator(),
               );
             } else if (state is QuickAddLoadedState) {
+
               var list = state.list!.data!.record!.records!.reversed.toList();
               print(list);
               print('list');
               return ListView.builder(
                 padding: const EdgeInsets.only(left: 5, right: 5, top: 10, bottom: 5),
                 shrinkWrap: true,
-                itemCount: list!.length,
+                itemCount: list.length,
                 itemBuilder: (context, index) {
                   return Slidable(
                     key: const ValueKey(0),
@@ -99,10 +100,12 @@ class _QuickTypeScreenState extends State<QuickTypeScreen> {
                                   children: [
                                     IconButton(
                                       onPressed: () {
+                                        print(list[index].sId!);
                                         Navigator.push(context,
                                             CupertinoPageRoute(
                                               builder: (context) {
                                                 return QuickAddImportScreen(
+                                                  mediaType: getType(list[index].type.toString()),
                                                   quickAddId: list[index].sId!,
                                                   title: list[index].title ??
                                                       'Image Type',
@@ -139,3 +142,17 @@ class _QuickTypeScreenState extends State<QuickTypeScreen> {
 
 
 
+String getType(String type) {
+  switch (type) {
+    case 'QUICKADD-image':
+      return 'image';
+    case 'QUICKADD-video':
+      return 'video';
+    case 'QUICKADD-audio':
+      return 'audio';
+    case 'QUICKADD-text':
+      return 'text';
+    default:
+      return 'unknown'; // Handle unknown types or provide a default value
+  }
+}

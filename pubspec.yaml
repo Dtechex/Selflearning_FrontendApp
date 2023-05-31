@@ -58,6 +58,7 @@ dependencies:
   mime: ^1.0.4
   loader_overlay: ^2.2.0
   cached_network_image: ^3.2.3
+  audioplayers: ^4.1.0
 
 
 

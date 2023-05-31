@@ -81,8 +81,6 @@ class _AddVideoScreenState extends State<AddVideoScreen> {
             listener: (context, state) {
               if (state.apiState==ApiState.submitted ) {
                 context.loaderOverlay.hide();
-                print(state.wichResources);
-                print('state.wichResources');
                 switch(state.wichResources){
                   case 0: {
                     Navigator.pushReplacement(
@@ -96,7 +94,7 @@ class _AddVideoScreenState extends State<AddVideoScreen> {
                     Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => AllResourcesList(rootId: widget.rootId),
+                        builder: (context) => AllResourcesList(rootId: widget.rootId,mediaType: ''),
                       ),
                     );
                   }break;
@@ -166,12 +164,17 @@ class _AddVideoScreenState extends State<AddVideoScreen> {
                       ),
                       Positioned(
                         top: 10,
-                        right: 10,
+                        left: 10,
                         child: IconButton(
                           icon: Icon(Icons.pause),
                           onPressed: _togglePlayPause,
                         ),
                       ),
+                      Positioned(
+                          top: 10,right: 10,
+                          child: IconButton(icon: Icon(Icons.delete),onPressed: () {
+                            addMediaBloc.add(RemoveMedia());
+                          },)),
                     ],
                   ),
                   const SizedBox(

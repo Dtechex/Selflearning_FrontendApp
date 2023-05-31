@@ -8,7 +8,8 @@ import 'model/quick_type_model.dart';
 class QuickImportRepo {
   static Future<List<QuickImportModel>> getAllCategory({String? rootId}) async {
     Response res = await Api().get(
-      endPoint: 'category/${rootId ?? ''}',);
+      endPoint: 'category/${rootId ?? ''}',
+    );
     var data = await jsonDecode(res.body);
     print(data);
     List<dynamic> recordata = data['data']['record'];
@@ -41,7 +42,7 @@ class QuickImportRepo {
     return res.statusCode;
   }
 
-  static Future<int?> addCategory({String? title, String? rootId}) async {
+  static Future<String> addCategory({String? title, String? rootId}) async {
     Map<String, dynamic> payload = {};
     List<String> keywords = [];
     List<Map<String, String>> styles = [
@@ -56,8 +57,6 @@ class QuickImportRepo {
     if (rootId != null) {
       payload.addAll({"rootId": rootId});
     }
-    print(payload);
-    print('payload');
     var token = await SharedPref().getToken();
     var res = await http.post(
       Uri.parse('http://3.110.219.9:8000/web/category/create'),
@@ -67,9 +66,34 @@ class QuickImportRepo {
         'Authorization': 'Bearer $token'
       },
     );
-    print(res);
-    print(res.body);
-    print('added to category');
+    final body=jsonDecode(res.body);
+    print(body);
+    print('response of add category');
+    return body['data']['record']['id'];
+  }
+
+  static Future<int?> updateResources({required String rootId,required String resourceId,required String mediaType}) async {
+    var token = await SharedPref().getToken();
+    var url = Uri.parse('http://3.110.219.9:8000/web/resource/update/$resourceId');
+    print(url);
+    final payload={};
+    print(mediaType);
+    print(rootId);
+    print('mediaType');
+    payload.addAll({
+      "rootId":rootId,
+      "type": mediaType,
+
+    });
+    Response res = await http.patch(url,
+      body: jsonEncode(payload),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token'
+      },
+    );
+    var data = await jsonDecode(res.body);
+    print(data);
     return res.statusCode;
   }
 }

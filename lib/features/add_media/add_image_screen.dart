@@ -73,7 +73,7 @@ class _AddImageScreenState extends State<AddImageScreen> {
                     Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => AllResourcesList(rootId: widget.rootId),
+                        builder: (context) => AllResourcesList(rootId: widget.rootId,mediaType: ''),
                       ),
                     );
                   }break;
@@ -164,7 +164,7 @@ class _AddImageScreenState extends State<AddImageScreen> {
                         // Navigator.pushAndRemoveUntil(
                         //     context,
                         //     MaterialPageRoute(
-                        //       builder: (context) => const QuickTypeScreen(),
+                        //       builder: De(context) => const QuickTypeScreen(),
                         //     ),
                         //         (route) => false);
                       },
