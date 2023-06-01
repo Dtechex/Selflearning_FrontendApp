@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import 'package:self_learning_app/features/add_media/bloc/add_media_bloc.dart';
 import 'package:self_learning_app/promt/promts_screen.dart';
@@ -29,12 +30,12 @@ final TextEditingController textEditingController = TextEditingController();
 class _AddImageScreenState extends State<AddImageScreen> {
 
 
-  AddMediaBloc addMediaBloc= AddMediaBloc();
+  AddMediaBloc addMediaBloc = AddMediaBloc();
 
 
   @override
   void initState() {
-    textEditingController.text='';
+    textEditingController.text = '';
     super.initState();
   }
 
@@ -50,54 +51,64 @@ class _AddImageScreenState extends State<AddImageScreen> {
     print(widget.rootId);
     print('inse image add image');
     return BlocProvider(
-      create: (context) => addMediaBloc,child: Scaffold(
+      create: (context) => addMediaBloc, child: Scaffold(
         appBar: AppBar(title: const Text('Create Image')),
-        body: SingleChildScrollView(child:  Container(
+        body: SingleChildScrollView(child: Container(
           padding: const EdgeInsets.only(left: 20, right: 20),
           child: BlocConsumer<AddMediaBloc, AddMediaInitial>(
             listener: (context, state) {
-              if (state.apiState==ApiState.submitted ) {
+              if (state.apiState == ApiState.submitted) {
                 context.loaderOverlay.hide();
                 print(state.wichResources);
                 print('state.wichResources');
-                switch(state.wichResources){
-                  case 0: {
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const QuickTypeScreen(),
-                      ),
-                    );
-                  }break;
-                  case 1: {
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => AllResourcesList(rootId: widget.rootId,mediaType: ''),
-                      ),
-                    );
-                  }break;
-                  case 2: {
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => PromtsScreen(promtId: widget.rootId),
-                      ),
-                    );
-
-                  }break;
+                switch (state.wichResources) {
+                  case 0:
+                    {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const QuickTypeScreen(),
+                        ),
+                      );
+                    }
+                    break;
+                  case 1:
+                    {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => AllResourcesList(
+                              rootId: widget.rootId, mediaType: ''),
+                        ),
+                      );
+                    }
+                    break;
+                  case 2:
+                    {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              PromtsScreen(promtId: widget.rootId),
+                        ),
+                      );
+                    }
+                    break;
                 }
               }
-              else if  (state.apiState==ApiState.submitting) {
+              else if (state.apiState == ApiState.submitting) {
                 context.loaderOverlay.show();
-                context.showSnackBar(const SnackBar(duration: Duration(seconds: 1),content: Text('Adding resources...')));
-              } else if  (state.apiState==ApiState.submitError) {
+                context.showSnackBar(const SnackBar(
+                    duration: Duration(seconds: 1),
+                    content: Text('Adding resources...')));
+              } else if (state.apiState == ApiState.submitError) {
                 context.loaderOverlay.hide();
-                context.showSnackBar(const SnackBar(duration: Duration(seconds: 1),content: Text('Something went wrong.')));
+                context.showSnackBar(const SnackBar(
+                    duration: Duration(seconds: 1),
+                    content: Text('Something went wrong.')));
               }
             },
             builder: (context, state) {
-
               return Column(
                 children: [
                   Container(
@@ -109,7 +120,7 @@ class _AddImageScreenState extends State<AddImageScreen> {
                       decoration: const InputDecoration(hintText: 'title'),
                     ),
                   ),
-                  state.selectedFilepath!.isEmpty?  GestureDetector(
+                  state.selectedFilepath!.isEmpty ? GestureDetector(
                     child: Container(
                       decoration: BoxDecoration(
                           color: Colors.grey,
@@ -120,20 +131,59 @@ class _AddImageScreenState extends State<AddImageScreen> {
                           child:
                           Row(
                             children: [
-                              Icon(Icons.image, size: context.screenWidth / 2.5),
+                              Icon(
+                                  Icons.image, size: context.screenWidth / 2.5),
                               const Text('Upload')
                             ],
                           )
                       ),
                     ),
                     onTap: () {
-                      ImagePickerHelper.pickImage().then((value) {
-                        if(value!=null){
-                          addMediaBloc.add(ImagePickEvent(image: value.path));
-                        }
-                      });
+                      showModalBottomSheet(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return SafeArea(
+                            child: Container(
+                              child: Wrap(
+                                children: <Widget>[
+                                  ListTile(
+                                    leading: Icon(Icons.photo_library),
+                                    title: Text('Photo Library'),
+                                    onTap: () {
+                                      ImagePickerHelper.pickImage(
+                                          imageSource: ImageSource.gallery)
+                                          .then((value) {
+                                        if (value != null) {
+                                          addMediaBloc.add(ImagePickEvent(
+                                              image: value.path));
+                                        }
+                                      });
+                                      Navigator.of(context).pop();
+                                    },
+                                  ),
+                                  ListTile(
+                                    leading: Icon(Icons.camera_alt),
+                                    title: Text('Camera'),
+                                    onTap: () {
+                                      ImagePickerHelper.pickImage(
+                                          imageSource: ImageSource.camera)
+                                          .then((value) {
+                                        if (value != null) {
+                                          addMediaBloc.add(ImagePickEvent(
+                                              image: value.path));
+                                        }
+                                      });
+                                      Navigator.of(context).pop();
+                                    },
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        },
+                      );
                     },
-                  ):Stack(children: [
+                  ) : Stack(children: [
 
                     Container(
                         decoration: BoxDecoration(
@@ -144,8 +194,9 @@ class _AddImageScreenState extends State<AddImageScreen> {
                         child: Image.file(File(state.selectedFilepath!))
                     ),
                     Positioned(
-                        top: 10,right: 10,
-                        child: IconButton(icon: Icon(Icons.delete),onPressed: () {
+                        top: 10, right: 10,
+                        child: IconButton(
+                          icon: Icon(Icons.delete), onPressed: () {
                           addMediaBloc.add(RemoveMedia());
                         },)),
                   ],),
@@ -155,7 +206,7 @@ class _AddImageScreenState extends State<AddImageScreen> {
                   ElevatedButton(
                       onPressed: () {
                         addMediaBloc.add(SubmitButtonEvent(
-                          MediaType: 1,
+                            MediaType: 1,
                             whichResources: widget.whichResources,
                             rootId: widget.rootId,
                             title: textEditingController.text.isEmpty
@@ -176,3 +227,5 @@ class _AddImageScreenState extends State<AddImageScreen> {
         ),)),);
   }
 }
+
+

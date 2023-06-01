@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import 'package:self_learning_app/features/add_media/bloc/add_media_bloc.dart';
 
@@ -148,12 +149,46 @@ class _AddVideoScreenState extends State<AddVideoScreen> {
                       ),
                     ),
                     onTap: () {
-                      ImagePickerHelper.pickFile().then((value) {
-                        if(value!=null){
-                          addMediaBloc.add(VideoPickEvent(video: value));
-                          _initializeVideoPlayer(value);
-                        }
-                      });
+                      showModalBottomSheet(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return SafeArea(
+                            child: Container(
+                              child: Wrap(
+                                children: <Widget>[
+                                  ListTile(
+                                    leading: Icon(Icons.photo_library),
+                                    title: Text('Photo Library'),
+                                    onTap: () {
+                                      ImagePickerHelper.pickVideo(imageSource: ImageSource.gallery).then((value) {
+                                        if(value!=null){
+                                          addMediaBloc.add(VideoPickEvent(video: value.path));
+                                          _initializeVideoPlayer(value.path);
+                                        }
+                                      });
+                                      Navigator.of(context).pop();
+                                    },
+                                  ),
+                                  ListTile(
+                                    leading: Icon(Icons.camera_alt),
+                                    title: Text('Camera'),
+                                    onTap: () {
+                                      ImagePickerHelper.pickVideo(imageSource: ImageSource.camera).then((value) {
+                                        if(value!=null){
+                                          addMediaBloc.add(VideoPickEvent(video: value.path));
+                                          _initializeVideoPlayer(value.path);
+                                        }
+                                      });
+                                      Navigator.of(context).pop();
+                                    },
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        },
+                      );
+
                     },
                   ):Stack(
                     children: [

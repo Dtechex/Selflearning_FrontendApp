@@ -147,7 +147,7 @@ class _AddResourceScreenState extends State<AddResourceScreen> {
 
                             return Text(count[index]);
                           }
-                          return Text('ff');
+                          return Text('0');
                         }, listener:  (context, state) {
 
                         },)
