@@ -1,13 +1,10 @@
-
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import 'package:self_learning_app/utilities/extenstion.dart';
-
 import '../../promt/promts_screen.dart';
 import '../../utilities/image_picker_helper.dart';
-import '../camera/camera_screen.dart';
-import '../quick_add/data/bloc/quick_add_bloc.dart';
 import '../quick_add/quick_add_screen.dart';
 import 'package:flutter/material.dart';
 
@@ -34,26 +31,39 @@ class _AddAudioScreenState extends State<AddAudioScreen> {
   @override
   void dispose() {
     super.dispose();
-    print('dispose');
+
     audioPlayer.dispose();
     addMediaBloc.close();
   }
 
-  void _togglePlayPause(String audioPath) async {
+  Future<void> _togglePlayPause(String audioPath) async {
     if (_isPlaying) {
       await audioPlayer.pause();
     } else {
+      if (audioPlayer.playerState.processingState ==
+          ProcessingState.completed) {
+        await audioPlayer.seek(Duration.zero);
+      }
+      await audioPlayer.setFilePath(audioPath);
       await audioPlayer.play();
     }
-    setState(() {
-      _isPlaying = !_isPlaying;
+  }
+
+  void _playerStateChanged() {
+    audioPlayer.playerStateStream.listen((playerState) {
+      setState(() {
+        _isPlaying = playerState.playing;
+      });
     });
   }
+
+
 
   @override
   void initState() {
     textEditingController.text='';
     super.initState();
+    _playerStateChanged();
   }
 
   @override
@@ -68,8 +78,6 @@ class _AddAudioScreenState extends State<AddAudioScreen> {
             listener: (context, state) {
               if (state.apiState==ApiState.submitted ) {
                 context.loaderOverlay.hide();
-                print(state.wichResources);
-                print('state.wichResources');
                 switch(state.wichResources){
                   case 0: {
                     Navigator.pushReplacement(
@@ -113,7 +121,10 @@ class _AddAudioScreenState extends State<AddAudioScreen> {
                     padding: const EdgeInsets.all(10),
                     height: context.screenHeight * 0.15,
                     width: context.screenWidth,
-                    child: TextField(
+                    child: TextFormField(
+                      inputFormatters: [
+                        LengthLimitingTextInputFormatter(80),
+                      ],
                       controller: textEditingController,
                       decoration: const InputDecoration(hintText: 'Title'),
                     ),
@@ -170,7 +181,7 @@ class _AddAudioScreenState extends State<AddAudioScreen> {
                         top: 10,
                         right: 10,
                         child: IconButton(
-                          icon: Icon(Icons.delete),
+                          icon: const Icon(Icons.delete),
                           onPressed: () {
                             audioPlayer.stop();
                             addMediaBloc.add(RemoveMedia());
@@ -184,18 +195,22 @@ class _AddAudioScreenState extends State<AddAudioScreen> {
                   ),
                   ElevatedButton(
                     onPressed: () {
-                      addMediaBloc.add(
-                        SubmitButtonEvent(
-                          MediaType: 2,
+                      if(state.selectedFilepath!.isEmpty){
+                        context.showSnackBar(const SnackBar(content: Text('Please attach file'),duration: Duration(seconds: 1),));
 
-                          //resourcesId: widget.resourceId,
-                          rootId: widget.rootId,
-                          whichResources: widget.whichResources,
-                          title: textEditingController.text.isEmpty
-                              ? 'Untitled'
-                              : textEditingController.text,
-                        ),
-                      );
+                      }else {
+                        addMediaBloc.add(
+                          SubmitButtonEvent(
+                            MediaType: 2,
+                            //resourcesId: widget.resourceId,
+                            rootId: widget.rootId,
+                            whichResources: widget.whichResources,
+                            title: textEditingController.text.isEmpty
+                                ? 'Untitled'
+                                : textEditingController.text,
+                          ),
+                        );
+                      }
                     },
                     child: const Text('Create'),
                   ),

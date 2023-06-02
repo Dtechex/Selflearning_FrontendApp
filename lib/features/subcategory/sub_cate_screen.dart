@@ -56,7 +56,7 @@ class _SubCategoryScreenState extends State<SubCategoryScreen> {
           floatingActionButton: SizedBox(
             height: context.screenHeight * 0.1,
             child: FittedBox(
-              child: FloatingActionButton(
+              child: ElevatedButton(
                 onPressed: () {
                   Navigator.push(context, MaterialPageRoute(
                     builder: (context) {
@@ -69,8 +69,8 @@ class _SubCategoryScreenState extends State<SubCategoryScreen> {
                 child: Row(
                   children: const [
                     Text(
-                      '    Create\n Subcatgory',
-                      style: TextStyle(fontSize: 7),
+                      '      Create\n Subcategory',
+                      style: TextStyle(fontSize: 9),
                     ),
                   ],
                 ),

@@ -48,88 +48,90 @@ class _QuickTypeScreenState extends State<QuickTypeScreen> {
                 child: CircularProgressIndicator(),
               );
             } else if (state is QuickAddLoadedState) {
-
               var list = state.list!.data!.record!.records!.reversed.toList();
-              print(list);
-              print('list');
-              return ListView.builder(
-                padding: const EdgeInsets.only(left: 5, right: 5, top: 10, bottom: 5),
-                shrinkWrap: true,
-                itemCount: list.length,
-                itemBuilder: (context, index) {
-                  return Slidable(
-                    key: const ValueKey(0),
-                    startActionPane: ActionPane(
-                      motion: const ScrollMotion(),
-                      dismissible: DismissiblePane(onDismissed: () {
-                        QuickAddRepo.deletequickAdd(
-                            id: list[index].sId!, context: context);
-                        context.read<QuickAddBloc>().add(LoadQuickTypeEvent());
-                      }),
-                      children: [
-                        SlidableAction(
-                          onPressed: (context) {
-                            QuickAddRepo.deletequickAdd(
-                                id: list[index].sId!, context: context);
-                            context
-                                .read<QuickAddBloc>()
-                                .add(LoadQuickTypeEvent());},
-                          backgroundColor: Color(0xFFFE4A49),
-                          foregroundColor: Colors.white,
-                          icon: Icons.delete,
-                          label: 'Delete',
-                        ),
-                      ],
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Container(
-                        padding: const EdgeInsets.only(top: 7, bottom: 7),
-                        decoration: BoxDecoration(
-                            color: Colors.blue[50],
-                            borderRadius: BorderRadius.circular(10)),
-                        //height: context.screenHeight*0.08,
-                        child: Center(
-                          child: ListTile(
-                              title: Text(list[index].title??'Untitled'),
-                              trailing: SizedBox(
-                                width: context.screenWidth / 3.5,
-                                child: Row(
-                                  mainAxisAlignment:
-                                  MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    IconButton(
-                                      onPressed: () {
-                                        print(list[index].sId!);
-                                        Navigator.push(context,
-                                            CupertinoPageRoute(
-                                              builder: (context) {
-                                                return QuickAddImportScreen(
-                                                  mediaType: getType(list[index].type.toString()),
-                                                  quickAddId: list[index].sId!,
-                                                  title: list[index].title ??
-                                                      'Image Type',
-                                                );
-                                              },
-                                            ));
-                                      },
-                                      icon: Icon(Icons.add),
-                                    ),
-                                    Column(
-                                      children: const [
-                                        Icon(Icons.arrow_right_alt),
-                                        Icon(Icons.delete),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              )),
-                        ),
-                      ),
-                    ),
-                  );
-                },
-              );
+             if(list.isEmpty){
+               return const Center(child: Text('No quick adds found.'),);
+             }else {
+               return ListView.builder(
+                 padding: const EdgeInsets.only(left: 5, right: 5, top: 10, bottom: 5),
+                 shrinkWrap: true,
+                 itemCount: list.length,
+                 itemBuilder: (context, index) {
+                   return Slidable(
+                     key: const ValueKey(0),
+                     startActionPane: ActionPane(
+                       motion: const ScrollMotion(),
+                       dismissible: DismissiblePane(onDismissed: () {
+                         QuickAddRepo.deletequickAdd(
+                             id: list[index].sId!, context: context);
+                         context.read<QuickAddBloc>().add(LoadQuickTypeEvent());
+                       }),
+                       children: [
+                         SlidableAction(
+                           onPressed: (context) {
+                             QuickAddRepo.deletequickAdd(
+                                 id: list[index].sId!, context: context);
+                             context
+                                 .read<QuickAddBloc>()
+                                 .add(LoadQuickTypeEvent());},
+                           backgroundColor: Color(0xFFFE4A49),
+                           foregroundColor: Colors.white,
+                           icon: Icons.delete,
+                           label: 'Delete',
+                         ),
+                       ],
+                     ),
+                     child: Padding(
+                       padding: const EdgeInsets.all(8.0),
+                       child: Container(
+                         padding: const EdgeInsets.only(top: 7, bottom: 7),
+                         decoration: BoxDecoration(
+                             color: Colors.blue[50],
+                             borderRadius: BorderRadius.circular(10)),
+                         //height: context.screenHeight*0.08,
+                         child: Center(
+                           child: ListTile(
+                             leading: getType(list[index].type.toString())=='image'?const Icon(Icons.image):getType(list[index].type.toString())=='video'?const Icon(Icons.video_camera_back_outlined):getType(list[index].type.toString())=='audio'?const Icon(Icons.audiotrack):Icon(Icons.text_format),
+                               title: Text(list[index].title??'Untitled'),
+                               trailing: SizedBox(
+                                 width: context.screenWidth / 3.5,
+                                 child: Row(
+                                   mainAxisAlignment:
+                                   MainAxisAlignment.spaceBetween,
+                                   children: [
+                                     IconButton(
+                                       onPressed: () {
+                                         print(list[index].sId!);
+                                         Navigator.push(context,
+                                             CupertinoPageRoute(
+                                               builder: (context) {
+                                                 return QuickAddImportScreen(
+                                                   mediaType: getType(list[index].type.toString()),
+                                                   quickAddId: list[index].sId!,
+                                                   title: list[index].title ??
+                                                       'Image Type',
+                                                 );
+                                               },
+                                             ));
+                                       },
+                                       icon: Icon(Icons.add),
+                                     ),
+                                     Column(
+                                       children: const [
+                                         Icon(Icons.arrow_right_alt),
+                                         Icon(Icons.delete),
+                                       ],
+                                     ),
+                                   ],
+                                 ),
+                               )),
+                         ),
+                       ),
+                     ),
+                   );
+                 },
+               );
+             }
             }
             return const Center(
               child: Text('Something Went Wrong'),

@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:loader_overlay/loader_overlay.dart';
@@ -116,8 +117,11 @@ class _AddImageScreenState extends State<AddImageScreen> {
                     height: context.screenHeight * 0.15,
                     width: context.screenWidth,
                     child: TextField(
+                      inputFormatters: [
+                        LengthLimitingTextInputFormatter(80),
+                      ],
                       controller: textEditingController,
-                      decoration: const InputDecoration(hintText: 'title'),
+                      decoration: const InputDecoration(hintText: 'Title'),
                     ),
                   ),
                   state.selectedFilepath!.isEmpty ? GestureDetector(
@@ -205,13 +209,17 @@ class _AddImageScreenState extends State<AddImageScreen> {
                   ),
                   ElevatedButton(
                       onPressed: () {
-                        addMediaBloc.add(SubmitButtonEvent(
+                        if(state.selectedFilepath!.isEmpty){
+                          context.showSnackBar(const SnackBar(content: Text('Please attach file'),duration: Duration(seconds: 1),));
+                        }else {
+                          addMediaBloc.add(SubmitButtonEvent(
                             MediaType: 1,
                             whichResources: widget.whichResources,
                             rootId: widget.rootId,
                             title: textEditingController.text.isEmpty
                                 ? 'Untitled'
                                 : textEditingController.text));
+                        }
                         // Navigator.pushAndRemoveUntil(
                         //     context,
                         //     MaterialPageRoute(

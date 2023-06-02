@@ -1,8 +1,8 @@
 import 'dart:convert';
 
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:self_learning_app/features/add_media/bloc/add_media_bloc.dart';
 import 'package:self_learning_app/features/resources/bloc/resources_bloc.dart';
@@ -21,7 +21,9 @@ class AllResourcesList extends StatefulWidget {
   final String rootId;
   final String mediaType;
 
-  const AllResourcesList({Key? key, required this.rootId,required this.mediaType}) : super(key: key);
+  const AllResourcesList(
+      {Key? key, required this.rootId, required this.mediaType})
+      : super(key: key);
 
   @override
   State<AllResourcesList> createState() => _AllResourcesListState();
@@ -29,43 +31,47 @@ class AllResourcesList extends StatefulWidget {
 
 class _AllResourcesListState extends State<AllResourcesList> {
   final ResourcesBloc resourcesBloc = ResourcesBloc();
-  TextEditingController textEditingController= TextEditingController();
+  TextEditingController textEditingController = TextEditingController();
 
   @override
   void initState() {
-    resourcesBloc.add(LoadResourcesEvent(rootId: widget.rootId,mediaType: widget.mediaType));
+    resourcesBloc.add(
+        LoadResourcesEvent(rootId: widget.rootId, mediaType: widget.mediaType));
     super.initState();
   }
 
-  static Future<String?> addPrompt({required String resourcesId,required String name,context,promtId}) async {
+  static Future<String?> addPrompt(
+      {required String resourcesId,
+      required String name,
+      context,
+      promtId,
+      required String mediatype,
+      required String content}) async {
     print(name);
     print('name');
     print('addpromt');
-    try{
+    try {
       final token = await SharedPref().getToken();
-      final res = await http.post(Uri.parse('http://3.110.219.9:8000/web/prompt/'),body: {
-        "name" : name,
-        "resourceId": promtId
-      },headers: {
-        'Authorization': "Bearer $token"
-      });
+      final res = await http.post(
+          Uri.parse('http://3.110.219.9:8000/web/prompt/'),
+          body: {"name": name, "resourceId": promtId},
+          headers: {'Authorization': "Bearer $token"});
       print(res.statusCode);
       print(res.statusCode);
-     // final response =jsonDecode(res.body);
-     // print(response.body);
-      if(res.statusCode==200 ||res.statusCode==201){
-        Navigator.pop(context);
-        // Navigator.push(context, MaterialPageRoute(
-        //   builder: (context) {
-        //     return PromtsScreen(
-        //         promtId: promtId);
-        //   },
-        // ));
+      // final response =jsonDecode(res.body);
+      // print(response.body);
+      if (res.statusCode == 200 || res.statusCode == 201) {
+        //  Navigator.pop(context);
+        Navigator.push(context, MaterialPageRoute(
+          builder: (context) {
+            return PromtsScreen(
+                content: content, mediaType: mediatype, promtId: promtId);
+          },
+        ));
       }
-      final data=jsonDecode(res.body);
+      final data = jsonDecode(res.body);
       return data[''];
-
-    }catch(e){
+    } catch (e) {
       print(e);
     }
   }
@@ -106,15 +112,24 @@ class _AllResourcesListState extends State<AllResourcesList> {
                         height: 60,
                         child: ListTile(
                             trailing: ElevatedButton(
-                              child: Text('View Prompts'),
+                              child: const Text('View Prompts'),
                               onPressed: () {
-                                print(state.allResourcesModel.data!.record!.records![index].content);
+                                print(state.allResourcesModel.data!.record!
+                                    .records![index].content);
 
                                 Navigator.push(context, MaterialPageRoute(
                                   builder: (context) {
                                     return PromtsScreen(
-                                      content: state.allResourcesModel.data!.record!.records![index].content??state.allResourcesModel.data!.record!.records![index].title,
-                                      mediaType: state.allResourcesModel.data!.record!.records![index].type!,
+                                        content: state
+                                                .allResourcesModel
+                                                .data!
+                                                .record!
+                                                .records![index]
+                                                .content ??
+                                            state.allResourcesModel.data!
+                                                .record!.records![index].title,
+                                        mediaType: state.allResourcesModel.data!
+                                            .record!.records![index].type!,
                                         promtId: state.allResourcesModel.data!
                                             .record!.records![index].sId!);
                                   },
@@ -145,46 +160,82 @@ class _AllResourcesListState extends State<AllResourcesList> {
                                             Icons.video_camera_back_outlined,
                                             size: 50,
                                           )
-                                        : getMediaType(content) !='audio'
-                                            ? const Icon(Icons.text_format_sharp,
+                                        : getMediaType(content) != 'audio'
+                                            ? const Icon(
+                                                Icons.text_format_sharp,
                                                 size: 50)
                                             : Icon(Icons.audiotrack, size: 50)),
                             title: ElevatedButton(
-                              child: const Text('Add Promt'),
+                              child: const Text('Add Prompt'),
                               onPressed: () {
                                 print(state.allResourcesModel.data!.record!
                                     .records![index].sId);
+                                textEditingController.text = '';
                                 context.showNewDialog(AlertDialog(
-                                  title: Text('Add Question'),
-                                  content: TextField(
+                                  title: const Text('Add Question'),
+                                  content: TextFormField(
+                                    inputFormatters: [
+                                      LengthLimitingTextInputFormatter(80),
+                                    ],
+                                    validator: (value) => value!.isEmpty
+                                        ? "Question can't be empty"
+                                        : null,
                                     controller: textEditingController,
-                                    decoration: InputDecoration(hintText: 'Enter your question'),
+                                    decoration: const InputDecoration(
+                                        hintText: 'Enter your question'),
                                   ),
                                   actions: <Widget>[
                                     ElevatedButton(
-                                      child: Text('Cancel'),
+                                      child: const Text('Cancel'),
                                       onPressed: () {
                                         Navigator.of(context).pop();
                                       },
                                     ),
                                     ElevatedButton(
-                                      child: Text('Add'),
+                                      child: const Text('Add'),
                                       onPressed: () {
-                                        String question = textEditingController.text;
-                                        // You can handle the entered question here, e.g., add it to a list
-                                        // or perform any other required operation.
-                                        print('Entered question: $question');
-                                        print(textEditingController.text);
-                                        Navigator.of(context).pop();
-                                        addPrompt(name: textEditingController.text,context: context,promtId: state.allResourcesModel.data!.record!.records![index].sId, resourcesId: state.allResourcesModel.data!.record!.records![index].iV.toString());
+                                        if(textEditingController.text.isEmpty){
+                                          context.showSnackBar(const SnackBar(content: Text('Please enter question')));
+                                        }else {
+                                          Navigator.of(context).pop();
+                                          addPrompt(
+                                              name: textEditingController.text,
+                                              context: context,
+                                              promtId: state
+                                                  .allResourcesModel
+                                                  .data!
+                                                  .record!
+                                                  .records![index]
+                                                  .sId,
+                                              resourcesId: state
+                                                  .allResourcesModel
+                                                  .data!
+                                                  .record!
+                                                  .records![index]
+                                                  .iV
+                                                  .toString(),
+                                              mediatype: widget.mediaType,
+                                              content: state
+                                                  .allResourcesModel
+                                                  .data!
+                                                  .record!
+                                                  .records![index]
+                                                  .content ??
+                                                  state
+                                                      .allResourcesModel
+                                                      .data!
+                                                      .record!
+                                                      .records![index]
+                                                      .title!);
+                                        }
 
                                       },
                                     ),
                                   ],
                                 ));
-                               //  Navigator.push(context, MaterialPageRoute(builder: (context) {
-                               // return   AddQuestionDialog();
-                               //  },));
+                                //  Navigator.push(context, MaterialPageRoute(builder: (context) {
+                                // return   AddQuestionDialog();
+                                //  },));
                               },
                             )),
                       );

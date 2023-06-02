@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -82,7 +83,7 @@ class _AddCateScreenState extends State<AddCateScreen> {
       );
       if (res.statusCode == 201) {
         context.showSnackBar(
-            SnackBar(content: Text('Category added Successfully')));
+            SnackBar(duration: Duration(seconds: 1),content: Text('Category added Successfully')));
         context.read<CategoryBloc>().add(CategoryLoadEvent());
         context.read<DashboardBloc>().ChangeIndex(0);
       } else {
@@ -117,7 +118,7 @@ class _AddCateScreenState extends State<AddCateScreen> {
                 const Align(
                   alignment: Alignment.centerLeft,
                   child: Text(
-                    'Create Categories',
+                    'Create Category',
                     style: TextStyle(
                         fontWeight: FontWeight.bold,
                         color: Colors.grey,
@@ -136,6 +137,9 @@ class _AddCateScreenState extends State<AddCateScreen> {
                     child: Align(
                         alignment: Alignment.centerLeft,
                         child: TextFormField(
+                          inputFormatters: [
+                            LengthLimitingTextInputFormatter(80),
+                          ],
                           controller: categoryNameController,
                           onChanged: (value) {},
                           decoration: InputDecoration(
@@ -287,7 +291,7 @@ class _AddCateScreenState extends State<AddCateScreen> {
                         print( _controller!.getTags);
                         if (categoryNameController.text.isEmpty) {
                           context.showSnackBar(const SnackBar(
-                              content: Text('Category Name is Requried')));
+                              content: Text('Category name is requried')));
                         } else {
                           addCategory();
                         }

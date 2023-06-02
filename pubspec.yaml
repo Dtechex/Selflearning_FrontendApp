@@ -59,6 +59,7 @@ dependencies:
   loader_overlay: ^2.2.0
   cached_network_image: ^3.2.3
   audioplayers: ^4.1.0
+  chewie: ^1.5.0
 
 
 

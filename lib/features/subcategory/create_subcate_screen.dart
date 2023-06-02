@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -146,6 +147,9 @@ class _CreateSubCateScreenState extends State<CreateSubCateScreen> {
                     child: Align(
                         alignment: Alignment.centerLeft,
                         child: TextFormField(
+                         inputFormatters: [
+                           LengthLimitingTextInputFormatter(80),
+                         ],
                           controller: categoryNameController,
                           onChanged: (value) {},
                           decoration: InputDecoration(

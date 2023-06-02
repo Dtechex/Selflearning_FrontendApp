@@ -170,7 +170,7 @@ class _UpdateCateScreenState extends State<UpdateCateScreen> {
                 const Align(
                   alignment: Alignment.centerLeft,
                   child: Text(
-                    'Create Categories',
+                    'Create Category',
                     style: TextStyle(
                         fontWeight: FontWeight.bold,
                         color: Colors.grey,

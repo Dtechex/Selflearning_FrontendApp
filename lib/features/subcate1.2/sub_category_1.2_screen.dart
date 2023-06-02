@@ -1,17 +1,13 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:self_learning_app/features/subcate1.2/update_subcate1.2.dart';
-import 'package:self_learning_app/features/subcategory/create_subcate_screen.dart';
 import 'package:self_learning_app/utilities/extenstion.dart';
 import 'package:self_learning_app/widgets/add_resources_screen.dart';
 import '../../subcate1.1/update_subcate1.1_screen.dart';
 import '../../utilities/colors.dart';
-import '../update_category/update_cate_screen.dart';
 import 'bloc/sub_cate2_bloc.dart';
 import 'bloc/sub_cate2_event.dart';
 import 'bloc/sub_cate2_state.dart';
-import 'create_subcate1.2_screen.dart';
 
 class SubCategory2Screen extends StatefulWidget {
   final String subCateTitle;
@@ -61,13 +57,13 @@ class _SubCategory2ScreenState extends State<SubCategory2Screen> {
               bottom:  TabBar(
                 tabs: [
                   Column(
-                    children: [
+                    children: const [
                       Tab(icon: Icon(Icons.list_alt,)),
                       Text('Subcategory list')
                     ],
                   ),
                   Column(
-                    children: [
+                    children: const [
                       Tab(icon: Icon(Icons.perm_media,)),
                       Text('Resources')
                     ],

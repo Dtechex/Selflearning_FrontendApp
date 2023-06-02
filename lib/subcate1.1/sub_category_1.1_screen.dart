@@ -59,7 +59,7 @@ class _SubCategory1ScreenState extends State<SubCategory1Screen> {
       child: Scaffold(
           floatingActionButton: SizedBox(height: context.screenHeight*0.1,
             child: FittedBox(
-              child: FloatingActionButton(
+              child: ElevatedButton(
 
                 onPressed: () {
                   Navigator.push(context, MaterialPageRoute(builder: (context) {
@@ -69,7 +69,7 @@ class _SubCategory1ScreenState extends State<SubCategory1Screen> {
                 },
                 child: Row(
                   children: const [
-                    Text('    Create\n Subcatgory',style: TextStyle(fontSize: 7),),
+                    Text('      Create\n Subcategory',style: TextStyle(fontSize: 9),),
 
                   ],
                 ),
@@ -80,13 +80,13 @@ class _SubCategory1ScreenState extends State<SubCategory1Screen> {
               bottom:  TabBar(
                 tabs: [
                   Column(
-                    children: [
+                    children: const [
                       Tab(icon: Icon(Icons.list_alt,)),
                       Text('Subcategory list')
                     ],
                   ),
                   Column(
-                    children: [
+                    children: const [
                       Tab(icon: Icon(Icons.perm_media,)),
                       Text('Resources')
                     ],
@@ -145,9 +145,6 @@ class _SubCategory1ScreenState extends State<SubCategory1Screen> {
                             itemBuilder: (context, index) {
                               return GestureDetector(
                                 onTap: () {
-                                  print(state.cateList[index].sId);
-                                  print('state.cateList[index].sId');
-
                                   Navigator.push(context, MaterialPageRoute(builder: (context) {
                                     return SubCategory2Screen(subCateTitle: state.cateList[index].name!,rootId: state.cateList[index].sId!,color: widget.color,keyWords: state.cateList[index].keywords!,);
                                   },));

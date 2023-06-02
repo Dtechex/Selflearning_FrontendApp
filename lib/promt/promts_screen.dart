@@ -1,9 +1,11 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:self_learning_app/features/dashboard/dashboard_screen.dart';
 import 'package:self_learning_app/promt/bloc/promt_bloc.dart';
 import 'package:self_learning_app/widgets/play_music.dart';
+import 'package:video_player/video_player.dart';
 
 import '../widgets/video_from_url.dart';
 
@@ -11,8 +13,8 @@ class PromtsScreen extends StatefulWidget {
   final String? mediaType;
   final String promtId;
   final String? content;
-  const PromtsScreen(
-      {Key? key, required this.promtId, this.mediaType, this.content})
+
+  const PromtsScreen({Key? key, required this.promtId, this.mediaType, this.content})
       : super(key: key);
 
   @override
@@ -24,6 +26,7 @@ class _PromtsScreenState extends State<PromtsScreen> {
   final PageController _pageController = PageController();
   int _currentPage = 0;
   int _promtModelLength = 0;
+  ChewieController? _chewieController;
 
   @override
   void initState() {
@@ -34,6 +37,7 @@ class _PromtsScreenState extends State<PromtsScreen> {
   @override
   void dispose() {
     _pageController.dispose();
+    _chewieController?.dispose(); // Dispose the ChewieController
     super.dispose();
   }
 
@@ -57,28 +61,28 @@ class _PromtsScreenState extends State<PromtsScreen> {
   Widget build(BuildContext context) {
     var h = MediaQuery.of(context).size.height;
     var w = MediaQuery.of(context).size.width;
-    print(
-        "http://3.110.219.9:8000/public/${widget.mediaType}/${widget.content}");
+    print("http://3.110.219.9:8000/public/${widget.mediaType}/${widget.content}");
     return BlocProvider(
       create: (context) => promtBloc,
       child: Scaffold(
-        appBar: AppBar(title: Text('Promts')),
+        appBar: AppBar(title: const Text('Prompts')),
         body: Scaffold(
           bottomSheet: Container(
             height: 60,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                //  SizedBox(width: 30,),
-                ElevatedButton(
+             _promtModelLength!=0?   ElevatedButton(
                   onPressed: () {
                     if (isLastPage()) {
                       // Handle Finish button press
-                      Navigator.pushAndRemoveUntil(context, MaterialPageRoute(
-                        builder: (context) {
+                      Navigator.pushAndRemoveUntil(
+                        context,
+                        MaterialPageRoute(builder: (context) {
                           return const DashBoardScreen();
-                        },
-                      ), (route) => false);
+                        }),
+                            (route) => false,
+                      );
                     } else {
                       _pageController.nextPage(
                         duration: const Duration(milliseconds: 300),
@@ -87,13 +91,18 @@ class _PromtsScreenState extends State<PromtsScreen> {
                     }
                   },
                   child: Text(isLastPage() ? 'Finish' : 'Next'),
-                ),
-                //  SizedBox(width: 30,),
+                ):const SizedBox()
               ],
             ),
           ),
           body: BlocConsumer<PromtBloc, PromtState>(
-            listener: (context, state) {},
+            listener: (context, state) {
+              if(state is  PromtLoaded){
+                setState(() {
+                 _promtModelLength= state.promtModel.length;
+                });
+              }
+            },
             builder: (context, state) {
               print(state);
               if (state is PromtLoading) {
@@ -107,7 +116,7 @@ class _PromtsScreenState extends State<PromtsScreen> {
               } else if (state is PromtLoaded) {
                 if (state.promtModel.isEmpty) {
                   return const Center(
-                    child: Text('No promts found'),
+                    child: Text('No prompts found'),
                   );
                 } else {
                   _promtModelLength = state.promtModel.length;
@@ -115,39 +124,7 @@ class _PromtsScreenState extends State<PromtsScreen> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // Padding(padding: EdgeInsets.only(left: 30,top: 30),child:  Align(
-                      //   alignment: Alignment.topLeft,
-                      //   child:  FloatingActionButton(onPressed: () {
-                      //
-                      //   },child: Text(_currentPage.toString()),),),),
-                    SizedBox(
-                      width: w,
-                      height: h*0.3,
-                      child:  widget.mediaType == 'image'
-                        ? Center(
-                      child: CachedNetworkImage(
-                        imageUrl:
-                        "http://3.110.219.9:8000/public/image/${widget.content}",
-                        fit: BoxFit.fill,
-                        height: h * 0.2,
-                        width: w / 1.5,
-                        progressIndicatorBuilder:
-                            (context, url, downloadProgress) =>
-                            CircularProgressIndicator(
-                                value: downloadProgress.progress),
-                        errorWidget: (context, url, error) =>
-                        const Icon(Icons.error),
-                      ),
-                    )
-                        : widget.mediaType == 'audio'
-                        ? AudioPlayerPage(
-                        audioUrl:
-                        "http://3.110.219.9:8000/public/${widget.mediaType}/${widget.content}")
-                        : widget.mediaType == 'video'
-                        ? VideoPlayerScreen(
-                        videoUrl:
-                        "http://3.110.219.9:8000/public/${widget.mediaType}/${widget.content}")
-                        : Text(widget.content.toString()),),
+
                       Expanded(
                         child: PageView.builder(
                           controller: _pageController,
@@ -159,10 +136,42 @@ class _PromtsScreenState extends State<PromtsScreen> {
                           },
                           itemBuilder: (context, index) {
                             return Center(
-                                child: Text(
-                                    state.promtModel[index].name.toString()));
+                                child: Text(state.promtModel[index].name.toString()));
                           },
                         ),
+                      ),
+                      SizedBox(
+                        width: w,
+                        height: h * 0.3,
+                        child: widget.mediaType == 'image'
+                            ? Center(
+                          child: CachedNetworkImage(
+                            imageUrl:
+                            "http://3.110.219.9:8000/public/image/${widget.content}",
+                            fit: BoxFit.fill,
+                            height: h * 0.2,
+                            width: w / 1.5,
+                            progressIndicatorBuilder:
+                                (context, url, downloadProgress) =>
+                                CircularProgressIndicator(
+                                  value: downloadProgress.progress,
+                                ),
+                            errorWidget: (context, url, error) =>
+                            const Icon(Icons.error),
+                          ),
+                        )
+                            : widget.mediaType == 'audio'
+                            ? AudioPlayerPage(
+                          audioUrl:
+                          "http://3.110.219.9:8000/public/${widget.mediaType}/${widget.content}",
+                        )
+                            : widget.mediaType == 'video'
+                            ? Chewie(
+                          controller: _createChewieController(
+                            "http://3.110.219.9:8000/public/${widget.mediaType}/${widget.content}",
+                          ),
+                        )
+                            : Text(widget.content.toString()),
                       ),
                       Padding(
                         padding: const EdgeInsets.all(16.0),
@@ -183,6 +192,25 @@ class _PromtsScreenState extends State<PromtsScreen> {
         ),
       ),
     );
+  }
+
+  ChewieController _createChewieController(String videoUrl) {
+    final videoPlayerController = VideoPlayerController.network(videoUrl);
+    _chewieController = ChewieController(
+      videoPlayerController: videoPlayerController,
+      autoInitialize: true,
+      autoPlay: true,
+      looping: false,
+      errorBuilder: (context, errorMessage) {
+        return Center(
+          child: Text(
+            errorMessage,
+            style: const TextStyle(color: Colors.white),
+          ),
+        );
+      },
+    );
+    return _chewieController!;
   }
 }
 

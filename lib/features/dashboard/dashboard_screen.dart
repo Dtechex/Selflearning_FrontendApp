@@ -12,7 +12,7 @@ class DashBoardScreen extends StatelessWidget {
   const DashBoardScreen({Key? key}) : super(key: key);
 
   static const TextStyle optionStyle =
-      TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
+      TextStyle(fontSize: 20, fontWeight: FontWeight.bold);
 
   static const List<Widget> _widgetOptions = <Widget>[
     AllCateScreen(),

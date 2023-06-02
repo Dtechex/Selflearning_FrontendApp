@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 
@@ -99,14 +100,18 @@ class _AddTextScreenState extends State<AddTextScreen> {
                     height: context.screenHeight * 0.15,
                     width: context.screenWidth,
                     child: TextField(
+                      inputFormatters: [
+                        LengthLimitingTextInputFormatter(80),
+                      ],
                       controller: textEditingController,
-                      decoration: InputDecoration(hintText: 'title'),
+                      decoration: const InputDecoration(hintText: 'Title'),
                     ),
                   ),
 
                   ElevatedButton(
                       onPressed: () {
-                        addMediaBloc.add(SubmitButtonEvent(
+
+                          addMediaBloc.add(SubmitButtonEvent(
                           MediaType: 0,
                           //  resourcesId: widget.resourceId,
                            whichResources: widget.whichResources,
@@ -114,7 +119,7 @@ class _AddTextScreenState extends State<AddTextScreen> {
                             title: textEditingController.text.isEmpty
                                 ? 'Untitled'
                                 : textEditingController.text));
-                      },
+                        },
                       child: const Text('Create '))
                 ],
               );
