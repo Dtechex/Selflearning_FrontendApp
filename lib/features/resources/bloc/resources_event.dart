@@ -9,3 +9,8 @@ class LoadResourcesEvent extends ResourcesEvent{
 
   LoadResourcesEvent({required this.rootId,required this.mediaType});
 }
+class DeleteResourcesEvent extends ResourcesEvent{
+  final String rootId;
+
+  DeleteResourcesEvent({required this.rootId});
+}

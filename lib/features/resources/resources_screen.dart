@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:self_learning_app/features/add_media/bloc/add_media_bloc.dart';
+import 'package:self_learning_app/features/dashboard/dashboard_screen.dart';
 import 'package:self_learning_app/features/resources/bloc/resources_bloc.dart';
 import 'package:self_learning_app/features/subcategory/model/resources_model.dart';
 import 'package:self_learning_app/promt/promts_screen.dart';
@@ -56,12 +57,8 @@ class _AllResourcesListState extends State<AllResourcesList> {
           Uri.parse('http://3.110.219.9:8000/web/prompt/'),
           body: {"name": name, "resourceId": promtId},
           headers: {'Authorization': "Bearer $token"});
-      print(res.statusCode);
-      print(res.statusCode);
-      // final response =jsonDecode(res.body);
-      // print(response.body);
+
       if (res.statusCode == 200 || res.statusCode == 201) {
-        //  Navigator.pop(context);
         Navigator.push(context, MaterialPageRoute(
           builder: (context) {
             return PromtsScreen(
@@ -72,7 +69,6 @@ class _AllResourcesListState extends State<AllResourcesList> {
       final data = jsonDecode(res.body);
       return data[''];
     } catch (e) {
-      print(e);
     }
   }
 
@@ -81,9 +77,16 @@ class _AllResourcesListState extends State<AllResourcesList> {
     return BlocProvider(
       create: (context) => resourcesBloc,
       child: Scaffold(
-        appBar: AppBar(title: Text('Resources')),
+        appBar: AppBar(title: const Text('Resources')),
         body: BlocConsumer<ResourcesBloc, ResourcesState>(
-          listener: (context, state) {},
+          listener: (context, state) {
+            if(state is ResourcesDelete){
+              context.showSnackBar(const SnackBar(duration: Duration(seconds: 2),content: Text('Ressource deleted successfully')));
+              Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) {
+                return const DashBoardScreen();
+              },), (route) => false);
+            }
+          },
           builder: (context, state) {
             if (state is ResourcesLoading) {
               return const Center(
@@ -111,31 +114,39 @@ class _AllResourcesListState extends State<AllResourcesList> {
                         width: context.screenWidth,
                         height: 60,
                         child: ListTile(
-                            trailing: ElevatedButton(
-                              child: const Text('View Prompts'),
-                              onPressed: () {
-                                print(state.allResourcesModel.data!.record!
-                                    .records![index].content);
+                            trailing: SizedBox(
+                              width: context.screenWidth*0.48,
+                                child: Row(children: [
+                              ElevatedButton(
+                                child: const Text('View Prompts'),
+                                onPressed: () {
+                                  print(state.allResourcesModel.data!.record!
+                                      .records![index].content);
 
-                                Navigator.push(context, MaterialPageRoute(
-                                  builder: (context) {
-                                    return PromtsScreen(
-                                        content: state
-                                                .allResourcesModel
-                                                .data!
-                                                .record!
-                                                .records![index]
-                                                .content ??
-                                            state.allResourcesModel.data!
-                                                .record!.records![index].title,
-                                        mediaType: state.allResourcesModel.data!
-                                            .record!.records![index].type!,
-                                        promtId: state.allResourcesModel.data!
-                                            .record!.records![index].sId!);
-                                  },
-                                ));
-                              },
-                            ),
+                                  Navigator.push(context, MaterialPageRoute(
+                                    builder: (context) {
+                                      return PromtsScreen(
+                                          content: state
+                                              .allResourcesModel
+                                              .data!
+                                              .record!
+                                              .records![index]
+                                              .content ??
+                                              state.allResourcesModel.data!
+                                                  .record!.records![index].title,
+                                          mediaType: state.allResourcesModel.data!
+                                              .record!.records![index].type!,
+                                          promtId: state.allResourcesModel.data!
+                                              .record!.records![index].sId!);
+                                    },
+                                  ));
+                                },
+                              ),IconButton(onPressed: () {
+
+                                resourcesBloc.add(DeleteResourcesEvent(rootId: state.allResourcesModel.data!.record!.records![index].sId.toString()));
+
+                              }, icon: const Icon(Icons.delete))
+                            ],)),
                             leading: content.contains('.jpeg') ||
                                     content.contains('.jpg') ||
                                     content.contains('.png') ||
@@ -166,7 +177,7 @@ class _AllResourcesListState extends State<AllResourcesList> {
                                                 size: 50)
                                             : Icon(Icons.audiotrack, size: 50)),
                             title: ElevatedButton(
-                              child: const Text('Add Prompt'),
+                              child: const Text('Add'),
                               onPressed: () {
                                 print(state.allResourcesModel.data!.record!
                                     .records![index].sId);
@@ -242,7 +253,7 @@ class _AllResourcesListState extends State<AllResourcesList> {
                     });
               }
             }
-            return const Text('someth9ng went wrong');
+            return const Text('something went wrong');
           },
         ),
       ),

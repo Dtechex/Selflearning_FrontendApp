@@ -8,8 +8,7 @@ import 'package:self_learning_app/utilities/shared_pref.dart';
 import 'constants.dart';
 
 
-class Api
-{
+class Api {
   // get client helper
   Future<Response> get({required String endPoint}) async {
     try {
@@ -42,16 +41,20 @@ class Api
       }, body: payload);
       return response;
     }
+
+
+
+  Future<http.Response> delete({required String endPoint,}) async {
+    var token = await SharedPref().getToken();
+    String base = DEVELOPMENT_BASE_URL;
+    var uri = Uri.parse(base + endPoint);
+    var response = await http.delete(uri,headers: {
+      'Authorization': 'bearer' + ' ' + token.toString(),
+    },);
+    return response;
+  }
   }
 
-Future<http.Response> post({required String endPoint,
-  required Map<String, dynamic> payload}) async {
-  var token = await SharedPref().getToken();
-  String base = DEVELOPMENT_BASE_URL;
-  var uri = Uri.parse(base + endPoint);
-  var response = await http.patch(uri,headers: {
-    'Authorization': 'bearer' + ' ' + token.toString(),
-  }, body: payload);
-  return response;
-}
+
+
 

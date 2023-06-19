@@ -11,6 +11,7 @@ part 'resources_state.dart';
 class ResourcesBloc extends Bloc<ResourcesEvent, ResourcesState> {
   ResourcesBloc() : super(ResourcesInitial()) {
     on<LoadResourcesEvent>(_onLoadResourcesEvent);
+    on<DeleteResourcesEvent>(_onDeleteResourcesEvent);
   }
 
   _onLoadResourcesEvent(
@@ -21,6 +22,20 @@ class ResourcesBloc extends Bloc<ResourcesEvent, ResourcesState> {
         emit(ResourcesLoaded(allResourcesModel: value!));
       });
     } catch (e) {
+      emit(ResourcesError());
+    }
+  }
+
+  _onDeleteResourcesEvent(
+      DeleteResourcesEvent event, Emitter<ResourcesState> emit) async {
+    emit(ResourcesLoading());
+    try {
+      await  ResourcesRepo.deleteResource(rootId: event.rootId).then((value) {
+        emit(ResourcesDelete());
+      });
+    } catch (e) {
+      print(e);
+      print('erorrre');
       emit(ResourcesError());
     }
   }

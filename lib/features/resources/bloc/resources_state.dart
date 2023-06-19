@@ -11,3 +11,5 @@ class ResourcesLoaded extends ResourcesState {
 }
 class ResourcesError extends ResourcesState {}
 
+class ResourcesDelete extends ResourcesState {}
+

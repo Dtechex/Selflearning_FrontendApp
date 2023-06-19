@@ -1,5 +1,21 @@
 import 'package:flutter/material.dart';
 
+
+extension StringExtension on String {
+  String capitalizeWords() {
+    if (this.isEmpty) {
+      return this;
+    }
+    final List<String> words = this.split(' ');
+    final capitalizedWords = words.map((word) {
+      final firstLetter = word.substring(0, 1).toUpperCase();
+      final remainingLetters = word.substring(1).toLowerCase();
+      return '$firstLetter$remainingLetters';
+    });
+    return capitalizedWords.join(' ');
+  }
+}
+
 /// Extension methods on BuildContext
 extension ContextExtension on BuildContext {
   ///Extension method on BuildContext to show a snackbar.

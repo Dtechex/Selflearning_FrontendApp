@@ -1,6 +1,4 @@
-
 import 'dart:convert';
-
 import '../../../../utilities/base_client.dart';
 import '../../../subcategory/model/resources_model.dart';
 import 'package:http/http.dart';
@@ -15,6 +13,14 @@ class ResourcesRepo{
       return AllResourcesModel.fromJson(data);
     }
     print(res.body);
+  }
+
+  static Future<int?> deleteResource({required String rootId,})async {
+    print('dlete');
+    Response res = await Api().delete(endPoint: 'resource/$rootId',);
+    print(res.body);
+    print("res.body");
+    return res.statusCode;
   }
 
 

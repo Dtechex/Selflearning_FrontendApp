@@ -1,15 +1,22 @@
+import 'dart:core';
+
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:loader_overlay/loader_overlay.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:self_learning_app/utilities/extenstion.dart';
 import '../../promt/promts_screen.dart';
 import '../../utilities/image_picker_helper.dart';
 import '../quick_add/quick_add_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:record/record.dart';
 
 import '../resources/resources_screen.dart';
 import 'bloc/add_media_bloc.dart';
+import 'dart:io';
+import 'package:path_provider/path_provider.dart';
+import 'package:external_path/external_path.dart';
 
 class AddAudioScreen extends StatefulWidget {
   final int whichResources;
@@ -27,6 +34,52 @@ class _AddAudioScreenState extends State<AddAudioScreen> {
   AddMediaBloc addMediaBloc = AddMediaBloc();
   AudioPlayer audioPlayer = AudioPlayer();
   bool _isPlaying = false;
+
+
+  bool _isRecording = false;
+  String _recordFilePath = '';
+
+   final recorder = Record();
+
+
+
+
+  Future<void> startRecording() async {
+    print('start');
+    await Permission.microphone.request();
+    await Permission.storage.request();
+    await Permission.audio.request();
+    await Permission.accessMediaLocation.request();
+    await Permission.manageExternalStorage.request();
+    String downloadPath = await ExternalPath.getExternalStoragePublicDirectory(ExternalPath.DIRECTORY_DOWNLOADS);
+
+    print(downloadPath);
+
+    setState(() {
+      _isRecording = true;
+    });
+    await recorder.start(
+      path: '$downloadPath/myFile.m4a',
+      encoder: AudioEncoder.aacLc, // by default
+      bitRate: 128000, // by default
+      samplingRate: 44100, // by default
+    );
+  }
+
+
+  Future<void> stopRecording() async {
+    setState(() {
+      _isRecording = false;
+    });
+
+    final path = await recorder.stop();
+    addMediaBloc.add(AudioPickEvent(audio: path));
+
+    _togglePlayPause(path!);
+    final audioFile = File(path);
+    print ('Recorded audio: $audioFile');
+  }
+
 
   @override
   void dispose() {
@@ -57,10 +110,20 @@ class _AddAudioScreenState extends State<AddAudioScreen> {
     });
   }
 
+  Future initRecorder () async {
+    final status = await Permission. microphone. request ();
+    if (status != PermissionStatus. granted) {
+      throw 'Microphone permission not granted';
+    }
+
+  }
+
 
 
   @override
   void initState() {
+    initRecorder();
+
     textEditingController.text='';
     super.initState();
     _playerStateChanged();
@@ -193,6 +256,32 @@ class _AddAudioScreenState extends State<AddAudioScreen> {
                   const SizedBox(
                     height: 30,
                   ),
+                  Text('OR RECORD'),
+                  // StreamBuilder<RecordingDisposition>(
+                  //     stream: recorder.onProgress,
+                  //     builder: (context, snapshot) {
+                  //       final duration = snapshot.hasData
+                  //           ? snapshot.data!.duration
+                  //           : Duration.zero;
+                  //       String twoDigits(int n) => n.toString().padLeft(2, '0');
+                  //
+                  //       final twoDigitMinutes = twoDigits(duration.inMinutes.remainder(60));
+                  //       final twoDigitSeconds = twoDigits(duration.inSeconds.remainder(60));
+                  //
+                  //       return Text(
+                  //         '$twoDigitMinutes:$twoDigitSeconds',
+                  //         style: const TextStyle(
+                  //           fontSize: 80,
+                  //           fontWeight: FontWeight.bold,
+                  //         ),
+                  //       );
+                  //
+                  //     }),
+                  _isRecording==true?FloatingActionButton(onPressed: () {
+                    stopRecording();
+                  },child: Icon(Icons.stop)):FloatingActionButton(onPressed: () {
+                    startRecording();
+                  },child: Icon(Icons.mic)),
                   ElevatedButton(
                     onPressed: () {
                       if(state.selectedFilepath!.isEmpty){
