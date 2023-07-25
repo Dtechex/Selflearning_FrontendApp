@@ -1,13 +1,11 @@
-import 'package:cached_network_image/cached_network_image.dart';
+
 import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:self_learning_app/features/dashboard/dashboard_screen.dart';
-import 'package:self_learning_app/promt/bloc/promt_bloc.dart';
-import 'package:self_learning_app/widgets/play_music.dart';
-import 'package:video_player/video_player.dart';
+import 'package:self_learning_app/utilities/extenstion.dart';
 
-import '../widgets/video_from_url.dart';
+import 'bloc/promt_bloc.dart';
+import 'data/model/flow_model.dart';
 
 class PromtsScreen extends StatefulWidget {
   final String? mediaType;
@@ -28,11 +26,16 @@ class _PromtsScreenState extends State<PromtsScreen> {
   int _promtModelLength = 0;
   ChewieController? _chewieController;
 
+  late final ColorScheme colorScheme;
+
   @override
   void initState() {
     promtBloc.add(LoadPromtEvent(promtId: widget.promtId));
     super.initState();
   }
+
+
+  final List<int> _items = List<int>.generate(50, (int index) => index);
 
   @override
   void dispose() {
@@ -59,52 +62,36 @@ class _PromtsScreenState extends State<PromtsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    var h = MediaQuery.of(context).size.height;
-    var w = MediaQuery.of(context).size.width;
-    print("http://3.110.219.9:8000/public/${widget.mediaType}/${widget.content}");
+    final ColorScheme colorScheme = Theme
+        .of(context)
+        .colorScheme;
+    final Color oddItemColor = colorScheme.primary.withOpacity(0.05);
+    final Color evenItemColor = colorScheme.primary.withOpacity(0.15);
+    var h = MediaQuery
+        .of(context)
+        .size
+        .height;
+    var w = MediaQuery
+        .of(context)
+        .size
+        .width;
+    print(
+        "http://3.110.219.9:8000/public/${widget.mediaType}/${widget.content}");
     return BlocProvider(
       create: (context) => promtBloc,
       child: Scaffold(
         appBar: AppBar(title: const Text('Prompts')),
         body: Scaffold(
-          bottomSheet: Container(
-            height: 60,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-             _promtModelLength!=0?   ElevatedButton(
-                  onPressed: () {
-                    if (isLastPage()) {
-                      // Handle Finish button press
-                      Navigator.pushAndRemoveUntil(
-                        context,
-                        MaterialPageRoute(builder: (context) {
-                          return const DashBoardScreen();
-                        }),
-                            (route) => false,
-                      );
-                    } else {
-                      _pageController.nextPage(
-                        duration: const Duration(milliseconds: 300),
-                        curve: Curves.ease,
-                      );
-                    }
-                  },
-                  child: Text(isLastPage() ? 'Finish' : 'Next'),
-                ):const SizedBox()
-              ],
-            ),
-          ),
           body: BlocConsumer<PromtBloc, PromtState>(
             listener: (context, state) {
-              if(state is  PromtLoaded){
-                setState(() {
-                 _promtModelLength= state.promtModel.length;
-                });
+              if(state is PromtLoaded){
+                if(state.apiState==ApiState.Success){
+                  Navigator.pop(context);
+                  context.showSnackBar(SnackBar(content: Text('Flow added')));
+                }
               }
             },
             builder: (context, state) {
-              print(state);
               if (state is PromtLoading) {
                 return const Center(
                   child: CircularProgressIndicator(),
@@ -114,74 +101,58 @@ class _PromtsScreenState extends State<PromtsScreen> {
                   child: Text(state.error!),
                 );
               } else if (state is PromtLoaded) {
-                if (state.promtModel.isEmpty) {
+                if (state.addFlowModel!.flow!.isEmpty) {
                   return const Center(
                     child: Text('No prompts found'),
                   );
                 } else {
-                  _promtModelLength = state.promtModel.length;
                   return Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
 
-                      Expanded(
-                        child: PageView.builder(
-                          controller: _pageController,
-                          itemCount: _promtModelLength,
-                          onPageChanged: (index) {
-                            setState(() {
-                              _currentPage = index;
-                            });
-                          },
-                          itemBuilder: (context, index) {
-                            return Center(
-                                child: Text(state.promtModel[index].name.toString()));
-                          },
-                        ),
-                      ),
-                      SizedBox(
-                        width: w,
-                        height: h * 0.3,
-                        child: widget.mediaType == 'image'
-                            ? Center(
-                          child: CachedNetworkImage(
-                            imageUrl:
-                            "http://3.110.219.9:8000/public/image/${widget.content}",
-                            fit: BoxFit.fill,
-                            height: h * 0.2,
-                            width: w / 1.5,
-                            progressIndicatorBuilder:
-                                (context, url, downloadProgress) =>
-                                CircularProgressIndicator(
-                                  value: downloadProgress.progress,
-                                ),
-                            errorWidget: (context, url, error) =>
-                            const Icon(Icons.error),
-                          ),
-                        )
-                            : widget.mediaType == 'audio'
-                            ? AudioPlayerPage(
-                          audioUrl:
-                          "http://3.110.219.9:8000/public/${widget.mediaType}/${widget.content}",
-                        )
-                            : widget.mediaType == 'video'
-                            ? Chewie(
-                          controller: _createChewieController(
-                            "http://3.110.219.9:8000/public/${widget.mediaType}/${widget.content}",
-                          ),
-                        )
-                            : Text(widget.content.toString()),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(16.0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: List.generate(_promtModelLength, (index) {
-                            return buildSliderIndicator(index);
-                          }),
-                        ),
-                      ),
+
+                    children: [
+                      Expanded(child: ReorderableListView(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 10, vertical: 10),
+                        children: <Widget>[
+                          for (int index = 0; index <
+                              state.addFlowModel!.flow!.length; index += 1)
+                            ListTile(
+                              leading: CircleAvatar(
+                                  maxRadius: 17,
+                                  child: Text("${index + 1}")),
+                              trailing: Icon(Icons.menu),
+                              key: Key('$index'),
+                              tileColor: index.isOdd
+                                  ? oddItemColor
+                                  : evenItemColor,
+                              title: Row(
+                                children: [
+                                  Text('Item ${state.addFlowModel!.flow![index]
+                                      .name}')
+                                ],
+                              ),
+                            ),
+                        ],
+                        onReorder: (int oldIndex, int newIndex) {
+                          setState(() {
+                            if (oldIndex < newIndex) {
+                              newIndex -= 1;
+                            }
+                            PromptFlow item = state.addFlowModel!.flow!
+                                .removeAt(oldIndex);
+                            state.addFlowModel!.flow!.insert(newIndex, item);
+                          });
+                        },
+                      )),
+                      ElevatedButton(
+                          style: const ButtonStyle(
+                              backgroundColor: MaterialStatePropertyAll(
+                                  Colors.red)),
+                          onPressed: () {
+                            print(state.addFlowModel!.flow![0].name);
+                            promtBloc.add(AddPromptFlow(addFlowModel: state.addFlowModel));
+
+                          }, child: Text('  Create Flow '))
                     ],
                   );
                 }
@@ -194,36 +165,37 @@ class _PromtsScreenState extends State<PromtsScreen> {
     );
   }
 
-  ChewieController _createChewieController(String videoUrl) {
-    final videoPlayerController = VideoPlayerController.network(videoUrl);
-    _chewieController = ChewieController(
-      videoPlayerController: videoPlayerController,
-      autoInitialize: true,
-      autoPlay: true,
-      looping: false,
-      errorBuilder: (context, errorMessage) {
-        return Center(
-          child: Text(
-            errorMessage,
-            style: const TextStyle(color: Colors.white),
-          ),
-        );
-      },
-    );
-    return _chewieController!;
-  }
-}
-
-class PromtMediaPlayScreen extends StatefulWidget {
-  const PromtMediaPlayScreen({Key? key}) : super(key: key);
-
-  @override
-  State<PromtMediaPlayScreen> createState() => _PromtMediaPlayScreenState();
-}
-
-class _PromtMediaPlayScreenState extends State<PromtMediaPlayScreen> {
-  @override
-  Widget build(BuildContext context) {
-    return const Placeholder();
-  }
+//   ChewieController _createChewieController(String videoUrl) {
+//     final videoPlayerController = VideoPlayerController.network(videoUrl);
+//     _chewieController = ChewieController(
+//       videoPlayerController: videoPlayerController,
+//       autoInitialize: true,
+//       autoPlay: true,
+//       looping: false,
+//       errorBuilder: (context, errorMessage) {
+//         return Center(
+//           child: Text(
+//             errorMessage,
+//             style: const TextStyle(color: Colors.white),
+//           ),
+//         );
+//       },
+//     );
+//     return _chewieController!;
+//   }
+// }
+//
+// class PromtMediaPlayScreen extends StatefulWidget {
+//   const PromtMediaPlayScreen({Key? key}) : super(key: key);
+//
+//   @override
+//   State<PromtMediaPlayScreen> createState() => _PromtMediaPlayScreenState();
+// }
+//
+// class _PromtMediaPlayScreenState extends State<PromtMediaPlayScreen> {
+//   @override
+//   Widget build(BuildContext context) {
+//     return const Placeholder();
+//   }
+// }
 }

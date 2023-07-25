@@ -66,6 +66,8 @@ class AddMediaRepo {
   }
 
   static Future<String?> addPrompt({String? imagePath,required String resourcesId,required String name,}) async {
+
+  //
     print('addpromt');
     try{
       final token = await SharedPref().getToken();
@@ -77,6 +79,14 @@ class AddMediaRepo {
       request.headers['Authorization'] = 'Bearer $token';
       request.fields['resourceId'] = resourcesId;
       request.fields['name'] = name;
+
+  //     {
+  //       "name":"Prompts with sides",
+  //   "side1":"64b649384f06b00c437880d2",
+  //   "side2":"64b6489f4f06b00c437880cf",
+  //   "resourceId":"64a6635d357f6dcd51a83526"
+  //
+  // }
 
       if (imagePath != null) {
         var file = File(imagePath);
@@ -117,6 +127,7 @@ class AddMediaRepo {
 
     request.headers['Authorization'] = 'Bearer $token';
     request.fields['rootId'] = resourceId;
+    request.fields['title'] = "unititled";
     switch(mediaType){
       case 0:{
         request.fields['type'] = 'text';

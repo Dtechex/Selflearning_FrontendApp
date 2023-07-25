@@ -4,6 +4,7 @@ import 'package:device_preview/device_preview.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:loader_overlay/loader_overlay.dart';
+import 'package:self_learning_app/features/add_promts/bloc/add_prompts_bloc.dart';
 import 'package:self_learning_app/features/category/bloc/category_bloc.dart';
 import 'package:self_learning_app/features/dashboard/dashboard_screen.dart';
 import 'package:self_learning_app/features/login/data/repo/login_repo.dart';
@@ -73,6 +74,7 @@ class MyApp extends StatelessWidget {
           BlocProvider<SubCategory2Bloc>(create: (context) => SubCategory2Bloc()),
           BlocProvider<QuickImportBloc>(create: (context) => QuickImportBloc()),
           BlocProvider<ResourcesBloc>(create: (context) => ResourcesBloc()),
+         // BlocProvider<AddPromptsBloc>(create: (context) => AddPromptsBloc()),
 
         ],
         child: GlobalLoaderOverlay(child: MaterialApp(

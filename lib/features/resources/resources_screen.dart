@@ -5,7 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:self_learning_app/features/add_media/bloc/add_media_bloc.dart';
+import 'package:self_learning_app/features/add_promts/add_promts_screen.dart';
 import 'package:self_learning_app/features/dashboard/dashboard_screen.dart';
+import 'package:self_learning_app/features/flow_screen/start_flow_screen.dart';
 import 'package:self_learning_app/features/resources/bloc/resources_bloc.dart';
 import 'package:self_learning_app/features/subcategory/model/resources_model.dart';
 import 'package:self_learning_app/promt/promts_screen.dart';
@@ -118,7 +120,7 @@ class _AllResourcesListState extends State<AllResourcesList> {
                               width: context.screenWidth*0.48,
                                 child: Row(children: [
                               ElevatedButton(
-                                child: const Text('View Prompts'),
+                                child: const Text('View'),
                                 onPressed: () {
                                   print(state.allResourcesModel.data!.record!
                                       .records![index].content);
@@ -141,7 +143,35 @@ class _AllResourcesListState extends State<AllResourcesList> {
                                     },
                                   ));
                                 },
-                              ),IconButton(onPressed: () {
+                              ),
+                                  SizedBox(width: 5,),
+                                  ElevatedButton(
+                                    child: const Text('Start'),
+                                    onPressed: () {
+                                      print(state.allResourcesModel.data!.record!
+                                          .records![index].content);
+
+                                      Navigator.push(context, MaterialPageRoute(
+                                        builder: (context) {
+                                          return StartFlowScreen(
+                                              content: state
+                                                  .allResourcesModel
+                                                  .data!
+                                                  .record!
+                                                  .records![index]
+                                                  .content ??
+                                                  state.allResourcesModel.data!
+                                                      .record!.records![index].title,
+                                              mediaType: state.allResourcesModel.data!
+                                                  .record!.records![index].type!,
+                                              promtId: state.allResourcesModel.data!
+                                                  .record!.records![index].sId!);
+                                        },
+                                      ));
+                                    },
+                                  ),
+
+                                  IconButton(onPressed: () {
 
                                 resourcesBloc.add(DeleteResourcesEvent(rootId: state.allResourcesModel.data!.record!.records![index].sId.toString()));
 
@@ -179,74 +209,7 @@ class _AllResourcesListState extends State<AllResourcesList> {
                             title: ElevatedButton(
                               child: const Text('Add'),
                               onPressed: () {
-                                print(state.allResourcesModel.data!.record!
-                                    .records![index].sId);
-                                textEditingController.text = '';
-                                context.showNewDialog(AlertDialog(
-                                  title: const Text('Add Question'),
-                                  content: TextFormField(
-                                    inputFormatters: [
-                                      LengthLimitingTextInputFormatter(80),
-                                    ],
-                                    validator: (value) => value!.isEmpty
-                                        ? "Question can't be empty"
-                                        : null,
-                                    controller: textEditingController,
-                                    decoration: const InputDecoration(
-                                        hintText: 'Enter your question'),
-                                  ),
-                                  actions: <Widget>[
-                                    ElevatedButton(
-                                      child: const Text('Cancel'),
-                                      onPressed: () {
-                                        Navigator.of(context).pop();
-                                      },
-                                    ),
-                                    ElevatedButton(
-                                      child: const Text('Add'),
-                                      onPressed: () {
-                                        if(textEditingController.text.isEmpty){
-                                          context.showSnackBar(const SnackBar(content: Text('Please enter question')));
-                                        }else {
-                                          Navigator.of(context).pop();
-                                          addPrompt(
-                                              name: textEditingController.text,
-                                              context: context,
-                                              promtId: state
-                                                  .allResourcesModel
-                                                  .data!
-                                                  .record!
-                                                  .records![index]
-                                                  .sId,
-                                              resourcesId: state
-                                                  .allResourcesModel
-                                                  .data!
-                                                  .record!
-                                                  .records![index]
-                                                  .iV
-                                                  .toString(),
-                                              mediatype: widget.mediaType,
-                                              content: state
-                                                  .allResourcesModel
-                                                  .data!
-                                                  .record!
-                                                  .records![index]
-                                                  .content ??
-                                                  state
-                                                      .allResourcesModel
-                                                      .data!
-                                                      .record!
-                                                      .records![index]
-                                                      .title!);
-                                        }
-
-                                      },
-                                    ),
-                                  ],
-                                ));
-                                //  Navigator.push(context, MaterialPageRoute(builder: (context) {
-                                // return   AddQuestionDialog();
-                                //  },));
+                                context.push( AddPromptsScreen(resourceId: state.allResourcesModel.data!.record!.records![index].sId.toString(),));
                               },
                             )),
                       );

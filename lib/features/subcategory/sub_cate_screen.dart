@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:self_learning_app/features/category/bloc/category_state.dart';
+import 'package:self_learning_app/features/dashboard/dashboard_screen.dart';
 import 'package:self_learning_app/features/subcategory/create_subcate_screen.dart';
 import 'package:self_learning_app/subcate1.1/sub_category_1.1_screen.dart';
 import 'package:self_learning_app/utilities/colors.dart';
@@ -44,15 +45,70 @@ class _SubCategoryScreenState extends State<SubCategoryScreen> {
     super.initState();
   }
 
+  int selectedIndex = 0;
+
   Future<void>savecatid()async{
     SharedPref().savesubcateId(widget.rootId!);
   }
+  static const TextStyle optionStyle =
+  TextStyle(fontSize: 20, fontWeight: FontWeight.bold);
+
+  static const List<Widget> _widgetOptions = <Widget>[
+    Text('Create Dailogs', style: optionStyle,),
+    Text(
+      'Create Flow',
+      style: optionStyle,
+    ),
+    Text(
+      'Schedule',
+      style: optionStyle,
+    ),
+  ];
 
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
       length: 2,
       child: Scaffold(
+        bottomNavigationBar: BottomNavigationBar(
+            type: BottomNavigationBarType.shifting,
+            enableFeedback: true,
+            showUnselectedLabels: true,
+            selectedItemColor: Colors.white,
+            elevation: 0,
+            currentIndex: 0,
+            onTap: (value) {
+           //   context.read<DashboardBloc>().ChangeIndex(value);
+            },
+            unselectedItemColor: Colors.white,
+
+            items:  [
+          BottomNavigationBarItem( icon: IconButton(onPressed: () {
+            Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => DashBoardScreen(),), (route) => false);
+
+          }, icon: Icon(Icons.home)),
+              label: 'Home',
+              backgroundColor: primaryColor),
+          BottomNavigationBarItem( icon: Icon(Icons.create),
+              label: 'Create',
+              backgroundColor: primaryColor),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.play_circle),
+              label: '  Start Flow',
+              backgroundColor: primaryColor),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.add),
+              label: 'Create \n Flow',
+              backgroundColor: primaryColor),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.add_card_rounded),
+              label: 'create prompts',
+              backgroundColor: primaryColor),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.calendar_month_sharp),
+              label: 'Schedule',
+              backgroundColor: primaryColor),
+        ]),
           floatingActionButton: SizedBox(
             height: context.screenHeight * 0.1,
             child: FittedBox(
@@ -80,16 +136,17 @@ class _SubCategoryScreenState extends State<SubCategoryScreen> {
           appBar: AppBar(
               bottom:  TabBar(
                 tabs: [
-                Column(
-                  children: const [
-                    Tab(icon: Icon(Icons.list_alt,)),
-                    Text('Subcategory list')
-                  ],
-                ),
+
                   Column(
                     children: const [
                       Tab(icon: Icon(Icons.perm_media,)),
                       Text('Resources')
+                    ],
+                  ),
+                  Column(
+                    children: const [
+                      Tab(icon: Icon(Icons.list_alt,)),
+                      Text('Subcategory list')
                     ],
                   ),
                 ],
@@ -123,6 +180,8 @@ class _SubCategoryScreenState extends State<SubCategoryScreen> {
             padding: const EdgeInsets.only(left: 10, right: 10),
             child: TabBarView(
               children: [
+
+                AddResourceScreen(rootId: widget.rootId??'',whichResources: 1,),
                 Column(
                   children: [  const SizedBox(
                     height: 20,
@@ -203,7 +262,6 @@ class _SubCategoryScreenState extends State<SubCategoryScreen> {
                       },
                     ),],
                 ),
-                AddResourceScreen(rootId: widget.rootId??'',whichResources: 1,),
 
               ],
             ),

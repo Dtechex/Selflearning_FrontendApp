@@ -89,7 +89,8 @@ class _AllCateScreenState extends State<AllCateScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(children: [
+    return Column(
+      children: [
       const SizedBox(
         height: 20,
       ),
@@ -176,7 +177,8 @@ class _AllCateScreenState extends State<AllCateScreen> {
             );
           } else if (state is CategoryLoaded) {
             if (state.cateList.isNotEmpty) {
-              return Container(
+              return Expanded(
+                child: Container(
                 padding: const EdgeInsets.only(left: 20, right: 20),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -184,6 +186,7 @@ class _AllCateScreenState extends State<AllCateScreen> {
                   children: [
 
                     GridView.builder(
+                      physics: ScrollPhysics(),
                       shrinkWrap: true,
                       // padding: EdgeInsets.all(15),
                       itemCount: state.cateList.length,
@@ -240,7 +243,7 @@ class _AllCateScreenState extends State<AllCateScreen> {
                     )
                   ],
                 ),
-              );
+              ),);
             } else {
               return SizedBox(height: context.screenHeight/2,child: const Center(child: Text('No Categories Found')),);
             }
