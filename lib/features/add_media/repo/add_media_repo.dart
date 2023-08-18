@@ -8,36 +8,41 @@ import 'package:http_parser/http_parser.dart';
 
 class AddMediaRepo {
   static Future<String?> addQuickAddwithResources(
-      {String? imagePath, required String title,required int contenttype}) async {
+      {String? imagePath,
+      required String title,
+      required int contenttype}) async {
     print('quickadd');
     try {
       final token = await SharedPref().getToken();
       var request = http.MultipartRequest(
         "POST",
-        Uri.parse('http://3.110.219.9:8000/web/resource/quickAdd/'),
+        Uri.parse('https://selflearning.dtechex.com/web/resource/quickAdd/'),
       );
 
       request.headers['Authorization'] = 'Bearer $token';
-     switch(contenttype){
-       case 0:{
-         request.fields['type'] = 'QUICKADD-text';
-       }
-       break;
-       case 1:{
-         request.fields['type'] = 'QUICKADD-image';
-       }
-       break;
-       case 2:{
-         request.fields['type'] = 'QUICKADD-audio';
-       }
-       break;
-       case 3:{
-         request.fields['type'] = 'QUICKADD-video';
-       }
-     }
+      switch (contenttype) {
+        case 0:
+          {
+            request.fields['type'] = 'QUICKADD-text';
+          }
+          break;
+        case 1:
+          {
+            request.fields['type'] = 'QUICKADD-image';
+          }
+          break;
+        case 2:
+          {
+            request.fields['type'] = 'QUICKADD-audio';
+          }
+          break;
+        case 3:
+          {
+            request.fields['type'] = 'QUICKADD-video';
+          }
+      }
       request.fields['title'] = title;
       print(imagePath!.length);
-
 
       if (imagePath.isNotEmpty) {
         print('inide');
@@ -46,9 +51,7 @@ class AddMediaRepo {
         request.files.add(http.MultipartFile.fromBytes(
           'content',
           await file.readAsBytes(),
-          filename: file.path
-              .split('/')
-              .last,
+          filename: file.path.split('/').last,
           contentType: MediaType.parse(mimeType!),
         ));
       }
@@ -65,28 +68,31 @@ class AddMediaRepo {
     }
   }
 
-  static Future<String?> addPrompt({String? imagePath,required String resourcesId,required String name,}) async {
-
-  //
+  static Future<String?> addPrompt({
+    String? imagePath,
+    required String resourcesId,
+    required String name,
+  }) async {
+    //
     print('addpromt');
-    try{
+    try {
       final token = await SharedPref().getToken();
       var request = http.MultipartRequest(
         "POST",
-        Uri.parse('http://3.110.219.9:8000/web/prompt/'),
+        Uri.parse('https://selflearning.dtechex.com/web/prompt/'),
       );
 
       request.headers['Authorization'] = 'Bearer $token';
       request.fields['resourceId'] = resourcesId;
       request.fields['name'] = name;
 
-  //     {
-  //       "name":"Prompts with sides",
-  //   "side1":"64b649384f06b00c437880d2",
-  //   "side2":"64b6489f4f06b00c437880cf",
-  //   "resourceId":"64a6635d357f6dcd51a83526"
-  //
-  // }
+      //     {
+      //       "name":"Prompts with sides",
+      //   "side1":"64b649384f06b00c437880d2",
+      //   "side2":"64b6489f4f06b00c437880cf",
+      //   "resourceId":"64a6635d357f6dcd51a83526"
+      //
+      // }
 
       if (imagePath != null) {
         var file = File(imagePath);
@@ -96,54 +102,58 @@ class AddMediaRepo {
           'content',
           file.openRead(),
           await file.length(),
-          filename: file.path
-              .split('/')
-              .last,
+          filename: file.path.split('/').last,
           contentType: MediaType.parse(mimeType!),
         ));
       }
 
       var streamedResponse = await request.send();
       var response = await http.Response.fromStream(streamedResponse);
-      final data=jsonDecode(response.body);
+      final data = jsonDecode(response.body);
       print(data);
       print('gg');
       return data[''];
-
-    }catch(e){
+    } catch (e) {
       print(e);
     }
   }
 
   static Future<String?> addResources(
-      {String? imagePath, required String resourceId,required int mediaType }) async {
+      {String? imagePath,
+      required String resourceId,
+      required int mediaType}) async {
     print(resourceId);
-    print('resource inside add reouse' );
+    print('resource inside add reouse');
     print('add resources');
     final token = await SharedPref().getToken();
     var request = http.MultipartRequest(
-      "POST", Uri.parse('http://3.110.219.9:8000/web/resource/'),
+      "POST",
+      Uri.parse('https://selflearning.dtechex.com/web/resource/'),
     );
 
     request.headers['Authorization'] = 'Bearer $token';
     request.fields['rootId'] = resourceId;
     request.fields['title'] = "unititled";
-    switch(mediaType){
-      case 0:{
-        request.fields['type'] = 'text';
-      }
-      break;
-      case 1:{
-        request.fields['type'] = 'image';
-      }
-      break;
-      case 2:{
-        request.fields['type'] = 'audio';
-      }
-      break;
-      case 3:{
-        request.fields['type'] = 'video';
-      }
+    switch (mediaType) {
+      case 0:
+        {
+          request.fields['type'] = 'text';
+        }
+        break;
+      case 1:
+        {
+          request.fields['type'] = 'image';
+        }
+        break;
+      case 2:
+        {
+          request.fields['type'] = 'audio';
+        }
+        break;
+      case 3:
+        {
+          request.fields['type'] = 'video';
+        }
     }
     print(imagePath!.isEmpty);
     print('imagePath');
@@ -152,15 +162,18 @@ class AddMediaRepo {
       print('inside multitpart');
       var file = File(imagePath);
       var mimeType = lookupMimeType(file.path);
-      request.files.add(http.MultipartFile.fromBytes('content', await file.readAsBytes(), filename: file.path.split('/').last, contentType: MediaType.parse(mimeType!),
+      request.files.add(http.MultipartFile.fromBytes(
+        'content',
+        await file.readAsBytes(),
+        filename: file.path.split('/').last,
+        contentType: MediaType.parse(mimeType!),
       ));
     }
 
     var streamedResponse = await request.send();
     var response = await http.Response.fromStream(streamedResponse);
 
-
-      print(response.body);
-      return response.body;
-    }
+    print(response.body);
+    return response.body;
   }
+}

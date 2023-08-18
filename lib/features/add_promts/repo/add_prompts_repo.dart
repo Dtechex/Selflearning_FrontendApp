@@ -32,7 +32,7 @@ class AddPromtsRepo {
       print(gg);
       print("gg");
       var request = await http.post(
-          Uri.parse('http://3.110.219.9:8000/web/prompt/'),
+          Uri.parse('https://selflearning.dtechex.com/web/prompt/'),
           body: data,
           headers: {"Authorization": 'Bearer $token'});
       return request;
@@ -43,88 +43,100 @@ class AddPromtsRepo {
   }
 
   static Future<http.Response> addResourcesForSide(
-      {required int whichSide, String? content, required String resourceId, required int mediaType}) async {
+      {required int whichSide,
+      String? content,
+      required String resourceId,
+      required int mediaType}) async {
     print('api called');
     final token = await SharedPref().getToken();
     var request = http.MultipartRequest(
       "POST",
-      Uri.parse('http://3.110.219.9:8000/web/resource/'),
+      Uri.parse('https://selflearning.dtechex.com/web/resource/'),
     );
+    print("mediaType ===>>> $mediaType");
+    print("content ===>>> $content");
     request.headers['Authorization'] = 'Bearer $token';
     request.fields['rootId'] = resourceId;
-    request.fields["content"]= content??'untitled';
-    request.fields["title"]= 'unittled';
+    request.fields["content"] = content ?? 'untitled';
+    request.fields["title"] = 'unittled';
     print(mediaType);
     print("mediaType");
 
-    if(whichSide==0){
-      request.fields['type'] = 'text-side1';
-    }else{
-      request.fields['type'] = 'text-side2';
-    }
     // if (whichSide == 0) {
-    //   print('side 1');
-    //
-    //   switch (mediaType) {
-    //     case 0:
-    //       {
-    //         request.fields['type'] = 'text-side1';
-    //       }
-    //       break;
-    //     case 1:
-    //       {
-    //         request.fields['type'] = 'image-side1';
-    //       }
-    //       break;
-    //     case 2:
-    //       {
-    //         request.fields['type'] = 'audio-side1';
-    //       }
-    //       break;
-    //     case 3:
-    //       {
-    //         request.fields['type'] = 'video-side1';
-    //       }
-    //   }
+    //   request.fields['type'] = 'text-side1';
     // } else {
-    //   print('side 2');
-    //   switch (mediaType) {
-    //     case 0:
-    //       {
-    //         request.fields['type'] = 'text-side2';
-    //       }
-    //       break;
-    //     case 1:
-    //       {
-    //         request.fields['type'] = 'image-side2';
-    //       }
-    //       break;
-    //     case 2:
-    //       {
-    //         request.fields['type'] = 'audio-side2';
-    //       }
-    //       break;
-    //     case 3:
-    //       {
-    //         request.fields['type'] = 'video-side2';
-    //       }
-    //   }
+    //   request.fields['type'] = 'text-side2';
     // }
+    bool isText = false;
+    if (whichSide == 0) {
+      print('side 1');
+
+      switch (mediaType) {
+        case 0:
+          {
+            request.fields['type'] = 'text-side1';
+            request.fields['content'] = content!;
+            isText = true;
+          }
+          break;
+        case 1:
+          {
+            request.fields['type'] = 'image-side1';
+          }
+          break;
+        case 2:
+          {
+            request.fields['type'] = 'audio-side1';
+          }
+          break;
+        case 3:
+          {
+            request.fields['type'] = 'video-side1';
+          }
+      }
+    } else {
+      print('side 2');
+      switch (mediaType) {
+        case 0:
+          {
+            request.fields['type'] = 'text-side2';
+            request.fields['content'] = content!;
+            isText = true;
+          }
+          break;
+        case 1:
+          {
+            request.fields['type'] = 'image-side2';
+          }
+          break;
+        case 2:
+          {
+            request.fields['type'] = 'audio-side2';
+          }
+          break;
+        case 3:
+          {
+            request.fields['type'] = 'video-side2';
+          }
+      }
+    }
 
     // print(imagePath!.isEmpty);
-    // print('imagePath');
+    print('imagePath');
+    if (!isText) {
+      if (content!.isNotEmpty) {
+        print('inside multitpart');
+        var file = File(content);
+        var mimeType = lookupMimeType(file.path);
+        request.files.add(http.MultipartFile.fromBytes(
+          'content',
+          await file.readAsBytes(),
+          filename: file.path.split('/').last,
+          contentType: MediaType.parse(mimeType!),
+        ));
+      }
+    }
 
-    // if (content.isNotEmpty) {
-    //   print('inside multitpart');
-    //   var file = File(content);
-    //   var mimeType = lookupMimeType(file.path);
-    //   request.files.add(http.MultipartFile.fromBytes(
-    //     'content',
-    //     await file.readAsBytes(),
-    //     filename: file.path.split('/').last,
-    //     contentType: MediaType.parse(mimeType!),
-    //   ));
-    // }
     print(request.files);
     print(request.fields);
     print("request.fields");

@@ -3,30 +3,41 @@ import '../../../../utilities/base_client.dart';
 import '../../../subcategory/model/resources_model.dart';
 import 'package:http/http.dart';
 
-class ResourcesRepo{
+class ResourcesRepo {
+  static Future<AllResourcesModel?> getResources(
+      {required String rootId, required String mediaType}) async {
+    Response res = await Api().get(
+      endPoint: 'resource?rootId=$rootId&type=$mediaType',
+    );
 
-  static Future<AllResourcesModel?> getResources({required String rootId,required String mediaType})async {
-    Response res = await Api().get(endPoint: 'resource?rootId=$rootId&type=$mediaType',);
-
-    if(res.statusCode==200){
+    if (res.statusCode == 200) {
       var data = await jsonDecode(res.body);
+      print("Fetched Data ===>>> ${jsonDecode(res.body)}");
       return AllResourcesModel.fromJson(data);
     }
     print(res.body);
   }
 
-  static Future<int?> deleteResource({required String rootId,})async {
+  static Future<int?> deleteResource({
+    required String rootId,
+  }) async {
     print('dlete');
-    Response res = await Api().delete(endPoint: 'resource/$rootId',);
+    Response res = await Api().delete(
+      endPoint: 'resource/$rootId',
+    );
     print(res.body);
     print("res.body");
     return res.statusCode;
   }
 
-
-  static Future<AllResourcesModel?> addResources({required String rootId,required String type, required String mediaPath})async {
-    Response res = await Api().get(endPoint: 'resource',);
-    if(res.statusCode==200){
+  static Future<AllResourcesModel?> addResources(
+      {required String rootId,
+      required String type,
+      required String mediaPath}) async {
+    Response res = await Api().get(
+      endPoint: 'resource',
+    );
+    if (res.statusCode == 200) {
       var data = await jsonDecode(res.body);
       return AllResourcesModel.fromJson(data);
     }

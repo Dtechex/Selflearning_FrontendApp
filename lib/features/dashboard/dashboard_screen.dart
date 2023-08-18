@@ -16,8 +16,11 @@ class DashBoardScreen extends StatelessWidget {
 
   static const List<Widget> _widgetOptions = <Widget>[
     AllCateScreen(),
-   AddCateScreen(),
-    Text('Create Dailogs', style: optionStyle,),
+    AddCateScreen(),
+    Text(
+      'Create Dailogs',
+      style: optionStyle,
+    ),
     Text(
       'Create Flow',
       style: optionStyle,
@@ -30,78 +33,88 @@ class DashBoardScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(child: BlocBuilder<DashboardBloc, int>(
-      builder: (context, state) {
-        return Scaffold(
-          appBar: AppBar(
-            automaticallyImplyLeading: false,
-            actions: [
-              IconButton(
-                  onPressed: () async {
-                    context.showNewDialog(
-                      AlertDialog(title: const Text('Are you sure you want to logout.',),actions: [
-                        ElevatedButton(onPressed: () async{
-                          await SharedPref().clear().then((value) {
-                            Navigator.pushAndRemoveUntil(context, MaterialPageRoute(
-                              builder: (context) {
-                                return const LoginScreen();
+    return WillPopScope(
+      child: BlocBuilder<DashboardBloc, int>(
+        builder: (context, state) {
+          return Scaffold(
+            appBar: AppBar(
+              automaticallyImplyLeading: false,
+              actions: [
+                IconButton(
+                    onPressed: () async {
+                      context.showNewDialog(AlertDialog(
+                        title: const Text(
+                          'Are you sure you want to logout.',
+                        ),
+                        actions: [
+                          ElevatedButton(
+                              onPressed: () async {
+                                await SharedPref().clear().then((value) {
+                                  Navigator.pushAndRemoveUntil(context,
+                                      MaterialPageRoute(
+                                    builder: (context) {
+                                      return const LoginScreen();
+                                    },
+                                  ), (route) => true);
+                                });
                               },
-                            ), (route) => true);
-                          });
-                        } , child: Text('Logout')),
-                        ElevatedButton(onPressed: () async{
-                        Navigator.pop(context);
-                        } , child: Text('Cancel'))
-                      ],)
-                    );
-
-                  },
-                  icon: const Icon(Icons.logout))
-            ],
-            centerTitle: true,
-            title: const Text('DashBoard'),
-          ),
-          bottomNavigationBar: BottomNavigationBar(
-            type: BottomNavigationBarType.shifting,
-            enableFeedback: true,
-            showUnselectedLabels: true,
-            selectedItemColor: Colors.white,
-            elevation: 0,
-            currentIndex: state,
-            onTap: (value) {
-              context.read<DashboardBloc>().ChangeIndex(value);
-            },
-            unselectedItemColor: Colors.white,
-            items:  const [
-              BottomNavigationBarItem( icon: Icon(Icons.home),
-                  label: 'Home',
-                  backgroundColor: primaryColor),
-              BottomNavigationBarItem( icon: Icon(Icons.create),
-                  label: '   Create \n Category',
-                  backgroundColor: primaryColor),
-              BottomNavigationBarItem(
-                  icon: Icon(Icons.message),
-                  label: '  Create \n Dailogs',
-                  backgroundColor: primaryColor),
-              BottomNavigationBarItem(
-                  icon: Icon(Icons.add),
-                  label: 'Create \n Flow',
-                  backgroundColor: primaryColor),
-              BottomNavigationBarItem(
-                  icon: Icon(Icons.calendar_month_sharp),
-                  label: 'Schedule',
-                  backgroundColor: primaryColor),
-            ],
-          ),
-          body: Center(
-            child: _widgetOptions.elementAt(state),
-          ),
-        );
+                              child: Text('Logout')),
+                          ElevatedButton(
+                              onPressed: () async {
+                                Navigator.pop(context);
+                              },
+                              child: Text('Cancel'))
+                        ],
+                      ));
+                    },
+                    icon: const Icon(Icons.logout))
+              ],
+              centerTitle: true,
+              title: const Text('DashBoard'),
+            ),
+            bottomNavigationBar: BottomNavigationBar(
+              type: BottomNavigationBarType.shifting,
+              enableFeedback: true,
+              showUnselectedLabels: true,
+              selectedItemColor: Colors.white,
+              elevation: 0,
+              currentIndex: state,
+              onTap: (value) {
+                context.read<DashboardBloc>().ChangeIndex(value);
+              },
+              unselectedItemColor: Colors.white,
+              items: const [
+                BottomNavigationBarItem(
+                    icon: Icon(Icons.home),
+                    label: 'Home',
+                    backgroundColor: primaryColor),
+                BottomNavigationBarItem(
+                    icon: Icon(Icons.create),
+                    label: '   Create \n Category',
+                    backgroundColor: primaryColor),
+                BottomNavigationBarItem(
+                    icon: Icon(Icons.message),
+                    label: '  Create \n Dailogs',
+                    backgroundColor: primaryColor),
+                BottomNavigationBarItem(
+                    icon: Icon(Icons.add),
+                    label: 'Create \n Flow',
+                    backgroundColor: primaryColor),
+                BottomNavigationBarItem(
+                    icon: Icon(Icons.calendar_month_sharp),
+                    label: 'Schedule',
+                    backgroundColor: primaryColor),
+              ],
+            ),
+            body: Center(
+              child: _widgetOptions.elementAt(state),
+            ),
+          );
+        },
+      ),
+      onWillPop: () {
+        return Future.value(true);
       },
-    ), onWillPop: () {
-      return Future.value(true);
-    },);
+    );
   }
 }
-
-

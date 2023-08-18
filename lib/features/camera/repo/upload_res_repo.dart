@@ -10,7 +10,7 @@
 //
 //   static Future<int?> uploadMediaFiles({XFile? file,String? rootId}) async {
 //     print('upload api');
-//     var postUri = Uri.parse("http://3.110.219.9:8000/web/resource/add");
+//     var postUri = Uri.parse("https://selflearning.dtechex.com/web/resource/add");
 //     var request = http.MultipartRequest("POST", postUri);
 //     var token = await SharedPref().getToken();
 //     request.headers.addAll({

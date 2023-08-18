@@ -19,7 +19,7 @@ class PickResource extends AddPrompts{
 class AddResource extends AddPrompts{
   final int ? whichSide;
   final String ? name;
-  final String ? mediaUrl;
+  final int ? mediaUrl;
   final String ? resourceId;
   final String ? content;
 

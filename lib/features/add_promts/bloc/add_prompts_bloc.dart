@@ -39,35 +39,64 @@ class AddPromptsBloc extends Bloc<AddPrompts, AddPromptsInitial> {
   }
 
   _onAddResource(AddResource event, Emitter<AddPromptsInitial> emit) async {
+    // print("====>>>>> ${convertMediaTypeToInt(state.side1selectedMediaType!)}");
+    // print("====>>>>> ${state.side1selectedMediaType!}");
+    // print("====>>>>> ${convertMediaTypeToInt(event.mediaUrl!)}");
+    print("====>>>>> ${event.mediaUrl!}");
     await AddPromtsRepo.addResourcesForSide(
             resourceId: event.resourceId!,
             whichSide: event.whichSide!,
-            mediaType: convertMediaTypeToInt(state.side1selectedMediaType!),
+            // mediaType: convertMediaTypeToInt(state.side1selectedMediaType!),
+            // mediaType: convertMediaTypeToInt(event.mediaUrl!),
+            mediaType: event.mediaUrl!,
             content: event.content)
-        .then((value) async{
-         final data= await jsonDecode(value.body);
-      if(event.whichSide==0){
+        .then((value) async {
+      final data = await jsonDecode(value.body);
+      if (event.whichSide == 0) {
         print('saved side1 _id');
-        emit(state.copyWith(side1Id: data['data']['_id'],uploadStatus: UploadStatus.resourceAdded));
-      }else{
+        print(data);
+        try {
+          emit(state.copyWith(
+              side1Id: data['data'][0]['_id'].toString(),
+              uploadStatus: UploadStatus.resourceAdded));
+        } catch (e) {
+          emit(state.copyWith(
+              side1Id: data['data']['_id'].toString(),
+              uploadStatus: UploadStatus.resourceAdded));
+        }
+      } else {
         print('saved side2 _id');
-        emit(state.copyWith(side2Id : data['data']['_id'],uploadStatus: UploadStatus.resourceAdded),);
+        print(data);
+        try {
+          emit(
+            state.copyWith(
+                side2Id: data['data'][0]['_id'].toString(),
+                uploadStatus: UploadStatus.resourceAdded),
+          );
+        } catch (e) {
+          emit(
+            state.copyWith(
+                side2Id: data['data']['_id'].toString(),
+                uploadStatus: UploadStatus.resourceAdded),
+          );
+        }
       }
-
     });
   }
 
-
-  _onAddPromptEvent(AddPromptEvent event, Emitter<AddPromptsInitial> emit) async {
+  _onAddPromptEvent(
+      AddPromptEvent event, Emitter<AddPromptsInitial> emit) async {
+    print(
+        "Data To Send: ${event.name} ${event.resourceId!} ${state.side2Id} ${state.side1Id!}");
     await AddPromtsRepo.addSidePrompts(
-      name: event.name,resourcesId: event.resourceId!,side2: state.side2Id,side1: state.side1Id)
-        .then((value) async{
-
-     emit(AddPromptsInitial(uploadStatus: UploadStatus.uploaded));
+            name: event.name,
+            resourcesId: event.resourceId!,
+            side2: state.side2Id,
+            side1: state.side1Id)
+        .then((value) async {
+      emit(AddPromptsInitial(uploadStatus: UploadStatus.uploaded));
     });
   }
-
-
 }
 
 int convertMediaTypeToInt(String mediaType) {

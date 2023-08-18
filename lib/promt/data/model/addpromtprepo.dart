@@ -5,7 +5,7 @@ import 'package:dio/dio.dart';
 import '../../../utilities/shared_pref.dart';
 import 'flow_model.dart';
 
-class AddPromptNew{
+class AddPromptNew {
   static Future<void> addFlow({required AddFlowModel? flow}) async {
     var token = await SharedPref().getToken();
 
@@ -26,7 +26,7 @@ class AddPromptNew{
     try {
       // Make the POST request using Dio
       Response response = await dio.post(
-        'http://3.110.219.9:8000/web/flow',
+        'https://selflearning.dtechex.com/web/flow',
         data: dd, // Use the JSON string as the request body
       );
 
@@ -40,4 +40,3 @@ class AddPromptNew{
     }
   }
 }
-

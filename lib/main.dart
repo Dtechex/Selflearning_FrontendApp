@@ -26,7 +26,7 @@ import 'features/login/bloc/login_bloc.dart';
 import 'features/subcate1.2/bloc/sub_cate2_bloc.dart';
 
 BaseOptions baseOptions = BaseOptions(
-  baseUrl: 'http://3.110.219.9:8000/',
+  baseUrl: 'https://selflearning.dtechex.com/',
   receiveTimeout: const Duration(seconds: 90),
   sendTimeout: const Duration(seconds: 90),
   connectTimeout: const Duration(seconds: 90),
@@ -34,9 +34,6 @@ BaseOptions baseOptions = BaseOptions(
   maxRedirects: 3,
 );
 Dio dio = Dio(baseOptions);
-
-
-
 
 void main() {
   dio.interceptors.add(LogInterceptor(
@@ -53,6 +50,7 @@ void main() {
     const MyApp(), // Wrap your app
   );
 }
+
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
@@ -65,55 +63,54 @@ class MyApp extends StatelessWidget {
           BlocProvider<DashboardBloc>(create: (context) => DashboardBloc()),
           BlocProvider<CategoryBloc>(
               create: (context) => CategoryBloc()..add(CategoryLoadEvent())),
-          BlocProvider<SignUpBloc>(create: (context) => SignUpBloc(singUpRepo: SignUpRepo())),
+          BlocProvider<SignUpBloc>(
+              create: (context) => SignUpBloc(singUpRepo: SignUpRepo())),
           BlocProvider<SearchCategoryBloc>(
               create: (context) => SearchCategoryBloc()),
           BlocProvider<SubCategoryBloc>(create: (context) => SubCategoryBloc()),
           //BlocProvider<CameraBloc>(create: (context) => CameraBloc()),
-          BlocProvider<SubCategory1Bloc>(create: (context) => SubCategory1Bloc()),
-          BlocProvider<SubCategory2Bloc>(create: (context) => SubCategory2Bloc()),
+          BlocProvider<SubCategory1Bloc>(
+              create: (context) => SubCategory1Bloc()),
+          BlocProvider<SubCategory2Bloc>(
+              create: (context) => SubCategory2Bloc()),
           BlocProvider<QuickImportBloc>(create: (context) => QuickImportBloc()),
           BlocProvider<ResourcesBloc>(create: (context) => ResourcesBloc()),
-         // BlocProvider<AddPromptsBloc>(create: (context) => AddPromptsBloc()),
-
+          // BlocProvider<AddPromptsBloc>(create: (context) => AddPromptsBloc()),
         ],
-        child: GlobalLoaderOverlay(child: MaterialApp(
-            useInheritedMediaQuery: true,
-            locale: DevicePreview.locale(context),
-            builder: DevicePreview.appBuilder,
-            debugShowCheckedModeBanner: false,
-            title: 'Self Learning',
-            theme: ThemeData(floatingActionButtonTheme: const FloatingActionButtonThemeData(
-                backgroundColor: primaryColor
-            ),
-
-              iconTheme: const IconThemeData(
-                  color: primaryColor,
-                  weight: 2
+        child: GlobalLoaderOverlay(
+          child: MaterialApp(
+              useInheritedMediaQuery: true,
+              locale: DevicePreview.locale(context),
+              builder: DevicePreview.appBuilder,
+              debugShowCheckedModeBanner: false,
+              title: 'Self Learning',
+              theme: ThemeData(
+                floatingActionButtonTheme: const FloatingActionButtonThemeData(
+                    backgroundColor: primaryColor),
+                iconTheme: const IconThemeData(color: primaryColor, weight: 2),
+                listTileTheme: const ListTileThemeData(iconColor: primaryColor),
+                elevatedButtonTheme: const ElevatedButtonThemeData(
+                    style: ButtonStyle(
+                        backgroundColor:
+                            MaterialStatePropertyAll(primaryColor))),
+                snackBarTheme: const SnackBarThemeData(
+                  backgroundColor: primaryColor,
+                ),
+                appBarTheme: const AppBarTheme(
+                    centerTitle: true, backgroundColor: primaryColor),
+                primarySwatch: Colors.blue,
               ),
-              listTileTheme: const ListTileThemeData(
-                  iconColor: primaryColor
-              ),
-              elevatedButtonTheme: const ElevatedButtonThemeData(
-                  style: ButtonStyle(
-                      backgroundColor: MaterialStatePropertyAll(primaryColor))),
-              snackBarTheme: const SnackBarThemeData(
-                backgroundColor: primaryColor,
-              ),
-              appBarTheme: const AppBarTheme(
-                  centerTitle: true, backgroundColor: primaryColor),
-              primarySwatch: Colors.blue,
-            ),
-            home: FutureBuilder(
-              future: SharedPref().getToken(),
-              builder: (context, snapshot) {
-                if (snapshot.hasData) {
-                  print(snapshot.data);
-                  return const DashBoardScreen();
-                } else {
-                  return const LoginScreen();
-                }
-              },
-            )),));
+              home: FutureBuilder(
+                future: SharedPref().getToken(),
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    print(snapshot.data);
+                    return const DashBoardScreen();
+                  } else {
+                    return const LoginScreen();
+                  }
+                },
+              )),
+        ));
   }
 }

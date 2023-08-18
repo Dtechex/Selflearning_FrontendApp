@@ -13,12 +13,12 @@ import '../../subcate1.1/bloc/sub_cate1_event.dart';
 import 'bloc/sub_cate2_bloc.dart';
 import 'bloc/sub_cate2_event.dart';
 
-
 class CreateSubCate2Screen extends StatefulWidget {
   final String? rootId;
   final String? subCatName;
 
-  const CreateSubCate2Screen({Key? key, this.rootId, this.subCatName}) : super(key: key);
+  const CreateSubCate2Screen({Key? key, this.rootId, this.subCatName})
+      : super(key: key);
 
   @override
   State<CreateSubCate2Screen> createState() => _CreateSubCate2ScreenState();
@@ -77,7 +77,7 @@ class _CreateSubCate2ScreenState extends State<CreateSubCate2Screen> {
     var token = await SharedPref().getToken();
     try {
       var res = await http.post(
-        Uri.parse('http://3.110.219.9:8000/web/category/create'),
+        Uri.parse('https://selflearning.dtechex.com/web/category/create'),
         body: jsonEncode(payload),
         headers: {
           'Content-Type': 'application/json',
@@ -97,11 +97,10 @@ class _CreateSubCate2ScreenState extends State<CreateSubCate2Screen> {
       }
       print(res.body);
       print('data');
-    } on SocketException catch(e){
+    } on SocketException catch (e) {
       context.showSnackBar(
           const SnackBar(content: Text('No internet connection...')));
-    }
-    finally {
+    } finally {
       isLoading = false;
     }
 
@@ -162,7 +161,7 @@ class _CreateSubCate2ScreenState extends State<CreateSubCate2Screen> {
                           textInputAction: TextInputAction.next,
                         ))),
                 SizedBox(
-                  height: context.screenHeight*0.05,
+                  height: context.screenHeight * 0.05,
                 ),
                 TextFieldTags(
                   textfieldTagsController: _controller,
@@ -202,58 +201,61 @@ class _CreateSubCate2ScreenState extends State<CreateSubCate2Screen> {
                             helperStyle: const TextStyle(
                               color: Color.fromARGB(255, 74, 137, 92),
                             ),
-                            hintText: _controller!.hasTags ? '' : "Enter tag...(Optional)",
+                            hintText: _controller!.hasTags
+                                ? ''
+                                : "Enter tag...(Optional)",
                             errorText: error,
                             prefixIconConstraints: BoxConstraints(
                                 maxWidth: context.screenWidth * 0.74),
                             prefixIcon: tags.isNotEmpty
                                 ? SingleChildScrollView(
-                              controller: sc,
-                              scrollDirection: Axis.horizontal,
-                              child: Row(
-                                  children: tags.map((String tag) {
-                                    return Container(
-                                      decoration: const BoxDecoration(
-                                        borderRadius: BorderRadius.all(
-                                          Radius.circular(20.0),
-                                        ),
-                                        color: Color.fromARGB(255, 74, 137, 92),
-                                      ),
-                                      margin: const EdgeInsets.symmetric(
-                                          horizontal: 5.0),
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 10.0, vertical: 5.0),
-                                      child: Row(
-                                        mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          InkWell(
-                                            child: Text(
-                                              '#$tag',
-                                              style: const TextStyle(
-                                                  color: Colors.white),
-                                            ),
-                                            onTap: () {
-                                              print("$tag selected");
-                                            },
+                                    controller: sc,
+                                    scrollDirection: Axis.horizontal,
+                                    child: Row(
+                                        children: tags.map((String tag) {
+                                      return Container(
+                                        decoration: const BoxDecoration(
+                                          borderRadius: BorderRadius.all(
+                                            Radius.circular(20.0),
                                           ),
-                                          const SizedBox(width: 4.0),
-                                          InkWell(
-                                            child: const Icon(
-                                              Icons.cancel,
-                                              size: 14.0,
-                                              color: Color.fromARGB(
-                                                  255, 233, 233, 233),
+                                          color:
+                                              Color.fromARGB(255, 74, 137, 92),
+                                        ),
+                                        margin: const EdgeInsets.symmetric(
+                                            horizontal: 5.0),
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 10.0, vertical: 5.0),
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            InkWell(
+                                              child: Text(
+                                                '#$tag',
+                                                style: const TextStyle(
+                                                    color: Colors.white),
+                                              ),
+                                              onTap: () {
+                                                print("$tag selected");
+                                              },
                                             ),
-                                            onTap: () {
-                                              onTagDelete(tag);
-                                            },
-                                          )
-                                        ],
-                                      ),
-                                    );
-                                  }).toList()),
-                            )
+                                            const SizedBox(width: 4.0),
+                                            InkWell(
+                                              child: const Icon(
+                                                Icons.cancel,
+                                                size: 14.0,
+                                                color: Color.fromARGB(
+                                                    255, 233, 233, 233),
+                                              ),
+                                              onTap: () {
+                                                onTagDelete(tag);
+                                              },
+                                            )
+                                          ],
+                                        ),
+                                      );
+                                    }).toList()),
+                                  )
                                 : null,
                           ),
                           onChanged: onChanged,
@@ -264,7 +266,7 @@ class _CreateSubCate2ScreenState extends State<CreateSubCate2Screen> {
                   },
                 ),
                 SizedBox(
-                  height: context.screenHeight*0.05,
+                  height: context.screenHeight * 0.05,
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
@@ -273,8 +275,8 @@ class _CreateSubCate2ScreenState extends State<CreateSubCate2Screen> {
                         onTap: () {
                           pickColor(context: context);
                         },
-                        child:
-                        Container(height: 25, width: 25, color: pickedColor)),
+                        child: Container(
+                            height: 25, width: 25, color: pickedColor)),
                     const Text('  Choose Color ')
                   ],
                 ),
@@ -297,8 +299,8 @@ class _CreateSubCate2ScreenState extends State<CreateSubCate2Screen> {
                       child: isLoading == true
                           ? const CircularProgressIndicator()
                           : const Center(
-                        child: Text('        Save\n Subcategory'),
-                      )),
+                              child: Text('        Save\n Subcategory'),
+                            )),
                 ),
                 SizedBox(
                   height: 20,
@@ -306,7 +308,6 @@ class _CreateSubCate2ScreenState extends State<CreateSubCate2Screen> {
               ],
             ),
           ),
-        )
-    );
+        ));
   }
 }

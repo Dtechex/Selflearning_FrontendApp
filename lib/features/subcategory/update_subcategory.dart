@@ -86,7 +86,8 @@ class _UpdateSubCateScreenState extends State<UpdateSubCateScreen> {
     var token = await SharedPref().getToken();
     try {
       var res = await http.patch(
-        Uri.parse('http://3.110.219.9:8000/web/category/${widget.rootId}'),
+        Uri.parse(
+            'https://selflearning.dtechex.com/web/category/${widget.rootId}'),
         body: jsonEncode(payload),
         headers: {
           'Content-Type': 'application/json',
@@ -94,8 +95,6 @@ class _UpdateSubCateScreenState extends State<UpdateSubCateScreen> {
         },
       );
       if (res.statusCode == 200) {
-
-
         context.showSnackBar(
             SnackBar(content: Text('Subcategory update Successfully..')));
         context
@@ -131,7 +130,8 @@ class _UpdateSubCateScreenState extends State<UpdateSubCateScreen> {
     var token = await SharedPref().getToken();
     try {
       var res = await http.delete(
-        Uri.parse('http://3.110.219.9:8000/web/category/${widget.rootId}'),
+        Uri.parse(
+            'https://selflearning.dtechex.com/web/category/${widget.rootId}'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $token'
@@ -141,7 +141,8 @@ class _UpdateSubCateScreenState extends State<UpdateSubCateScreen> {
         context.showSnackBar(
             SnackBar(content: Text('Subcategory deleted Successfully')));
         context
-            .read<SubCategoryBloc>().add(SubCategoryLoadEvent(rootId: widget.rootId));
+            .read<SubCategoryBloc>()
+            .add(SubCategoryLoadEvent(rootId: widget.rootId));
         Navigator.pushReplacement(context, MaterialPageRoute(
           builder: (context) {
             return DashBoardScreen();

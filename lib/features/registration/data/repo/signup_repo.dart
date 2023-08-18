@@ -7,12 +7,9 @@ class SignUpRepo {
       {required String name,
       required String email,
       required String password}) async {
-    final response = await http
-        .post(Uri.parse('http://3.110.219.9:8000/web/user/register'), body: {
-      "name": name,
-      "email": email,
-      "password": password
-    });
+    final response = await http.post(
+        Uri.parse('https://selflearning.dtechex.com/web/user/register'),
+        body: {"name": name, "email": email, "password": password});
     print(response.body);
     return response.statusCode;
   }

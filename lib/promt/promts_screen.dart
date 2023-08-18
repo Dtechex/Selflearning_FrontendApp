@@ -1,4 +1,3 @@
-
 import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -12,7 +11,8 @@ class PromtsScreen extends StatefulWidget {
   final String promtId;
   final String? content;
 
-  const PromtsScreen({Key? key, required this.promtId, this.mediaType, this.content})
+  const PromtsScreen(
+      {Key? key, required this.promtId, this.mediaType, this.content})
       : super(key: key);
 
   @override
@@ -33,7 +33,6 @@ class _PromtsScreenState extends State<PromtsScreen> {
     promtBloc.add(LoadPromtEvent(promtId: widget.promtId));
     super.initState();
   }
-
 
   final List<int> _items = List<int>.generate(50, (int index) => index);
 
@@ -62,21 +61,13 @@ class _PromtsScreenState extends State<PromtsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final ColorScheme colorScheme = Theme
-        .of(context)
-        .colorScheme;
+    final ColorScheme colorScheme = Theme.of(context).colorScheme;
     final Color oddItemColor = colorScheme.primary.withOpacity(0.05);
     final Color evenItemColor = colorScheme.primary.withOpacity(0.15);
-    var h = MediaQuery
-        .of(context)
-        .size
-        .height;
-    var w = MediaQuery
-        .of(context)
-        .size
-        .width;
+    var h = MediaQuery.of(context).size.height;
+    var w = MediaQuery.of(context).size.width;
     print(
-        "http://3.110.219.9:8000/public/${widget.mediaType}/${widget.content}");
+        "https://selflearning.dtechex.com/public/${widget.mediaType}/${widget.content}");
     return BlocProvider(
       create: (context) => promtBloc,
       child: Scaffold(
@@ -84,8 +75,8 @@ class _PromtsScreenState extends State<PromtsScreen> {
         body: Scaffold(
           body: BlocConsumer<PromtBloc, PromtState>(
             listener: (context, state) {
-              if(state is PromtLoaded){
-                if(state.apiState==ApiState.Success){
+              if (state is PromtLoaded) {
+                if (state.apiState == ApiState.Success) {
                   Navigator.pop(context);
                   context.showSnackBar(SnackBar(content: Text('Flow added')));
                 }
@@ -107,28 +98,26 @@ class _PromtsScreenState extends State<PromtsScreen> {
                   );
                 } else {
                   return Column(
-
-
                     children: [
-                      Expanded(child: ReorderableListView(
+                      Expanded(
+                          child: ReorderableListView(
                         padding: const EdgeInsets.symmetric(
                             horizontal: 10, vertical: 10),
                         children: <Widget>[
-                          for (int index = 0; index <
-                              state.addFlowModel!.flow!.length; index += 1)
+                          for (int index = 0;
+                              index < state.addFlowModel!.flow!.length;
+                              index += 1)
                             ListTile(
                               leading: CircleAvatar(
-                                  maxRadius: 17,
-                                  child: Text("${index + 1}")),
+                                  maxRadius: 17, child: Text("${index + 1}")),
                               trailing: Icon(Icons.menu),
                               key: Key('$index'),
-                              tileColor: index.isOdd
-                                  ? oddItemColor
-                                  : evenItemColor,
+                              tileColor:
+                                  index.isOdd ? oddItemColor : evenItemColor,
                               title: Row(
                                 children: [
-                                  Text('Item ${state.addFlowModel!.flow![index]
-                                      .name}')
+                                  Text(
+                                      'Item ${state.addFlowModel!.flow![index].name}')
                                 ],
                               ),
                             ),
@@ -138,21 +127,22 @@ class _PromtsScreenState extends State<PromtsScreen> {
                             if (oldIndex < newIndex) {
                               newIndex -= 1;
                             }
-                            PromptFlow item = state.addFlowModel!.flow!
-                                .removeAt(oldIndex);
+                            PromptFlow item =
+                                state.addFlowModel!.flow!.removeAt(oldIndex);
                             state.addFlowModel!.flow!.insert(newIndex, item);
                           });
                         },
                       )),
                       ElevatedButton(
                           style: const ButtonStyle(
-                              backgroundColor: MaterialStatePropertyAll(
-                                  Colors.red)),
+                              backgroundColor:
+                                  MaterialStatePropertyAll(Colors.red)),
                           onPressed: () {
                             print(state.addFlowModel!.flow![0].name);
-                            promtBloc.add(AddPromptFlow(addFlowModel: state.addFlowModel));
-
-                          }, child: Text('  Create Flow '))
+                            promtBloc.add(AddPromptFlow(
+                                addFlowModel: state.addFlowModel));
+                          },
+                          child: Text('  Create Flow '))
                     ],
                   );
                 }

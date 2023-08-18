@@ -29,7 +29,7 @@ class QuickImportRepo {
   }) async {
     print('deletee category');
     var token = await SharedPref().getToken();
-    var url = Uri.parse('http://3.110.219.9:8000/web/resource/$id');
+    var url = Uri.parse('https://selflearning.dtechex.com/web/resource/$id');
     print(url);
     Response res = await http.delete(
       url,
@@ -59,33 +59,37 @@ class QuickImportRepo {
     }
     var token = await SharedPref().getToken();
     var res = await http.post(
-      Uri.parse('http://3.110.219.9:8000/web/category/create'),
+      Uri.parse('https://selflearning.dtechex.com/web/category/create'),
       body: jsonEncode(payload),
       headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer $token'
       },
     );
-    final body=jsonDecode(res.body);
+    final body = jsonDecode(res.body);
     print(body);
     print('response of add category');
     return body['data']['record']['id'];
   }
 
-  static Future<int?> updateResources({required String rootId,required String resourceId,required String mediaType}) async {
+  static Future<int?> updateResources(
+      {required String rootId,
+      required String resourceId,
+      required String mediaType}) async {
     var token = await SharedPref().getToken();
-    var url = Uri.parse('http://3.110.219.9:8000/web/resource/update/$resourceId');
+    var url = Uri.parse(
+        'https://selflearning.dtechex.com/web/resource/update/$resourceId');
     print(url);
-    final payload={};
+    final payload = {};
     print(mediaType);
     print(rootId);
     print('mediaType');
     payload.addAll({
-      "rootId":rootId,
+      "rootId": rootId,
       "type": mediaType,
-
     });
-    Response res = await http.patch(url,
+    Response res = await http.patch(
+      url,
       body: jsonEncode(payload),
       headers: {
         'Content-Type': 'application/json',

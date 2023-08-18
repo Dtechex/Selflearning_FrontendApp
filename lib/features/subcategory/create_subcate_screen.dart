@@ -20,7 +20,8 @@ class CreateSubCateScreen extends StatefulWidget {
   final String? rootId;
   final String? subCatName;
 
-  const CreateSubCateScreen({Key? key, this.rootId, this.subCatName}) : super(key: key);
+  const CreateSubCateScreen({Key? key, this.rootId, this.subCatName})
+      : super(key: key);
 
   @override
   State<CreateSubCateScreen> createState() => _CreateSubCateScreenState();
@@ -79,7 +80,7 @@ class _CreateSubCateScreenState extends State<CreateSubCateScreen> {
     var token = await SharedPref().getToken();
     try {
       var res = await http.post(
-        Uri.parse('http://3.110.219.9:8000/web/category/create'),
+        Uri.parse('https://selflearning.dtechex.com/web/category/create'),
         body: jsonEncode(payload),
         headers: {
           'Content-Type': 'application/json',
@@ -100,11 +101,10 @@ class _CreateSubCateScreenState extends State<CreateSubCateScreen> {
         context.showSnackBar(
             const SnackBar(content: Text('opps something went worng')));
       }
-    } on SocketException catch(e){
+    } on SocketException catch (e) {
       context.showSnackBar(
           const SnackBar(content: Text('No internet connection...')));
-    }
-    finally {
+    } finally {
       isLoading = false;
     }
 
@@ -113,7 +113,6 @@ class _CreateSubCateScreenState extends State<CreateSubCateScreen> {
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
         appBar: AppBar(title: const Text('Create subcategory')),
         body: SingleChildScrollView(
@@ -147,9 +146,9 @@ class _CreateSubCateScreenState extends State<CreateSubCateScreen> {
                     child: Align(
                         alignment: Alignment.centerLeft,
                         child: TextFormField(
-                         inputFormatters: [
-                           LengthLimitingTextInputFormatter(80),
-                         ],
+                          inputFormatters: [
+                            LengthLimitingTextInputFormatter(80),
+                          ],
                           controller: categoryNameController,
                           onChanged: (value) {},
                           decoration: InputDecoration(
@@ -168,7 +167,7 @@ class _CreateSubCateScreenState extends State<CreateSubCateScreen> {
                           textInputAction: TextInputAction.next,
                         ))),
                 SizedBox(
-                  height: context.screenHeight*0.05,
+                  height: context.screenHeight * 0.05,
                 ),
                 TextFieldTags(
                   textfieldTagsController: _controller,
@@ -208,57 +207,59 @@ class _CreateSubCateScreenState extends State<CreateSubCateScreen> {
                             helperStyle: const TextStyle(
                               color: Color.fromARGB(255, 74, 137, 92),
                             ),
-                            hintText: _controller!.hasTags ? '' : "Enter tag...(Optional)",
+                            hintText: _controller!.hasTags
+                                ? ''
+                                : "Enter tag...(Optional)",
                             errorText: error,
                             prefixIconConstraints: BoxConstraints(
                                 maxWidth: context.screenWidth * 0.74),
                             prefixIcon: tags.isNotEmpty
                                 ? SingleChildScrollView(
-                              controller: sc,
-                              scrollDirection: Axis.horizontal,
-                              child: Row(
-                                  children: tags.map((String tag) {
-                                    return Container(
-                                      decoration: const BoxDecoration(
-                                        borderRadius: BorderRadius.all(
-                                          Radius.circular(20.0),
-                                        ),
-                                        color: Color.fromARGB(255, 74, 137, 92),
-                                      ),
-                                      margin: const EdgeInsets.symmetric(
-                                          horizontal: 5.0),
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 10.0, vertical: 5.0),
-                                      child: Row(
-                                        mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          InkWell(
-                                            child: Text(
-                                              '#$tag',
-                                              style: const TextStyle(
-                                                  color: Colors.white),
-                                            ),
-                                            onTap: () {
-                                            },
+                                    controller: sc,
+                                    scrollDirection: Axis.horizontal,
+                                    child: Row(
+                                        children: tags.map((String tag) {
+                                      return Container(
+                                        decoration: const BoxDecoration(
+                                          borderRadius: BorderRadius.all(
+                                            Radius.circular(20.0),
                                           ),
-                                          const SizedBox(width: 4.0),
-                                          InkWell(
-                                            child: const Icon(
-                                              Icons.cancel,
-                                              size: 14.0,
-                                              color: Color.fromARGB(
-                                                  255, 233, 233, 233),
+                                          color:
+                                              Color.fromARGB(255, 74, 137, 92),
+                                        ),
+                                        margin: const EdgeInsets.symmetric(
+                                            horizontal: 5.0),
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 10.0, vertical: 5.0),
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            InkWell(
+                                              child: Text(
+                                                '#$tag',
+                                                style: const TextStyle(
+                                                    color: Colors.white),
+                                              ),
+                                              onTap: () {},
                                             ),
-                                            onTap: () {
-                                              onTagDelete(tag);
-                                            },
-                                          )
-                                        ],
-                                      ),
-                                    );
-                                  }).toList()),
-                            )
+                                            const SizedBox(width: 4.0),
+                                            InkWell(
+                                              child: const Icon(
+                                                Icons.cancel,
+                                                size: 14.0,
+                                                color: Color.fromARGB(
+                                                    255, 233, 233, 233),
+                                              ),
+                                              onTap: () {
+                                                onTagDelete(tag);
+                                              },
+                                            )
+                                          ],
+                                        ),
+                                      );
+                                    }).toList()),
+                                  )
                                 : null,
                           ),
                           onChanged: onChanged,
@@ -269,7 +270,7 @@ class _CreateSubCateScreenState extends State<CreateSubCateScreen> {
                   },
                 ),
                 SizedBox(
-                  height: context.screenHeight*0.05,
+                  height: context.screenHeight * 0.05,
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
@@ -278,8 +279,8 @@ class _CreateSubCateScreenState extends State<CreateSubCateScreen> {
                         onTap: () {
                           pickColor(context: context);
                         },
-                        child:
-                        Container(height: 25, width: 25, color: pickedColor)),
+                        child: Container(
+                            height: 25, width: 25, color: pickedColor)),
                     const Text('  Choose Color ')
                   ],
                 ),
@@ -302,8 +303,8 @@ class _CreateSubCateScreenState extends State<CreateSubCateScreen> {
                       child: isLoading == true
                           ? const CircularProgressIndicator()
                           : const Center(
-                        child: Text('        Save\n Subcategory'),
-                      )),
+                              child: Text('        Save\n Subcategory'),
+                            )),
                 ),
                 SizedBox(
                   height: 20,
@@ -311,7 +312,6 @@ class _CreateSubCateScreenState extends State<CreateSubCateScreen> {
               ],
             ),
           ),
-        )
-    );
+        ));
   }
 }

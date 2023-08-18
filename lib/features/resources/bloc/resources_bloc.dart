@@ -18,8 +18,11 @@ class ResourcesBloc extends Bloc<ResourcesEvent, ResourcesState> {
       LoadResourcesEvent event, Emitter<ResourcesState> emit) async {
     emit(ResourcesLoading());
     try {
-     await  ResourcesRepo.getResources(rootId: event.rootId,mediaType: event.mediaType).then((value) {
+      await ResourcesRepo.getResources(
+              rootId: event.rootId, mediaType: event.mediaType)
+          .then((value) {
         emit(ResourcesLoaded(allResourcesModel: value!));
+        // print("Fetched Data ===>>> $value");
       });
     } catch (e) {
       emit(ResourcesError());
@@ -30,7 +33,7 @@ class ResourcesBloc extends Bloc<ResourcesEvent, ResourcesState> {
       DeleteResourcesEvent event, Emitter<ResourcesState> emit) async {
     emit(ResourcesLoading());
     try {
-      await  ResourcesRepo.deleteResource(rootId: event.rootId).then((value) {
+      await ResourcesRepo.deleteResource(rootId: event.rootId).then((value) {
         emit(ResourcesDelete());
       });
     } catch (e) {

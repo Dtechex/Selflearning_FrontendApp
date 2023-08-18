@@ -180,8 +180,9 @@ class _SubCategoryScreenState extends State<SubCategoryScreen> {
             padding: const EdgeInsets.only(left: 10, right: 10),
             child: TabBarView(
               children: [
-
+                // tab 1 
                 AddResourceScreen(rootId: widget.rootId??'',whichResources: 1,),
+                // tab 2
                 Column(
                   children: [  const SizedBox(
                     height: 20,

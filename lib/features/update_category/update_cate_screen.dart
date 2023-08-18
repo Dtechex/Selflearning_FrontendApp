@@ -16,7 +16,13 @@ class UpdateCateScreen extends StatefulWidget {
   final List<String>? tags;
   final Color? selectedColor;
   final String? categoryTitle;
-  const UpdateCateScreen({Key? key, this.rootId, this.selectedColor, this.categoryTitle, this.tags}) : super(key: key);
+  const UpdateCateScreen(
+      {Key? key,
+      this.rootId,
+      this.selectedColor,
+      this.categoryTitle,
+      this.tags})
+      : super(key: key);
 
   @override
   State<UpdateCateScreen> createState() => _UpdateCateScreenState();
@@ -25,18 +31,15 @@ class UpdateCateScreen extends StatefulWidget {
 class _UpdateCateScreenState extends State<UpdateCateScreen> {
   Color? pickedColor;
 
-
   @override
   void initState() {
-    pickedColor=widget.selectedColor;
-    categoryNameController.text=widget.categoryTitle!;
+    pickedColor = widget.selectedColor;
+    categoryNameController.text = widget.categoryTitle!;
     super.initState();
   }
 
-
   TextEditingController categoryNameController = TextEditingController();
   final TextfieldTagsController _controller = TextfieldTagsController();
-
 
   bool? isLoading = false;
 
@@ -83,7 +86,8 @@ class _UpdateCateScreenState extends State<UpdateCateScreen> {
     var token = await SharedPref().getToken();
     try {
       var res = await http.patch(
-        Uri.parse('http://3.110.219.9:8000/web/category/${widget.rootId}'),
+        Uri.parse(
+            'https://selflearning.dtechex.com/web/category/${widget.rootId}'),
         body: jsonEncode(payload),
         headers: {
           'Content-Type': 'application/json',
@@ -100,29 +104,28 @@ class _UpdateCateScreenState extends State<UpdateCateScreen> {
           },
         ));
       } else {
-        context
-            .showSnackBar(const SnackBar(content: Text('opps something went worng')));
+        context.showSnackBar(
+            const SnackBar(content: Text('opps something went worng')));
       }
       print(res.body);
       print('data');
-    } on SocketException catch(_){
+    } on SocketException catch (_) {
       context
           .showSnackBar(const SnackBar(content: Text('No internet available')));
-    }
-    finally {
+    } finally {
       isLoading = false;
     }
 
     return null;
   }
 
-
   Future<int?> deleteCategory() async {
     isLoading = true;
     var token = await SharedPref().getToken();
     try {
       var res = await http.delete(
-        Uri.parse('http://3.110.219.9:8000/web/category/${widget.rootId}'),
+        Uri.parse(
+            'https://selflearning.dtechex.com/web/category/${widget.rootId}'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $token'
@@ -138,16 +141,15 @@ class _UpdateCateScreenState extends State<UpdateCateScreen> {
           },
         ));
       } else {
-        context
-            .showSnackBar(const SnackBar(content: Text('opps something went worng')));
+        context.showSnackBar(
+            const SnackBar(content: Text('opps something went worng')));
       }
       print(res.body);
       print('data');
-    } on SocketException catch(_){
+    } on SocketException catch (_) {
       context
           .showSnackBar(const SnackBar(content: Text('No internet available')));
-    }
-    finally {
+    } finally {
       isLoading = false;
     }
 
@@ -189,7 +191,6 @@ class _UpdateCateScreenState extends State<UpdateCateScreen> {
                     child: Align(
                         alignment: Alignment.centerLeft,
                         child: TextFormField(
-
                           controller: categoryNameController,
                           onChanged: (value) {},
                           decoration: InputDecoration(
@@ -208,7 +209,7 @@ class _UpdateCateScreenState extends State<UpdateCateScreen> {
                           textInputAction: TextInputAction.next,
                         ))),
                 SizedBox(
-                  height: context.screenHeight*0.023,
+                  height: context.screenHeight * 0.023,
                 ),
                 TextFieldTags(
                   textfieldTagsController: _controller,
@@ -248,58 +249,61 @@ class _UpdateCateScreenState extends State<UpdateCateScreen> {
                             helperStyle: const TextStyle(
                               color: Color.fromARGB(255, 74, 137, 92),
                             ),
-                            hintText: _controller!.hasTags ? '' : "Enter tag...(Optional)",
+                            hintText: _controller!.hasTags
+                                ? ''
+                                : "Enter tag...(Optional)",
                             errorText: error,
                             prefixIconConstraints: BoxConstraints(
                                 maxWidth: context.screenWidth * 0.74),
                             prefixIcon: tags.isNotEmpty
                                 ? SingleChildScrollView(
-                              controller: sc,
-                              scrollDirection: Axis.horizontal,
-                              child: Row(
-                                  children: tags.map((String tag) {
-                                    return Container(
-                                      decoration: const BoxDecoration(
-                                        borderRadius: BorderRadius.all(
-                                          Radius.circular(20.0),
-                                        ),
-                                        color: Color.fromARGB(255, 74, 137, 92),
-                                      ),
-                                      margin: const EdgeInsets.symmetric(
-                                          horizontal: 5.0),
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 10.0, vertical: 5.0),
-                                      child: Row(
-                                        mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          InkWell(
-                                            child: Text(
-                                              '#$tag',
-                                              style: const TextStyle(
-                                                  color: Colors.white),
-                                            ),
-                                            onTap: () {
-                                              print("$tag selected");
-                                            },
+                                    controller: sc,
+                                    scrollDirection: Axis.horizontal,
+                                    child: Row(
+                                        children: tags.map((String tag) {
+                                      return Container(
+                                        decoration: const BoxDecoration(
+                                          borderRadius: BorderRadius.all(
+                                            Radius.circular(20.0),
                                           ),
-                                          const SizedBox(width: 4.0),
-                                          InkWell(
-                                            child: const Icon(
-                                              Icons.cancel,
-                                              size: 14.0,
-                                              color: Color.fromARGB(
-                                                  255, 233, 233, 233),
+                                          color:
+                                              Color.fromARGB(255, 74, 137, 92),
+                                        ),
+                                        margin: const EdgeInsets.symmetric(
+                                            horizontal: 5.0),
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 10.0, vertical: 5.0),
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            InkWell(
+                                              child: Text(
+                                                '#$tag',
+                                                style: const TextStyle(
+                                                    color: Colors.white),
+                                              ),
+                                              onTap: () {
+                                                print("$tag selected");
+                                              },
                                             ),
-                                            onTap: () {
-                                              onTagDelete(tag);
-                                            },
-                                          )
-                                        ],
-                                      ),
-                                    );
-                                  }).toList()),
-                            )
+                                            const SizedBox(width: 4.0),
+                                            InkWell(
+                                              child: const Icon(
+                                                Icons.cancel,
+                                                size: 14.0,
+                                                color: Color.fromARGB(
+                                                    255, 233, 233, 233),
+                                              ),
+                                              onTap: () {
+                                                onTagDelete(tag);
+                                              },
+                                            )
+                                          ],
+                                        ),
+                                      );
+                                    }).toList()),
+                                  )
                                 : null,
                           ),
                           onChanged: onChanged,
@@ -317,9 +321,7 @@ class _UpdateCateScreenState extends State<UpdateCateScreen> {
                           pickColor(context: context);
                         },
                         child: Container(
-                            height: 25,
-                            width: 25,
-                            color:pickedColor)),
+                            height: 25, width: 25, color: pickedColor)),
                     const Text('  Choose Color ')
                   ],
                 ),
@@ -347,7 +349,6 @@ class _UpdateCateScreenState extends State<UpdateCateScreen> {
                 SizedBox(
                   height: 20,
                 ),
-
                 SizedBox(
                   width: context.screenWidth * 0.35,
                   height: context.screenHeight * 0.068,
@@ -368,7 +369,6 @@ class _UpdateCateScreenState extends State<UpdateCateScreen> {
               ],
             ),
           ),
-        )
-    );
+        ));
   }
 }

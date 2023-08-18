@@ -16,13 +16,18 @@ import '../utilities/shared_pref.dart';
 import 'bloc/sub_cate1_bloc.dart';
 import 'bloc/sub_cate1_event.dart';
 
-
 class UpdateSubCate1Screen extends StatefulWidget {
   final String rootId;
   final Color selectedColor;
   final String categoryTitle;
   final List<String> keyWords;
-  const UpdateSubCate1Screen({Key? key, required this.rootId, required this.selectedColor, required this.categoryTitle, required this.keyWords}) : super(key: key);
+  const UpdateSubCate1Screen(
+      {Key? key,
+      required this.rootId,
+      required this.selectedColor,
+      required this.categoryTitle,
+      required this.keyWords})
+      : super(key: key);
 
   @override
   State<UpdateSubCate1Screen> createState() => _UpdateSubCate1ScreenState();
@@ -35,8 +40,8 @@ class _UpdateSubCate1ScreenState extends State<UpdateSubCate1Screen> {
 
   @override
   void initState() {
-    categoryNameController.text=widget.categoryTitle;
-    pickedColor=widget.selectedColor;
+    categoryNameController.text = widget.categoryTitle;
+    pickedColor = widget.selectedColor;
     super.initState();
   }
 
@@ -83,7 +88,8 @@ class _UpdateSubCate1ScreenState extends State<UpdateSubCate1Screen> {
     var token = await SharedPref().getToken();
     try {
       var res = await http.patch(
-        Uri.parse('http://3.110.219.9:8000/web/category/${widget.rootId}'),
+        Uri.parse(
+            'https://selflearning.dtechex.com/web/category/${widget.rootId}'),
         body: jsonEncode(payload),
         headers: {
           'Content-Type': 'application/json',
@@ -93,36 +99,37 @@ class _UpdateSubCate1ScreenState extends State<UpdateSubCate1Screen> {
       if (res.statusCode == 200) {
         context.showSnackBar(
             SnackBar(content: Text('Subcategory update Successfully')));
-      //  context.read<SubCategory1Bloc>().add(SubCategory1LoadEvent(rootId: widget.rootId));
-        context.read<SubCategoryBloc>().add(SubCategoryLoadEvent(rootId: widget.rootId));
+        //  context.read<SubCategory1Bloc>().add(SubCategory1LoadEvent(rootId: widget.rootId));
+        context
+            .read<SubCategoryBloc>()
+            .add(SubCategoryLoadEvent(rootId: widget.rootId));
         Navigator.pushReplacement(context, MaterialPageRoute(
           builder: (context) {
             return DashBoardScreen();
           },
         ));
-
       } else {
-        context
-            .showSnackBar(const SnackBar(content: Text('opps something went worng')));
+        context.showSnackBar(
+            const SnackBar(content: Text('opps something went worng')));
       }
       print(res.body);
       print('data');
-    } on SocketException catch(e){
-      context.showSnackBar(const SnackBar(content: Text('No internet Connection...')));
-    }
-    finally {
+    } on SocketException catch (e) {
+      context.showSnackBar(
+          const SnackBar(content: Text('No internet Connection...')));
+    } finally {
       isLoading = false;
     }
     return null;
   }
-
 
   Future<int?> deleteCategory() async {
     isLoading = true;
     var token = await SharedPref().getToken();
     try {
       var res = await http.delete(
-        Uri.parse('http://3.110.219.9:8000/web/category/${widget.rootId}'),
+        Uri.parse(
+            'https://selflearning.dtechex.com/web/category/${widget.rootId}'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $token'
@@ -131,25 +138,27 @@ class _UpdateSubCate1ScreenState extends State<UpdateSubCate1Screen> {
       if (res.statusCode == 200) {
         context.showSnackBar(
             SnackBar(content: Text('Subcategory deleted Successfully')));
-        context.read<SubCategory1Bloc>().add(SubCategory1LoadEvent(rootId: widget.rootId));
-        context.read<SubCategoryBloc>().add(SubCategoryLoadEvent(rootId: widget.rootId));
+        context
+            .read<SubCategory1Bloc>()
+            .add(SubCategory1LoadEvent(rootId: widget.rootId));
+        context
+            .read<SubCategoryBloc>()
+            .add(SubCategoryLoadEvent(rootId: widget.rootId));
         Navigator.pushReplacement(context, MaterialPageRoute(
           builder: (context) {
             return DashBoardScreen();
           },
         ));
-
       } else {
-        context
-            .showSnackBar(const SnackBar(content: Text('opps something went worng')));
+        context.showSnackBar(
+            const SnackBar(content: Text('opps something went worng')));
       }
       print(res.body);
       print('data');
-    }on SocketException catch(e){
-      context
-          .showSnackBar(const SnackBar(content: Text('No internet Connection')));
-    }
-    finally {
+    } on SocketException catch (e) {
+      context.showSnackBar(
+          const SnackBar(content: Text('No internet Connection')));
+    } finally {
       isLoading = false;
     }
     return null;
@@ -193,14 +202,11 @@ class _UpdateSubCate1ScreenState extends State<UpdateSubCate1Screen> {
                     child: Align(
                         alignment: Alignment.centerLeft,
                         child: TextFormField(
-
                           controller: categoryNameController,
                           onChanged: (value) {},
                           decoration: InputDecoration(
                             hintText: 'Title',
-                            hintStyle: TextStyle(
-                                fontSize: 18
-                            ),
+                            hintStyle: TextStyle(fontSize: 18),
                             border: InputBorder.none,
                             icon: Icon(
                               Icons.add,
@@ -225,9 +231,7 @@ class _UpdateSubCate1ScreenState extends State<UpdateSubCate1Screen> {
                           pickColor(context: context);
                         },
                         child: Container(
-                            height: 25,
-                            width: 25,
-                            color:pickedColor)),
+                            height: 25, width: 25, color: pickedColor)),
                     const Text('  Choose Color ')
                   ],
                 ),
@@ -254,7 +258,6 @@ class _UpdateSubCate1ScreenState extends State<UpdateSubCate1Screen> {
                 SizedBox(
                   height: 20,
                 ),
-
                 SizedBox(
                   width: context.screenWidth * 0.35,
                   height: context.screenHeight * 0.068,
@@ -275,7 +278,6 @@ class _UpdateSubCate1ScreenState extends State<UpdateSubCate1Screen> {
               ],
             ),
           ),
-        )
-    );
+        ));
   }
 }
