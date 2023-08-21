@@ -8,11 +8,10 @@ import 'package:self_learning_app/features/subcate1.2/bloc/sub_cate2_bloc.dart';
 import 'package:self_learning_app/features/subcategory/sub_cate_screen.dart';
 import 'package:self_learning_app/utilities/extenstion.dart';
 
-import '../features/category/bloc/category_bloc.dart';
-import '../features/dashboard/dashboard_screen.dart';
-import '../features/subcategory/bloc/sub_cate_bloc.dart';
-import '../features/subcategory/bloc/sub_cate_event.dart';
-import '../utilities/shared_pref.dart';
+import '../../utilities/shared_pref.dart';
+import '../dashboard/dashboard_screen.dart';
+import '../subcategory/bloc/sub_cate_bloc.dart';
+import '../subcategory/bloc/sub_cate_event.dart';
 import 'bloc/sub_cate1_bloc.dart';
 import 'bloc/sub_cate1_event.dart';
 

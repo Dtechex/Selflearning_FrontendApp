@@ -3,13 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:self_learning_app/features/subcate1.2/bloc/sub_cate2_bloc.dart';
 import 'package:self_learning_app/features/subcate1.2/bloc/sub_cate2_event.dart';
-import 'package:self_learning_app/subcate1.1/bloc/sub_cate1_bloc.dart';
-import 'package:self_learning_app/subcate1.1/bloc/sub_cate1_event.dart';
 import 'package:self_learning_app/utilities/extenstion.dart';
 
-import '../../subcate1.1/bloc/sub_cate1_state.dart';
 import '../category/bloc/category_bloc.dart';
 import '../dashboard/dashboard_screen.dart';
+import '../subcate1.1/bloc/sub_cate1_bloc.dart';
+import '../subcate1.1/bloc/sub_cate1_event.dart';
+import '../subcate1.1/bloc/sub_cate1_state.dart';
 import '../subcategory/bloc/sub_cate_bloc.dart';
 import '../subcategory/bloc/sub_cate_event.dart';
 import '../subcategory/bloc/sub_cate_state.dart';

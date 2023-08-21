@@ -1,7 +1,8 @@
 
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:self_learning_app/subcate1.1/bloc/sub_cate1_event.dart';
-import 'package:self_learning_app/subcate1.1/bloc/sub_cate1_state.dart';
+import 'package:self_learning_app/features/subcate1.1/bloc/sub_cate1_event.dart';
+import 'package:self_learning_app/features/subcate1.1/bloc/sub_cate1_state.dart';
+
 import '../repo/subcate1_repo.dart';
 
 

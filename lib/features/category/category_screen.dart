@@ -180,68 +180,61 @@ class _AllCateScreenState extends State<AllCateScreen> {
               return Expanded(
                 child: Container(
                 padding: const EdgeInsets.only(left: 20, right: 20),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
+                child: GridView.builder(
+                  physics: ScrollPhysics(),
+                  shrinkWrap: true,
+                  // padding: EdgeInsets.all(15),
+                  itemCount: state.cateList.length,
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisSpacing: 20,
+                      mainAxisSpacing: 20,
+                      mainAxisExtent: context.screenHeight * 0.15,
+                      crossAxisCount: 2),
+                  itemBuilder: (context, index) {
+                    Color currentColor = primaryColor;
 
-                    GridView.builder(
-                      physics: ScrollPhysics(),
-                      shrinkWrap: true,
-                      // padding: EdgeInsets.all(15),
-                      itemCount: state.cateList.length,
-                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisSpacing: 20,
-                          mainAxisSpacing: 20,
-                          mainAxisExtent: context.screenHeight * 0.15,
-                          crossAxisCount: 2),
-                      itemBuilder: (context, index) {
-                        Color currentColor = primaryColor;
+                    if (state.cateList[index].styles!.isNotEmpty) {
+                      if (state.cateList[index].styles![1].value!.length != 10) {
+                        currentColor = primaryColor;
+                      } else {
+                        currentColor = Color(int.parse(
+                            state.cateList[index].styles![1].value!));
+                      }
+                    }
 
-                        if (state.cateList[index].styles!.isNotEmpty) {
-                          if (state.cateList[index].styles![1].value!.length != 10) {
-                            currentColor = primaryColor;
-                          } else {
-                            currentColor = Color(int.parse(
-                                state.cateList[index].styles![1].value!));
-                          }
-                        }
-
-                        return GestureDetector(
-                          child: Container(
-                            padding: const EdgeInsets.all(8),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
-                              color: Colors.transparent,
-                              border: Border.all(color: currentColor, width: 3),
-                            ),
-                            child: Center(
-                              child: Text(state.cateList[index].name.toString(),
-                                  textAlign: TextAlign.center,
-                                  overflow: TextOverflow.ellipsis,
-                                  maxLines: 2,
-                                  style: const TextStyle(color: primaryColor)),
-                            ),
-                          ),
-                          onTap: () {
-                            Navigator.push(context, MaterialPageRoute(
-                              builder: (context) {
-                                return SubCategoryScreen(
-                                  tags: state.cateList[index].keywords,
-                                  color: Color(
-                                    int.parse(
-                                        state.cateList[index].styles![1].value!),
-                                  ),
-                                  rootId: state.cateList[index].sId,
-                                  categoryName: state.cateList[index].name,
-                                );
-                              },
-                            ));
+                    return GestureDetector(
+                      child: Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          color: Colors.transparent,
+                          border: Border.all(color: currentColor, width: 3),
+                        ),
+                        child: Center(
+                          child: Text(state.cateList[index].name.toString(),
+                              textAlign: TextAlign.center,
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 2,
+                              style: const TextStyle(color: primaryColor)),
+                        ),
+                      ),
+                      onTap: () {
+                        Navigator.push(context, MaterialPageRoute(
+                          builder: (context) {
+                            return SubCategoryScreen(
+                              tags: state.cateList[index].keywords,
+                              color: Color(
+                                int.parse(
+                                    state.cateList[index].styles![1].value!),
+                              ),
+                              rootId: state.cateList[index].sId,
+                              categoryName: state.cateList[index].name,
+                            );
                           },
-                        );
+                        ));
                       },
-                    )
-                  ],
+                    );
+                  },
                 ),
               ),);
             } else {

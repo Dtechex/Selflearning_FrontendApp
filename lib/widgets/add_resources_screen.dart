@@ -4,7 +4,6 @@ import 'package:self_learning_app/features/add_media/add_audio_screen.dart';
 import 'package:self_learning_app/features/add_media/add_text_screen.dart';
 import 'package:self_learning_app/features/add_media/add_video_screen.dart';
 import 'package:self_learning_app/features/resources/bloc/resources_bloc.dart';
-import 'package:self_learning_app/promt/promts_screen.dart';
 import 'package:self_learning_app/utilities/extenstion.dart';
 
 import '../features/add_media/add_image_screen.dart';

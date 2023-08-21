@@ -10,7 +10,6 @@ import 'package:self_learning_app/features/dashboard/dashboard_screen.dart';
 import 'package:self_learning_app/features/flow_screen/start_flow_screen.dart';
 import 'package:self_learning_app/features/resources/bloc/resources_bloc.dart';
 import 'package:self_learning_app/features/subcategory/model/resources_model.dart';
-import 'package:self_learning_app/promt/promts_screen.dart';
 import 'package:self_learning_app/utilities/extenstion.dart';
 import 'package:mime/mime.dart';
 import '../../utilities/shared_pref.dart';
@@ -19,6 +18,8 @@ import '../../widgets/play_music.dart';
 import '../../widgets/pop_up_menu.dart';
 import 'package:http/http.dart' as http;
 import 'dart:io';
+
+import '../promt/promts_screen.dart';
 
 class AllResourcesList extends StatefulWidget {
   final String rootId;

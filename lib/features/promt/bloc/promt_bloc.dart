@@ -2,8 +2,6 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
-import 'package:self_learning_app/promt/data/model/promt_model.dart';
-import 'package:self_learning_app/promt/data/promt_repo.dart';
 
 import '../data/model/addpromtprepo.dart';
 import '../data/model/flow_model.dart';
@@ -11,6 +9,7 @@ import '../data/model/promt_model.dart';
 import '../data/model/promt_model.dart';
 import '../data/model/promt_model.dart';
 import '../data/model/promt_model.dart';
+import '../data/promt_repo.dart';
 
 part 'promt_event.dart';
 part 'promt_state.dart';

@@ -10,10 +10,10 @@ import 'package:self_learning_app/utilities/extenstion.dart';
 import 'package:self_learning_app/utilities/shared_pref.dart';
 import 'package:textfield_tags/textfield_tags.dart';
 
-import '../../subcate1.1/bloc/sub_cate1_bloc.dart';
-import '../../subcate1.1/bloc/sub_cate1_event.dart';
 import '../category/bloc/category_bloc.dart';
 import '../dashboard/dashboard_screen.dart';
+import '../subcate1.1/bloc/sub_cate1_bloc.dart';
+import '../subcate1.1/bloc/sub_cate1_event.dart';
 import 'bloc/sub_cate_event.dart';
 
 class CreateSubCateScreen extends StatefulWidget {

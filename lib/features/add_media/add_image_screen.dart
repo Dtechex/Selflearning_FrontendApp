@@ -6,12 +6,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import 'package:self_learning_app/features/add_media/bloc/add_media_bloc.dart';
-import 'package:self_learning_app/promt/promts_screen.dart';
 
 import 'package:self_learning_app/utilities/extenstion.dart';
 import 'package:self_learning_app/utilities/image_picker_helper.dart';
 
 import '../camera/camera_screen.dart';
+import '../promt/promts_screen.dart';
 import '../quick_add/data/bloc/quick_add_bloc.dart';
 import '../quick_add/quick_add_screen.dart';
 import '../resources/resources_screen.dart';

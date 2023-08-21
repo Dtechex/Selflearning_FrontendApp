@@ -5,8 +5,8 @@ import 'package:loader_overlay/loader_overlay.dart';
 
 import 'package:self_learning_app/utilities/extenstion.dart';
 
-import '../../promt/promts_screen.dart';
 import '../camera/camera_screen.dart';
+import '../promt/promts_screen.dart';
 import '../quick_add/data/bloc/quick_add_bloc.dart';
 import '../quick_add/quick_add_screen.dart';
 import '../resources/resources_screen.dart';

@@ -18,11 +18,11 @@ import 'package:self_learning_app/features/registration/data/repo/signup_repo.da
 import 'package:self_learning_app/features/resources/bloc/resources_bloc.dart';
 import 'package:self_learning_app/features/search_category/bloc/search_cat_bloc.dart';
 import 'package:self_learning_app/features/subcategory/bloc/sub_cate_bloc.dart';
-import 'package:self_learning_app/subcate1.1/bloc/sub_cate1_bloc.dart';
 import 'package:self_learning_app/utilities/colors.dart';
 import 'package:self_learning_app/utilities/shared_pref.dart';
 import 'features/dashboard/bloc/dashboard_bloc.dart';
 import 'features/login/bloc/login_bloc.dart';
+import 'features/subcate1.1/bloc/sub_cate1_bloc.dart';
 import 'features/subcate1.2/bloc/sub_cate2_bloc.dart';
 
 BaseOptions baseOptions = BaseOptions(
@@ -58,21 +58,15 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
         providers: [
-          BlocProvider<MyFormBloc>(
-              create: (context) => MyFormBloc(loginRepo: LoginRepo())),
+          BlocProvider<MyFormBloc>(create: (context) => MyFormBloc(loginRepo: LoginRepo())),
           BlocProvider<DashboardBloc>(create: (context) => DashboardBloc()),
-          BlocProvider<CategoryBloc>(
-              create: (context) => CategoryBloc()..add(CategoryLoadEvent())),
-          BlocProvider<SignUpBloc>(
-              create: (context) => SignUpBloc(singUpRepo: SignUpRepo())),
-          BlocProvider<SearchCategoryBloc>(
-              create: (context) => SearchCategoryBloc()),
+          BlocProvider<CategoryBloc>(create: (context) => CategoryBloc()..add(CategoryLoadEvent())),
+          BlocProvider<SignUpBloc>(create: (context) => SignUpBloc(singUpRepo: SignUpRepo())),
+          BlocProvider<SearchCategoryBloc>(create: (context) => SearchCategoryBloc()),
           BlocProvider<SubCategoryBloc>(create: (context) => SubCategoryBloc()),
           //BlocProvider<CameraBloc>(create: (context) => CameraBloc()),
-          BlocProvider<SubCategory1Bloc>(
-              create: (context) => SubCategory1Bloc()),
-          BlocProvider<SubCategory2Bloc>(
-              create: (context) => SubCategory2Bloc()),
+          BlocProvider<SubCategory1Bloc>(create: (context) => SubCategory1Bloc()),
+          BlocProvider<SubCategory2Bloc>(create: (context) => SubCategory2Bloc()),
           BlocProvider<QuickImportBloc>(create: (context) => QuickImportBloc()),
           BlocProvider<ResourcesBloc>(create: (context) => ResourcesBloc()),
           // BlocProvider<AddPromptsBloc>(create: (context) => AddPromptsBloc()),

@@ -160,20 +160,21 @@ class EmailInput extends StatelessWidget {
         print('email state');
         return Container(
             padding: const EdgeInsets.only(left: 10, right: 5),
-            height: context.screenHeight * 0.1,
+            //height: context.screenHeight * 0.1,
             decoration: BoxDecoration(
                 color: Colors.grey.withOpacity(0.4),
-                borderRadius: BorderRadius.circular(20)),
+                borderRadius: BorderRadius.circular(12)),
             child: Align(
               alignment: Alignment.centerLeft,
               child: TextFormField(
                 initialValue: state.email.value,
                 decoration: InputDecoration(
+                  contentPadding: EdgeInsets.symmetric(vertical: 0.0, horizontal: 0.0),
                   hintText: 'david@gmail.com',
                   border: InputBorder.none,
                   icon: Icon(
                     Icons.email,
-                    size: context.screenWidth>1280?50:context.screenWidth * 0.08,
+                    size: context.screenWidth>1280?50:context.screenWidth * 0.06,
                   ),
                   errorText: state.email.invalid
                       ? 'Please ensure the email entered is valid'
@@ -204,10 +205,10 @@ class PasswordInput extends StatelessWidget {
 
         return Container(
             padding: const EdgeInsets.only(left: 10, right: 5),
-            height: context.screenHeight * 0.1,
+            //height: context.screenHeight * 0.1,
             decoration: BoxDecoration(
                 color: Colors.grey.withOpacity(0.4),
-                borderRadius: BorderRadius.circular(20)),
+                borderRadius: BorderRadius.circular(12)),
             child: Align(
               alignment: Alignment.centerLeft,
               child: TextFormField(
@@ -225,7 +226,7 @@ class PasswordInput extends StatelessWidget {
                   border: InputBorder.none,
                   icon: Icon(
                     Icons.lock,
-                    size:context.screenWidth>1280?50:context.screenWidth * 0.08,
+                    size:context.screenWidth>1280?50:context.screenWidth * 0.06,
                   ),
                   errorText: state.password.invalid
                       ? 'Please ensure the Phone Number is valid'

@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:dio/dio.dart';
 
-import '../../../utilities/shared_pref.dart';
+import '../../../../utilities/shared_pref.dart';
 import 'flow_model.dart';
 
 class AddPromptNew {

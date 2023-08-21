@@ -12,8 +12,8 @@ import 'package:self_learning_app/utilities/image_picker_helper.dart';
 import 'package:chewie/chewie.dart';
 import 'package:video_player/video_player.dart';
 
-import '../../promt/promts_screen.dart';
 import '../camera/camera_screen.dart';
+import '../promt/promts_screen.dart';
 import '../quick_add/data/bloc/quick_add_bloc.dart';
 import '../quick_add/quick_add_screen.dart';
 import '../resources/resources_screen.dart';

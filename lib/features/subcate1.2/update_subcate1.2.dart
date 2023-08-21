@@ -8,10 +8,10 @@ import 'package:self_learning_app/features/subcate1.2/bloc/sub_cate2_bloc.dart';
 import 'package:self_learning_app/utilities/extenstion.dart';
 import 'package:self_learning_app/utilities/shared_pref.dart';
 
-import '../../subcate1.1/bloc/sub_cate1_bloc.dart';
-import '../../subcate1.1/bloc/sub_cate1_event.dart';
 import '../category/bloc/category_bloc.dart';
 import '../dashboard/dashboard_screen.dart';
+import '../subcate1.1/bloc/sub_cate1_bloc.dart';
+import '../subcate1.1/bloc/sub_cate1_event.dart';
 import 'bloc/sub_cate2_event.dart';
 
 class UpdateSubCate2Screen extends StatefulWidget {

@@ -6,11 +6,9 @@ import 'package:self_learning_app/features/subcategory/create_subcate_screen.dar
 import 'package:self_learning_app/features/subcategory/update_subcategory.dart';
 import 'package:self_learning_app/utilities/extenstion.dart';
 
-import '../features/subcate1.2/bloc/sub_cate2_event.dart';
-import '../features/subcate1.2/sub_category_1.2_screen.dart';
-import '../features/update_category/update_cate_screen.dart';
-import '../utilities/colors.dart';
-import '../widgets/add_resources_screen.dart';
+import '../../utilities/colors.dart';
+import '../../widgets/add_resources_screen.dart';
+import '../subcate1.2/sub_category_1.2_screen.dart';
 import 'bloc/sub_cate1_bloc.dart';
 import 'bloc/sub_cate1_event.dart';
 import 'bloc/sub_cate1_state.dart';

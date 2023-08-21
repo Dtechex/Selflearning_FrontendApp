@@ -28,6 +28,9 @@ class _AddPromptsScreenState extends State<AddPromptsScreen> {
   TextEditingController title_Controller = TextEditingController();
   TextEditingController side1_Controller = TextEditingController();
   TextEditingController side2_Controller = TextEditingController();
+  GlobalKey<FormState> _titleformKey = GlobalKey<FormState>();
+  GlobalKey<FormState> _side1TextformKey = GlobalKey<FormState>();
+  GlobalKey<FormState> _side2TextformKey = GlobalKey<FormState>();
   @override
   void initState() {
     // side2_Controller.text='';
@@ -90,18 +93,21 @@ class _AddPromptsScreenState extends State<AddPromptsScreen> {
                               color: Colors.grey.shade200,
                             ),
                             padding: EdgeInsets.all(10),
-                            child: TextFormField(
-                              validator: (value) {
-                                if (value!.isEmpty) {
-                                  return "Field required";
-                                }
-                                return null;
-                              },
-                              controller: title_Controller,
-                              onTap: () {},
-                              decoration: InputDecoration.collapsed(
-                                  hintText: 'Add Title',
-                                  hintStyle: TextStyle(fontSize: 12)),
+                            child: Form(
+                              key: _titleformKey,
+                              child: TextFormField(
+                                validator: (value) {
+                                  if (value!.isEmpty) {
+                                    return "Field required";
+                                  }
+                                  return null;
+                                },
+                                controller: title_Controller,
+                                onTap: () {},
+                                decoration: InputDecoration.collapsed(
+                                    hintText: 'Add Title',
+                                    hintStyle: TextStyle(fontSize: 12)),
+                              ),
                             ),
                           ),
                           Card(
@@ -114,6 +120,7 @@ class _AddPromptsScreenState extends State<AddPromptsScreen> {
                                   children: [
                                     const Text('Side 1/ Question'),
                                     Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                       children: [
                                         Text('Resources type.        '),
                                         Container(
@@ -124,7 +131,7 @@ class _AddPromptsScreenState extends State<AddPromptsScreen> {
                                                   BorderRadius.circular(10)),
                                           margin: EdgeInsets.only(top: 10),
                                           height: 40,
-                                          width: context.screenWidth / 2,
+                                          //width: context.screenWidth / 2,
                                           child: Row(
                                             children: [
                                               Icon(Icons.text_format,
@@ -192,22 +199,26 @@ class _AddPromptsScreenState extends State<AddPromptsScreen> {
                                               color: Colors.grey.shade200,
                                             ),
                                             padding: EdgeInsets.all(10),
-                                            child: TextFormField(
-                                              controller: side1_Controller,
-                                              onTap: () {},
-                                              decoration:
-                                                  InputDecoration.collapsed(
-                                                      hintText: 'Add Questions',
-                                                      hintStyle: TextStyle(
-                                                          fontSize: 12)),
+                                            child: Form(
+                                              key: _side1TextformKey,
+                                              child: TextFormField(
+                                                controller: side1_Controller,
+                                                onTap: () {},
+                                                validator: (value) => value == null || value.isEmpty
+                                                    ? 'Field required!'
+                                                    : null,
+                                                decoration: InputDecoration.collapsed(
+                                                        hintText: 'Add Questions',
+                                                        hintStyle: TextStyle(
+                                                            fontSize: 12)),
+                                              ),
                                             ),
                                           )
                                         : GestureDetector(
                                             onTap: () {
                                               print(
                                                   state.side1selectedMediaType);
-                                              if (state
-                                                      .side1selectedMediaType ==
+                                              if (state.side1selectedMediaType ==
                                                   'Image') {
                                                 ImagePickerHelper.pickImage(
                                                         imageSource:
@@ -281,21 +292,37 @@ class _AddPromptsScreenState extends State<AddPromptsScreen> {
                                             onPressed: () {
                                               // print(state.side1ResourceUrl);
                                               // Task 1
+
+                                              if(state.side1selectedMediaType == 'Text') {
+                                               if(_titleformKey.currentState!.validate() && _side1TextformKey.currentState!.validate()){
+                                                 addPromptsBloc.add(
+                                                   AddResource(
+                                                     mediaUrl: 0,
+                                                     whichSide: 0,
+                                                     name: 'Unitited 1',
+                                                     resourceId: widget.resourceId,
+                                                     content: side1_Controller.text
+                                                   ),
+                                                 );
+                                               }else{
+                                                 ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Fill details correctly!')));
+                                               }
+
+                                              }else if(state.side1ResourceUrl != '') {
+
+                                              }
+
                                               addPromptsBloc.add(
                                                 AddResource(
                                                   mediaUrl:
                                                       // state.side1ResourceUrl,
-                                                      state.side1selectedMediaType ==
-                                                              'Text'
+                                                      state.side1selectedMediaType == 'Text'
                                                           ? 0
-                                                          : state.side1selectedMediaType ==
-                                                                  'Image'
+                                                          : state.side1selectedMediaType == 'Image'
                                                               ? 1
-                                                              : state.side1selectedMediaType ==
-                                                                      'Video'
+                                                              : state.side1selectedMediaType == 'Video'
                                                                   ? 3
-                                                                  : state.side1selectedMediaType ==
-                                                                          'Audio'
+                                                                  : state.side1selectedMediaType == 'Audio'
                                                                       ? 2
                                                                       : -1,
                                                   whichSide: 0,
@@ -305,8 +332,7 @@ class _AddPromptsScreenState extends State<AddPromptsScreen> {
                                                       // side1_Controller.text
                                                       state.side1selectedMediaType ==
                                                               'Image'
-                                                          ? state
-                                                              .side1ResourceUrl
+                                                          ? state.side1ResourceUrl
                                                           : state.side1selectedMediaType ==
                                                                   'Text'
                                                               ? side1_Controller
@@ -337,6 +363,7 @@ class _AddPromptsScreenState extends State<AddPromptsScreen> {
                                   children: [
                                     Text('Side 2/ Question'),
                                     Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                       children: [
                                         Text('Resources type.        '),
                                         Container(
@@ -347,7 +374,7 @@ class _AddPromptsScreenState extends State<AddPromptsScreen> {
                                                   BorderRadius.circular(10)),
                                           margin: EdgeInsets.only(top: 10),
                                           height: 40,
-                                          width: context.screenWidth / 2,
+                                          //width: context.screenWidth / 2,
                                           child: Row(
                                             children: [
                                               Icon(Icons.text_format,
@@ -427,9 +454,7 @@ class _AddPromptsScreenState extends State<AddPromptsScreen> {
                                           )
                                         : GestureDetector(
                                             onTap: () {
-                                              if (state
-                                                      .side2selectedMediaType ==
-                                                  'Image') {
+                                              if (state.side2selectedMediaType == 'Image') {
                                                 ImagePickerHelper.pickImage(
                                                         imageSource:
                                                             ImageSource.camera)
@@ -441,9 +466,7 @@ class _AddPromptsScreenState extends State<AddPromptsScreen> {
                                                           mediaUrl: value.path,
                                                           whichSide: 1));
                                                 });
-                                              } else if (state
-                                                      .side2selectedMediaType ==
-                                                  'Video') {
+                                              } else if (state.side2selectedMediaType == 'Video') {
                                                 ImagePickerHelper.pickVideo(
                                                         imageSource:
                                                             ImageSource.camera)
@@ -455,9 +478,7 @@ class _AddPromptsScreenState extends State<AddPromptsScreen> {
                                                           mediaUrl: value.path,
                                                           whichSide: 1));
                                                 });
-                                              } else if (state
-                                                      .side2selectedMediaType ==
-                                                  'Audio') {
+                                              } else if (state.side2selectedMediaType == 'Audio') {
                                                 ImagePickerHelper.pickFile()
                                                     .then((value) {
                                                   print(value);
@@ -472,9 +493,7 @@ class _AddPromptsScreenState extends State<AddPromptsScreen> {
                                             child: Container(
                                               color: Colors.grey,
                                               height: context.screenHeight / 5,
-                                              child: getFileType(state
-                                                          .side2ResourceUrl!) ==
-                                                      'Photo'
+                                              child: getFileType(state.side2ResourceUrl!) == 'Photo'
                                                   ? Image.file(
                                                       File(state
                                                           .side2ResourceUrl!),
@@ -505,6 +524,7 @@ class _AddPromptsScreenState extends State<AddPromptsScreen> {
                                                         Colors.red)),
                                             onPressed: () {
                                               // print(state.side2ResourceUrl);
+
                                               addPromptsBloc.add(
                                                 AddResource(
                                                   // mediaUrl:

@@ -5,7 +5,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:self_learning_app/features/add_media/repo/add_media_repo.dart';
 import 'package:self_learning_app/features/add_promts/add_promts_screen.dart';
 import 'package:self_learning_app/features/add_promts/repo/add_prompts_repo.dart';
-import 'package:self_learning_app/promt/bloc/promt_bloc.dart';
 
 part 'add_prompts_event.dart';
 part 'add_prompts_state.dart';

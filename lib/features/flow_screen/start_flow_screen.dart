@@ -5,10 +5,11 @@ import 'package:flippy/flippy.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:self_learning_app/features/dashboard/dashboard_screen.dart';
-import 'package:self_learning_app/promt/bloc/promt_bloc.dart';
 import 'package:self_learning_app/utilities/extenstion.dart';
 import 'package:self_learning_app/widgets/play_music.dart';
 import 'package:video_player/video_player.dart';
+
+import '../promt/bloc/promt_bloc.dart';
 
 class StartFlowScreen extends StatefulWidget {
   final String? mediaType;
