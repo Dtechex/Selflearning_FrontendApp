@@ -164,7 +164,7 @@ class _AllResourcesListState extends State<AllResourcesList> {
                             ),
                             SizedBox(width: 5.0,),
                             ElevatedButton(
-                              child: const Text('View'),
+                              child: const Text('Start Flow'),
                               onPressed: () {
                                 print(state.allResourcesModel.data!
                                     .record!.records![index].content);
@@ -201,7 +201,7 @@ class _AllResourcesListState extends State<AllResourcesList> {
                                     ));
                               },
                             ),
-                            SizedBox(width: 5.0,),
+                            /*SizedBox(width: 5.0,),
                             ElevatedButton(
                               child: const Text('Start'),
                               onPressed: () {
@@ -239,7 +239,7 @@ class _AllResourcesListState extends State<AllResourcesList> {
                                       },
                                     ));
                               },
-                            ),
+                            ),*/
                             Spacer(),
                             IconButton(
                                 onPressed: () {

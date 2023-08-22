@@ -62,7 +62,8 @@ class _AddImageScreenState extends State<AddImageScreen> {
                 context.loaderOverlay.hide();
                 print(state.wichResources);
                 print('state.wichResources');
-                switch (state.wichResources) {
+                Navigator.pop(context);
+                /*switch (state.wichResources) {
                   case 0:
                     {
                       Navigator.pushReplacement(
@@ -95,7 +96,7 @@ class _AddImageScreenState extends State<AddImageScreen> {
                       );
                     }
                     break;
-                }
+                }*/
               }
               else if (state.apiState == ApiState.submitting) {
                 context.loaderOverlay.show();

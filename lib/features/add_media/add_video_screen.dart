@@ -90,7 +90,8 @@ class _AddVideoScreenState extends State<AddVideoScreen> {
             listener: (context, state) {
               if (state.apiState == ApiState.submitted) {
                 context.loaderOverlay.hide();
-                switch (state.wichResources) {
+                Navigator.pop(context);
+                /*switch (state.wichResources) {
                   case 0:
                     {
                       Navigator.pushReplacement(
@@ -121,7 +122,7 @@ class _AddVideoScreenState extends State<AddVideoScreen> {
                       );
                     }
                     break;
-                }
+                }*/
               } else if (state.apiState == ApiState.submitting) {
                 context.loaderOverlay.show();
                 context.showSnackBar(const SnackBar(duration: Duration(seconds: 1), content: Text('Adding resources...')));

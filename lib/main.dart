@@ -10,6 +10,7 @@ import 'package:self_learning_app/features/dashboard/dashboard_screen.dart';
 import 'package:self_learning_app/features/login/data/repo/login_repo.dart';
 import 'package:self_learning_app/features/login/login_screen.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:self_learning_app/features/promt/bloc/promt_bloc.dart';
 import 'package:self_learning_app/features/quick_add/data/bloc/quick_add_bloc.dart';
 import 'package:self_learning_app/features/quick_import/bloc/quick_add_bloc.dart';
 import 'package:self_learning_app/features/quick_import/quick_add_import_screen.dart';
@@ -69,6 +70,7 @@ class MyApp extends StatelessWidget {
           BlocProvider<SubCategory2Bloc>(create: (context) => SubCategory2Bloc()),
           BlocProvider<QuickImportBloc>(create: (context) => QuickImportBloc()),
           BlocProvider<ResourcesBloc>(create: (context) => ResourcesBloc()),
+          BlocProvider<PromtBloc>(create: (context) => PromtBloc()),
           // BlocProvider<AddPromptsBloc>(create: (context) => AddPromptsBloc()),
         ],
         child: GlobalLoaderOverlay(

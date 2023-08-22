@@ -141,7 +141,8 @@ class _AddAudioScreenState extends State<AddAudioScreen> {
             listener: (context, state) {
               if (state.apiState==ApiState.submitted ) {
                 context.loaderOverlay.hide();
-                switch(state.wichResources){
+                Navigator.pop(context);
+                /*switch(state.wichResources){
                   case 0: {
                     Navigator.pushReplacement(
                       context,
@@ -167,7 +168,7 @@ class _AddAudioScreenState extends State<AddAudioScreen> {
                     );
 
                   }break;
-                }
+                }*/
               }
               else if  (state.apiState==ApiState.submitting) {
                 context.loaderOverlay.show();

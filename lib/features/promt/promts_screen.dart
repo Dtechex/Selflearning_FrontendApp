@@ -1,8 +1,10 @@
 import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:self_learning_app/features/promt/data/model/promt_model.dart';
 import 'package:self_learning_app/utilities/extenstion.dart';
 
+import '../flow_screen/start_flow_screen.dart';
 import 'bloc/promt_bloc.dart';
 import 'data/model/flow_model.dart';
 
@@ -20,7 +22,7 @@ class PromtsScreen extends StatefulWidget {
 }
 
 class _PromtsScreenState extends State<PromtsScreen> {
-  final PromtBloc promtBloc = PromtBloc();
+  //final PromtBloc promtBloc = PromtBloc();
   final PageController _pageController = PageController();
   int _currentPage = 0;
   int _promtModelLength = 0;
@@ -30,7 +32,7 @@ class _PromtsScreenState extends State<PromtsScreen> {
 
   @override
   void initState() {
-    promtBloc.add(LoadPromtEvent(promtId: widget.promtId));
+    BlocProvider.of<PromtBloc>(context).add(LoadPromtEvent(promtId: widget.promtId));
     super.initState();
   }
 
@@ -66,90 +68,96 @@ class _PromtsScreenState extends State<PromtsScreen> {
     final Color evenItemColor = colorScheme.primary.withOpacity(0.15);
     var h = MediaQuery.of(context).size.height;
     var w = MediaQuery.of(context).size.width;
+    print('Vipin');
     print(
         "https://selflearning.dtechex.com/public/${widget.mediaType}/${widget.content}");
-    return BlocProvider(
-      create: (context) => promtBloc,
-      child: Scaffold(
-        appBar: AppBar(title: const Text('Prompts')),
-        body: Scaffold(
-          body: BlocConsumer<PromtBloc, PromtState>(
-            listener: (context, state) {
-              if (state is PromtLoaded) {
-                if (state.apiState == ApiState.Success) {
-                  Navigator.pop(context);
-                  context.showSnackBar(SnackBar(content: Text('Flow added')));
-                }
+    return Scaffold(
+      appBar: AppBar(title: const Text('Prompts')),
+      body: Scaffold(
+        body: BlocConsumer<PromtBloc, PromtState>(
+          listener: (context, state) {
+            if (state is PromtLoaded) {
+              if (state.apiState == ApiState.Success) {
+                Navigator.pop(context);
+                context.showSnackBar(SnackBar(content: Text('Flow added')));
               }
-            },
-            builder: (context, state) {
-              if (state is PromtLoading) {
+            }
+          },
+          builder: (context, state) {
+            if (state is PromtLoading) {
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            } else if (state is PromtError) {
+              return Center(
+                child: Text(state.error!),
+              );
+            } else if (state is PromtLoaded) {
+              if (state.addFlowModel!.flow!.isEmpty) {
                 return const Center(
-                  child: CircularProgressIndicator(),
+                  child: Text('No prompts found'),
                 );
-              } else if (state is PromtError) {
-                return Center(
-                  child: Text(state.error!),
-                );
-              } else if (state is PromtLoaded) {
-                if (state.addFlowModel!.flow!.isEmpty) {
-                  return const Center(
-                    child: Text('No prompts found'),
-                  );
-                } else {
-                  return Column(
-                    children: [
-                      Expanded(
-                          child: ReorderableListView(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 10, vertical: 10),
-                        children: <Widget>[
-                          for (int index = 0;
-                              index < state.addFlowModel!.flow!.length;
-                              index += 1)
-                            ListTile(
-                              leading: CircleAvatar(
-                                  maxRadius: 17, child: Text("${index + 1}")),
-                              trailing: Icon(Icons.menu),
-                              key: Key('$index'),
-                              tileColor:
-                                  index.isOdd ? oddItemColor : evenItemColor,
-                              title: Row(
-                                children: [
-                                  Text(
-                                      'Item ${state.addFlowModel!.flow![index].name}')
-                                ],
-                              ),
+              } else {
+                return Column(
+                  children: [
+                    Expanded(
+                        child: ReorderableListView(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 10, vertical: 10),
+                      children: <Widget>[
+                        for (int index = 0;
+                            index < state.addFlowModel!.flow!.length;
+                            index += 1)
+                          ListTile(
+                            leading: CircleAvatar(
+                                maxRadius: 17, child: Text("${index + 1}")),
+                            trailing: Icon(Icons.menu),
+                            key: Key('$index'),
+                            tileColor:
+                                index.isOdd ? oddItemColor : evenItemColor,
+                            title: Row(
+                              children: [
+                                Text(
+                                    'Item ${state.addFlowModel!.flow![index].name}')
+                              ],
                             ),
-                        ],
-                        onReorder: (int oldIndex, int newIndex) {
-                          setState(() {
-                            if (oldIndex < newIndex) {
-                              newIndex -= 1;
-                            }
-                            PromptFlow item =
-                                state.addFlowModel!.flow!.removeAt(oldIndex);
-                            state.addFlowModel!.flow!.insert(newIndex, item);
-                          });
+                          ),
+                      ],
+                      onReorder: (int oldIndex, int newIndex) {
+                        setState(() {
+                          if (oldIndex < newIndex) {
+                            newIndex -= 1;
+                          }
+                          //print(state.addFlowModel)
+                          PromptFlow item = state.addFlowModel!.flow!.removeAt(oldIndex);
+                          state.addFlowModel!.flow!.insert(newIndex, item);
+
+                          PromtModel model = state.promtModel!.removeAt(oldIndex);
+                          state.promtModel!.insert(newIndex, model);
+                        });
+                      },
+                    )),
+                    ElevatedButton(
+                        style: const ButtonStyle(
+                            backgroundColor:
+                                MaterialStatePropertyAll(Colors.red)),
+                        onPressed: () {
+
+                          /*print(state.allResourcesModel.data!
+                              .record!.records![index].content);*/
+
+                          Navigator.push(context, MaterialPageRoute( builder: (context) { return StartFlowScreen();},));
+                          /*print(state.addFlowModel!.flow![0].name);
+                          context.read().add(AddPromptFlow(
+                              addFlowModel: state.addFlowModel));*/
                         },
-                      )),
-                      ElevatedButton(
-                          style: const ButtonStyle(
-                              backgroundColor:
-                                  MaterialStatePropertyAll(Colors.red)),
-                          onPressed: () {
-                            print(state.addFlowModel!.flow![0].name);
-                            promtBloc.add(AddPromptFlow(
-                                addFlowModel: state.addFlowModel));
-                          },
-                          child: Text('  Create Flow '))
-                    ],
-                  );
-                }
+                        child: Text('  Create Flow '))
+                  ],
+                );
               }
-              return const SizedBox();
-            },
-          ),
+            }
+            return const SizedBox();
+          },
         ),
       ),
     );

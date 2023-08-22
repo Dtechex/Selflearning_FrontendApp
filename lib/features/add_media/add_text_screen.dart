@@ -56,7 +56,8 @@ class _AddTextScreenState extends State<AddTextScreen> {
                 context.loaderOverlay.hide();
                 print(state.wichResources);
                 print('state.wichResources');
-                switch(state.wichResources){
+                Navigator.pop(context);
+                /*switch(state.wichResources){
                   case 0: {
                     Navigator.pushReplacement(
                       context,
@@ -82,7 +83,7 @@ class _AddTextScreenState extends State<AddTextScreen> {
                     );
 
                   }break;
-                }
+                }*/
               }
               else if  (state.apiState==ApiState.submitting) {
                 context.loaderOverlay.show();
