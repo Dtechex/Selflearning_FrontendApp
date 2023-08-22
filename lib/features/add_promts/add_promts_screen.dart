@@ -305,42 +305,46 @@ class _AddPromptsScreenState extends State<AddPromptsScreen> {
                                                    ),
                                                  );
                                                }else{
+                                                 print('Hii');
                                                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Fill details correctly!')));
                                                }
 
-                                              }else if(state.side1ResourceUrl != '') {
-
+                                              }else if(_titleformKey.currentState!.validate() && state.side1ResourceUrl != '') {
+                                                print('Hii1');
+                                                addPromptsBloc.add(
+                                                  AddResource(
+                                                    mediaUrl:
+                                                    // state.side1ResourceUrl,
+                                                    state.side1selectedMediaType == 'Text'
+                                                        ? 0
+                                                        : state.side1selectedMediaType == 'Image'
+                                                        ? 1
+                                                        : state.side1selectedMediaType == 'Video'
+                                                        ? 3
+                                                        : state.side1selectedMediaType == 'Audio'
+                                                        ? 2
+                                                        : -1,
+                                                    whichSide: 0,
+                                                    name: 'Unitited 1',
+                                                    resourceId: widget.resourceId,
+                                                    content:
+                                                    // side1_Controller.text
+                                                    state.side1selectedMediaType ==
+                                                        'Image'
+                                                        ? state.side1ResourceUrl
+                                                        : state.side1selectedMediaType ==
+                                                        'Text'
+                                                        ? side1_Controller
+                                                        .text
+                                                        : state
+                                                        .side1ResourceUrl,
+                                                  ),
+                                                );
+                                              }else{
+                                                print('Hii2');
+                                                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Fill details correctly!')));
                                               }
 
-                                              addPromptsBloc.add(
-                                                AddResource(
-                                                  mediaUrl:
-                                                      // state.side1ResourceUrl,
-                                                      state.side1selectedMediaType == 'Text'
-                                                          ? 0
-                                                          : state.side1selectedMediaType == 'Image'
-                                                              ? 1
-                                                              : state.side1selectedMediaType == 'Video'
-                                                                  ? 3
-                                                                  : state.side1selectedMediaType == 'Audio'
-                                                                      ? 2
-                                                                      : -1,
-                                                  whichSide: 0,
-                                                  name: 'Unitited 1',
-                                                  resourceId: widget.resourceId,
-                                                  content:
-                                                      // side1_Controller.text
-                                                      state.side1selectedMediaType ==
-                                                              'Image'
-                                                          ? state.side1ResourceUrl
-                                                          : state.side1selectedMediaType ==
-                                                                  'Text'
-                                                              ? side1_Controller
-                                                                  .text
-                                                              : state
-                                                                  .side1ResourceUrl,
-                                                ),
-                                              );
                                             },
                                             child: const Text('     Save    '))
                                       ],
@@ -442,14 +446,17 @@ class _AddPromptsScreenState extends State<AddPromptsScreen> {
                                               color: Colors.grey.shade200,
                                             ),
                                             padding: EdgeInsets.all(10),
-                                            child: TextFormField(
-                                              controller: side2_Controller,
-                                              onTap: () {},
-                                              decoration:
-                                                  InputDecoration.collapsed(
-                                                      hintText: 'Add Question',
-                                                      hintStyle: TextStyle(
-                                                          fontSize: 12)),
+                                            child: Form(
+                                              key: _side2TextformKey,
+                                              child: TextFormField(
+                                                controller: side2_Controller,
+                                                onTap: () {},
+                                                decoration:
+                                                    InputDecoration.collapsed(
+                                                        hintText: 'Add Question',
+                                                        hintStyle: TextStyle(
+                                                            fontSize: 12)),
+                                              ),
                                             ),
                                           )
                                         : GestureDetector(
@@ -525,51 +532,75 @@ class _AddPromptsScreenState extends State<AddPromptsScreen> {
                                             onPressed: () {
                                               // print(state.side2ResourceUrl);
 
-                                              addPromptsBloc.add(
-                                                AddResource(
-                                                  // mediaUrl:
-                                                  //     // state.side2ResourceUrl,
-                                                  //     state.side2selectedMediaType ==
-                                                  //             'Text'
-                                                  //         ? "text-side2"
-                                                  //         : state.side2selectedMediaType ==
-                                                  //                 'Image'
-                                                  //             ? "image-side2"
-                                                  //             : state.side2selectedMediaType ==
-                                                  //             'Video'
-                                                  //         ? "video-side2"
-                                                  //         : state.side2selectedMediaType ==
-                                                  //             'Audio'
-                                                  //         ? "audio-side2"
-                                                  //         : "other",
-                                                  mediaUrl:
-                                                      // state.side1ResourceUrl,
-                                                      state.side2selectedMediaType ==
-                                                              'Text'
-                                                          ? 0
-                                                          : state.side2selectedMediaType ==
-                                                                  'Image'
-                                                              ? 1
-                                                              : state.side2selectedMediaType ==
-                                                                      'Video'
-                                                                  ? 3
-                                                                  : state.side2selectedMediaType ==
-                                                                          'Audio'
-                                                                      ? 2
-                                                                      : -1,
-                                                  whichSide: 1,
-                                                  name: 'United 2',
-                                                  resourceId: widget.resourceId,
-                                                  content:
-                                                      // side2_Controller.text,
-                                                      state.side2selectedMediaType ==
-                                                              'Text'
-                                                          ? side2_Controller
-                                                              .text
-                                                          : state
-                                                              .side2ResourceUrl,
-                                                ),
-                                              );
+
+                                              if(state.side2selectedMediaType == 'Text') {
+                                                if(_titleformKey.currentState!.validate() && _side2TextformKey.currentState!.validate()){
+                                                  addPromptsBloc.add(
+                                                    AddResource(
+                                                        mediaUrl: 0,
+                                                        whichSide: 1,
+                                                        name: 'United 2',
+                                                        resourceId: widget.resourceId,
+                                                        content: side2_Controller.text
+                                                    ),
+                                                  );
+                                                }else{
+                                                  print('Hii3');
+                                                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Fill details correctly!')));
+                                                }
+
+                                              }else if(_titleformKey.currentState!.validate() && state.side2ResourceUrl != '') {
+                                                print('Hii4');
+                                                addPromptsBloc.add(
+                                                  AddResource(
+                                                    // mediaUrl:
+                                                    //     // state.side2ResourceUrl,
+                                                    //     state.side2selectedMediaType ==
+                                                    //             'Text'
+                                                    //         ? "text-side2"
+                                                    //         : state.side2selectedMediaType ==
+                                                    //                 'Image'
+                                                    //             ? "image-side2"
+                                                    //             : state.side2selectedMediaType ==
+                                                    //             'Video'
+                                                    //         ? "video-side2"
+                                                    //         : state.side2selectedMediaType ==
+                                                    //             'Audio'
+                                                    //         ? "audio-side2"
+                                                    //         : "other",
+                                                    mediaUrl:
+                                                    // state.side1ResourceUrl,
+                                                    state.side2selectedMediaType ==
+                                                        'Text'
+                                                        ? 0
+                                                        : state.side2selectedMediaType ==
+                                                        'Image'
+                                                        ? 1
+                                                        : state.side2selectedMediaType ==
+                                                        'Video'
+                                                        ? 3
+                                                        : state.side2selectedMediaType ==
+                                                        'Audio'
+                                                        ? 2
+                                                        : -1,
+                                                    whichSide: 1,
+                                                    name: 'United 2',
+                                                    resourceId: widget.resourceId,
+                                                    content:
+                                                    // side2_Controller.text,
+                                                    state.side2selectedMediaType ==
+                                                        'Text'
+                                                        ? side2_Controller
+                                                        .text
+                                                        : state
+                                                        .side2ResourceUrl,
+                                                  ),
+                                                );
+                                              }else{
+                                                print('Hii5');
+                                                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Fill details correctly!')));
+                                              }
+
                                             },
                                             child: Text('     Save    '))
                                       ],
@@ -585,16 +616,21 @@ class _AddPromptsScreenState extends State<AddPromptsScreen> {
                                 context.showSnackBar(SnackBar(
                                     content: Text("Title Required..")));
                                 return;
+                              }else if(state.side1Id != '' && state.side2Id != ''){
+
+                                print("Tapped");
+                                print(state.side1Id);
+                                print(state.side2Id);
+                                print(widget.resourceId!);
+                                context.read<AddPromptsBloc>().add(
+                                  AddPromptEvent(
+                                      resourceId: widget.resourceId!,
+                                      name: title_Controller.text),
+                                );
+                              }else{
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(content: Text(state.side1Id ==''? 'Save resource1 first!' : 'Save resource2 first!')));
                               }
-                              print("Tapped");
-                              print(state.side1Id);
-                              print(state.side2Id);
-                              print(widget.resourceId!);
-                              context.read<AddPromptsBloc>().add(
-                                    AddPromptEvent(
-                                        resourceId: widget.resourceId!,
-                                        name: title_Controller.text),
-                                  );
                             },
                             child: Container(
                               margin: EdgeInsets.only(top: 20),

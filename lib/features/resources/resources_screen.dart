@@ -107,8 +107,7 @@ class _AllResourcesListState extends State<AllResourcesList> {
               } else {
                 return ListView.builder(
                     shrinkWrap: true,
-                    itemCount:
-                        state.allResourcesModel.data!.record!.records!.length,
+                    itemCount: state.allResourcesModel.data!.record!.records!.length,
                     itemBuilder: (context, index) {
                       final content = state.allResourcesModel.data!.record!
                           .records![index].content
@@ -119,135 +118,41 @@ class _AllResourcesListState extends State<AllResourcesList> {
                       return SizedBox(
                         width: context.screenWidth,
                         height: 60,
-                        child: ListTile(
-                            trailing: SizedBox(
-                                width: context.screenWidth * 0.48,
-                                child: Row(
-                                  children: [
-                                    ElevatedButton(
-                                      child: const Text('View'),
-                                      onPressed: () {
-                                        print(state.allResourcesModel.data!
-                                            .record!.records![index].content);
+                        child: Row(
+                          children: [
 
-                                        Navigator.push(context,
-                                            MaterialPageRoute(
-                                          builder: (context) {
-                                            return PromtsScreen(
-                                                content: state
-                                                        .allResourcesModel
-                                                        .data!
-                                                        .record!
-                                                        .records![index]
-                                                        .content ??
-                                                    state
-                                                        .allResourcesModel
-                                                        .data!
-                                                        .record!
-                                                        .records![index]
-                                                        .title,
-                                                mediaType: state
-                                                    .allResourcesModel
-                                                    .data!
-                                                    .record!
-                                                    .records![index]
-                                                    .type!,
-                                                promtId: state
-                                                    .allResourcesModel
-                                                    .data!
-                                                    .record!
-                                                    .records![index]
-                                                    .sId!);
-                                          },
-                                        ));
-                                      },
-                                    ),
-                                    SizedBox(
-                                      width: 5,
-                                    ),
-                                    ElevatedButton(
-                                      child: const Text('Start'),
-                                      onPressed: () {
-                                        print(state.allResourcesModel.data!
-                                            .record!.records![index].content);
-
-                                        Navigator.push(context,
-                                            MaterialPageRoute(
-                                          builder: (context) {
-                                            return StartFlowScreen(
-                                                content: state
-                                                        .allResourcesModel
-                                                        .data!
-                                                        .record!
-                                                        .records![index]
-                                                        .content ??
-                                                    state
-                                                        .allResourcesModel
-                                                        .data!
-                                                        .record!
-                                                        .records![index]
-                                                        .title,
-                                                mediaType: state
-                                                    .allResourcesModel
-                                                    .data!
-                                                    .record!
-                                                    .records![index]
-                                                    .type!,
-                                                promtId: state
-                                                    .allResourcesModel
-                                                    .data!
-                                                    .record!
-                                                    .records![index]
-                                                    .sId!);
-                                          },
-                                        ));
-                                      },
-                                    ),
-                                    IconButton(
-                                        onPressed: () {
-                                          resourcesBloc.add(
-                                              DeleteResourcesEvent(
-                                                  rootId: state
-                                                      .allResourcesModel
-                                                      .data!
-                                                      .record!
-                                                      .records![index]
-                                                      .sId
-                                                      .toString()));
-                                        },
-                                        icon: const Icon(Icons.delete))
-                                  ],
-                                )),
-                            leading: content.contains('.jpeg') ||
-                                    content.contains('.jpg') ||
-                                    content.contains('.png') ||
-                                    content.contains('.gif')
+                            Spacer(),
+                            content.contains('.jpeg') ||
+                                content.contains('.jpg') ||
+                                content.contains('.png') ||
+                                content.contains('.gif')
                                 ? CachedNetworkImage(
-                                    imageUrl:
-                                        'https://selflearning.dtechex.com/public/image/$content',
-                                    fit: BoxFit.fill,
-                                    height: 40,
-                                    width: 50,
-                                    progressIndicatorBuilder: (context, url,
-                                            downloadProgress) =>
-                                        CircularProgressIndicator(
-                                            value: downloadProgress.progress),
-                                    errorWidget: (context, url, error) =>
-                                        Icon(Icons.error),
-                                  )
+                              imageUrl:
+                              'https://selflearning.dtechex.com/public/image/$content',
+                              fit: BoxFit.fill,
+                              height: 40,
+                              width: 50,
+                              progressIndicatorBuilder: (context, url,
+                                  downloadProgress) =>
+                                  CircularProgressIndicator(
+                                      value: downloadProgress.progress),
+                              errorWidget: (context, url, error) =>
+                                  Icon(Icons.error),
+                            )
                                 : SizedBox(
-                                    width: 50,
-                                    child: getMediaType(content) == 'video'
-                                        ? const Icon(
-                                            Icons.video_camera_back_outlined,
-                                            size: 50,
-                                          )
-                                        : getMediaType(content) != 'audio'
-                                            ? const Icon(
-                                                Icons.text_format_sharp,
-                                                size: 50)
-                                            : Icon(Icons.audiotrack, size: 50)),
-                            title: ElevatedButton(
+                                width: 50,
+                                child: getMediaType(content) == 'video'
+                                    ? const Icon(
+                                  Icons.video_camera_back_outlined,
+                                  size: 50,
+                                )
+                                    : getMediaType(content) != 'audio'
+                                    ? const Icon(
+                                    Icons.text_format_sharp,
+                                    size: 50)
+                                    : Icon(Icons.audiotrack, size: 50)),
+                            Spacer(),
+                            ElevatedButton(
                               child: const Text('Add'),
                               onPressed: () {
                                 context.push(AddPromptsScreen(
@@ -256,7 +161,102 @@ class _AllResourcesListState extends State<AllResourcesList> {
                                       .toString(),
                                 ));
                               },
-                            )),
+                            ),
+                            SizedBox(width: 5.0,),
+                            ElevatedButton(
+                              child: const Text('View'),
+                              onPressed: () {
+                                print(state.allResourcesModel.data!
+                                    .record!.records![index].content);
+
+                                Navigator.push(context,
+                                    MaterialPageRoute(
+                                      builder: (context) {
+                                        return PromtsScreen(
+                                            content: state
+                                                .allResourcesModel
+                                                .data!
+                                                .record!
+                                                .records![index]
+                                                .content ??
+                                                state
+                                                    .allResourcesModel
+                                                    .data!
+                                                    .record!
+                                                    .records![index]
+                                                    .title,
+                                            mediaType: state
+                                                .allResourcesModel
+                                                .data!
+                                                .record!
+                                                .records![index]
+                                                .type!,
+                                            promtId: state
+                                                .allResourcesModel
+                                                .data!
+                                                .record!
+                                                .records![index]
+                                                .sId!);
+                                      },
+                                    ));
+                              },
+                            ),
+                            SizedBox(width: 5.0,),
+                            ElevatedButton(
+                              child: const Text('Start'),
+                              onPressed: () {
+                                print(state.allResourcesModel.data!
+                                    .record!.records![index].content);
+
+                                Navigator.push(context,
+                                    MaterialPageRoute(
+                                      builder: (context) {
+                                        return StartFlowScreen(
+                                            content: state
+                                                .allResourcesModel
+                                                .data!
+                                                .record!
+                                                .records![index]
+                                                .content ??
+                                                state
+                                                    .allResourcesModel
+                                                    .data!
+                                                    .record!
+                                                    .records![index]
+                                                    .title,
+                                            mediaType: state
+                                                .allResourcesModel
+                                                .data!
+                                                .record!
+                                                .records![index]
+                                                .type!,
+                                            promtId: state
+                                                .allResourcesModel
+                                                .data!
+                                                .record!
+                                                .records![index]
+                                                .sId!);
+                                      },
+                                    ));
+                              },
+                            ),
+                            Spacer(),
+                            IconButton(
+                                onPressed: () {
+                                  resourcesBloc.add(
+                                      DeleteResourcesEvent(
+                                          rootId: state
+                                              .allResourcesModel
+                                              .data!
+                                              .record!
+                                              .records![index]
+                                              .sId
+                                              .toString()));
+                                },
+                                icon: const Icon(Icons.delete)),
+                            Spacer(),
+                          ],
+                        ),
                       );
                     });
               }
