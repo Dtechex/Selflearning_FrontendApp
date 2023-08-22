@@ -10,6 +10,7 @@ import 'package:self_learning_app/widgets/play_music.dart';
 import 'package:video_player/video_player.dart';
 
 import '../promt/bloc/promt_bloc.dart';
+import '../promt/data/model/promt_model.dart';
 
 class StartFlowScreen extends StatefulWidget {
   final String? mediaType;
@@ -106,318 +107,77 @@ class _StartFlowScreenState extends State<StartFlowScreen> {
                     children: [
                       DragFlipper(
                         /// Card 1 front
-                        front: Card(
-                          margin: EdgeInsets.all(10),
-                          child: Container(
-                            margin: EdgeInsets.all(10),
-                            padding: EdgeInsets.all(10),
-                            child: SizedBox(
-                              height: context.screenHeight / 2,
-                              child: PageView.builder(
-                                allowImplicitScrolling: false,
-                                controller: _pageController,
-                                itemCount: _promtModelLength,
-                                onPageChanged: (index) {
-                                  setState(() {
-                                    _currentPage = index;
-                                  });
-                                },
-                                itemBuilder: (context, index) {
-                                  print(
-                                      "Got : ====>>>> https://selflearning.dtechex.com/public//${state.promtModel![index].side1!.content}");
-                                  return Column(
-                                    children: [
-                                      Text(
-                                          state.promtModel![index].name
-                                              .toString(),
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 19)),
-                                      SizedBox(
-                                        width: w,
-                                        height: h * 0.3,
-                                        child: state.promtModel![index].side1!.content!.contains("jpg") ||
-                                                state.promtModel![index].side1!.content!
-                                                    .contains("png") ||
-                                                state.promtModel![index].side1!.content!
-                                                    .contains("jpeg")
-                                            ? Center(
-                                                child: CachedNetworkImage(
-                                                  imageUrl:
-                                                      "https://selflearning.dtechex.com/public/image/${state.promtModel![index].side1!.content}",
-                                                  fit: BoxFit.fill,
-                                                  height: h * 0.2,
-                                                  width: w / 1.5,
-                                                  progressIndicatorBuilder: (context,
-                                                          url,
-                                                          downloadProgress) =>
-                                                      CircularProgressIndicator(
-                                                    value: downloadProgress
-                                                        .progress,
-                                                  ),
-                                                  errorWidget: (context, url,
-                                                          error) =>
-                                                      const Icon(Icons.error),
-                                                ),
-                                              )
-                                            : state.promtModel![index].side1!.content!.contains("mp3") ||
-                                                    state.promtModel![index].side1!.content!
-                                                        .contains("wav") ||
-                                                    state.promtModel![index].side1!.content!
-                                                        .contains("aac") ||
-                                                    state.promtModel![index]
-                                                        .side1!.content!
-                                                        .contains("ogg")
-                                                ? AudioPlayerPage(
-                                                    audioUrl:
-                                                        "https://selflearning.dtechex.com/public/audio/${state.promtModel![index].side1!.content}",
-                                                  )
-                                                // : widget.mediaType == 'video'
-
-                                                : state.promtModel![index].side1!.content!.contains("mp4") ||
-                                                        state.promtModel![index]
-                                                            .side1!.content!
-                                                            .contains("mkv") ||
-                                                        state.promtModel![index]
-                                                            .side1!.content!
-                                                            .contains("mov") ||
-                                                        state.promtModel![index]
-                                                            .side1!.content!
-                                                            .contains("avi")
-                                                    ?
-                                                    // Chewie(
-                                                    //     controller:
-                                                    //         _createChewieController(
-                                                    //       "https://selflearning.dtechex.com/public/${widget.mediaType}/${state.promtModel![index].side1!.content}",
-                                                    //     ),
-                                                    //   )
-                                                    VideoPlayerWidget(videoUrl: "https://selflearning.dtechex.com/public/video/${state.promtModel![index].side1!.content}")
-
-                                                    // : Text(state.promtModel![index].side1!.content!),
-                                                    : Text(state.promtModel![index].side1!.content.toString()),
-                                      ),
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          SizedBox(
-                                            width: context.screenWidth * 0.2,
-                                            child: TextButton(
-                                              onPressed: () {
-                                                controller.flipLeft();
-                                              },
-                                              child: Text('View side 2',
-                                                  style: TextStyle(
-                                                      fontSize: 12,
-                                                      color: Colors.white)),
-                                              style: ButtonStyle(
-                                                backgroundColor:
-                                                    MaterialStatePropertyAll(
-                                                        Colors.blueAccent),
-                                              ),
-                                            ),
-                                          ),
-                                          SizedBox(
-                                              width: context.screenWidth * 0.2,
-                                              child: ElevatedButton(
-                                                  onPressed: () {
-                                                    if (isLastPage()) {
-                                                      // Handle Finish button press
-                                                      Navigator
-                                                          .pushAndRemoveUntil(
-                                                        context,
-                                                        MaterialPageRoute(
-                                                            builder: (context) {
-                                                          return const DashBoardScreen();
-                                                        }),
-                                                        (route) => false,
-                                                      );
-                                                    } else {
-                                                      _pageController.nextPage(
-                                                        duration:
-                                                            const Duration(
-                                                                milliseconds:
-                                                                    300),
-                                                        curve: Curves.ease,
-                                                      );
-                                                    }
-                                                    // Container(
-                                                    //   height: 60,
-                                                    //   child: Row(
-                                                    //     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                                    //     children: [
-                                                    //       _promtModelLength!=0?   ElevatedButton(
-                                                    //         onPressed: () {
-                                                    //           if (isLastPage()) {
-                                                    //             // Handle Finish button press
-                                                    //             Navigator.pushAndRemoveUntil(
-                                                    //               context,
-                                                    //               MaterialPageRoute(builder: (context) {
-                                                    //                 return const DashBoardScreen();
-                                                    //               }),
-                                                    //                   (route) => false,
-                                                    //             );
-                                                    //           } else {
-                                                    //             _pageController.nextPage(
-                                                    //               duration: const Duration(milliseconds: 300),
-                                                    //               curve: Curves.ease,
-                                                    //             );
-                                                    //           }
-                                                    //         },
-                                                    //         child: Text(isLastPage() ? 'Finish' : 'Next'),
-                                                    //       ):const SizedBox()
-                                                    //     ],
-                                                    //   ),
-                                                    // )
-                                                  },
-                                                  style: const ButtonStyle(
-                                                      backgroundColor:
-                                                          MaterialStatePropertyAll(
-                                                              Colors
-                                                                  .greenAccent)),
-                                                  child: const Text(
-                                                      "   Next \n Prompt",
-                                                      style: TextStyle(
-                                                          fontSize: 12)))),
-                                          SizedBox(
-                                              width: context.screenWidth * 0.2,
-                                              child: TextButton(
-                                                  onPressed: () {
-                                                    promtBloc.add(
-                                                        ViewResourceEvent(
-                                                            showResource:
-                                                                true));
-                                                    controller.flipRight();
-                                                  },
-                                                  style: const ButtonStyle(
-                                                      backgroundColor:
-                                                          MaterialStatePropertyAll(
-                                                              Colors
-                                                                  .blueAccent)),
-                                                  child: const Text(
-                                                      "     View\n  resource",
-                                                      style: TextStyle(
-                                                          fontSize: 12,
-                                                          color:
-                                                              Colors.white)))),
-                                        ],
-                                      )
-                                    ],
-                                  );
-                                },
-                              ),
-                            ),
-                          ),
+                        front: FrontPageWidget(
+                            promtModel: state.promtModel!,
+                            index: _currentPage,
+                            h: h,
+                            w: w,
+                            onView2sidePressed : (){
+                              controller.flipLeft();
+                            },
+                            onNextButtonPressed: () {
+                              if (isLastPage()) {
+                                // Handle Finish button press
+                                Navigator
+                                    .pushAndRemoveUntil(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) {
+                                        return const DashBoardScreen();
+                                      }),
+                                      (route) => false,
+                                );
+                              } else {
+                                setState(() {
+                                  _currentPage += 1;
+                                });
+                              }
+                              // Container(
+                              //   height: 60,
+                              //   child: Row(
+                              //     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              //     children: [
+                              //       _promtModelLength!=0?   ElevatedButton(
+                              //         onPressed: () {
+                              //           if (isLastPage()) {
+                              //             // Handle Finish button press
+                              //             Navigator.pushAndRemoveUntil(
+                              //               context,
+                              //               MaterialPageRoute(builder: (context) {
+                              //                 return const DashBoardScreen();
+                              //               }),
+                              //                   (route) => false,
+                              //             );
+                              //           } else {
+                              //             _pageController.nextPage(
+                              //               duration: const Duration(milliseconds: 300),
+                              //               curve: Curves.ease,
+                              //             );
+                              //           }
+                              //         },
+                              //         child: Text(isLastPage() ? 'Finish' : 'Next'),
+                              //       ):const SizedBox()
+                              //     ],
+                              //   ),
+                              // )
+                            },
+                          onViewResourcePressed: () {
+                            promtBloc.add(
+                                ViewResourceEvent(
+                                    showResource:
+                                    true));
+                            controller.flipRight();
+                          },
                         ), //required
                         ///card 2 back
-                        back: Card(
-                          margin: EdgeInsets.all(10),
-                          child: Container(
-                            margin: EdgeInsets.all(10),
-                            padding: EdgeInsets.all(10),
-                            child: SizedBox(
-                              height: context.screenHeight / 2,
-                              child: PageView.builder(
-                                allowImplicitScrolling: false,
-                                controller: _pageController,
-                                itemCount: _promtModelLength,
-                                onPageChanged: (index) {
-                                  setState(() {
-                                    _currentPage = index;
-                                  });
-                                },
-                                itemBuilder: (context, index) {
-                                  print(
-                                      "Got : ====>>>> https://selflearning.dtechex.com/public/video/${state.promtModel![index].side2!.content}");
-
-                                  return Column(
-                                    children: [
-                                      Text(
-                                          state.promtModel![index].name
-                                              .toString(),
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 19)),
-                                      SizedBox(
-                                        width: w,
-                                        height: h * 0.3,
-                                        child: state.promtModel![index].side2!.content!.contains("jpg") ||
-                                                state.promtModel![index].side2!.content!
-                                                    .contains("png") ||
-                                                state.promtModel![index].side2!.content!
-                                                    .contains("jpeg")
-                                            ? Center(
-                                                child: CachedNetworkImage(
-                                                  imageUrl:
-                                                      "https://selflearning.dtechex.com/public/image/${state.promtModel![index].side2!.content}",
-                                                  fit: BoxFit.fill,
-                                                  height: h * 0.2,
-                                                  width: w / 1.5,
-                                                  progressIndicatorBuilder: (context,
-                                                          url,
-                                                          downloadProgress) =>
-                                                      CircularProgressIndicator(
-                                                    value: downloadProgress
-                                                        .progress,
-                                                  ),
-                                                  errorWidget: (context, url,
-                                                          error) =>
-                                                      const Icon(Icons.error),
-                                                ),
-                                              )
-                                            : state.promtModel![index].side2!.content!.contains("mp3") ||
-                                                    state.promtModel![index].side2!.content!
-                                                        .contains("wav") ||
-                                                    state.promtModel![index].side2!.content!
-                                                        .contains("aac") ||
-                                                    state.promtModel![index]
-                                                        .side2!.content!
-                                                        .contains("ogg")
-                                                ? AudioPlayerPage(
-                                                    audioUrl:
-                                                        "https://selflearning.dtechex.com/public/audio/${state.promtModel![index].side2!.content}",
-                                                  )
-                                                : state.promtModel![index].side2!.content!.contains("mp4") ||
-                                                        state.promtModel![index]
-                                                            .side2!.content!
-                                                            .contains("mkv") ||
-                                                        state.promtModel![index]
-                                                            .side2!.content!
-                                                            .contains("mov") ||
-                                                        state.promtModel![index]
-                                                            .side2!.content!
-                                                            .contains("avi")
-                                                    ?
-                                                    // Chewie(
-                                                    //     controller:
-                                                    //         _createChewieController(
-                                                    //       "https://selflearning.dtechex.com/public/${widget.mediaType}/${state.promtModel![index].side2!.content}",
-                                                    //     ),
-                                                    //   )
-                                                    VideoPlayerWidget(videoUrl: "https://selflearning.dtechex.com/public/video/${state.promtModel![index].side2!.content}")
-                                                    : Text(state.promtModel![index].side2!.content!),
-                                      ),
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                          ElevatedButton(
-                                              onPressed: () {
-                                                controller.flipLeft();
-                                              },
-                                              child: Text('View side 1'),
-                                              style: ButtonStyle(
-                                                  backgroundColor:
-                                                      MaterialStatePropertyAll(
-                                                          Colors.blueAccent))),
-                                        ],
-                                      )
-                                    ],
-                                  );
-                                },
-                              ),
-                            ),
-                          ),
+                        back: BackPageWidget(
+                          promtModel: state.promtModel!,
+                          index: _currentPage,
+                          onView1sidePressed: () {
+                            controller.flipLeft();
+                          },
+                          h: h,
+                          w: h,
                         ), //required
                         controller: controller, //required
                         height: context.screenHeight / 2,
@@ -526,3 +286,261 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
     super.dispose();
   }
 }
+
+
+class FrontPageWidget extends StatelessWidget {
+
+  final List<PromtModel> promtModel;
+  final int index;
+  final Function() onView2sidePressed;
+  final double h;
+  final double w;
+  final Function() onNextButtonPressed;
+  final Function() onViewResourcePressed;
+  const FrontPageWidget({super.key, required this.promtModel, required this.index, required this.h, required this.w, required this.onView2sidePressed, required this.onNextButtonPressed, required this.onViewResourcePressed,});
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      margin: EdgeInsets.all(10),
+      child: Container(
+        margin: EdgeInsets.all(10),
+        padding: EdgeInsets.all(10),
+        child: SizedBox(
+          height: context.screenHeight / 2,
+          child: Column(
+            children: [
+              Text(
+                  promtModel![index].name
+                      .toString(),
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 19)),
+              SizedBox(
+                width: w,
+                height: h * 0.3,
+                child: promtModel![index].side1!.content!.contains("jpg") ||
+                    promtModel![index].side1!.content!
+                        .contains("png") ||
+                    promtModel![index].side1!.content!
+                        .contains("jpeg")
+                    ? Center(
+                  child: CachedNetworkImage(
+                    imageUrl:
+                    "https://selflearning.dtechex.com/public/image/${promtModel![index].side1!.content}",
+                    fit: BoxFit.fill,
+                    height: h * 0.2,
+                    width: w / 1.5,
+                    progressIndicatorBuilder: (context,
+                        url,
+                        downloadProgress) =>
+                        CircularProgressIndicator(
+                          value: downloadProgress
+                              .progress,
+                        ),
+                    errorWidget: (context, url,
+                        error) =>
+                    const Icon(Icons.error),
+                  ),
+                )
+                    : promtModel![index].side1!.content!.contains("mp3") ||
+                    promtModel![index].side1!.content!
+                        .contains("wav") ||
+                    promtModel![index].side1!.content!
+                        .contains("aac") ||
+                    promtModel![index]
+                        .side1!.content!
+                        .contains("ogg")
+                    ? AudioPlayerPage(
+                  audioUrl:
+                  "https://selflearning.dtechex.com/public/audio/${promtModel![index].side1!.content}",
+                )
+                // : widget.mediaType == 'video'
+
+                    : promtModel![index].side1!.content!.contains("mp4") ||
+                    promtModel![index]
+                        .side1!.content!
+                        .contains("mkv") ||
+                    promtModel![index]
+                        .side1!.content!
+                        .contains("mov") ||
+                    promtModel![index]
+                        .side1!.content!
+                        .contains("avi")
+                    ?
+                // Chewie(
+                //     controller:
+                //         _createChewieController(
+                //       "https://selflearning.dtechex.com/public/${widget.mediaType}/${state.promtModel![index].side1!.content}",
+                //     ),
+                //   )
+                VideoPlayerWidget(videoUrl: "https://selflearning.dtechex.com/public/video/${promtModel![index].side1!.content}")
+
+                // : Text(state.promtModel![index].side1!.content!),
+                    : Text(promtModel![index].side1!.content.toString()),
+              ),
+              Row(
+                mainAxisAlignment:
+                MainAxisAlignment.spaceBetween,
+                children: [
+                  SizedBox(
+                    width: context.screenWidth * 0.2,
+                    child: TextButton(
+                      onPressed: onView2sidePressed,
+                      child: Text('View side 2',
+                          style: TextStyle(
+                              fontSize: 12,
+                              color: Colors.white)),
+                      style: ButtonStyle(
+                        backgroundColor:
+                        MaterialStatePropertyAll(
+                            Colors.blueAccent),
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                      width: context.screenWidth * 0.2,
+                      child: ElevatedButton(
+                          onPressed: onNextButtonPressed,
+                          style: const ButtonStyle(
+                              backgroundColor:
+                              MaterialStatePropertyAll(
+                                  Colors
+                                      .greenAccent)),
+                          child: const Text(
+                              "   Next \n Prompt",
+                              style: TextStyle(
+                                  fontSize: 12)))),
+                  SizedBox(
+                      width: context.screenWidth * 0.2,
+                      child: TextButton(
+                          onPressed: onViewResourcePressed,
+                          style: const ButtonStyle(
+                              backgroundColor:
+                              MaterialStatePropertyAll(
+                                  Colors
+                                      .blueAccent)),
+                          child: const Text(
+                              "     View\n  resource",
+                              style: TextStyle(
+                                  fontSize: 12,
+                                  color:
+                                  Colors.white)))),
+                ],
+              )
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class BackPageWidget extends StatelessWidget {
+
+
+  final List<PromtModel> promtModel;
+  final int index;
+  final Function() onView1sidePressed;
+  final double h;
+  final double w;
+  const BackPageWidget({super.key, required this.promtModel, required this.index, required this.onView1sidePressed, required this.h, required this.w});
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      margin: EdgeInsets.all(10),
+      child: Container(
+        margin: EdgeInsets.all(10),
+        padding: EdgeInsets.all(10),
+        child: SizedBox(
+          height: context.screenHeight / 2,
+          child: Column(
+            children: [
+              Text(
+                  promtModel![index].name
+                      .toString(),
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 19)),
+              SizedBox(
+                width: w,
+                height: h * 0.3,
+                child: promtModel![index].side2!.content!.contains("jpg") ||
+                    promtModel![index].side2!.content!
+                        .contains("png") ||
+                    promtModel![index].side2!.content!
+                        .contains("jpeg")
+                    ? Center(
+                  child: CachedNetworkImage(
+                    imageUrl:
+                    "https://selflearning.dtechex.com/public/image/${promtModel![index].side2!.content}",
+                    fit: BoxFit.fill,
+                    height: h * 0.2,
+                    width: w / 1.5,
+                    progressIndicatorBuilder: (context,
+                        url,
+                        downloadProgress) =>
+                        CircularProgressIndicator(
+                          value: downloadProgress
+                              .progress,
+                        ),
+                    errorWidget: (context, url,
+                        error) =>
+                    const Icon(Icons.error),
+                  ),
+                )
+                    : promtModel![index].side2!.content!.contains("mp3") ||
+                    promtModel![index].side2!.content!
+                        .contains("wav") ||
+                    promtModel![index].side2!.content!
+                        .contains("aac") ||
+                    promtModel![index]
+                        .side2!.content!
+                        .contains("ogg")
+                    ? AudioPlayerPage(
+                  audioUrl:
+                  "https://selflearning.dtechex.com/public/audio/${promtModel![index].side2!.content}",
+                )
+                    : promtModel![index].side2!.content!.contains("mp4") ||
+                    promtModel![index]
+                        .side2!.content!
+                        .contains("mkv") ||
+                    promtModel![index]
+                        .side2!.content!
+                        .contains("mov") ||
+                    promtModel![index]
+                        .side2!.content!
+                        .contains("avi")
+                    ?
+                // Chewie(
+                //     controller:
+                //         _createChewieController(
+                //       "https://selflearning.dtechex.com/public/${widget.mediaType}/${state.promtModel![index].side2!.content}",
+                //     ),
+                //   )
+                VideoPlayerWidget(videoUrl: "https://selflearning.dtechex.com/public/video/${promtModel![index].side2!.content}")
+                    : Text(promtModel![index].side2!.content!),
+              ),
+              Row(
+                mainAxisAlignment:
+                MainAxisAlignment.center,
+                children: [
+                  ElevatedButton(
+                      onPressed: onView1sidePressed,
+                      child: Text('View side 1'),
+                      style: ButtonStyle(
+                          backgroundColor:
+                          MaterialStatePropertyAll(
+                              Colors.blueAccent))),
+                ],
+              )
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+
