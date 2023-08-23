@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:bloc/bloc.dart';
+import 'package:equatable/equatable.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:self_learning_app/features/add_media/repo/add_media_repo.dart';
 import 'package:self_learning_app/features/add_promts/add_promts_screen.dart';
@@ -15,6 +16,9 @@ class AddPromptsBloc extends Bloc<AddPrompts, AddPromptsInitial> {
     on<PickResource>(_onPickResource);
     on<AddResource>(_onAddResource);
     on<AddPromptEvent>(_onAddPromptEvent);
+    on<ResetFileUploadStatus>((event, emit) {
+      emit(state.copyWith(uploadStatus: UploadStatus.initial));
+    },);
   }
 
   _onChangeMediaType(ChangeMediaType event, Emitter<AddPromptsInitial> emit) {
@@ -31,9 +35,9 @@ class AddPromptsBloc extends Bloc<AddPrompts, AddPromptsInitial> {
 
   _onPickResource(PickResource event, Emitter<AddPromptsInitial> emit) {
     if (event.whichSide == 0) {
-      emit(state.copyWith(side1ResourceUrl: event.mediaUrl));
+      emit(state.copyWith(side1ResourceUrl: event.mediaUrl, resource1status: Resource1Status.selected));
     } else {
-      emit(state.copyWith(side2ResourceUrl: event.mediaUrl));
+      emit(state.copyWith(side2ResourceUrl: event.mediaUrl, resource2status: Resource2Status.selected));
     }
   }
 
@@ -41,7 +45,7 @@ class AddPromptsBloc extends Bloc<AddPrompts, AddPromptsInitial> {
     // print("====>>>>> ${convertMediaTypeToInt(state.side1selectedMediaType!)}");
     // print("====>>>>> ${state.side1selectedMediaType!}");
     // print("====>>>>> ${convertMediaTypeToInt(event.mediaUrl!)}");
-    print("====>>>>> ${event.mediaUrl!}");
+    print("====>>>>> ${event.mediaUrl!} content ${event.content}");
     await AddPromtsRepo.addResourcesForSide(
             resourceId: event.resourceId!,
             whichSide: event.whichSide!,
@@ -55,13 +59,22 @@ class AddPromptsBloc extends Bloc<AddPrompts, AddPromptsInitial> {
         print('saved side1 _id');
         print(data);
         try {
+          print('try');
           emit(state.copyWith(
               side1Id: data['data'][0]['_id'].toString(),
-              uploadStatus: UploadStatus.resourceAdded));
+              uploadStatus: UploadStatus.resourceAdded,
+            resource1status: Resource1Status.uploaded,
+          )
+          );
         } catch (e) {
+
+          print('catch  - $e');
           emit(state.copyWith(
               side1Id: data['data']['_id'].toString(),
-              uploadStatus: UploadStatus.resourceAdded));
+              uploadStatus: UploadStatus.resourceAdded,
+            resource1status: Resource1Status.uploaded,
+
+          ));
         }
       } else {
         print('saved side2 _id');
@@ -70,13 +83,18 @@ class AddPromptsBloc extends Bloc<AddPrompts, AddPromptsInitial> {
           emit(
             state.copyWith(
                 side2Id: data['data'][0]['_id'].toString(),
-                uploadStatus: UploadStatus.resourceAdded),
+                uploadStatus: UploadStatus.resourceAdded,
+              resource2status: Resource2Status.uploaded,
+
+            ),
           );
         } catch (e) {
           emit(
             state.copyWith(
                 side2Id: data['data']['_id'].toString(),
-                uploadStatus: UploadStatus.resourceAdded),
+                uploadStatus: UploadStatus.resourceAdded,
+              resource2status: Resource2Status.uploaded,
+            ),
           );
         }
       }

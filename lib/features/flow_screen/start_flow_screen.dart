@@ -11,13 +11,14 @@ import 'package:video_player/video_player.dart';
 
 import '../promt/bloc/promt_bloc.dart';
 import '../promt/data/model/promt_model.dart';
+import '../resources/resources_screen.dart';
 
 class StartFlowScreen extends StatefulWidget {
-  //final String? mediaType;
-  //final String promtId;
-  //final String? content;
+  final String? mediaType;
+  final String promtId;
+  final String? content;
 
-  const StartFlowScreen({Key? key}) : super(key: key);
+  const StartFlowScreen({Key? key, required this.mediaType, required this.promtId, required this.content}) : super(key: key);
 
   @override
   State<StartFlowScreen> createState() => _StartFlowScreenState();
@@ -29,6 +30,7 @@ class _StartFlowScreenState extends State<StartFlowScreen> {
   int _currentPage = 0;
   int _promtModelLength = 0;
   ChewieController? _chewieController;
+  bool _showResource = false;
 
   @override
   void initState() {
@@ -149,15 +151,15 @@ class _StartFlowScreenState extends State<StartFlowScreen> {
                           // )
                         },
                         onViewResourcePressed: () {
-                          BlocProvider.of<PromtBloc>(context).add(
-                              ViewResourceEvent(
-                                  showResource:
-                                  true));
+                          //BlocProvider.of<PromtBloc>(context).add(ViewResourceEvent(showResource: true));
                           controller.flipRight();
+                          setState(() {
+                            _showResource = true;
+                          });
                         },
                       ), //required
                       ///card 2 back
-                      back: BackPageWidget(
+                      back: !_showResource? BackPageWidget(
                         promtModel: state.promtModel!,
                         index: _currentPage,
                         onView1sidePressed: () {
@@ -165,6 +167,16 @@ class _StartFlowScreenState extends State<StartFlowScreen> {
                         },
                         h: h,
                         w: h,
+                      ) : BackPage2Widget(
+                        content: widget.content!,
+                        onView1sidePressed: () {
+                          controller.flipLeft();
+                          setState(() {
+                          _showResource = false;
+                        }); },
+                        mediaType: widget.mediaType!,
+                        h: h,
+                        w: w,
                       ), //required
                       controller: controller, //required
                       height: context.screenHeight / 2,
@@ -288,6 +300,10 @@ class FrontPageWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(20.0),
+      ),
+      color: Colors.grey.shade200,
       margin: EdgeInsets.all(10),
       child: Container(
         margin: EdgeInsets.all(10),
@@ -302,6 +318,7 @@ class FrontPageWidget extends StatelessWidget {
                   style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 19)),
+              Spacer(),
               SizedBox(
                 width: w,
                 //height: h * 0.3,
@@ -320,9 +337,11 @@ class FrontPageWidget extends StatelessWidget {
                     progressIndicatorBuilder: (context,
                         url,
                         downloadProgress) =>
-                        CircularProgressIndicator(
-                          value: downloadProgress
-                              .progress,
+                        Center(
+                          child: CircularProgressIndicator(
+                            value: downloadProgress
+                                .progress,
+                          ),
                         ),
                     errorWidget: (context, url,
                         error) =>
@@ -363,7 +382,7 @@ class FrontPageWidget extends StatelessWidget {
                 VideoPlayerWidget(videoUrl: "https://selflearning.dtechex.com/public/video/${promtModel![index].side1!.content}")
 
                 // : Text(state.promtModel![index].side1!.content!),
-                    : Text(promtModel![index].side1!.content.toString()),
+                    : Text(promtModel![index].side1!.content.toString(), style: TextStyle(fontSize: 16),),
               ),
               Spacer(),
               Row(
@@ -436,6 +455,10 @@ class BackPageWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(20.0),
+      ),
+      color: Colors.grey.shade200,
       margin: EdgeInsets.all(10),
       child: Container(
         margin: EdgeInsets.all(10),
@@ -450,6 +473,7 @@ class BackPageWidget extends StatelessWidget {
                   style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 19)),
+              Spacer(),
               SizedBox(
                 width: w,
                 //height: h * 0.3,
@@ -468,9 +492,11 @@ class BackPageWidget extends StatelessWidget {
                     progressIndicatorBuilder: (context,
                         url,
                         downloadProgress) =>
-                        CircularProgressIndicator(
-                          value: downloadProgress
-                              .progress,
+                        Center(
+                          child: CircularProgressIndicator(
+                            value: downloadProgress
+                                .progress,
+                          ),
                         ),
                     errorWidget: (context, url,
                         error) =>
@@ -507,7 +533,7 @@ class BackPageWidget extends StatelessWidget {
                 //     ),
                 //   )
                 VideoPlayerWidget(videoUrl: "https://selflearning.dtechex.com/public/video/${promtModel![index].side2!.content}")
-                    : Text(promtModel![index].side2!.content!),
+                    : Text(promtModel![index].side2!.content!, style: TextStyle(fontSize: 16.0),),
               ),
               Spacer(),
               Row(
@@ -517,6 +543,84 @@ class BackPageWidget extends StatelessWidget {
                   ElevatedButton(
                       onPressed: onView1sidePressed,
                       child: Text('View side 1'),
+                      style: ButtonStyle(
+                          backgroundColor:
+                          MaterialStatePropertyAll(
+                              Colors.blueAccent))),
+                ],
+              )
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+
+
+class BackPage2Widget extends StatelessWidget {
+
+
+  final String content;
+  final Function() onView1sidePressed;
+  final double h;
+  final double w;
+  final String mediaType;
+  const BackPage2Widget({super.key, required this.content, required this.onView1sidePressed, required this.mediaType, required this.h, required this.w});
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      margin: EdgeInsets.all(10),
+      child: Container(
+        margin: EdgeInsets.all(10),
+        padding: EdgeInsets.all(10),
+        child: SizedBox(
+          //height: context.screenHeight / 2,
+          child: Column(
+            children: [
+              content.contains('.jpeg') ||
+                  content.contains('.jpg') ||
+                  content.contains('.png') ||
+                  content.contains('.gif')
+                  ? Expanded(
+                    child: CachedNetworkImage(
+                imageUrl:
+                'https://selflearning.dtechex.com/public/image/$content',
+                fit: BoxFit.fitHeight,
+                //height: h * 0.,
+                //width: 50,
+                progressIndicatorBuilder: (context, url,
+                      downloadProgress) =>
+                      Center(
+                        child: CircularProgressIndicator(
+                            value: downloadProgress.progress),
+                      ),
+                errorWidget: (context, url, error) =>
+                      Icon(Icons.error),
+              ),
+                  )
+                  : SizedBox(
+                  width: 50,
+                  child: getMediaType(content) == 'video'
+                      ? const Icon(
+                    Icons.video_camera_back_outlined,
+                    size: 50,
+                  )
+                      : getMediaType(content) != 'audio'
+                      ? const Icon(
+                      Icons.text_format_sharp,
+                      size: 50)
+                      : Icon(Icons.audiotrack, size: 50)),
+              Spacer(),
+              Row(
+                mainAxisAlignment:
+                MainAxisAlignment.center,
+                children: [
+                  ElevatedButton(
+                      onPressed: onView1sidePressed,
+                      child: Text('View Slide'),
                       style: ButtonStyle(
                           backgroundColor:
                           MaterialStatePropertyAll(

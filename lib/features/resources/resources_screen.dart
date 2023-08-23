@@ -39,8 +39,7 @@ class _AllResourcesListState extends State<AllResourcesList> {
 
   @override
   void initState() {
-    resourcesBloc.add(
-        LoadResourcesEvent(rootId: widget.rootId, mediaType: widget.mediaType));
+    resourcesBloc.add(LoadResourcesEvent(rootId: widget.rootId, mediaType: widget.mediaType));
     super.initState();
   }
 
@@ -86,11 +85,8 @@ class _AllResourcesListState extends State<AllResourcesList> {
               context.showSnackBar(const SnackBar(
                   duration: Duration(seconds: 2),
                   content: Text('Ressource deleted successfully')));
-              Navigator.pushAndRemoveUntil(context, MaterialPageRoute(
-                builder: (context) {
-                  return const DashBoardScreen();
-                },
-              ), (route) => false);
+              resourcesBloc.add(LoadResourcesEvent(rootId: widget.rootId, mediaType: widget.mediaType));
+
             }
           },
           builder: (context, state) {
@@ -134,8 +130,10 @@ class _AllResourcesListState extends State<AllResourcesList> {
                               width: 50,
                               progressIndicatorBuilder: (context, url,
                                   downloadProgress) =>
-                                  CircularProgressIndicator(
-                                      value: downloadProgress.progress),
+                                  Center(
+                                    child: CircularProgressIndicator(
+                                        value: downloadProgress.progress),
+                                  ),
                               errorWidget: (context, url, error) =>
                                   Icon(Icons.error),
                             )

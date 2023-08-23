@@ -79,14 +79,14 @@ class _SubCategory1ScreenState extends State<SubCategory1Screen> {
                 tabs: [
                   Column(
                     children: const [
-                      Tab(icon: Icon(Icons.list_alt,)),
-                      Text('Subcategory list')
+                      Tab(icon: Icon(Icons.perm_media,)),
+                      Text('Resources')
                     ],
                   ),
                   Column(
                     children: const [
-                      Tab(icon: Icon(Icons.perm_media,)),
-                      Text('Resources')
+                      Tab(icon: Icon(Icons.list_alt,)),
+                      Text('Subcategory list')
                     ],
                   ),
                 ],
@@ -109,6 +109,10 @@ class _SubCategory1ScreenState extends State<SubCategory1Screen> {
           ]),
           body: TabBarView(
             children: [
+              //tab1
+              AddResourceScreen(rootId: widget.rootId??'',whichResources: 1,),
+
+              //tab2
               Container(
                 padding: EdgeInsets.only(left: 10,right: 10),
                 child: Column(children: [
@@ -168,8 +172,6 @@ class _SubCategory1ScreenState extends State<SubCategory1Screen> {
                     },),
                 ],),
               ),
-              AddResourceScreen(rootId: widget.rootId??'',whichResources: 1,),
-
             ],
           )
       ),

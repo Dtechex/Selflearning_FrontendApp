@@ -146,12 +146,16 @@ class _PromtsScreenState extends State<PromtsScreen> {
                           /*print(state.allResourcesModel.data!
                               .record!.records![index].content);*/
 
-                          Navigator.push(context, MaterialPageRoute( builder: (context) { return StartFlowScreen();},));
+                          Navigator.push(context, MaterialPageRoute( builder: (context) { return StartFlowScreen(
+                              content: widget.content,
+                              mediaType: widget.mediaType,
+                              promtId: widget.promtId,
+                          );},));
                           /*print(state.addFlowModel!.flow![0].name);
                           context.read().add(AddPromptFlow(
                               addFlowModel: state.addFlowModel));*/
                         },
-                        child: Text('  Create Flow '))
+                        child: Text('Create Flow'))
                   ],
                 );
               }

@@ -32,3 +32,7 @@ class AddPromptEvent extends AddPrompts{
   AddPromptEvent({this.resourceId,this.name});
 }
 
+class ResetFileUploadStatus extends AddPrompts{
+  ResetFileUploadStatus();
+}
+
