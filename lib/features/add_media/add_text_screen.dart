@@ -117,7 +117,7 @@ class _AddTextScreenState extends State<AddTextScreen> {
                           //  resourcesId: widget.resourceId,
                            whichResources: widget.whichResources,
                             rootId: widget.rootId,
-                            title: textEditingController.text.isEmpty
+                            title: textEditingController.text == ''
                                 ? 'Untitled'
                                 : textEditingController.text));
                         },

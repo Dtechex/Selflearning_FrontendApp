@@ -14,9 +14,7 @@ import '../features/resources/resources_screen.dart';
 class AddResourceScreen extends StatefulWidget {
   final int whichResources;
   final String rootId;
-  AddResourceScreen(
-      {Key? key, required this.rootId, required this.whichResources})
-      : super(key: key);
+  AddResourceScreen({Key? key, required this.rootId, required this.whichResources}) : super(key: key);
 
   @override
   State<AddResourceScreen> createState() => _AddResourceScreenState();
@@ -39,9 +37,7 @@ List<IconData> mediaIcons = [
 class _AddResourceScreenState extends State<AddResourceScreen> {
   @override
   void initState() {
-    context
-        .read<ResourcesBloc>()
-        .add(LoadResourcesEvent(rootId: widget.rootId, mediaType: ''));
+    context.read<ResourcesBloc>().add(LoadResourcesEvent(rootId: widget.rootId, mediaType: ''));
     super.initState();
   }
 
@@ -85,7 +81,7 @@ class _AddResourceScreenState extends State<AddResourceScreen> {
                                         whichResources: widget.whichResources,
                                       );
                                     },
-                                  ));
+                                  )).then((value) => context.read<ResourcesBloc>().add(LoadResourcesEvent(rootId: widget.rootId, mediaType: '')));
                                 }
                                 break;
                               case 1:
@@ -97,7 +93,7 @@ class _AddResourceScreenState extends State<AddResourceScreen> {
                                         whichResources: widget.whichResources,
                                       );
                                     },
-                                  ));
+                                  )).then((value) => context.read<ResourcesBloc>().add(LoadResourcesEvent(rootId: widget.rootId, mediaType: '')));
                                 }
                                 break;
                               case 2:
@@ -109,7 +105,7 @@ class _AddResourceScreenState extends State<AddResourceScreen> {
                                         whichResources: widget.whichResources,
                                       );
                                     },
-                                  ));
+                                  )).then((value) => context.read<ResourcesBloc>().add(LoadResourcesEvent(rootId: widget.rootId, mediaType: '')));
                                 }
                                 break;
                               case 3:
@@ -121,7 +117,7 @@ class _AddResourceScreenState extends State<AddResourceScreen> {
                                           whichResources:
                                               widget.whichResources);
                                     },
-                                  ));
+                                  )).then((value) => context.read<ResourcesBloc>().add(LoadResourcesEvent(rootId: widget.rootId, mediaType: '')));
                                 }
                             }
                           },

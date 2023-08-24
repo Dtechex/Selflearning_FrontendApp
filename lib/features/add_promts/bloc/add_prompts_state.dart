@@ -5,10 +5,10 @@ enum UploadStatus {
 }
 
 enum Resource1Status {
-  initial, selected, uploaded,
+  initial, selected, failed, uploaded,
 }
 enum Resource2Status {
-  initial, selected, uploaded,
+  initial, selected, failed, uploaded,
 }
 
 class AddPromptsInitial extends Equatable {

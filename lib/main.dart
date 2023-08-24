@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:device_preview/device_preview.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import 'package:self_learning_app/features/add_promts/bloc/add_prompts_bloc.dart';
 import 'package:self_learning_app/features/category/bloc/category_bloc.dart';
@@ -47,9 +48,27 @@ void main() {
       logPrint: (text) {
         log(text.toString());
       }));
+  configLoading();
   runApp(
     const MyApp(), // Wrap your app
   );
+}
+
+void configLoading() {
+  EasyLoading.instance
+    ..displayDuration = const Duration(milliseconds: 2000)
+    ..indicatorType = EasyLoadingIndicatorType.fadingCircle
+    ..loadingStyle = EasyLoadingStyle.dark
+    ..indicatorSize = 45.0
+    ..radius = 10.0
+    ..progressColor = Colors.yellow
+    ..backgroundColor = Colors.green
+    ..indicatorColor = Colors.yellow
+    ..textColor = Colors.yellow
+    ..maskColor = Colors.blue.withOpacity(0.5)
+    ..userInteractions = false
+    ..dismissOnTap = false;
+    //..customAnimation = CustomAnimation();
 }
 
 class MyApp extends StatelessWidget {
@@ -77,7 +96,7 @@ class MyApp extends StatelessWidget {
           child: MaterialApp(
               useInheritedMediaQuery: true,
               locale: DevicePreview.locale(context),
-              builder: DevicePreview.appBuilder,
+            builder: EasyLoading.init(),
               debugShowCheckedModeBanner: false,
               title: 'Self Learning',
               theme: ThemeData(
@@ -106,7 +125,8 @@ class MyApp extends StatelessWidget {
                     return const LoginScreen();
                   }
                 },
-              )),
+              ),
+          ),
         ));
   }
 }

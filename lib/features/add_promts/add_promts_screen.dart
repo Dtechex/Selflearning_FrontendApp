@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:self_learning_app/features/add_media/bloc/add_media_bloc.dart';
 import 'package:self_learning_app/features/add_promts/bloc/add_prompts_bloc.dart';
@@ -31,6 +32,8 @@ class _AddPromptsScreenState extends State<AddPromptsScreen> {
   GlobalKey<FormState> _titleformKey = GlobalKey<FormState>();
   GlobalKey<FormState> _side1TextformKey = GlobalKey<FormState>();
   GlobalKey<FormState> _side2TextformKey = GlobalKey<FormState>();
+  FocusNode _questionFocusNode = FocusNode();
+  FocusNode _answerFocusNode = FocusNode();
   @override
   void initState() {
     // side2_Controller.text='';
@@ -44,6 +47,9 @@ class _AddPromptsScreenState extends State<AddPromptsScreen> {
     side2_Controller.dispose();
     side1_Controller.dispose();
     addPromptsBloc.close();
+    if(EasyLoading.isShow){
+      EasyLoading.dismiss();
+    }
     super.dispose();
   }
 
@@ -70,11 +76,15 @@ class _AddPromptsScreenState extends State<AddPromptsScreen> {
                       if (state is AddPromptsInitial) {
                         if (state.uploadStatus == UploadStatus.uploaded) {
                           addPromptsBloc.add(ResetFileUploadStatus());
-                          context.showSnackBar(
-                              SnackBar(content: Text("Resource uploaded..")));
-                          context.pop();
+                          context.showSnackBar(SnackBar(content: Text("Resource uploaded..")));
+                          Future.delayed(Duration(seconds: 2), () {
+                            EasyLoading.dismiss();
+                            context.pop();
+                          },);
                         }
                         if (state.uploadStatus == UploadStatus.resourceAdded) {
+                          EasyLoading.dismiss();
+
                           addPromptsBloc.add(ResetFileUploadStatus());
                           context.showSnackBar(SnackBar(content: Text("Resource added..")));
                         }
@@ -218,10 +228,21 @@ class _AddPromptsScreenState extends State<AddPromptsScreen> {
                                             child: Form(
                                               key: _side1TextformKey,
                                               child: TextFormField(
+                                                focusNode: _questionFocusNode,
                                                 controller: side1_Controller,
                                                 onTap: () {},
-                                                onEditingComplete: () {
-                                                  saveResource1(state);
+                                                onTapOutside: (event) {
+                                                  if(_questionFocusNode.hasFocus){
+                                                    _questionFocusNode.unfocus();
+                                                    if(side1_Controller.text != ''){
+                                                      saveResource1(state);
+                                                    }
+                                                  }
+                                                },
+                                                onFieldSubmitted: (value) {
+                                                  if(value != ''){
+                                                    saveResource1(state);
+                                                  }
                                                 },
                                                 validator: (value) => value == null || value.isEmpty
                                                     ? 'Field required!'
@@ -235,69 +256,53 @@ class _AddPromptsScreenState extends State<AddPromptsScreen> {
                                           )
                                         : GestureDetector(
                                             onTap: () {
-                                              print(
-                                                  state.side1selectedMediaType);
-                                              if (state.side1selectedMediaType == 'Image') {
-                                                ImagePickerHelper.pickImage(
-                                                        imageSource:
-                                                            ImageSource.camera)
-                                                    .then((value) {
-                                                  print(value!.path);
-                                                  print("value");
-                                                  addPromptsBloc.add(
-                                                      PickResource(
-                                                          mediaUrl: value.path,
-                                                          whichSide: 0));
-                                                });
-                                              } else if (state
-                                                      .side1selectedMediaType ==
-                                                  'Video') {
-                                                ImagePickerHelper.pickVideo(
-                                                        imageSource:
-                                                            ImageSource.camera)
-                                                    .then((value) {
+                                              //print(state.side1selectedMediaType);
+                                              if(state.resource1status == Resource1Status.initial || state.resource1status == Resource1Status.failed){
+                                                if (state.side1selectedMediaType == 'Image') {
+                                                  ImagePickerHelper.pickImage(imageSource: ImageSource.camera)
+                                                      .then((value) {
+                                                    addPromptsBloc.add(
+                                                        PickResource(
+                                                            mediaUrl: value!.path,
+                                                            whichSide: 0));
+                                                  });
+                                                } else if (state.side1selectedMediaType == 'Video') {
+                                                  ImagePickerHelper.pickVideo(imageSource: ImageSource.camera)
+                                                      .then((value) {
 
-                                                  addPromptsBloc.add(
-                                                      PickResource(
-                                                          mediaUrl: value!.path,
-                                                          whichSide: 0));
-                                                });
-                                              } else if (state
-                                                      .side1selectedMediaType ==
-                                                  'Audio') {
-                                                ImagePickerHelper.pickFile()
-                                                    .then((value) {
-                                                  addPromptsBloc.add(
-                                                      PickResource(
-                                                          mediaUrl: value,
-                                                          whichSide: 0));
-                                                });
+                                                    addPromptsBloc.add(
+                                                        PickResource(
+                                                            mediaUrl: value!.path,
+                                                            whichSide: 0));
+                                                  });
+                                                } else if (state.side1selectedMediaType == 'Audio') {
+                                                  ImagePickerHelper.pickFile()
+                                                      .then((value) {
+                                                    addPromptsBloc.add(
+                                                        PickResource(
+                                                            mediaUrl: value,
+                                                            whichSide: 0));
+                                                  });
+                                                }
                                               }
                                             },
                                             child: Container(
                                               color: Colors.grey,
                                               height: context.screenHeight / 5,
                                               child: getFileType(state.side1ResourceUrl!) == 'Photo'
-                                                  ? Image.file(
-                                                      File(state
-                                                          .side1ResourceUrl!),
-                                                      fit: BoxFit.fill,
-                                                    )
+                                                  ? Image.file(File(state.side1ResourceUrl!), fit: BoxFit.fill,)
                                                   : Center(
-                                                      child: Text(state
-                                                                  .side1selectedMediaType ==
-                                                              'Image'
+                                                      child: Text(state.side1selectedMediaType == 'Image'
                                                           ? 'Upload Image'
-                                                          : state.side1selectedMediaType ==
-                                                                  'Video'
-                                                              ? "Upload Video"
-                                                              : state.side1selectedMediaType ==
-                                                                      'Audio'
-                                                                  ? 'Upload Audio'
-                                                                  : ''),
+                                                          : state.side1selectedMediaType == 'Video'
+                                                          ? "Upload Video"
+                                                          : state.side1selectedMediaType == 'Audio'
+                                                          ? 'Upload Audio'
+                                                          : ''),
                                                     ),
                                             ),
                                           ),
+
                                     /*Row(
                                       mainAxisAlignment: MainAxisAlignment.end,
                                       children: [
@@ -419,9 +424,28 @@ class _AddPromptsScreenState extends State<AddPromptsScreen> {
                                               key: _side2TextformKey,
                                               child: TextFormField(
                                                 controller: side2_Controller,
-                                                onTap: () {},
-                                                onEditingComplete: () {
-                                                  saveResource2(state);
+                                                focusNode: _answerFocusNode,
+                                                onTap: () {
+                                                  if(state.resource1status == Resource1Status.selected && state.side1Id == ''){
+                                                    saveResource1(state);
+                                                  }else if(side1_Controller.text != '' && state.side1Id == ''){
+                                                    saveResource1(state);
+                                                  }else{
+                                                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Resource 1 is not saved!')));
+                                                  }
+                                                },
+                                                onTapOutside: (event) {
+                                                  if(_answerFocusNode.hasFocus){
+                                                    _answerFocusNode.unfocus();
+                                                    if(side2_Controller.text != ''){
+                                                      saveResource2(state);
+                                                    }
+                                                  }
+                                                },
+                                                onFieldSubmitted: (value) {
+                                                  if(value != ''){
+                                                    saveResource2(state);
+                                                  }
                                                 },
                                                 decoration:
                                                     InputDecoration.collapsed(
@@ -433,40 +457,34 @@ class _AddPromptsScreenState extends State<AddPromptsScreen> {
                                           )
                                         : GestureDetector(
                                             onTap: () {
-                                              if (state.side2selectedMediaType == 'Image') {
-                                                ImagePickerHelper.pickImage(
-                                                        imageSource:
-                                                            ImageSource.camera)
-                                                    .then((value) {
-                                                  print(value!.path);
-                                                  print("value");
-                                                  addPromptsBloc.add(
-                                                      PickResource(
-                                                          mediaUrl: value.path,
-                                                          whichSide: 1));
-                                                });
-                                              } else if (state.side2selectedMediaType == 'Video') {
-                                                ImagePickerHelper.pickVideo(
-                                                        imageSource:
-                                                            ImageSource.camera)
-                                                    .then((value) {
-                                                  print(value!.path);
-                                                  print("value");
-                                                  addPromptsBloc.add(
-                                                      PickResource(
-                                                          mediaUrl: value.path,
-                                                          whichSide: 1));
-                                                });
-                                              } else if (state.side2selectedMediaType == 'Audio') {
-                                                ImagePickerHelper.pickFile()
-                                                    .then((value) {
-                                                  print(value);
-                                                  print("value");
-                                                  addPromptsBloc.add(
-                                                      PickResource(
-                                                          mediaUrl: value,
-                                                          whichSide: 1));
-                                                });
+                                              if(state.resource2status == Resource2Status.initial || state.resource2status == Resource2Status.failed){
+                                                if (state.side2selectedMediaType == 'Image') {
+                                                  ImagePickerHelper.pickImage(imageSource: ImageSource.camera)
+                                                      .then((value) {
+                                                    print(value!.path);
+                                                    print("value");
+                                                    addPromptsBloc.add(
+                                                        PickResource(
+                                                            mediaUrl: value.path,
+                                                            whichSide: 1));
+                                                  });
+                                                } else if (state.side2selectedMediaType == 'Video') {
+                                                  ImagePickerHelper.pickVideo(imageSource: ImageSource.camera)
+                                                      .then((value) {
+                                                    addPromptsBloc.add(
+                                                        PickResource(
+                                                            mediaUrl: value!.path,
+                                                            whichSide: 1));
+                                                  });
+                                                } else if (state.side2selectedMediaType == 'Audio') {
+                                                  ImagePickerHelper.pickFile()
+                                                      .then((value) {
+                                                    addPromptsBloc.add(
+                                                        PickResource(
+                                                            mediaUrl: value,
+                                                            whichSide: 1));
+                                                  });
+                                                }
                                               }
                                             },
                                             child: Container(
@@ -560,6 +578,7 @@ class _AddPromptsScreenState extends State<AddPromptsScreen> {
             resourceId: widget.resourceId!,
             name: title_Controller.text),
       );*/
+      EasyLoading.show();
       context.read<AddPromptsBloc>().add(
         AddPromptEvent(
             resourceId: widget.resourceId!,
@@ -575,6 +594,7 @@ class _AddPromptsScreenState extends State<AddPromptsScreen> {
 
     if(state.side1selectedMediaType == 'Text') {
       if(_side1TextformKey.currentState!.validate()){
+        EasyLoading.show();
         addPromptsBloc.add(
           AddResource(
               mediaUrl: 0,
@@ -591,6 +611,7 @@ class _AddPromptsScreenState extends State<AddPromptsScreen> {
 
     }else {
       print('Hii1');
+      EasyLoading.show();
       addPromptsBloc.add(
         AddResource(
           mediaUrl:
@@ -622,6 +643,7 @@ class _AddPromptsScreenState extends State<AddPromptsScreen> {
 
     if(state.side2selectedMediaType == 'Text') {
       if(_side2TextformKey.currentState!.validate()){
+        EasyLoading.show();
         addPromptsBloc.add(
           AddResource(
               mediaUrl: 0,
@@ -638,6 +660,7 @@ class _AddPromptsScreenState extends State<AddPromptsScreen> {
 
     }else{
       print('Hii4');
+      EasyLoading.show();
       addPromptsBloc.add(
         AddResource(
           // mediaUrl:

@@ -58,7 +58,7 @@ class AddMediaBloc extends Bloc<AddMediaEvent, AddMediaInitial> {
          emit(state.copyWith(apiState: ApiState.submitted,wichResources: 0));
      });
    }else {
-     await  AddMediaRepo.addResources(imagePath: state.selectedFilepath, resourceId:  event.rootId??'',mediaType: event.MediaType).then((value) {
+     await  AddMediaRepo.addResources(imagePath: state.selectedFilepath, title: event.title, resourceId:  event.rootId??'',mediaType: event.MediaType).then((value) {
        if (value != null) {
          emit(state.copyWith(apiState: ApiState.submitted,wichResources: 1));
        }

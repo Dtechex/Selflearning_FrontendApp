@@ -4,10 +4,14 @@ import 'package:flippy/flipper/dragFlipper.dart';
 import 'package:flippy/flippy.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:self_learning_app/features/dashboard/dashboard_screen.dart';
+import 'package:just_audio/just_audio.dart';
+import 'package:just_audio/just_audio.dart' as JA;
+import 'package:audio_session/audio_session.dart';
+import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
 import 'package:self_learning_app/utilities/extenstion.dart';
 import 'package:self_learning_app/widgets/play_music.dart';
 import 'package:video_player/video_player.dart';
+import 'package:rxdart/rxdart.dart';
 
 import '../promt/bloc/promt_bloc.dart';
 import '../promt/data/model/promt_model.dart';
@@ -196,24 +200,6 @@ class _StartFlowScreenState extends State<StartFlowScreen> {
     );
   }
 
-  ChewieController _createChewieController(String videoUrl) {
-    final videoPlayerController = VideoPlayerController.network(videoUrl);
-    _chewieController = ChewieController(
-      videoPlayerController: videoPlayerController,
-      autoInitialize: true,
-      autoPlay: true,
-      looping: false,
-      errorBuilder: (context, errorMessage) {
-        return Center(
-          child: Text(
-            errorMessage,
-            style: const TextStyle(color: Colors.white),
-          ),
-        );
-      },
-    );
-    return _chewieController!;
-  }
 }
 
 class PromtMediaPlayScreen extends StatefulWidget {
@@ -559,67 +545,138 @@ class BackPageWidget extends StatelessWidget {
 
 
 
-class BackPage2Widget extends StatelessWidget {
 
+class BackPage2Widget extends StatefulWidget {
 
   final String content;
   final Function() onView1sidePressed;
   final double h;
   final double w;
   final String mediaType;
+
   const BackPage2Widget({super.key, required this.content, required this.onView1sidePressed, required this.mediaType, required this.h, required this.w});
 
   @override
+  State<BackPage2Widget> createState() => _BackPage2WidgetState();
+}
+
+class _BackPage2WidgetState extends State<BackPage2Widget> {
+
+  ChewieController? _chewieController;
+  AudioPlayer? _audioPlayer;
+
+
+
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    if(getMediaType(widget.content) == 'video'){
+    _chewieController = _createChewieController('https://selflearning.dtechex.com/public/video/${widget.content}');
+    }else if(getMediaType(widget.content) == 'audio'){
+    _audioPlayer = AudioPlayer();
+    initAudio();
+    }
+    super.initState();
+  }
+
+
+  Future<void> initAudio() async {
+    final session = await AudioSession.instance;
+    await session.configure(const AudioSessionConfiguration.speech());
+    // Listen to errors during playback.
+    _audioPlayer?.playbackEventStream.listen((event) {},
+        onError: (Object e, StackTrace stackTrace) {
+          print('A stream error occurred: $e');
+        });
+    // Try to load audio from a source and catch any errors.
+    try {
+      // AAC example: https://dl.espressif.com/dl/audio/ff-16b-2c-44100hz.aac
+      await _audioPlayer?.setAudioSource(AudioSource.uri(Uri.parse("https://selflearning.dtechex.com/public/audio/${widget.content}")));
+    } catch (e) {
+      print("Error loading audio source: $e");
+    }
+  }
+  @override
   Widget build(BuildContext context) {
     return Card(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(20.0),
+      ),
+      color: Colors.grey.shade200,
       margin: EdgeInsets.all(10),
       child: Container(
         margin: EdgeInsets.all(10),
         padding: EdgeInsets.all(10),
         child: SizedBox(
           //height: context.screenHeight / 2,
+          width: MediaQuery.of(context).size.width,
           child: Column(
             children: [
-              content.contains('.jpeg') ||
-                  content.contains('.jpg') ||
-                  content.contains('.png') ||
-                  content.contains('.gif')
-                  ? Expanded(
-                    child: CachedNetworkImage(
-                imageUrl:
-                'https://selflearning.dtechex.com/public/image/$content',
-                fit: BoxFit.fitHeight,
-                //height: h * 0.,
-                //width: 50,
-                progressIndicatorBuilder: (context, url,
+              if(_chewieController == null) Spacer(),
+              widget.content.contains('.jpeg') ||
+                  widget.content.contains('.jpg') ||
+                  widget.content.contains('.png') ||
+                  widget.content.contains('.gif')
+                  ? Expanded(child: CachedNetworkImage(
+                  imageUrl:
+                  'https://selflearning.dtechex.com/public/image/${widget.content}',
+                  fit: BoxFit.fitHeight,
+                  //height: h * 0.,
+                  //width: 50,
+                  progressIndicatorBuilder: (context, url,
                       downloadProgress) =>
                       Center(
                         child: CircularProgressIndicator(
                             value: downloadProgress.progress),
                       ),
-                errorWidget: (context, url, error) =>
+                  errorWidget: (context, url, error) =>
                       Icon(Icons.error),
-              ),
-                  )
-                  : SizedBox(
-                  width: 50,
-                  child: getMediaType(content) == 'video'
-                      ? const Icon(
-                    Icons.video_camera_back_outlined,
-                    size: 50,
-                  )
-                      : getMediaType(content) != 'audio'
-                      ? const Icon(
-                      Icons.text_format_sharp,
-                      size: 50)
-                      : Icon(Icons.audiotrack, size: 50)),
-              Spacer(),
+                ),)
+                  : getMediaType(widget.content) == 'video'
+                      ? Expanded(
+                child: Container(
+                  decoration: BoxDecoration(
+                      color: Colors.black,
+                      borderRadius: BorderRadius.circular(4.0)
+                  ),
+                  height: widget.h * 0.3,
+                  child: _chewieController != null
+                      ? Chewie(controller: _chewieController! ):const SizedBox.shrink(), // Return an empty widget if _chewieController is null
+                ),
+              )
+                      : getMediaType(widget.content) == 'audio'
+                      ? Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  // Display play/pause button and volume/speed sliders.
+                  ControlButtons(_audioPlayer!),
+                  StreamBuilder<PositionData>(
+                    stream: _positionDataStream,
+                    builder: (context, snapshot) {
+                      final positionData = snapshot.data;
+                      return Container(
+                        margin: EdgeInsets.symmetric(horizontal: 24.0),
+                        child: ProgressBar(
+                          total: positionData?.duration ?? Duration.zero,
+                          progress: positionData?.position ?? Duration.zero,
+                          buffered: positionData?.bufferedPosition ?? Duration.zero,
+                          onSeek: (newPosition) {_audioPlayer?.seek(newPosition);},
+                        ),
+                      );
+                    },
+                  ),
+                ],
+              )
+                      : Flexible(child: Text(widget.content, style: TextStyle(fontSize: 19.0, fontWeight: FontWeight.bold),)),
+              if(_chewieController == null) Spacer(),
               Row(
                 mainAxisAlignment:
                 MainAxisAlignment.center,
                 children: [
                   ElevatedButton(
-                      onPressed: onView1sidePressed,
+                      onPressed: widget.onView1sidePressed,
                       child: Text('View Slide'),
                       style: ButtonStyle(
                           backgroundColor:
@@ -631,6 +688,219 @@ class BackPage2Widget extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+
+  Stream<PositionData> get _positionDataStream =>
+      Rx.combineLatest3<Duration, Duration, Duration?, PositionData>(
+          _audioPlayer!.positionStream,
+          _audioPlayer!.bufferedPositionStream,
+          _audioPlayer!.durationStream,
+              (position, bufferedPosition, duration) => PositionData(
+              position, bufferedPosition, duration ?? Duration.zero));
+
+  ChewieController _createChewieController(String videoUrl) {
+    final videoPlayerController = VideoPlayerController.network(videoUrl);
+    ChewieController chewieController = ChewieController(
+      videoPlayerController: videoPlayerController,
+      autoInitialize: true,
+      autoPlay: true,
+      looping: false,
+      errorBuilder: (context, errorMessage) {
+        return Center(
+          child: Text(
+            errorMessage,
+            style: const TextStyle(color: Colors.white),
+          ),
+        );
+      },
+    );
+    return chewieController!;
+  }
+
+  @override
+  void dispose() {
+    _chewieController?.dispose();
+    super.dispose();
+  }
+
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.paused) {
+      // Release the player's resources when not in use. We use "stop" so that
+      // if the app resumes later, it will still remember what position to
+      // resume from.
+      _audioPlayer?.stop();
+    }
+  }
+/*Future<void> _initializeVideoPlayer(String videoPath) async {
+    if (_chewieController != null) {
+      await  Future.delayed(Duration(milliseconds: 100));
+      _chewieController!.dispose();
+    }
+
+    final videoPlayerController = VideoPlayerController.contentUri(Uri.parse('https://selflearning.dtechex.com/public/video/$content'));
+    await videoPlayerController.initialize();
+
+    _chewieController = ChewieController(
+      videoPlayerController: videoPlayerController,
+      autoPlay: true,
+      looping: true,
+      // Other ChewieController configurations...
+    );
+
+  }*/
+}
+
+class PositionData {
+  Duration _position;
+  Duration _bufferedPosition;
+  Duration _duration;
+
+  PositionData(this._position, this._bufferedPosition, this._duration);
+
+  Duration get duration => _duration;
+
+  Duration get bufferedPosition => _bufferedPosition;
+
+  Duration get position => _position;
+}
+
+
+/// Displays the play/pause button and volume/speed sliders.
+
+class ControlButtons extends StatelessWidget {
+  final AudioPlayer player;
+
+  const ControlButtons(this.player, {Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        /*IconButton(
+          icon: const Icon(Icons.volume_up),
+          onPressed: () {
+            showSliderDialog(
+              context: context,
+              title: "Adjust volume",
+              divisions: 10,
+              min: 0.0,
+              max: 1.0,
+              stream: player.volumeStream,
+              onChanged: player.setVolume,
+            );
+          },
+        ),*/
+        /*Spacer(flex: 2,),
+        StreamBuilder<LoopMode>(
+          stream: player.loopModeStream,
+          builder: (context, snapshot) {
+            final loopMode = snapshot.data ?? LoopMode.off;
+            const icons = [
+              Icon(Icons.repeat, color: Colors.grey),
+              Icon(Icons.repeat, color: Colors.orange),
+              Icon(Icons.repeat_one, color: Colors.orange),
+            ];
+            const cycleModes = [
+              LoopMode.off,
+              LoopMode.all,
+              LoopMode.one,
+            ];
+            final index = cycleModes.indexOf(loopMode);
+            return IconButton(
+              icon: icons[index],
+              onPressed: () {
+                player.setLoopMode(cycleModes[
+                (cycleModes.indexOf(loopMode) + 1) %
+                    cycleModes.length]);
+              },
+            );
+          },
+        ),
+        Spacer(flex: 1,),
+
+        StreamBuilder<SequenceState?>(
+          stream: player.sequenceStateStream,
+          builder: (context, snapshot) => IconButton(
+            icon: const Icon(Icons.skip_previous),
+            onPressed: player.hasPrevious ? player.seekToPrevious : null,
+          ),
+        ),
+        ///
+        StreamBuilder<SequenceState?>(
+          stream: player.sequenceStateStream,
+          builder: (context, snapshot) => IconButton(
+            icon: const Icon(Icons.skip_next),
+            onPressed: player.hasNext ? player.seekToNext : null,
+          ),
+        ),
+        Spacer(flex: 1,),
+        StreamBuilder<bool>(
+          stream: player.shuffleModeEnabledStream,
+          builder: (context, snapshot) {
+            final shuffleModeEnabled = snapshot.data ?? false;
+            return IconButton(
+              icon: shuffleModeEnabled
+                  ? const Icon(Icons.shuffle, color: Colors.orange)
+                  : const Icon(Icons.shuffle, color: Colors.grey),
+              onPressed: () async {
+                final enable = !shuffleModeEnabled;
+                if (enable) {
+                  await player.shuffle();
+                }
+                await player.setShuffleModeEnabled(enable);
+              },
+            );
+          },
+        ),
+        Spacer(flex: 2,),*/
+        Card(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(40.0)),
+          ),
+          child: StreamBuilder<JA.PlayerState>(
+            stream: player.playerStateStream,
+            builder: (context, snapshot) {
+              final playerState = snapshot.data;
+              final processingState = playerState?.processingState;
+              final playing = playerState?.playing;
+
+              if (processingState == ProcessingState.loading || processingState == ProcessingState.buffering) {
+                return Center(
+                  child: Container(
+                    margin: const EdgeInsets.all(8.0),
+                    width: 48.0,
+                    height: 48.0,
+                    child: const CircularProgressIndicator(),
+                  ),
+                );
+              } else if (playing != true) {
+                return IconButton(
+                  icon: const Icon(Icons.play_arrow),
+                  iconSize: 40.0,
+                  onPressed: player.play,
+                );
+              } else if (processingState != ProcessingState.completed) {
+                return IconButton(
+                  icon: const Icon(Icons.pause),
+                  iconSize: 40.0,
+                  onPressed: player.pause,
+                );
+              } else {
+                return IconButton(
+                  icon: const Icon(Icons.replay),
+                  iconSize: 40.0,
+                  onPressed: () => player.seek(Duration.zero,
+                      index: player.effectiveIndices!.first),
+                );
+              }
+            },
+          ),
+        ),
+      ],
     );
   }
 }

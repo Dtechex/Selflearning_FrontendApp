@@ -210,8 +210,8 @@ class _AddVideoScreenState extends State<AddVideoScreen> {
                     children: [
                       AspectRatio(
                         aspectRatio: _chewieController?.videoPlayerController.value.aspectRatio ?? 1.0,
-                        child: _chewieController != null?
-               Chewie(controller: _chewieController!):const SizedBox.shrink(), // Return an empty widget if _chewieController is null
+                        child: _chewieController != null
+                            ? Chewie(controller: _chewieController!):const SizedBox.shrink(), // Return an empty widget if _chewieController is null
                       ),
                       Positioned(
                         top: 10,
