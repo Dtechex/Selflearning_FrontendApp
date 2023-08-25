@@ -14,6 +14,7 @@ import '../camera/camera_screen.dart';
 import '../promt/promts_screen.dart';
 import '../quick_add/data/bloc/quick_add_bloc.dart';
 import '../quick_add/quick_add_screen.dart';
+import '../resources/bloc/resources_bloc.dart';
 import '../resources/resources_screen.dart';
 
 class AddImageScreen extends StatefulWidget {
@@ -62,6 +63,8 @@ class _AddImageScreenState extends State<AddImageScreen> {
                 context.loaderOverlay.hide();
                 print(state.wichResources);
                 print('state.wichResources');
+                context.read<ResourcesBloc>().add(LoadResourcesEvent(rootId: widget.rootId, mediaType: ''));
+
                 Navigator.pop(context);
                 /*switch (state.wichResources) {
                   case 0:

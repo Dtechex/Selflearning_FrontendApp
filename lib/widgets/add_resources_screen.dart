@@ -81,7 +81,7 @@ class _AddResourceScreenState extends State<AddResourceScreen> {
                                         whichResources: widget.whichResources,
                                       );
                                     },
-                                  )).then((value) => context.read<ResourcesBloc>().add(LoadResourcesEvent(rootId: widget.rootId, mediaType: '')));
+                                  ));
                                 }
                                 break;
                               case 1:
@@ -93,7 +93,7 @@ class _AddResourceScreenState extends State<AddResourceScreen> {
                                         whichResources: widget.whichResources,
                                       );
                                     },
-                                  )).then((value) => context.read<ResourcesBloc>().add(LoadResourcesEvent(rootId: widget.rootId, mediaType: '')));
+                                  ));
                                 }
                                 break;
                               case 2:
@@ -105,7 +105,7 @@ class _AddResourceScreenState extends State<AddResourceScreen> {
                                         whichResources: widget.whichResources,
                                       );
                                     },
-                                  )).then((value) => context.read<ResourcesBloc>().add(LoadResourcesEvent(rootId: widget.rootId, mediaType: '')));
+                                  ));
                                 }
                                 break;
                               case 3:
@@ -117,7 +117,7 @@ class _AddResourceScreenState extends State<AddResourceScreen> {
                                           whichResources:
                                               widget.whichResources);
                                     },
-                                  )).then((value) => context.read<ResourcesBloc>().add(LoadResourcesEvent(rootId: widget.rootId, mediaType: '')));
+                                  ));
                                 }
                             }
                           },

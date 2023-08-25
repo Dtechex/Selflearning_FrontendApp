@@ -12,6 +12,7 @@ import '../quick_add/quick_add_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:record/record.dart';
 
+import '../resources/bloc/resources_bloc.dart';
 import '../resources/resources_screen.dart';
 import 'bloc/add_media_bloc.dart';
 import 'dart:io';
@@ -141,6 +142,7 @@ class _AddAudioScreenState extends State<AddAudioScreen> {
             listener: (context, state) {
               if (state.apiState==ApiState.submitted ) {
                 context.loaderOverlay.hide();
+                context.read<ResourcesBloc>().add(LoadResourcesEvent(rootId: widget.rootId, mediaType: ''));
                 Navigator.pop(context);
                 /*switch(state.wichResources){
                   case 0: {

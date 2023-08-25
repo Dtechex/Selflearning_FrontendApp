@@ -36,6 +36,7 @@ class AllResourcesList extends StatefulWidget {
 class _AllResourcesListState extends State<AllResourcesList> {
   final ResourcesBloc resourcesBloc = ResourcesBloc();
   TextEditingController textEditingController = TextEditingController();
+  bool _shouldRefreshBloc = false;
 
   @override
   void initState() {
@@ -77,190 +78,210 @@ class _AllResourcesListState extends State<AllResourcesList> {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => resourcesBloc,
-      child: Scaffold(
-        appBar: AppBar(title: const Text('Resources')),
-        body: BlocConsumer<ResourcesBloc, ResourcesState>(
-          listener: (context, state) {
-            if (state is ResourcesDelete) {
-              context.showSnackBar(const SnackBar(
-                  duration: Duration(seconds: 2),
-                  content: Text('Ressource deleted successfully')));
-              resourcesBloc.add(LoadResourcesEvent(rootId: widget.rootId, mediaType: widget.mediaType));
-
-            }
-          },
-          builder: (context, state) {
-            if (state is ResourcesLoading) {
-              return const Center(
-                child: CircularProgressIndicator(),
-              );
-            }
-            if (state is ResourcesLoaded) {
-              if (state.allResourcesModel.data!.record!.records!.isEmpty) {
-                return const Center(
-                  child: Text('No Resources found.'),
-                );
-              } else {
-                return ListView.builder(
-                    shrinkWrap: true,
-                    itemCount: state.allResourcesModel.data!.record!.records!.length,
-                    itemBuilder: (context, index) {
-                      final content = state.allResourcesModel.data!.record!
-                          .records![index].content
-                          .toString();
-                      print(content);
-                      print('content');
-
-                      return SizedBox(
-                        width: context.screenWidth,
-                        height: 60,
-                        child: Row(
-                          children: [
-
-                            Spacer(),
-                            content.contains('.jpeg') ||
-                                content.contains('.jpg') ||
-                                content.contains('.png') ||
-                                content.contains('.gif')
-                                ? CachedNetworkImage(
-                              imageUrl:
-                              'https://selflearning.dtechex.com/public/image/$content',
-                              fit: BoxFit.fill,
-                              height: 40,
-                              width: 50,
-                              progressIndicatorBuilder: (context, url,
-                                  downloadProgress) =>
-                                  Center(
-                                    child: CircularProgressIndicator(
-                                        value: downloadProgress.progress),
-                                  ),
-                              errorWidget: (context, url, error) =>
-                                  Icon(Icons.error),
-                            )
-                                : SizedBox(
-                                width: 50,
-                                child: getMediaType(content) == 'video'
-                                    ? const Icon(
-                                  Icons.video_camera_back_outlined,
-                                  size: 50,
-                                )
-                                    : getMediaType(content) != 'audio'
-                                    ? const Icon(
-                                    Icons.text_format_sharp,
-                                    size: 50)
-                                    : Icon(Icons.audiotrack, size: 50)),
-                            Spacer(),
-                            ElevatedButton(
-                              child: const Text('Add'),
-                              onPressed: () {
-                                context.push(AddPromptsScreen(
-                                  resourceId: state.allResourcesModel.data!
-                                      .record!.records![index].sId
-                                      .toString(),
-                                ));
-                              },
-                            ),
-                            SizedBox(width: 5.0,),
-                            ElevatedButton(
-                              child: const Text('Start Flow'),
-                              onPressed: () {
-                                print(state.allResourcesModel.data!
-                                    .record!.records![index].content);
-
-                                Navigator.push(context,
-                                    MaterialPageRoute(
-                                      builder: (context) {
-                                        return PromtsScreen(
-                                            content: state
-                                                .allResourcesModel
-                                                .data!
-                                                .record!
-                                                .records![index]
-                                                .content ??
-                                                state
-                                                    .allResourcesModel
-                                                    .data!
-                                                    .record!
-                                                    .records![index]
-                                                    .title,
-                                            mediaType: state
-                                                .allResourcesModel
-                                                .data!
-                                                .record!
-                                                .records![index]
-                                                .type!,
-                                            promtId: state
-                                                .allResourcesModel
-                                                .data!
-                                                .record!
-                                                .records![index]
-                                                .sId!);
-                                      },
-                                    ));
-                              },
-                            ),
-                            /*SizedBox(width: 5.0,),
-                            ElevatedButton(
-                              child: const Text('Start'),
-                              onPressed: () {
-                                print(state.allResourcesModel.data!
-                                    .record!.records![index].content);
-
-                                Navigator.push(context,
-                                    MaterialPageRoute(
-                                      builder: (context) {
-                                        return StartFlowScreen(
-                                            content: state
-                                                .allResourcesModel
-                                                .data!
-                                                .record!
-                                                .records![index]
-                                                .content ??
-                                                state
-                                                    .allResourcesModel
-                                                    .data!
-                                                    .record!
-                                                    .records![index]
-                                                    .title,
-                                            mediaType: state
-                                                .allResourcesModel
-                                                .data!
-                                                .record!
-                                                .records![index]
-                                                .type!,
-                                            promtId: state
-                                                .allResourcesModel
-                                                .data!
-                                                .record!
-                                                .records![index]
-                                                .sId!);
-                                      },
-                                    ));
-                              },
-                            ),*/
-                            Spacer(),
-                            IconButton(
-                                onPressed: () {
-                                  resourcesBloc.add(
-                                      DeleteResourcesEvent(
-                                          rootId: state
-                                              .allResourcesModel
-                                              .data!
-                                              .record!
-                                              .records![index]
-                                              .sId
-                                              .toString()));
-                                },
-                                icon: const Icon(Icons.delete)),
-                            Spacer(),
-                          ],
-                        ),
-                      );
-                    });
+      child: WillPopScope(
+        onWillPop: () async{
+          if(_shouldRefreshBloc){
+            BlocProvider.of<ResourcesBloc>(context).add(LoadResourcesEvent(rootId: widget.rootId, mediaType: ''));
+          }
+          return true;
+        },
+        child: Scaffold(
+          appBar: AppBar(
+              title: const Text('Resources'),
+            leading: IconButton(
+              icon: Icon(Icons.arrow_back),
+              onPressed: () {
+                if(_shouldRefreshBloc){
+                  BlocProvider.of<ResourcesBloc>(context).add(LoadResourcesEvent(rootId: widget.rootId, mediaType: ''));
+                }
+                Navigator.pop(context);
+              },
+            ),
+          ),
+          body: BlocConsumer<ResourcesBloc, ResourcesState>(
+            listener: (context, state) {
+              if (state is ResourcesDelete) {
+                context.showSnackBar(const SnackBar(
+                    duration: Duration(seconds: 2),
+                    content: Text('Ressource deleted successfully')));
+                resourcesBloc.add(LoadResourcesEvent(rootId: widget.rootId, mediaType: widget.mediaType));
+                //context.read<ResourcesBloc>().add(LoadResourcesEvent(rootId: widget.rootId, mediaType: ''));
+                _shouldRefreshBloc = true;
               }
-            }
-            return const Text('something went wrong');
-          },
+            },
+            builder: (context, state) {
+              if (state is ResourcesLoading) {
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              }
+              if (state is ResourcesLoaded) {
+                if (state.allResourcesModel.data!.record!.records!.isEmpty) {
+                  return const Center(
+                    child: Text('No Resources found.'),
+                  );
+                } else {
+                  return ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: state.allResourcesModel.data!.record!.records!.length,
+                      itemBuilder: (context, index) {
+                        final content = state.allResourcesModel.data!.record!
+                            .records![index].content
+                            .toString();
+                        print(content);
+                        print('content');
+
+                        return SizedBox(
+                          width: context.screenWidth,
+                          height: 60,
+                          child: Row(
+                            children: [
+
+                              Spacer(),
+                              content.contains('.jpeg') ||
+                                  content.contains('.jpg') ||
+                                  content.contains('.png') ||
+                                  content.contains('.gif')
+                                  ? CachedNetworkImage(
+                                imageUrl:
+                                'https://selflearning.dtechex.com/public/image/$content',
+                                fit: BoxFit.fill,
+                                height: 40,
+                                width: 50,
+                                progressIndicatorBuilder: (context, url,
+                                    downloadProgress) =>
+                                    Center(
+                                      child: CircularProgressIndicator(
+                                          value: downloadProgress.progress),
+                                    ),
+                                errorWidget: (context, url, error) =>
+                                    Icon(Icons.error),
+                              )
+                                  : SizedBox(
+                                  width: 50,
+                                  child: getMediaType(content) == 'video'
+                                      ? const Icon(
+                                    Icons.video_camera_back_outlined,
+                                    size: 50,
+                                  )
+                                      : getMediaType(content) != 'audio'
+                                      ? const Icon(
+                                      Icons.text_format_sharp,
+                                      size: 50)
+                                      : Icon(Icons.audiotrack, size: 50)),
+                              Spacer(),
+                              ElevatedButton(
+                                child: const Text('Add'),
+                                onPressed: () {
+                                  context.push(AddPromptsScreen(
+                                    resourceId: state.allResourcesModel.data!
+                                        .record!.records![index].sId
+                                        .toString(),
+                                  ));
+                                },
+                              ),
+                              SizedBox(width: 5.0,),
+                              ElevatedButton(
+                                child: const Text('Start Flow'),
+                                onPressed: () {
+                                  print(state.allResourcesModel.data!
+                                      .record!.records![index].content);
+
+                                  Navigator.push(context,
+                                      MaterialPageRoute(
+                                        builder: (context) {
+                                          return PromtsScreen(
+                                              content: state
+                                                  .allResourcesModel
+                                                  .data!
+                                                  .record!
+                                                  .records![index]
+                                                  .content ??
+                                                  state
+                                                      .allResourcesModel
+                                                      .data!
+                                                      .record!
+                                                      .records![index]
+                                                      .title,
+                                              mediaType: state
+                                                  .allResourcesModel
+                                                  .data!
+                                                  .record!
+                                                  .records![index]
+                                                  .type!,
+                                              promtId: state
+                                                  .allResourcesModel
+                                                  .data!
+                                                  .record!
+                                                  .records![index]
+                                                  .sId!);
+                                        },
+                                      ));
+                                },
+                              ),
+                              /*SizedBox(width: 5.0,),
+                              ElevatedButton(
+                                child: const Text('Start'),
+                                onPressed: () {
+                                  print(state.allResourcesModel.data!
+                                      .record!.records![index].content);
+
+                                  Navigator.push(context,
+                                      MaterialPageRoute(
+                                        builder: (context) {
+                                          return StartFlowScreen(
+                                              content: state
+                                                  .allResourcesModel
+                                                  .data!
+                                                  .record!
+                                                  .records![index]
+                                                  .content ??
+                                                  state
+                                                      .allResourcesModel
+                                                      .data!
+                                                      .record!
+                                                      .records![index]
+                                                      .title,
+                                              mediaType: state
+                                                  .allResourcesModel
+                                                  .data!
+                                                  .record!
+                                                  .records![index]
+                                                  .type!,
+                                              promtId: state
+                                                  .allResourcesModel
+                                                  .data!
+                                                  .record!
+                                                  .records![index]
+                                                  .sId!);
+                                        },
+                                      ));
+                                },
+                              ),*/
+                              Spacer(),
+                              IconButton(
+                                  onPressed: () {
+                                    resourcesBloc.add(
+                                        DeleteResourcesEvent(
+                                            rootId: state
+                                                .allResourcesModel
+                                                .data!
+                                                .record!
+                                                .records![index]
+                                                .sId
+                                                .toString()));
+                                  },
+                                  icon: const Icon(Icons.delete)),
+                              Spacer(),
+                            ],
+                          ),
+                        );
+                      });
+                }
+              }
+              return const Text('something went wrong');
+            },
+          ),
         ),
       ),
     );

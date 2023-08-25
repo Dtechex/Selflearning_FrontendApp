@@ -16,6 +16,7 @@ import '../camera/camera_screen.dart';
 import '../promt/promts_screen.dart';
 import '../quick_add/data/bloc/quick_add_bloc.dart';
 import '../quick_add/quick_add_screen.dart';
+import '../resources/bloc/resources_bloc.dart';
 import '../resources/resources_screen.dart';
 
 class AddVideoScreen extends StatefulWidget {
@@ -90,6 +91,8 @@ class _AddVideoScreenState extends State<AddVideoScreen> {
             listener: (context, state) {
               if (state.apiState == ApiState.submitted) {
                 context.loaderOverlay.hide();
+                context.read<ResourcesBloc>().add(LoadResourcesEvent(rootId: widget.rootId, mediaType: ''));
+
                 Navigator.pop(context);
                 /*switch (state.wichResources) {
                   case 0:

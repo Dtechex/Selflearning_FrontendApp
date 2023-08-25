@@ -68,9 +68,7 @@ class _PromtsScreenState extends State<PromtsScreen> {
     final Color evenItemColor = colorScheme.primary.withOpacity(0.15);
     var h = MediaQuery.of(context).size.height;
     var w = MediaQuery.of(context).size.width;
-    print('Vipin');
-    print(
-        "https://selflearning.dtechex.com/public/${widget.mediaType}/${widget.content}");
+    print("https://selflearning.dtechex.com/public/${widget.mediaType}/${widget.content}");
     return Scaffold(
       appBar: AppBar(title: const Text('Prompts')),
       body: Scaffold(
@@ -118,7 +116,7 @@ class _PromtsScreenState extends State<PromtsScreen> {
                             title: Row(
                               children: [
                                 Text(
-                                    'Item ${state.addFlowModel!.flow![index].name}')
+                                    '${state.addFlowModel!.flow![index].name}')
                               ],
                             ),
                           ),

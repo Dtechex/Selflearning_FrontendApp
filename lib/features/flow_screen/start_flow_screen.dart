@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chewie/chewie.dart';
+import 'package:flick_video_player/flick_video_player.dart';
 import 'package:flippy/flipper/dragFlipper.dart';
 import 'package:flippy/flippy.dart';
 import 'package:flutter/material.dart';
@@ -272,7 +273,8 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
 }
 
 
-class FrontPageWidget extends StatelessWidget {
+
+class FrontPageWidget extends StatefulWidget {
 
   final List<PromtModel> promtModel;
   final int index;
@@ -281,7 +283,56 @@ class FrontPageWidget extends StatelessWidget {
   final double w;
   final Function() onNextButtonPressed;
   final Function() onViewResourcePressed;
-  const FrontPageWidget({super.key, required this.promtModel, required this.index, required this.h, required this.w, required this.onView2sidePressed, required this.onNextButtonPressed, required this.onViewResourcePressed,});
+   FrontPageWidget({super.key, required this.promtModel, required this.index, required this.h, required this.w, required this.onView2sidePressed, required this.onNextButtonPressed, required this.onViewResourcePressed,});
+
+  @override
+  State<FrontPageWidget> createState() => _FrontPageWidgetState();
+}
+
+class _FrontPageWidgetState extends State<FrontPageWidget> {
+  //ChewieController? _chewieController;
+  FlickManager? flickManager;
+
+  AudioPlayer? _audioPlayer;
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    print('try');
+    if(getMediaType(widget.promtModel![widget.index].side1!.content!) == 'video'){
+      print('try1');
+      //_chewieController = _createChewieController('https://selflearning.dtechex.com/public/video/${widget.promtModel![widget.index].side2!.content!}');
+      initVideo();
+    }else if(getMediaType(widget.promtModel![widget.index].side1!.content!) == 'audio'){
+      print('try2');
+      initAudio();
+    }else{
+      print('try3');
+      setState(() {
+        _isLoading = false;
+      });
+    }
+    super.initState();
+  }
+  Future<void> initAudio() async {
+    _audioPlayer = AudioPlayer();
+    final session = await AudioSession.instance;
+    await session.configure(const AudioSessionConfiguration.speech());
+    // Listen to errors during playback.
+    _audioPlayer?.playbackEventStream.listen((event) {},
+        onError: (Object e, StackTrace stackTrace) {
+          print('A stream error occurred: $e');
+        });
+    // Try to load audio from a source and catch any errors.
+    try {
+      // AAC example: https://dl.espressif.com/dl/audio/ff-16b-2c-44100hz.aac
+      await _audioPlayer?.setAudioSource(AudioSource.uri(Uri.parse("https://selflearning.dtechex.com/public/audio/${widget.promtModel![widget.index].side1!.content!}")));
+    } catch (e) {
+      print("Error loading audio source: $e");
+    }
+    setState(() { _isLoading = false;});
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -299,13 +350,12 @@ class FrontPageWidget extends StatelessWidget {
           child: Column(
             children: [
               Text(
-                  promtModel![index].name
+                  widget.promtModel![widget.index].name
                       .toString(),
                   style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 19)),
-              Spacer(),
-              SizedBox(
+              /*SizedBox(
                 width: w,
                 //height: h * 0.3,
                 child: promtModel![index].side1!.content!.contains("jpg") ||
@@ -369,8 +419,78 @@ class FrontPageWidget extends StatelessWidget {
 
                 // : Text(state.promtModel![index].side1!.content!),
                     : Text(promtModel![index].side1!.content.toString(), style: TextStyle(fontSize: 16),),
+              ),*/
+              Expanded(
+                child: _isLoading
+                    ? Center(child: CircularProgressIndicator(),)
+                    : widget.promtModel![widget.index].side1!.content!.contains("jpg") ||
+                    widget.promtModel![widget.index].side1!.content!.contains("png") ||
+                    widget.promtModel![widget.index].side1!.content!.contains("jpeg")
+                    ? Center(child: CachedNetworkImage(
+                  imageUrl: "https://selflearning.dtechex.com/public/image/${widget.promtModel![widget.index].side1!.content}",
+                  fit: BoxFit.fitHeight,
+                  height: widget.h * 0.2,
+                  width: widget.w / 1.5,
+                  progressIndicatorBuilder: (context, url, downloadProgress) =>
+                      Center(
+                        child: CircularProgressIndicator(
+                          value: downloadProgress
+                              .progress,
+                        ),
+                      ),
+                  errorWidget: (context, url, error) => const Icon(Icons.error),),)
+                    : getMediaType(widget.promtModel![widget.index].side1!.content!) == 'video'
+                    ? Column(
+                  children: [
+                    Spacer(),
+                    Container(
+                      decoration: BoxDecoration(
+                          color: Colors.black,
+                          borderRadius: BorderRadius.circular(4.0)
+                      ),
+                      height: widget.h * 0.2,
+                      child: FlickVideoPlayer(
+                        flickVideoWithControls: FlickVideoWithControls(
+                          videoFit: BoxFit.fitHeight,
+                        ),
+                        flickManager: flickManager!,
+                      ),// Return an empty widget if _chewieController is null
+                    ),
+                    Spacer(),
+                  ],
+                )
+                    : getMediaType(widget.promtModel![widget.index].side1!.content!) == 'audio'
+                    ? Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    // Display play/pause button and volume/speed sliders.
+                    ControlButtons(_audioPlayer!),
+                    StreamBuilder<PositionData>(
+                      stream: _positionDataStream,
+                      builder: (context, snapshot) {
+                        final positionData = snapshot.data;
+                        return Container(
+                          margin: EdgeInsets.symmetric(horizontal: 24.0),
+                          child: ProgressBar(
+                            total: positionData?.duration ?? Duration.zero,
+                            progress: positionData?.position ?? Duration.zero,
+                            buffered: positionData?.bufferedPosition ?? Duration.zero,
+                            onSeek: (newPosition) {_audioPlayer?.seek(newPosition);},
+                          ),
+                        );
+                      },
+                    ),
+                  ],
+                )
+                    : Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Flexible(child: Text(widget.promtModel![widget.index].side1!.content!, style: TextStyle(fontSize: 19.0, fontWeight: FontWeight.bold),)),
+                  ],
+                ),
               ),
-              Spacer(),
+
               Row(
                 mainAxisAlignment:
                 MainAxisAlignment.spaceBetween,
@@ -378,7 +498,7 @@ class FrontPageWidget extends StatelessWidget {
                   SizedBox(
                     width: context.screenWidth * 0.2,
                     child: TextButton(
-                      onPressed: onView2sidePressed,
+                      onPressed: widget.onView2sidePressed,
                       child: Text('View side 2',
                           style: TextStyle(
                               fontSize: 12,
@@ -393,7 +513,7 @@ class FrontPageWidget extends StatelessWidget {
                   SizedBox(
                       width: context.screenWidth * 0.2,
                       child: ElevatedButton(
-                          onPressed: onNextButtonPressed,
+                          onPressed: widget.onNextButtonPressed,
                           style: const ButtonStyle(
                               backgroundColor:
                               MaterialStatePropertyAll(
@@ -406,7 +526,7 @@ class FrontPageWidget extends StatelessWidget {
                   SizedBox(
                       width: context.screenWidth * 0.2,
                       child: TextButton(
-                          onPressed: onViewResourcePressed,
+                          onPressed: widget.onViewResourcePressed,
                           style: const ButtonStyle(
                               backgroundColor:
                               MaterialStatePropertyAll(
@@ -426,10 +546,55 @@ class FrontPageWidget extends StatelessWidget {
       ),
     );
   }
+
+
+  Stream<PositionData> get _positionDataStream =>
+      Rx.combineLatest3<Duration, Duration, Duration?, PositionData>(
+          _audioPlayer!.positionStream,
+          _audioPlayer!.bufferedPositionStream,
+          _audioPlayer!.durationStream,
+              (position, bufferedPosition, duration) => PositionData(
+              position, bufferedPosition, duration ?? Duration.zero));
+
+  ChewieController _createChewieController(String videoUrl) {
+    final videoPlayerController = VideoPlayerController.network(videoUrl);
+    ChewieController chewieController = ChewieController(
+      videoPlayerController: videoPlayerController,
+      autoInitialize: true,
+      autoPlay: true,
+      looping: false,
+      errorBuilder: (context, errorMessage) {
+        return Center(
+          child: Text(
+            errorMessage,
+            style: const TextStyle(color: Colors.white),
+          ),
+        );
+      },
+    );
+    return chewieController!;
+  }
+
+  @override
+  void dispose() {
+    //_chewieController?.dispose();
+    //flickManager?.dispose();
+    //_audioPlayer?.dispose();
+    super.dispose();
+  }
+
+  Future<void> initVideo() async{
+    print('https://selflearning.dtechex.com/public/video/${widget.promtModel![widget.index].side1!.content!}');
+    flickManager = FlickManager(
+      videoPlayerController: VideoPlayerController.network('https://selflearning.dtechex.com/public/video/${widget.promtModel![widget.index].side1!.content!}'),
+    );
+    setState(() { _isLoading = false;});
+  }
+
 }
 
-class BackPageWidget extends StatelessWidget {
 
+class BackPageWidget extends StatefulWidget {
 
   final List<PromtModel> promtModel;
   final int index;
@@ -437,6 +602,61 @@ class BackPageWidget extends StatelessWidget {
   final double h;
   final double w;
   const BackPageWidget({super.key, required this.promtModel, required this.index, required this.onView1sidePressed, required this.h, required this.w});
+
+  @override
+  State<BackPageWidget> createState() => _BackPageWidgetState();
+}
+
+class _BackPageWidgetState extends State<BackPageWidget> {
+
+  //ChewieController? _chewieController;
+  FlickManager? flickManager;
+
+  AudioPlayer? _audioPlayer;
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    if(getMediaType(widget.promtModel![widget.index].side2!.content!) == 'video'){
+      //_chewieController = _createChewieController('https://selflearning.dtechex.com/public/video/${widget.promtModel![widget.index].side2!.content!}');
+      print('This: '+ 'https://selflearning.dtechex.com/public/video/${widget.promtModel![widget.index].side2!.content!}');
+      flickManager = FlickManager(
+        videoPlayerController: VideoPlayerController.network('https://selflearning.dtechex.com/public/video/${widget.promtModel![widget.index].side2!.content!}'),
+      );
+      setState(() {
+        _isLoading = false;
+      });
+    }else if(getMediaType(widget.promtModel![widget.index].side2!.content!) == 'audio'){
+      _audioPlayer = AudioPlayer();
+      initAudio();
+    }else{
+      setState(() {
+        _isLoading = false;
+      });
+    }
+    super.initState();
+  }
+  Future<void> initAudio() async {
+    final session = await AudioSession.instance;
+    await session.configure(const AudioSessionConfiguration.speech());
+    // Listen to errors during playback.
+    _audioPlayer?.playbackEventStream.listen((event) {},
+        onError: (Object e, StackTrace stackTrace) {
+          print('A stream error occurred: $e');
+        });
+    // Try to load audio from a source and catch any errors.
+    try {
+      // AAC example: https://dl.espressif.com/dl/audio/ff-16b-2c-44100hz.aac
+      await _audioPlayer?.setAudioSource(AudioSource.uri(Uri.parse("https://selflearning.dtechex.com/public/audio/${widget.promtModel![widget.index].side2!.content!}")));
+    } catch (e) {
+      print("Error loading audio source: $e");
+    }
+
+    setState(() {
+      _isLoading = false;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -449,98 +669,140 @@ class BackPageWidget extends StatelessWidget {
       child: Container(
         margin: EdgeInsets.all(10),
         padding: EdgeInsets.all(10),
-        child: SizedBox(
-          //height: context.screenHeight / 2,
-          child: Column(
-            children: [
-              Text(
-                  promtModel![index].name
-                      .toString(),
-                  style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 19)),
-              Spacer(),
-              SizedBox(
-                width: w,
-                //height: h * 0.3,
-                child: promtModel![index].side2!.content!.contains("jpg") ||
-                    promtModel![index].side2!.content!
-                        .contains("png") ||
-                    promtModel![index].side2!.content!
-                        .contains("jpeg")
-                    ? Center(
-                  child: CachedNetworkImage(
-                    imageUrl:
-                    "https://selflearning.dtechex.com/public/image/${promtModel![index].side2!.content}",
-                    fit: BoxFit.fill,
-                    height: h * 0.2,
-                    width: w / 1.5,
-                    progressIndicatorBuilder: (context,
-                        url,
-                        downloadProgress) =>
-                        Center(
-                          child: CircularProgressIndicator(
-                            value: downloadProgress
-                                .progress,
-                          ),
+        child: Column(
+          children: [
+            Text(
+                widget.promtModel![widget.index].name.toString(),
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 19)),
+            Expanded(
+              child: _isLoading
+                  ? Center(child: CircularProgressIndicator(),)
+                  : widget.promtModel![widget.index].side2!.content!.contains("jpg") ||
+                  widget.promtModel![widget.index].side2!.content!.contains("png") ||
+                  widget.promtModel![widget.index].side2!.content!.contains("jpeg")
+                  ? Center(child: CachedNetworkImage(
+                  imageUrl:
+                  "https://selflearning.dtechex.com/public/image/${widget.promtModel![widget.index].side2!.content}",
+                  fit: BoxFit.fitHeight,
+                  height: widget.h * 0.2,
+                  width: widget.w / 1.5,
+                  progressIndicatorBuilder: (context, url, downloadProgress) =>
+                      Center(
+                        child: CircularProgressIndicator(
+                          value: downloadProgress
+                              .progress,
                         ),
-                    errorWidget: (context, url,
-                        error) =>
-                    const Icon(Icons.error),
-                  ),
-                )
-                    : promtModel![index].side2!.content!.contains("mp3") ||
-                    promtModel![index].side2!.content!
-                        .contains("wav") ||
-                    promtModel![index].side2!.content!
-                        .contains("aac") ||
-                    promtModel![index]
-                        .side2!.content!
-                        .contains("ogg")
-                    ? AudioPlayerPage(
-                  audioUrl:
-                  "https://selflearning.dtechex.com/public/audio/${promtModel![index].side2!.content}",
-                )
-                    : promtModel![index].side2!.content!.contains("mp4") ||
-                    promtModel![index]
-                        .side2!.content!
-                        .contains("mkv") ||
-                    promtModel![index]
-                        .side2!.content!
-                        .contains("mov") ||
-                    promtModel![index]
-                        .side2!.content!
-                        .contains("avi")
-                    ?
-                // Chewie(
-                //     controller:
-                //         _createChewieController(
-                //       "https://selflearning.dtechex.com/public/${widget.mediaType}/${state.promtModel![index].side2!.content}",
-                //     ),
-                //   )
-                VideoPlayerWidget(videoUrl: "https://selflearning.dtechex.com/public/video/${promtModel![index].side2!.content}")
-                    : Text(promtModel![index].side2!.content!, style: TextStyle(fontSize: 16.0),),
-              ),
-              Spacer(),
-              Row(
-                mainAxisAlignment:
-                MainAxisAlignment.center,
+                      ),
+                  errorWidget: (context, url, error) => const Icon(Icons.error),),)
+                  : getMediaType(widget.promtModel![widget.index].side2!.content!) == 'video'
+                  ? Column(
+                    children: [
+                      Spacer(),
+                      Container(
+                        decoration: BoxDecoration(
+                            color: Colors.black,
+                            borderRadius: BorderRadius.circular(4.0)
+                        ),
+                        height: widget.h * 0.2,
+                        child: FlickVideoPlayer(
+                          flickVideoWithControls: FlickVideoWithControls(
+                            videoFit: BoxFit.fitHeight,
+                            controls: FlickPortraitControls(
+                              progressBarSettings:
+                              FlickProgressBarSettings(playedColor: Colors.green),
+                            ),
+                          ),
+                          flickManager: flickManager!,
+                        ),// Return an empty widget if _chewieController is null
+                      ),
+                      Spacer(),
+                    ],
+                  )
+                  : getMediaType(widget.promtModel![widget.index].side2!.content!) == 'audio'
+                  ? Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  ElevatedButton(
-                      onPressed: onView1sidePressed,
-                      child: Text('View side 1'),
-                      style: ButtonStyle(
-                          backgroundColor:
-                          MaterialStatePropertyAll(
-                              Colors.blueAccent))),
+                  // Display play/pause button and volume/speed sliders.
+                  ControlButtons(_audioPlayer!),
+                  StreamBuilder<PositionData>(
+                    stream: _positionDataStream,
+                    builder: (context, snapshot) {
+                      final positionData = snapshot.data;
+                      return Container(
+                        margin: EdgeInsets.symmetric(horizontal: 24.0),
+                        child: ProgressBar(
+                          total: positionData?.duration ?? Duration.zero,
+                          progress: positionData?.position ?? Duration.zero,
+                          buffered: positionData?.bufferedPosition ?? Duration.zero,
+                          onSeek: (newPosition) {_audioPlayer?.seek(newPosition);},
+                        ),
+                      );
+                    },
+                  ),
                 ],
               )
-            ],
-          ),
+                  : Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Flexible(child: Text(widget.promtModel![widget.index].side2!.content!, style: TextStyle(fontSize: 19.0, fontWeight: FontWeight.bold),)),
+                    ],
+                  ),
+            ),
+            Row(
+              mainAxisAlignment:
+              MainAxisAlignment.center,
+              children: [
+                ElevatedButton(
+                    onPressed: widget.onView1sidePressed,
+                    child: Text('View side 1'),
+                    style: ButtonStyle(
+                        backgroundColor:
+                        MaterialStatePropertyAll(
+                            Colors.blueAccent))),
+              ],
+            )
+          ],
         ),
       ),
     );
   }
+
+  Stream<PositionData> get _positionDataStream =>
+      Rx.combineLatest3<Duration, Duration, Duration?, PositionData>(
+          _audioPlayer!.positionStream,
+          _audioPlayer!.bufferedPositionStream,
+          _audioPlayer!.durationStream,
+              (position, bufferedPosition, duration) => PositionData(
+              position, bufferedPosition, duration ?? Duration.zero));
+
+  ChewieController _createChewieController(String videoUrl) {
+    final videoPlayerController = VideoPlayerController.network(videoUrl);
+    ChewieController chewieController = ChewieController(
+      videoPlayerController: videoPlayerController,
+      autoInitialize: true,
+      autoPlay: true,
+      looping: false,
+      errorBuilder: (context, errorMessage) {
+        return Center(
+          child: Text(
+            errorMessage,
+            style: const TextStyle(color: Colors.white),
+          ),
+        );
+      },
+    );
+    return chewieController!;
+  }
+
+  @override
+  void dispose() {
+    //_chewieController?.dispose();
+    //flickManager?.dispose();
+    //_audioPlayer?.dispose();
+    super.dispose();
+  }
+
 }
 
 
@@ -624,15 +886,9 @@ class _BackPage2WidgetState extends State<BackPage2Widget> {
                   fit: BoxFit.fitHeight,
                   //height: h * 0.,
                   //width: 50,
-                  progressIndicatorBuilder: (context, url,
-                      downloadProgress) =>
-                      Center(
-                        child: CircularProgressIndicator(
-                            value: downloadProgress.progress),
-                      ),
-                  errorWidget: (context, url, error) =>
-                      Icon(Icons.error),
-                ),)
+                  progressIndicatorBuilder: (context, url, downloadProgress) =>
+                      Center(child: CircularProgressIndicator(value: downloadProgress.progress),),
+                  errorWidget: (context, url, error) => Icon(Icons.error),),)
                   : getMediaType(widget.content) == 'video'
                       ? Expanded(
                 child: Container(
@@ -720,7 +976,8 @@ class _BackPage2WidgetState extends State<BackPage2Widget> {
 
   @override
   void dispose() {
-    _chewieController?.dispose();
+    //_chewieController?.dispose();
+    //_audioPlayer?.dispose();
     super.dispose();
   }
 
