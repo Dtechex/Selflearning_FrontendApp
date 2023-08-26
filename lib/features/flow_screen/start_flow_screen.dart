@@ -110,6 +110,7 @@ class _StartFlowScreenState extends State<StartFlowScreen> {
                     DragFlipper(
                       /// Card 1 front
                       front: FrontPageWidget(
+                        key: GlobalKey(),
                         promtModel: state.promtModel!,
                         index: _currentPage,
                         h: h,
@@ -165,6 +166,7 @@ class _StartFlowScreenState extends State<StartFlowScreen> {
                       ), //required
                       ///card 2 back
                       back: !_showResource? BackPageWidget(
+                        key: GlobalKey(),
                         promtModel: state.promtModel!,
                         index: _currentPage,
                         onView1sidePressed: () {
@@ -452,6 +454,7 @@ class _FrontPageWidgetState extends State<FrontPageWidget> {
                       child: FlickVideoPlayer(
                         flickVideoWithControls: FlickVideoWithControls(
                           videoFit: BoxFit.fitHeight,
+                          controls: const FlickPortraitControls(),
                         ),
                         flickManager: flickManager!,
                       ),// Return an empty widget if _chewieController is null
