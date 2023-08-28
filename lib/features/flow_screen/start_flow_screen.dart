@@ -710,10 +710,7 @@ class _BackPageWidgetState extends State<BackPageWidget> {
                         child: FlickVideoPlayer(
                           flickVideoWithControls: FlickVideoWithControls(
                             videoFit: BoxFit.fitHeight,
-                            controls: FlickPortraitControls(
-                              progressBarSettings:
-                              FlickProgressBarSettings(playedColor: Colors.green),
-                            ),
+                            controls: FlickPortraitControls(),
                           ),
                           flickManager: flickManager!,
                         ),// Return an empty widget if _chewieController is null

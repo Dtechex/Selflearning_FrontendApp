@@ -10,6 +10,7 @@ import 'package:self_learning_app/utilities/shared_pref.dart';
 import 'package:self_learning_app/widgets/add_resources_screen.dart';
 
 import '../category/bloc/category_bloc.dart';
+import '../promt/promts_screen.dart';
 import '../subcate1.1/sub_category_1.1_screen.dart';
 import '../update_category/update_cate_screen.dart';
 import 'bloc/sub_cate_bloc.dart';
@@ -87,7 +88,19 @@ class _SubCategoryScreenState extends State<SubCategoryScreen> {
           }, icon: Icon(Icons.home)),
               label: 'Home',
               backgroundColor: primaryColor),
-          BottomNavigationBarItem( icon: Icon(Icons.create),
+          BottomNavigationBarItem(
+              icon: IconButton(
+                icon: Icon(Icons.create),
+                onPressed: () {
+                  Navigator.push(context, MaterialPageRoute(
+                    builder: (context) {
+                      return CreateSubCateScreen(
+                        rootId: widget.rootId,
+                      );
+                    },
+                  ));
+                },
+              ),
               label: 'Create',
               backgroundColor: primaryColor),
           BottomNavigationBarItem(
@@ -107,30 +120,6 @@ class _SubCategoryScreenState extends State<SubCategoryScreen> {
               label: 'Schedule',
               backgroundColor: primaryColor),
         ]),
-          floatingActionButton: SizedBox(
-            height: context.screenHeight * 0.1,
-            child: FittedBox(
-              child: ElevatedButton(
-                onPressed: () {
-                  Navigator.push(context, MaterialPageRoute(
-                    builder: (context) {
-                      return CreateSubCateScreen(
-                        rootId: widget.rootId,
-                      );
-                    },
-                  ));
-                },
-                child: Row(
-                  children: const [
-                    Text(
-                      '      Create\n Subcategory',
-                      style: TextStyle(fontSize: 9),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
           appBar: AppBar(
               bottom:  TabBar(
                 tabs: [

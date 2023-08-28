@@ -46,6 +46,57 @@ class _AddResourceScreenState extends State<AddResourceScreen> {
     print(widget.rootId);
     print('rootId');
     return Scaffold(
+        floatingActionButton: SizedBox(
+          height: context.screenHeight * 0.1,
+          child: FittedBox(
+            child: ElevatedButton(
+              onPressed: () {
+                /*print(state.allResourcesModel.data!
+                    .record!.records![index].content);
+
+                Navigator.push(context,
+                    MaterialPageRoute(
+                      builder: (context) {
+                        return PromtsScreen(
+                            content: state
+                                .allResourcesModel
+                                .data!
+                                .record!
+                                .records![index]
+                                .content ??
+                                state
+                                    .allResourcesModel
+                                    .data!
+                                    .record!
+                                    .records![index]
+                                    .title,
+                            mediaType: state
+                                .allResourcesModel
+                                .data!
+                                .record!
+                                .records![index]
+                                .type!,
+                            promtId: state
+                                .allResourcesModel
+                                .data!
+                                .record!
+                                .records![index]
+                                .sId!);
+                      },
+                    ));*/
+              },
+              child: Row(
+                children: const [
+                  Text(
+                    'Create Flow',
+                    style: TextStyle(fontSize: 9),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+
         body: SizedBox(
       child: ListView.builder(
         shrinkWrap: true,

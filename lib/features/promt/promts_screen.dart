@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -71,96 +73,103 @@ class _PromtsScreenState extends State<PromtsScreen> {
     print("https://selflearning.dtechex.com/public/${widget.mediaType}/${widget.content}");
     return Scaffold(
       appBar: AppBar(title: const Text('Prompts')),
-      body: Scaffold(
-        body: BlocConsumer<PromtBloc, PromtState>(
-          listener: (context, state) {
-            if (state is PromtLoaded) {
-              if (state.apiState == ApiState.Success) {
-                Navigator.pop(context);
-                context.showSnackBar(SnackBar(content: Text('Flow added')));
-              }
+      body: BlocConsumer<PromtBloc, PromtState>(
+        listener: (context, state) {
+          if (state is PromtLoaded) {
+            if (state.apiState == ApiState.Success) {
+              Navigator.pop(context);
+              context.showSnackBar(SnackBar(content: Text('Flow added')));
             }
-          },
-          builder: (context, state) {
-            if (state is PromtLoading) {
+          }
+        },
+        builder: (context, state) {
+          if (state is PromtLoading) {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          } else if (state is PromtError) {
+            return Center(
+              child: Text(state.error!),
+            );
+          } else if (state is PromtLoaded) {
+            if (state.addFlowModel!.flow!.isEmpty) {
               return const Center(
-                child: CircularProgressIndicator(),
+                child: Text('No prompts found'),
               );
-            } else if (state is PromtError) {
-              return Center(
-                child: Text(state.error!),
-              );
-            } else if (state is PromtLoaded) {
-              if (state.addFlowModel!.flow!.isEmpty) {
-                return const Center(
-                  child: Text('No prompts found'),
-                );
-              } else {
-                return Column(
+            } else {
+              return Scaffold(
+                floatingActionButton: SizedBox(
+                  height: context.screenHeight * 0.1,
+                  child: FittedBox(
+                    child: ElevatedButton(
+                      onPressed: () {
+
+                        Navigator.push(context, MaterialPageRoute( builder: (context) { return StartFlowScreen(
+                          content: widget.content,
+                          mediaType: widget.mediaType,
+                          promtId: widget.promtId,
+                        );},));
+                      },
+                      child: Row(
+                        children: const [
+                          Text(
+                            'Create Flow',
+                            style: TextStyle(fontSize: 9),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                body: Column(
                   children: [
                     Expanded(
                         child: ReorderableListView(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 10, vertical: 10),
-                      children: <Widget>[
-                        for (int index = 0;
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 10, vertical: 10),
+                          children: <Widget>[
+                            for (int index = 0;
                             index < state.addFlowModel!.flow!.length;
                             index += 1)
-                          ListTile(
-                            leading: CircleAvatar(
-                                maxRadius: 17, child: Text("${index + 1}")),
-                            trailing: Icon(Icons.menu),
-                            key: Key('$index'),
-                            tileColor:
-                                index.isOdd ? oddItemColor : evenItemColor,
-                            title: Row(
-                              children: [
-                                Text(
-                                    '${state.addFlowModel!.flow![index].name}')
-                              ],
-                            ),
-                          ),
-                      ],
-                      onReorder: (int oldIndex, int newIndex) {
-                        setState(() {
-                          if (oldIndex < newIndex) {
-                            newIndex -= 1;
-                          }
-                          //print(state.addFlowModel)
-                          PromptFlow item = state.addFlowModel!.flow!.removeAt(oldIndex);
-                          state.addFlowModel!.flow!.insert(newIndex, item);
+                              ListTile(
+                                leading: CircleAvatar(
+                                    maxRadius: 17, backgroundColor: generateRandomColor(),
+                                  foregroundColor: Colors.white,
+                                  child: Text(
+                                    extractFirstLetter(state.addFlowModel!.flow![index].name!),
+                                    style: TextStyle(fontWeight: FontWeight.bold),)
+                                  ,),
+                                trailing: Icon(Icons.menu),
+                                key: Key('$index'),
+                                tileColor: index.isOdd ? oddItemColor : evenItemColor,
+                                title: Row(
+                                  children: [
+                                    Text('${state.addFlowModel!.flow![index].name}')
+                                  ],
+                                ),
+                              ),
+                          ],
+                          onReorder: (int oldIndex, int newIndex) {
+                            setState(() {
+                              if (oldIndex < newIndex) {
+                                newIndex -= 1;
+                              }
+                              //print(state.addFlowModel)
+                              PromptFlow item = state.addFlowModel!.flow!.removeAt(oldIndex);
+                              state.addFlowModel!.flow!.insert(newIndex, item);
 
-                          PromtModel model = state.promtModel!.removeAt(oldIndex);
-                          state.promtModel!.insert(newIndex, model);
-                        });
-                      },
-                    )),
-                    ElevatedButton(
-                        style: const ButtonStyle(
-                            backgroundColor:
-                                MaterialStatePropertyAll(Colors.red)),
-                        onPressed: () {
-
-                          /*print(state.allResourcesModel.data!
-                              .record!.records![index].content);*/
-
-                          Navigator.push(context, MaterialPageRoute( builder: (context) { return StartFlowScreen(
-                              content: widget.content,
-                              mediaType: widget.mediaType,
-                              promtId: widget.promtId,
-                          );},));
-                          /*print(state.addFlowModel!.flow![0].name);
-                          context.read().add(AddPromptFlow(
-                              addFlowModel: state.addFlowModel));*/
-                        },
-                        child: Text('Create Flow'))
+                              PromtModel model = state.promtModel!.removeAt(oldIndex);
+                              state.promtModel!.insert(newIndex, model);
+                            });
+                          },
+                        )),
                   ],
-                );
-              }
+                ),
+              );
             }
-            return const SizedBox();
-          },
-        ),
+          }
+          return const SizedBox();
+        },
       ),
     );
   }
@@ -198,4 +207,39 @@ class _PromtsScreenState extends State<PromtsScreen> {
 //     return const Placeholder();
 //   }
 // }
+
+
+
+  Color generateRandomColor() {
+    final Random random = Random();
+    Color color;
+
+    do {
+      color = Color.fromARGB(
+        255,
+        random.nextInt(256),
+        random.nextInt(256),
+        random.nextInt(256),
+      );
+    } while (_isBright(color) || color == Colors.white);
+
+    return color;
+  }
+
+  bool _isBright(Color color) {
+    // Calculate the luminance of the color using the formula
+    // Luminance = 0.299 * Red + 0.587 * Green + 0.114 * Blue
+    double luminance = 0.299 * color.red + 0.587 * color.green + 0.114 * color.blue;
+
+    // Return true if the luminance is greater than a threshold (adjust as needed)
+    return luminance > 180;
+  }
+
+  String extractFirstLetter(String text) {
+    if (text.isEmpty) {
+      return text;
+    }
+    return text.substring(0,1).toUpperCase();
+  }
+
 }

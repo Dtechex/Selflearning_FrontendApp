@@ -95,6 +95,8 @@ class Records {
     updatedAt = json['updatedAt'];
     iV = json['__v'];
     title = json['title'];
+
+    print('$sId $type $content $rootId $createdAt $updatedAt $iV $title\n Response');
   }
 
   Map<String, dynamic> toJson() {

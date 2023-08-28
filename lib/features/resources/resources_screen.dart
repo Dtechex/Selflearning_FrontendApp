@@ -86,6 +86,7 @@ class _AllResourcesListState extends State<AllResourcesList> {
           return true;
         },
         child: Scaffold(
+          backgroundColor: const Color(0xFFEEEEEE),
           appBar: AppBar(
               title: const Text('Resources'),
             leading: IconButton(
@@ -128,10 +129,128 @@ class _AllResourcesListState extends State<AllResourcesList> {
                         final content = state.allResourcesModel.data!.record!
                             .records![index].content
                             .toString();
+                        final title = state.allResourcesModel.data!.record!
+                            .records![index].title;
                         print(content);
                         print('content');
 
-                        return SizedBox(
+                        return Card(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12.0),
+                          ),
+                          child: ListTile(
+                            tileColor: Colors.white,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12.0),
+                            ),
+                            leading: Container(
+                              padding: const EdgeInsets.all(4.0),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(12.0),
+                                color: const Color(0xFFF5F5F5),
+                              ),
+                                child: getFileType(content)=='Photo'
+                                    ? CachedNetworkImage(
+                                  imageUrl: 'https://selflearning.dtechex.com/public/image/$content',
+                                  fit: BoxFit.fitHeight,
+                                  height: 40,
+                                  width: 50,
+                                  progressIndicatorBuilder: (context, url,
+                                      downloadProgress) =>
+                                      Center(
+                                        child: CircularProgressIndicator(
+                                            value: downloadProgress.progress),
+                                      ),
+                                  errorWidget: (context, url, error) =>
+                                      Icon(Icons.error),
+                                )
+                                    :getMediaType(content) == 'video'
+                                    ? const Icon(Icons.video_camera_back_outlined, size: 35,)
+                                    : getMediaType(content) == 'audio'
+                                    ? const Icon(Icons.audiotrack, size: 35)
+                                    : const Icon(Icons.text_format_sharp, size: 35),
+                            ),
+                            title: Text(
+                              title != null
+                                  ?'${title.substring(0,1).toUpperCase()}${title.substring(1)}'
+                                  : 'Untitled',
+                              style: TextStyle(fontSize: 20.0, letterSpacing: 1, fontWeight: FontWeight.w600),),
+                            subtitle: Row(
+                              children: [
+                                ElevatedButton(
+                                  child: const Text('Add'),
+                                  onPressed: () {
+                                    context.push(AddPromptsScreen(
+                                      resourceId: state.allResourcesModel.data!
+                                          .record!.records![index].sId
+                                          .toString(),
+                                    ));
+                                  },
+                                ),
+                                SizedBox(width: 5.0,),
+                                ElevatedButton(
+                                  child: const Text('Remove'),
+                                  onPressed: () {
+
+                                    resourcesBloc.add(
+                                        DeleteResourcesEvent(
+                                            rootId: state
+                                                .allResourcesModel
+                                                .data!
+                                                .record!
+                                                .records![index]
+                                                .sId
+                                                .toString()));
+                                  },
+                                ),
+                              ],
+                            ),
+                            trailing: Container(
+                              decoration: BoxDecoration(
+                                color: Colors.red,
+                                shape: BoxShape.circle,
+                              ),
+                              child: IconButton(
+                                  onPressed: () {
+                                    print(state.allResourcesModel.data!
+                                        .record!.records![index].content);
+
+                                    Navigator.push(context,
+                                        MaterialPageRoute(
+                                          builder: (context) {
+                                            return PromtsScreen(
+                                                content: state
+                                                    .allResourcesModel
+                                                    .data!
+                                                    .record!
+                                                    .records![index]
+                                                    .content ??
+                                                    state
+                                                        .allResourcesModel
+                                                        .data!
+                                                        .record!
+                                                        .records![index]
+                                                        .title,
+                                                mediaType: state
+                                                    .allResourcesModel
+                                                    .data!
+                                                    .record!
+                                                    .records![index]
+                                                    .type!,
+                                                promtId: state
+                                                    .allResourcesModel
+                                                    .data!
+                                                    .record!
+                                                    .records![index]
+                                                    .sId!);
+                                          },
+                                        ));
+                                  },
+                                  icon: const Icon(Icons.play_arrow_rounded,), color: Colors.white),
+                            ),
+                          ),
+                        );
+                        /*return SizedBox(
                           width: context.screenWidth,
                           height: 60,
                           child: Row(
@@ -157,8 +276,7 @@ class _AllResourcesListState extends State<AllResourcesList> {
                                 errorWidget: (context, url, error) =>
                                     Icon(Icons.error),
                               )
-                                  : SizedBox(
-                                  width: 50,
+                                  : SizedBox(width: 50,
                                   child: getMediaType(content) == 'video'
                                       ? const Icon(
                                     Icons.video_camera_back_outlined,
@@ -219,7 +337,7 @@ class _AllResourcesListState extends State<AllResourcesList> {
                                       ));
                                 },
                               ),
-                              /*SizedBox(width: 5.0,),
+                              *//*SizedBox(width: 5.0,),
                               ElevatedButton(
                                 child: const Text('Start'),
                                 onPressed: () {
@@ -257,7 +375,7 @@ class _AllResourcesListState extends State<AllResourcesList> {
                                         },
                                       ));
                                 },
-                              ),*/
+                              ),*//*
                               Spacer(),
                               IconButton(
                                   onPressed: () {
@@ -275,7 +393,7 @@ class _AllResourcesListState extends State<AllResourcesList> {
                               Spacer(),
                             ],
                           ),
-                        );
+                        );*/
                       });
                 }
               }

@@ -1,11 +1,14 @@
 import 'dart:io';
 
 import 'package:dropdown_button2/dropdown_button2.dart';
+import 'package:external_path/external_path.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:record/record.dart';
 import 'package:self_learning_app/features/add_media/bloc/add_media_bloc.dart';
 import 'package:self_learning_app/features/add_promts/bloc/add_prompts_bloc.dart';
 import 'package:self_learning_app/utilities/extenstion.dart';
@@ -36,11 +39,26 @@ class _AddPromptsScreenState extends State<AddPromptsScreen> {
   GlobalKey<FormState> _side2TextformKey = GlobalKey<FormState>();
   FocusNode _questionFocusNode = FocusNode();
   FocusNode _answerFocusNode = FocusNode();
+
+  bool _isRecording1 = false;
+  final recorder1 = Record();
+  bool _isRecording2 = false;
+  final recorder2 = Record();
+
+
+  Future initRecorder() async {
+    final status = await Permission. microphone. request ();
+    if (status != PermissionStatus. granted) {
+      throw 'Microphone permission not granted';
+    }
+
+  }
   @override
   void initState() {
     // side2_Controller.text='';
     // side1_Controller.text='';
     // addPromptsBloc.add(LoadPrompts());
+    initRecorder();
     super.initState();
   }
 
@@ -105,35 +123,29 @@ class _AddPromptsScreenState extends State<AddPromptsScreen> {
                     builder: (context, state) {
                       return Column(
                         children: [
-                          Container(
-                            margin: EdgeInsets.all(10),
-                            decoration: BoxDecoration(
-                              border: Border.all(
-                                color: Colors.black.withOpacity(
-                                    0.5), // Set border color to red
-                                width: 2, // Set border width
-                              ),
-                              borderRadius: BorderRadius.circular(10),
-                              color: Colors.grey.shade200,
-                            ),
-                            padding: EdgeInsets.all(10),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 8.0),
                             child: Form(
                               key: _titleformKey,
                               child: TextFormField(
                                 validator: (value) {
-                                  if (value!.isEmpty) {
+                                  if (value!.isEmpty || value == '') {
                                     return "Field required";
                                   }
                                   return null;
                                 },
                                 controller: title_Controller,
                                 onTap: () {},
-                                decoration: InputDecoration.collapsed(
+                                textAlign: TextAlign.center,
+                                style: TextStyle(fontWeight: FontWeight.w600, fontSize: 20.0, letterSpacing: 1),
+                                decoration: InputDecoration(
                                     hintText: 'Add Title',
-                                    hintStyle: TextStyle(fontSize: 12)),
+                                  hintStyle: TextStyle(fontWeight: FontWeight.w600, fontSize: 20.0, letterSpacing: 1),
+                                ),
                               ),
                             ),
                           ),
+                          SizedBox(height: 12.0,),
                           Card(
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(12.0),
@@ -146,7 +158,14 @@ class _AddPromptsScreenState extends State<AddPromptsScreen> {
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    const Text('Side 1/ Question'),
+                                    const Text.rich(
+                                      TextSpan(
+                                        children: [
+                                          TextSpan(text: 'Side 1/ '),
+                                          TextSpan(text: 'Question', style: TextStyle(fontWeight: FontWeight.bold)),
+                                        ]
+                                      )
+                                    ),
                                     Row(
                                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                       children: [
@@ -162,7 +181,14 @@ class _AddPromptsScreenState extends State<AddPromptsScreen> {
                                           //width: context.screenWidth / 2,
                                           child: Row(
                                             children: [
-                                              Icon(Icons.text_format,
+                                              Icon(
+                                                  state.side1selectedMediaType == 'Video'
+                                                      ? Icons.videocam_outlined
+                                                      : state.side1selectedMediaType == 'Image'
+                                                      ? Icons.image
+                                                      : state.side1selectedMediaType == 'Audio'
+                                                      ? Icons.music_note
+                                                      : Icons.text_format,
                                                   color: Colors.white),
                                               const SizedBox(
                                                 width: 20,
@@ -175,9 +201,7 @@ class _AddPromptsScreenState extends State<AddPromptsScreen> {
                                                     color: Colors.white),
 
                                                 // Initial Value
-                                                value: state
-                                                        .side1selectedMediaType ??
-                                                    mediaType.first,
+                                                value: state.side1selectedMediaType ?? mediaType.first,
 
                                                 // Down Arrow Icon
                                                 icon: const Icon(
@@ -286,15 +310,49 @@ class _AddPromptsScreenState extends State<AddPromptsScreen> {
                                         ),
                                         ElevatedButton(
                                             onPressed: () {
-                                              ImagePickerHelper.pickVideo(imageSource: ImageSource.camera)
-                                                  .then((value) {
-                                                    if(value != null) {
-                                                      addPromptsBloc.add(
-                                                          PickResource(
-                                                              mediaUrl: value!.path,
-                                                              whichSide: 0));
-                                                    }
-                                              });
+                                              showModalBottomSheet(
+                                                context: context,
+                                                builder: (BuildContext context) {
+                                                  return SafeArea(
+                                                    child: Container(
+                                                      child: Wrap(
+                                                        children: <Widget>[
+                                                          ListTile(
+                                                            leading: Icon(Icons.photo_library),
+                                                            title: Text('Photo Library'),
+                                                            onTap: () {
+                                                              ImagePickerHelper.pickVideo(imageSource: ImageSource.gallery).then((value) {
+                                                                if(value != null) {
+                                                                  addPromptsBloc.add(
+                                                                      PickResource(
+                                                                          mediaUrl: value!.path,
+                                                                          whichSide: 0));
+                                                                }
+                                                              });
+                                                              Navigator.of(context).pop();
+                                                            },
+                                                          ),
+                                                          ListTile(
+                                                            leading: Icon(Icons.camera_alt),
+                                                            title: Text('Camera'),
+                                                            onTap: () {
+                                                              ImagePickerHelper.pickVideo(imageSource: ImageSource.camera).then((value) {
+                                                                if(value != null) {
+                                                                  addPromptsBloc.add(
+                                                                      PickResource(
+                                                                          mediaUrl: value!.path,
+                                                                          whichSide: 0));
+                                                                }
+                                                              });
+                                                              Navigator.of(context).pop();
+                                                            },
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  );
+                                                },
+                                              );
                                             },
                                             child: Text('Choose File')
                                         ),
@@ -318,16 +376,55 @@ class _AddPromptsScreenState extends State<AddPromptsScreen> {
                                               fit: BoxFit.fitHeight,)),
                                         ElevatedButton(
                                             onPressed: () {
-                                              ImagePickerHelper.pickImage(imageSource: ImageSource.camera)
-                                                  .then((value) {
-                                                    if(value != null) {
-                                                      addPromptsBloc.add(
-                                                          PickResource(
-                                                              mediaUrl: value!
-                                                                  .path,
-                                                              whichSide: 0));
-                                                    }
-                                              });
+                                              showModalBottomSheet(
+                                                context: context,
+                                                builder: (BuildContext context) {
+                                                  return SafeArea(
+                                                    child: Container(
+                                                      child: Wrap(
+                                                        children: <Widget>[
+                                                          ListTile(
+                                                            leading: Icon(Icons.photo_library),
+                                                            title: Text('Photo Library'),
+                                                            onTap: () {
+                                                              ImagePickerHelper.pickImage(
+                                                                  imageSource: ImageSource.gallery)
+                                                                  .then((value) {
+                                                                if(value != null) {
+                                                                  addPromptsBloc.add(
+                                                                      PickResource(
+                                                                          mediaUrl: value!
+                                                                              .path,
+                                                                          whichSide: 0));
+                                                                }
+                                                              });
+                                                              Navigator.of(context).pop();
+                                                            },
+                                                          ),
+                                                          ListTile(
+                                                            leading: Icon(Icons.camera_alt),
+                                                            title: Text('Camera'),
+                                                            onTap: () {
+                                                              ImagePickerHelper.pickImage(
+                                                                  imageSource: ImageSource.camera)
+                                                                  .then((value) {
+                                                                if(value != null) {
+                                                                  addPromptsBloc.add(
+                                                                      PickResource(
+                                                                          mediaUrl: value!
+                                                                              .path,
+                                                                          whichSide: 0));
+                                                                }
+                                                              });
+                                                              Navigator.of(context).pop();
+                                                            },
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  );
+                                                },
+                                              );
                                             },
                                             child: Text('Choose File')
                                         ),
@@ -340,7 +437,19 @@ class _AddPromptsScreenState extends State<AddPromptsScreen> {
                                             alignment: Alignment.center,
                                             height: MediaQuery.of(context).size.height * 0.2,
                                             width: MediaQuery.of(context).size.height * 0.2,
-                                            child: Icon(Icons.music_note)),
+                                            child: Column(
+                                              mainAxisAlignment: MainAxisAlignment.center,
+                                              children: [
+                                                _isRecording1==true
+                                                    ?FloatingActionButton(onPressed: () {stopRecording(1);},child: Icon(Icons.stop))
+                                                    :FloatingActionButton(onPressed: () {startRecording(1);},child: Icon(Icons.mic)),
+                                                SizedBox(height: 8.0,),
+                                                Text(_isRecording1?'Stop Recording':'Start Recording'),
+                                              ],
+                                            )
+                                            ),
+                                        Text('OR'),
+
                                         ElevatedButton(
                                             onPressed: () {
                                               ImagePickerHelper.pickFile()
@@ -394,7 +503,14 @@ class _AddPromptsScreenState extends State<AddPromptsScreen> {
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Text('Side 2/ Answer'),
+                                    const Text.rich(
+                                        TextSpan(
+                                            children: [
+                                              TextSpan(text: 'Side 2/ '),
+                                              TextSpan(text: 'Answer', style: TextStyle(fontWeight: FontWeight.bold)),
+                                            ]
+                                        )
+                                    ),
                                     Row(
                                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                       children: [
@@ -403,14 +519,20 @@ class _AddPromptsScreenState extends State<AddPromptsScreen> {
                                           padding: EdgeInsets.only(left: 10),
                                           decoration: BoxDecoration(
                                               color: primaryColor,
-                                              borderRadius:
-                                                  BorderRadius.circular(10)),
+                                              borderRadius: BorderRadius.circular(10)),
                                           margin: EdgeInsets.only(top: 10),
                                           height: 40,
                                           //width: context.screenWidth / 2,
                                           child: Row(
                                             children: [
-                                              Icon(Icons.text_format,
+                                              Icon(
+                                                  state.side2selectedMediaType == 'Video'
+                                                      ? Icons.videocam_outlined
+                                                      : state.side2selectedMediaType == 'Image'
+                                                      ? Icons.image
+                                                      : state.side2selectedMediaType == 'Audio'
+                                                      ? Icons.music_note
+                                                      : Icons.text_format,
                                                   color: Colors.white),
                                               SizedBox(
                                                 width: 20,
@@ -419,13 +541,10 @@ class _AddPromptsScreenState extends State<AddPromptsScreen> {
                                                 dropdownColor: Colors.redAccent,
                                                 iconEnabledColor: Colors.white,
 
-                                                style: const TextStyle(
-                                                    color: Colors.white),
+                                                style: const TextStyle(color: Colors.white),
 
                                                 // Initial Value
-                                                value: state
-                                                        .side2selectedMediaType ??
-                                                    mediaType.first,
+                                                value: state.side2selectedMediaType ?? mediaType.first,
 
                                                 // Down Arrow Icon
                                                 icon: const Icon(
@@ -481,13 +600,13 @@ class _AddPromptsScreenState extends State<AddPromptsScreen> {
                                                 controller: side2_Controller,
                                                 focusNode: _answerFocusNode,
                                                 onTap: () {
-                                                  if(state.resource1status == Resource1Status.selected && state.side1Id == ''){
+                                                  /*if(state.resource1status == Resource1Status.selected && state.side1Id == ''){
                                                     saveResource1(state);
                                                   }else if(side1_Controller.text != '' && state.side1Id == ''){
                                                     saveResource1(state);
                                                   }else{
                                                     ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Resource 1 is not saved!')));
-                                                  }
+                                                  }*/
                                                 },
                                                 onTapOutside: (event) {
                                                   if(_answerFocusNode.hasFocus){
@@ -540,16 +659,49 @@ class _AddPromptsScreenState extends State<AddPromptsScreen> {
                                         ),
                                         ElevatedButton(
                                             onPressed: () {
-                                              ImagePickerHelper.pickVideo(imageSource: ImageSource.camera)
-                                                  .then((value) {
-                                                    if(value != null) {
-                                                      addPromptsBloc.add(
-                                                          PickResource(
-                                                              mediaUrl: value!
-                                                                  .path,
-                                                              whichSide: 1));
-                                                    }
-                                              });
+                                              showModalBottomSheet(
+                                                context: context,
+                                                builder: (BuildContext context) {
+                                                  return SafeArea(
+                                                    child: Container(
+                                                      child: Wrap(
+                                                        children: <Widget>[
+                                                          ListTile(
+                                                            leading: Icon(Icons.photo_library),
+                                                            title: Text('Photo Library'),
+                                                            onTap: () {
+                                                              ImagePickerHelper.pickVideo(imageSource: ImageSource.gallery).then((value) {
+                                                                if(value != null) {
+                                                                  addPromptsBloc.add(
+                                                                      PickResource(
+                                                                          mediaUrl: value!.path,
+                                                                          whichSide: 1));
+                                                                }
+                                                              });
+                                                              Navigator.of(context).pop();
+                                                            },
+                                                          ),
+                                                          ListTile(
+                                                            leading: Icon(Icons.camera_alt),
+                                                            title: Text('Camera'),
+                                                            onTap: () {
+                                                              ImagePickerHelper.pickVideo(imageSource: ImageSource.camera).then((value) {
+                                                                if(value != null) {
+                                                                  addPromptsBloc.add(
+                                                                      PickResource(
+                                                                          mediaUrl: value!.path,
+                                                                          whichSide: 1));
+                                                                }
+                                                              });
+                                                              Navigator.of(context).pop();
+                                                            },
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  );
+                                                },
+                                              );
                                             },
                                             child: Text('Choose File')
                                         ),
@@ -565,24 +717,63 @@ class _AddPromptsScreenState extends State<AddPromptsScreen> {
                                             height: MediaQuery.of(context).size.height * 0.2,
                                             width: MediaQuery.of(context).size.height * 0.2,
                                             child: Icon(Icons.image))
-                                            : SizedBox(
-                                          height: MediaQuery.of(context).size.height * 0.2,
+                                            : SizedBox(height: MediaQuery.of(context).size.height * 0.2,
                                             child: Image.file(
                                               File(state.side2ResourceUrl!),
                                               errorBuilder: (context, error, stackTrace) => Flexible(child: Text('Please choose file again!', style: TextStyle(color: Colors.red),),),
                                               fit: BoxFit.fitHeight,)),
                                         ElevatedButton(
                                             onPressed: () {
-                                              ImagePickerHelper.pickImage(imageSource: ImageSource.camera)
-                                                  .then((value) {
-                                                    if(value != null) {
-                                                      addPromptsBloc.add(
-                                                          PickResource(
-                                                              mediaUrl: value
-                                                                  .path,
-                                                              whichSide: 1));
-                                                    }
-                                              });
+
+
+                                              showModalBottomSheet(
+                                                  context: context,
+                                                  builder: (BuildContext context) {
+                                                return SafeArea(
+                                                  child: Container(
+                                                    child: Wrap(
+                                                      children: <Widget>[
+                                                        ListTile(
+                                                          leading: Icon(Icons.photo_library),
+                                                          title: Text('Photo Library'),
+                                                          onTap: () {
+                                                            ImagePickerHelper.pickImage(
+                                                                imageSource: ImageSource.gallery)
+                                                                .then((value) {
+                                                              if(value != null) {
+                                                                addPromptsBloc.add(
+                                                                    PickResource(
+                                                                        mediaUrl: value
+                                                                            .path,
+                                                                        whichSide: 1));
+                                                              }
+                                                            });
+                                                            Navigator.of(context).pop();
+                                                          },
+                                                        ),
+                                                        ListTile(
+                                                          leading: Icon(Icons.camera_alt),
+                                                          title: Text('Camera'),
+                                                          onTap: () {
+                                                            ImagePickerHelper.pickImage(
+                                                                imageSource: ImageSource.camera)
+                                                                .then((value) {
+                                                              if(value != null) {
+                                                                addPromptsBloc.add(
+                                                                    PickResource(
+                                                                        mediaUrl: value
+                                                                            .path,
+                                                                        whichSide: 1));
+                                                              }
+                                                            });
+                                                            Navigator.of(context).pop();
+                                                          },
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                );
+                                              },);
                                             },
                                             child: Text('Choose File')
                                         ),
@@ -595,7 +786,19 @@ class _AddPromptsScreenState extends State<AddPromptsScreen> {
                                             alignment: Alignment.center,
                                             height: MediaQuery.of(context).size.height * 0.2,
                                             width: MediaQuery.of(context).size.height * 0.2,
-                                            child: Icon(Icons.music_note)),
+                                            child: Column(
+                                              mainAxisAlignment: MainAxisAlignment.center,
+                                              children: [
+                                                _isRecording2==true
+                                                    ?FloatingActionButton(onPressed: () {stopRecording(2);},child: Icon(Icons.stop))
+                                                    :FloatingActionButton(onPressed: () {startRecording(2);},child: Icon(Icons.mic)),
+                                                SizedBox(height: 8.0,),
+                                                Text(_isRecording2?'Stop Recording':'Start Recording'),
+                                              ],
+                                            )
+                                        ),
+                                        Text('OR'),
+
                                         ElevatedButton(
                                             onPressed: () {
                                               ImagePickerHelper.pickFile()
@@ -664,9 +867,8 @@ class _AddPromptsScreenState extends State<AddPromptsScreen> {
   }
 
   Future<void> onAddPromptPressed(AddPromptsInitial state, BuildContext context) async{
-    if (title_Controller.text.isEmpty) {
-      context.showSnackBar(SnackBar(
-          content: Text("Title Required..")));
+    if (!_titleformKey.currentState!.validate()) {
+      context.showSnackBar(SnackBar(content: Text("Title Required..")));
       return;
     }else if(state.side1Id != '' && state.side2Id != ''){
 
@@ -821,6 +1023,80 @@ class _AddPromptsScreenState extends State<AddPromptsScreen> {
 
     return uint8list;
   }
+
+  Future<void> startRecording(int recorderValue) async {
+    print('start');
+    await Permission.microphone.request();
+    await Permission.storage.request();
+    await Permission.audio.request();
+    await Permission.accessMediaLocation.request();
+    await Permission.manageExternalStorage.request();
+    String downloadPath = await ExternalPath.getExternalStoragePublicDirectory(ExternalPath.DIRECTORY_DOWNLOADS);
+
+    print(downloadPath);
+
+    if(recorderValue == 1){
+
+      setState(() {
+        _isRecording1 = true;
+      });
+      await recorder1.start(
+        path: '$downloadPath/myFile.m4a',
+        encoder: AudioEncoder.aacLc, // by default
+        bitRate: 128000, // by default
+        samplingRate: 44100, // by default
+      );
+    }else{
+
+      setState(() {
+        _isRecording2 = true;
+      });
+      await recorder2.start(
+        path: '$downloadPath/myFile.m4a',
+        encoder: AudioEncoder.aacLc, // by default
+        bitRate: 128000, // by default
+        samplingRate: 44100, // by default
+      );
+    }
+  }
+
+
+  Future<void> stopRecording(int recorderValue) async {
+    if(recorderValue == 1){
+      setState(() {
+        _isRecording1 = false;
+      });
+
+      final path = await recorder1.stop();
+      //addMediaBloc.add(AudioPickEvent(audio: path));
+      print(path);
+      addPromptsBloc.add(
+          PickResource(
+              mediaUrl: path,
+              whichSide: 0));
+
+      //_togglePlayPause(path!);
+      final audioFile = File(path!);
+      print ('Recorded audio: $audioFile');
+    }else{
+      setState(() {
+        _isRecording2 = false;
+      });
+
+      final path = await recorder2.stop();
+      //addMediaBloc.add(AudioPickEvent(audio: path));
+      print(path);
+      addPromptsBloc.add(
+          PickResource(
+              mediaUrl: path,
+              whichSide: 1));
+
+      //_togglePlayPause(path!);
+      final audioFile = File(path!);
+      print ('Recorded audio: $audioFile');
+    }
+  }
+
 }
 
 String getFileType(String format) {

@@ -1,5 +1,6 @@
 import 'dart:core';
 
+import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:just_audio/just_audio.dart';
@@ -7,6 +8,7 @@ import 'package:loader_overlay/loader_overlay.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:self_learning_app/utilities/extenstion.dart';
 import '../../utilities/image_picker_helper.dart';
+import '../flow_screen/start_flow_screen.dart';
 import '../promt/promts_screen.dart';
 import '../quick_add/quick_add_screen.dart';
 import 'package:flutter/material.dart';
@@ -16,7 +18,7 @@ import '../resources/bloc/resources_bloc.dart';
 import '../resources/resources_screen.dart';
 import 'bloc/add_media_bloc.dart';
 import 'dart:io';
-import 'package:path_provider/path_provider.dart';
+import 'package:rxdart/rxdart.dart';
 import 'package:external_path/external_path.dart';
 
 class AddAudioScreen extends StatefulWidget {
@@ -94,8 +96,7 @@ class _AddAudioScreenState extends State<AddAudioScreen> {
     if (_isPlaying) {
       await audioPlayer.pause();
     } else {
-      if (audioPlayer.playerState.processingState ==
-          ProcessingState.completed) {
+      if (audioPlayer.playerState.processingState == ProcessingState.completed) {
         await audioPlayer.seek(Duration.zero);
       }
       await audioPlayer.setFilePath(audioPath);
@@ -135,183 +136,244 @@ class _AddAudioScreenState extends State<AddAudioScreen> {
     return BlocProvider(
       create: (context) => addMediaBloc,
       child: Scaffold(
-        appBar: AppBar(title: const Text('Create Audio')),
-        body: SingleChildScrollView(
-          padding: const EdgeInsets.only(left: 20, right: 20),
-          child: BlocConsumer<AddMediaBloc, AddMediaInitial>(
-            listener: (context, state) {
-              if (state.apiState==ApiState.submitted ) {
-                context.loaderOverlay.hide();
-                context.read<ResourcesBloc>().add(LoadResourcesEvent(rootId: widget.rootId, mediaType: ''));
-                Navigator.pop(context);
-                /*switch(state.wichResources){
-                  case 0: {
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const QuickTypeScreen(),
-                      ),
-                    );
-                  }break;
-                  case 1: {
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => AllResourcesList(rootId: widget.rootId,mediaType: ''),
-                      ),
-                    );
-                  }break;
-                  case 2: {
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => PromtsScreen(promtId: widget.rootId),
-                      ),
-                    );
+        backgroundColor: const Color(0xFFEEEEEE),
+        appBar: AppBar(title: const Text('Upload Audio')),
+        body: BlocConsumer<AddMediaBloc, AddMediaInitial>(
+          listener: (context, state) {
+            if (state.apiState==ApiState.submitted ) {
+              context.loaderOverlay.hide();
+              context.read<ResourcesBloc>().add(LoadResourcesEvent(rootId: widget.rootId, mediaType: ''));
+              Navigator.pop(context);
+              /*switch(state.wichResources){
+                case 0: {
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const QuickTypeScreen(),
+                    ),
+                  );
+                }break;
+                case 1: {
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => AllResourcesList(rootId: widget.rootId,mediaType: ''),
+                    ),
+                  );
+                }break;
+                case 2: {
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => PromtsScreen(promtId: widget.rootId),
+                    ),
+                  );
 
-                  }break;
-                }*/
-              }
-              else if  (state.apiState==ApiState.submitting) {
-                context.loaderOverlay.show();
-                context.showSnackBar(const SnackBar(duration: Duration(seconds: 1),content: Text('Adding resources...')));
-              } else if  (state.apiState==ApiState.submitError) {
-                context.loaderOverlay.hide();
-                context.showSnackBar(const SnackBar(duration: Duration(seconds: 1),content: Text('Something went wrong.')));
-              }
-            },
-            builder: (context, state) {
-              return Column(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(10),
-                    height: context.screenHeight * 0.15,
-                    width: context.screenWidth,
-                    child: TextFormField(
-                      inputFormatters: [
-                        LengthLimitingTextInputFormatter(80),
-                      ],
-                      controller: textEditingController,
-                      decoration: const InputDecoration(hintText: 'Title'),
+                }break;
+              }*/
+            }
+            else if  (state.apiState==ApiState.submitting) {
+              context.loaderOverlay.show();
+              context.showSnackBar(const SnackBar(duration: Duration(seconds: 1),content: Text('Adding resources...')));
+            } else if  (state.apiState==ApiState.submitError) {
+              context.loaderOverlay.hide();
+              context.showSnackBar(const SnackBar(duration: Duration(seconds: 1),content: Text('Something went wrong.')));
+            }
+
+            if(state.selectedFilepath != ''){
+
+            }
+          },
+          builder: (context, state) {
+            return Column(
+              children: [
+
+                const Spacer(),
+                Container(
+                  padding: EdgeInsets.all(10),
+                  height: context.screenHeight * 0.15,
+                  width: context.screenWidth,
+                  child: TextField(
+                    inputFormatters: [
+                      LengthLimitingTextInputFormatter(80),
+                    ],
+                    style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.w500, color: Colors.red),
+                    controller: textEditingController,
+                    decoration: const InputDecoration(
+                      contentPadding: EdgeInsets.symmetric(horizontal: 12.0),
+                      hintText: 'Title',
+                      hintStyle: TextStyle(fontSize: 16.0, fontWeight: FontWeight.w500),
+                      fillColor: Colors.white,
+                      filled: true,
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(12.0))
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.red, width: 2.0),
+                        borderRadius: BorderRadius.all(Radius.circular(12.0)),
+                      ),
                     ),
                   ),
-                  state.selectedFilepath!.isEmpty
-                      ? GestureDetector(
-                    child: Container(
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Row(
+                    children: [
+                      const Spacer(flex: 3,),
+                      Column(
+                        children: [
+                          _isRecording==true
+                              ?FloatingActionButton(onPressed: () {stopRecording();},child: Icon(Icons.stop))
+                              :FloatingActionButton(onPressed: () {startRecording();},child: Icon(Icons.mic)),
+                          SizedBox(height: 8.0,),
+                          /*_isRecording==true
+                              ? Text('Stop Recording')
+                              : Text('Start Recording'),*/
+                        ],
+                      ),
+                      const Spacer(flex: 1,),
+                      Text('OR'),
+                      const Spacer(flex: 1,),
+                      ElevatedButton(
+                          onPressed: () {
+                            ImagePickerHelper.pickFile().then((value) {
+                              if (value != null) {
+                                addMediaBloc.add(AudioPickEvent(audio: value));
+                                _togglePlayPause(value);
+                              }
+                            });
+                          },
+                        child: const Text('Choose File'),
+                      ),
+                      const Spacer(flex: 3,),
+
+                    ],
+                  ),
+                ),
+
+
+/*
+                if(state.selectedFilepath!.isNotEmpty) Stack(
+                  children: [
+                    Container(
                       decoration: BoxDecoration(
                         color: Colors.grey,
                         borderRadius: BorderRadius.circular(10),
                       ),
                       height: context.screenHeight * 0.24,
                       width: context.screenWidth,
-                      child: Center(
-                        child: Row(
-                          children: [
-                            Icon(
-                              Icons.audiotrack_outlined,
-                              size: context.screenWidth / 2.5,
-                            ),
-                            const Text('Upload'),
-                          ],
-                        ),
+                      child: IconButton(
+                        icon: Icon(_isPlaying
+                            ? Icons.pause
+                            : Icons.play_arrow),
+                        onPressed: () {
+                          _togglePlayPause(state.selectedFilepath!);
+                        },
                       ),
                     ),
-                    onTap: () {
-                      ImagePickerHelper.pickFile().then((value) {
-                        if (value != null) {
-                          addMediaBloc.add(AudioPickEvent(audio: value));
-                          _togglePlayPause(value);
-                        }
-                      });
-                    },
-                  )
-                      : Stack(
-                    children: [
-                      Container(
-                        decoration: BoxDecoration(
-                          color: Colors.grey,
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        height: context.screenHeight * 0.24,
-                        width: context.screenWidth,
-                        child: IconButton(
-                          icon: Icon(_isPlaying
-                              ? Icons.pause
-                              : Icons.play_arrow),
-                          onPressed: () {
-                            _togglePlayPause(state.selectedFilepath!);
-                          },
-                        ),
+                    Positioned(
+                      top: 10,
+                      right: 10,
+                      child: IconButton(
+                        icon: const Icon(Icons.delete),
+                        onPressed: () {
+                          audioPlayer.stop();
+                          addMediaBloc.add(RemoveMedia());
+                        },
                       ),
-                      Positioned(
-                        top: 10,
-                        right: 10,
-                        child: IconButton(
-                          icon: const Icon(Icons.delete),
-                          onPressed: () {
-                            audioPlayer.stop();
-                            addMediaBloc.add(RemoveMedia());
-                          },
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(
-                    height: 30,
-                  ),
-                  Text('OR RECORD'),
-                  // StreamBuilder<RecordingDisposition>(
-                  //     stream: recorder.onProgress,
-                  //     builder: (context, snapshot) {
-                  //       final duration = snapshot.hasData
-                  //           ? snapshot.data!.duration
-                  //           : Duration.zero;
-                  //       String twoDigits(int n) => n.toString().padLeft(2, '0');
-                  //
-                  //       final twoDigitMinutes = twoDigits(duration.inMinutes.remainder(60));
-                  //       final twoDigitSeconds = twoDigits(duration.inSeconds.remainder(60));
-                  //
-                  //       return Text(
-                  //         '$twoDigitMinutes:$twoDigitSeconds',
-                  //         style: const TextStyle(
-                  //           fontSize: 80,
-                  //           fontWeight: FontWeight.bold,
-                  //         ),
-                  //       );
-                  //
-                  //     }),
-                  _isRecording==true?FloatingActionButton(onPressed: () {
-                    stopRecording();
-                  },child: Icon(Icons.stop)):FloatingActionButton(onPressed: () {
-                    startRecording();
-                  },child: Icon(Icons.mic)),
-                  ElevatedButton(
-                    onPressed: () {
-                      if(state.selectedFilepath!.isEmpty){
-                        context.showSnackBar(const SnackBar(content: Text('Please attach file'),duration: Duration(seconds: 1),));
+                    ),
+                  ],
+                ),
+*/
 
-                      }else {
-                        addMediaBloc.add(
-                          SubmitButtonEvent(
-                            MediaType: 2,
-                            //resourcesId: widget.resourceId,
-                            rootId: widget.rootId,
-                            whichResources: widget.whichResources,
-                            title: textEditingController.text.isEmpty
-                                ? 'Untitled'
-                                : textEditingController.text,
+                const SizedBox(
+                  height: 30,
+                ),
+
+                if(state.selectedFilepath!.isNotEmpty) Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    // Display play/pause button and volume/speed sliders.
+                    ControlButtons(audioPlayer),
+                    StreamBuilder<PositionData>(
+                      stream: _positionDataStream,
+                      builder: (context, snapshot) {
+                        final positionData = snapshot.data;
+                        return Container(
+                          margin: EdgeInsets.symmetric(horizontal: 24.0),
+                          child: ProgressBar(
+                            total: positionData?.duration ?? Duration.zero,
+                            progress: positionData?.position ?? Duration.zero,
+                            buffered: positionData?.bufferedPosition ?? Duration.zero,
+                            onSeek: (newPosition) {audioPlayer?.seek(newPosition);},
                           ),
                         );
-                      }
-                    },
-                    child: const Text('Create'),
-                  ),
-                ],
-              );
-            },
-          ),
+                      },
+                    ),
+                  ],
+                ),
+                const SizedBox(
+                  height: 30,
+                ),
+                // StreamBuilder<RecordingDisposition>(
+                //     stream: recorder.onProgress,
+                //     builder: (context, snapshot) {
+                //       final duration = snapshot.hasData
+                //           ? snapshot.data!.duration
+                //           : Duration.zero;
+                //       String twoDigits(int n) => n.toString().padLeft(2, '0');
+                //
+                //       final twoDigitMinutes = twoDigits(duration.inMinutes.remainder(60));
+                //       final twoDigitSeconds = twoDigits(duration.inSeconds.remainder(60));
+                //
+                //       return Text(
+                //         '$twoDigitMinutes:$twoDigitSeconds',
+                //         style: const TextStyle(
+                //           fontSize: 80,
+                //           fontWeight: FontWeight.bold,
+                //         ),
+                //       );
+                //
+                //     }),
+
+                ElevatedButton(
+                  onPressed: () {
+                    if(state.selectedFilepath!.isEmpty){
+                      context.showSnackBar(const SnackBar(content: Text('Please attach file'),duration: Duration(seconds: 1),));
+
+                    }else {
+                      addMediaBloc.add(
+                        SubmitButtonEvent(
+                          MediaType: 2,
+                          //resourcesId: widget.resourceId,
+                          rootId: widget.rootId,
+                          whichResources: widget.whichResources,
+                          title: textEditingController.text.isEmpty
+                              ? 'Untitled'
+                              : textEditingController.text,
+                        ),
+                      );
+                    }
+                  },
+                  child: const Text('Upload'),
+                ),
+                Spacer(flex: 3,),
+              ],
+            );
+          },
         ),
       ),
     );
   }
+
+
+  Stream<PositionData> get _positionDataStream =>
+      Rx.combineLatest3<Duration, Duration, Duration?, PositionData>(
+          audioPlayer!.positionStream,
+          audioPlayer!.bufferedPositionStream,
+          audioPlayer!.durationStream,
+              (position, bufferedPosition, duration) => PositionData(
+              position, bufferedPosition, duration ?? Duration.zero));
+
 }
