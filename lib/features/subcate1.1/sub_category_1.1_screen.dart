@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:self_learning_app/features/resources/subcategory_resources_screen.dart';
 import 'package:self_learning_app/features/subcate1.2/bloc/sub_cate2_bloc.dart';
 import 'package:self_learning_app/features/subcategory/create_subcate_screen.dart';
 import 'package:self_learning_app/features/subcategory/update_subcategory.dart';
@@ -41,6 +42,7 @@ class _SubCategory1ScreenState extends State<SubCategory1Screen> {
     Icons.audio_file_outlined,
     Icons.text_increase
   ];
+  int _tabIndex = 0;
 
 
   @override
@@ -58,17 +60,28 @@ class _SubCategory1ScreenState extends State<SubCategory1Screen> {
           floatingActionButton: SizedBox(height: context.screenHeight*0.1,
             child: FittedBox(
               child: ElevatedButton(
-
                 onPressed: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) {
-                    return CreateSubCate1Screen(rootId: widget.rootId,);
-                  },));
+
+                  if(_tabIndex == 0) {
+                    Navigator.push(context, MaterialPageRoute(
+                      builder: (context) =>
+                          SubcategoryResourcesList(rootId: widget.rootId,
+                              mediaType: '',
+                              title: widget.subCateTitle),));
+                  }else {
+                    Navigator.push(
+                        context, MaterialPageRoute(builder: (context) {
+                      return CreateSubCate1Screen(rootId: widget.rootId,);
+                    },));
+                  }
 
                 },
                 child: Row(
-                  children: const [
-                    Text('      Create\n Subcategory',style: TextStyle(fontSize: 9),),
-
+                  children: [
+                    Text(
+                      _tabIndex==0?'Create Flow':'Create\n Category',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(fontSize: 9),),
                   ],
                 ),
               ),
@@ -90,6 +103,12 @@ class _SubCategory1ScreenState extends State<SubCategory1Screen> {
                     ],
                   ),
                 ],
+                onTap: (value) {
+                  setState(() {
+                    _tabIndex = value;
+                  });
+                },
+                isScrollable: false,
               ),
               title: Text(widget.subCateTitle),actions: [
             IconButton(
@@ -108,9 +127,10 @@ class _SubCategory1ScreenState extends State<SubCategory1Screen> {
             ))
           ]),
           body: TabBarView(
+            physics: NeverScrollableScrollPhysics(),
             children: [
               //tab1
-              AddResourceScreen(rootId: widget.rootId??'',whichResources: 1,),
+              AddResourceScreen(rootId: widget.rootId??'',whichResources: 1, categoryName: widget.subCateTitle,),
 
               //tab2
               Container(

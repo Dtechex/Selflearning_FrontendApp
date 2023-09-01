@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
+import 'package:self_learning_app/features/promt/promts_screen.dart';
 
 import '../data/model/addpromtprepo.dart';
 import '../data/model/flow_model.dart';
@@ -23,7 +24,7 @@ class PromtBloc extends Bloc<PromtEvent, PromtState> {
 
   _onLoadPromtEvent(LoadPromtEvent event, Emitter<PromtState>emit)async{
     emit(PromtLoading());
-     await PromtRepo.getPromts(promtId: event.promtId).then((value) {
+     await PromtRepo.getPromts(promtId: event.promtId, fromType: event.fromType).then((value) {
        emit(PromtLoaded(promtModel: value.promtList,addFlowModel: value.addFlowModel));
      });
   }

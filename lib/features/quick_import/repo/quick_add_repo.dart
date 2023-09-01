@@ -27,7 +27,7 @@ class QuickImportRepo {
   static Future<int?> deletequickAdd({
     required String id,
   }) async {
-    print('deletee category');
+    print('delete category');
     var token = await SharedPref().getToken();
     var url = Uri.parse('https://selflearning.dtechex.com/web/resource/$id');
     print(url);

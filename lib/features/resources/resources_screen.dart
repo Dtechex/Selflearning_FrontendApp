@@ -65,7 +65,7 @@ class _AllResourcesListState extends State<AllResourcesList> {
         Navigator.push(context, MaterialPageRoute(
           builder: (context) {
             return PromtsScreen(
-                content: content, mediaType: mediatype, promtId: promtId);
+                content: content, mediaType: mediatype, promtId: promtId, fromType: Prompt.fromResource,);
           },
         ));
       }
@@ -153,8 +153,8 @@ class _AllResourcesListState extends State<AllResourcesList> {
                                     ? CachedNetworkImage(
                                   imageUrl: 'https://selflearning.dtechex.com/public/image/$content',
                                   fit: BoxFit.fitHeight,
-                                  height: 40,
-                                  width: 50,
+                                  height: 35,
+                                  width: 35,
                                   progressIndicatorBuilder: (context, url,
                                       downloadProgress) =>
                                       Center(
@@ -181,9 +181,8 @@ class _AllResourcesListState extends State<AllResourcesList> {
                                   child: const Text('Add'),
                                   onPressed: () {
                                     context.push(AddPromptsScreen(
-                                      resourceId: state.allResourcesModel.data!
-                                          .record!.records![index].sId
-                                          .toString(),
+                                      resourceId: state.allResourcesModel.data!.record!.records![index].sId.toString(),
+                                      categoryId: widget.rootId,
                                     ));
                                   },
                                 ),
@@ -242,7 +241,8 @@ class _AllResourcesListState extends State<AllResourcesList> {
                                                     .data!
                                                     .record!
                                                     .records![index]
-                                                    .sId!);
+                                                    .sId!,
+                                              fromType: Prompt.fromResource,);
                                           },
                                         ));
                                   },

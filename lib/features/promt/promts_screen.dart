@@ -10,13 +10,15 @@ import '../flow_screen/start_flow_screen.dart';
 import 'bloc/promt_bloc.dart';
 import 'data/model/flow_model.dart';
 
+enum Prompt{fromResource, fromCategory}
 class PromtsScreen extends StatefulWidget {
   final String? mediaType;
   final String promtId;
   final String? content;
+  final Prompt fromType;
 
   const PromtsScreen(
-      {Key? key, required this.promtId, this.mediaType, this.content})
+      {Key? key, required this.promtId, this.mediaType, this.content, required this.fromType})
       : super(key: key);
 
   @override
@@ -34,7 +36,7 @@ class _PromtsScreenState extends State<PromtsScreen> {
 
   @override
   void initState() {
-    BlocProvider.of<PromtBloc>(context).add(LoadPromtEvent(promtId: widget.promtId));
+    BlocProvider.of<PromtBloc>(context).add(LoadPromtEvent(promtId: widget.promtId, fromType: widget.fromType));
     super.initState();
   }
 

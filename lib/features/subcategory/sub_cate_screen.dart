@@ -10,7 +10,9 @@ import 'package:self_learning_app/utilities/shared_pref.dart';
 import 'package:self_learning_app/widgets/add_resources_screen.dart';
 
 import '../category/bloc/category_bloc.dart';
+import '../create_flow/create_flow_screen.dart';
 import '../promt/promts_screen.dart';
+import '../resources/maincategory_resources_screen.dart';
 import '../subcate1.1/sub_category_1.1_screen.dart';
 import '../update_category/update_cate_screen.dart';
 import 'bloc/sub_cate_bloc.dart';
@@ -38,19 +40,19 @@ class SubCategoryScreen extends StatefulWidget {
 class _SubCategoryScreenState extends State<SubCategoryScreen> {
 
 
+
   @override
   void initState() {
     context.read<SubCategoryBloc>().add(SubCategoryLoadEvent(rootId: widget.rootId));
     super.initState();
   }
 
-  int selectedIndex = 0;
+  int _tabIndex = 0;
 
   Future<void>savecatid()async{
     SharedPref().savesubcateId(widget.rootId!);
   }
-  static const TextStyle optionStyle =
-  TextStyle(fontSize: 20, fontWeight: FontWeight.bold);
+  static const TextStyle optionStyle = TextStyle(fontSize: 20, fontWeight: FontWeight.bold);
 
   static const List<Widget> _widgetOptions = <Widget>[
     Text('Create Dailogs', style: optionStyle,),
@@ -82,10 +84,10 @@ class _SubCategoryScreenState extends State<SubCategoryScreen> {
             unselectedItemColor: Colors.white,
 
             items:  [
-          BottomNavigationBarItem( icon: IconButton(onPressed: () {
-            Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => DashBoardScreen(),), (route) => false);
-
-          }, icon: Icon(Icons.home)),
+          BottomNavigationBarItem(
+              icon: IconButton(onPressed: () {
+                Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => DashBoardScreen(),), (route) => false);
+                }, icon: Icon(Icons.home)),
               label: 'Home',
               backgroundColor: primaryColor),
           BottomNavigationBarItem(
@@ -108,7 +110,11 @@ class _SubCategoryScreenState extends State<SubCategoryScreen> {
               label: '  Start Flow',
               backgroundColor: primaryColor),
           BottomNavigationBarItem(
-              icon: Icon(Icons.add),
+              icon: IconButton(
+                icon: Icon(Icons.add),
+                onPressed: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => CreateFlowScreen(),));
+                },),
               label: 'Create \n Flow',
               backgroundColor: primaryColor),
           BottomNavigationBarItem(
@@ -121,22 +127,29 @@ class _SubCategoryScreenState extends State<SubCategoryScreen> {
               backgroundColor: primaryColor),
         ]),
           appBar: AppBar(
-              bottom:  TabBar(
+              bottom: TabBar(
                 tabs: [
 
                   Column(
-                    children: const [
+                    children: [
                       Tab(icon: Icon(Icons.perm_media,)),
                       Text('Resources')
                     ],
                   ),
                   Column(
-                    children: const [
+                    children: [
                       Tab(icon: Icon(Icons.list_alt,)),
                       Text('Subcategory list')
                     ],
                   ),
                 ],
+                onTap: (value) {
+                  setState(() {
+                    _tabIndex = value;
+                  });
+                },
+                isScrollable: false,
+
               ),
               title: Text(widget.categoryName??"Subcategory"), actions: [
             IconButton(
@@ -163,12 +176,47 @@ class _SubCategoryScreenState extends State<SubCategoryScreen> {
                   ],
                 ))
           ]),
+          floatingActionButton: SizedBox(height: context.screenHeight*0.1,
+            child: FittedBox(
+              child: ElevatedButton(
+                onPressed: () {
+
+                  if(_tabIndex == 0) {
+                    Navigator.push(context, MaterialPageRoute(
+                      builder: (context) =>
+                          MaincategoryResourcesList(rootId: widget.rootId!,
+                              mediaType: '',
+                              title: widget.categoryName!),));
+                  }else {
+                    Navigator.push(context, MaterialPageRoute(
+                      builder: (context) {
+                        return CreateSubCateScreen(
+                          rootId: widget.rootId,
+                        );
+                      },
+                    ));
+                  }
+
+                },
+                child: Row(
+                  children: [
+                    Text(
+                      _tabIndex==0?'Create Flow':'Create\n Category',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(fontSize: 9),),
+                  ],
+                ),
+              ),
+            ),
+          ),
+
           body: Container(
             padding: const EdgeInsets.only(left: 10, right: 10),
             child: TabBarView(
+              physics: NeverScrollableScrollPhysics(),
               children: [
                 // tab 1 
-                AddResourceScreen(rootId: widget.rootId??'',whichResources: 1,),
+                AddResourceScreen(rootId: widget.rootId??'',whichResources: 1, categoryName: widget.categoryName??"Subcategory"),
                 // tab 2
                 Column(
                   children: [  const SizedBox(
@@ -256,4 +304,5 @@ class _SubCategoryScreenState extends State<SubCategoryScreen> {
           )),
     );
   }
+
 }

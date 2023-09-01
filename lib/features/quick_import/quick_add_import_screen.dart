@@ -345,6 +345,7 @@ class _QuickAddImportScreenState extends State<QuickAddImportScreen> {
               },
             ),
           ],
-        ));
+        )
+    );
   }
 }

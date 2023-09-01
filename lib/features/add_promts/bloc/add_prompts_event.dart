@@ -29,7 +29,8 @@ class AddResource extends AddPrompts{
 class AddPromptEvent extends AddPrompts{
   final String ? name;
   final String ? resourceId;
-  AddPromptEvent({this.resourceId,this.name});
+  final String ? categoryId;
+  AddPromptEvent({this.resourceId,this.name, this.categoryId});
 }
 
 class ResetFileUploadStatus extends AddPrompts{

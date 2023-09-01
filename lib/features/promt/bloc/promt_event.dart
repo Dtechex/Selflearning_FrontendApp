@@ -4,7 +4,8 @@ part of 'promt_bloc.dart';
 abstract class PromtEvent {}
  class LoadPromtEvent extends PromtEvent {
  final String promtId;
- LoadPromtEvent({required this.promtId});
+ final Prompt fromType;
+ LoadPromtEvent({required this.promtId, required this.fromType});
 
 }
 

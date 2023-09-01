@@ -19,7 +19,8 @@ import '../../utilities/colors.dart';
 
 class AddPromptsScreen extends StatefulWidget {
   final String resourceId;
-  const AddPromptsScreen({required this.resourceId, Key? key})
+  final String categoryId;
+  const AddPromptsScreen({required this.resourceId, required this.categoryId, Key? key})
       : super(key: key);
 
   @override
@@ -58,6 +59,8 @@ class _AddPromptsScreenState extends State<AddPromptsScreen> {
     // side2_Controller.text='';
     // side1_Controller.text='';
     // addPromptsBloc.add(LoadPrompts());
+
+    print('Res: ${widget.resourceId} Cat: ${widget.categoryId}');
     initRecorder();
     super.initState();
   }
@@ -885,6 +888,7 @@ class _AddPromptsScreenState extends State<AddPromptsScreen> {
       context.read<AddPromptsBloc>().add(
         AddPromptEvent(
             resourceId: widget.resourceId!,
+            categoryId: widget.categoryId!,
             name: title_Controller.text),
       );
 

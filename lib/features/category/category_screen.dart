@@ -24,7 +24,7 @@ class AllCateScreen extends StatefulWidget {
 
 class _AllCateScreenState extends State<AllCateScreen> {
   int selectedIndex = 0;
-  List<String> titles = ['All', 'Categories', 'Dialogs','QuickAdd List '];
+  List<String> titles = ['All Categories', 'Dialogs','QuickAdd List '];
   TextEditingController controller = TextEditingController(text: "  Search");
   TextEditingController quickaddcontroller = TextEditingController();
 
@@ -116,7 +116,7 @@ class _AllCateScreenState extends State<AllCateScreen> {
 
                     child: Align(
                       alignment: Alignment.centerLeft,
-                      child: Text('    Search..',style: TextStyle(
+                      child: Text('Search..',style: TextStyle(
                           color: Colors.black.withOpacity(0.5)
                       ),),
                     ),
@@ -150,8 +150,7 @@ class _AllCateScreenState extends State<AllCateScreen> {
                 onTap: (){
                   setState(() {
                     selectedIndex=index;
-                    if(index==3) {
-
+                    if(index==2) {
                       Navigator.push(context, MaterialPageRoute(builder: (context) {
                         return const QuickTypeScreen();
                       },));

@@ -109,8 +109,8 @@ class _AddTextScreenState extends State<AddTextScreen> {
                     style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.w500, color: Colors.red),
                     controller: textEditingController,
                     decoration: const InputDecoration(
-                      contentPadding: EdgeInsets.symmetric(horizontal: 12.0),
-                      hintText: 'Title',
+                      contentPadding: EdgeInsets.symmetric(horizontal: 20.0),
+                      hintText: 'Enter Title here...',
                       hintStyle: TextStyle(fontSize: 16.0, fontWeight: FontWeight.w500),
                       fillColor: Colors.white,
                       filled: true,
@@ -141,7 +141,7 @@ class _AddTextScreenState extends State<AddTextScreen> {
                             SnackBar(content: Text('Title required!')));
                       }
                       },
-                    child: const Text('Add')),
+                    child: const Text('Upload Resource')),
                 Spacer(flex: 3,),
               ],
             );

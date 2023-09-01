@@ -108,6 +108,7 @@ class AddPromptsBloc extends Bloc<AddPrompts, AddPromptsInitial> {
     await AddPromtsRepo.addSidePrompts(
             name: event.name,
             resourcesId: event.resourceId!,
+            categoryId: event.categoryId!,
             side2: state.side2Id,
             side1: state.side1Id)
         .then((value) async {

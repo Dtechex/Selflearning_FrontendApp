@@ -4,9 +4,11 @@ import 'package:self_learning_app/features/add_media/add_audio_screen.dart';
 import 'package:self_learning_app/features/add_media/add_text_screen.dart';
 import 'package:self_learning_app/features/add_media/add_video_screen.dart';
 import 'package:self_learning_app/features/resources/bloc/resources_bloc.dart';
+import 'package:self_learning_app/features/resources/subcategory_resources_screen.dart';
 import 'package:self_learning_app/utilities/extenstion.dart';
 
 import '../features/add_media/add_image_screen.dart';
+import '../features/resources/maincategory_resources_screen.dart';
 import '../features/resources/resources_screen.dart';
 
 //without app bar for add category or subcatrogry resource or promt
@@ -14,7 +16,8 @@ import '../features/resources/resources_screen.dart';
 class AddResourceScreen extends StatefulWidget {
   final int whichResources;
   final String rootId;
-  AddResourceScreen({Key? key, required this.rootId, required this.whichResources}) : super(key: key);
+  final String categoryName;
+  AddResourceScreen({Key? key, required this.rootId, required this.whichResources, required this.categoryName}) : super(key: key);
 
   @override
   State<AddResourceScreen> createState() => _AddResourceScreenState();
@@ -46,57 +49,6 @@ class _AddResourceScreenState extends State<AddResourceScreen> {
     print(widget.rootId);
     print('rootId');
     return Scaffold(
-        floatingActionButton: SizedBox(
-          height: context.screenHeight * 0.1,
-          child: FittedBox(
-            child: ElevatedButton(
-              onPressed: () {
-                /*print(state.allResourcesModel.data!
-                    .record!.records![index].content);
-
-                Navigator.push(context,
-                    MaterialPageRoute(
-                      builder: (context) {
-                        return PromtsScreen(
-                            content: state
-                                .allResourcesModel
-                                .data!
-                                .record!
-                                .records![index]
-                                .content ??
-                                state
-                                    .allResourcesModel
-                                    .data!
-                                    .record!
-                                    .records![index]
-                                    .title,
-                            mediaType: state
-                                .allResourcesModel
-                                .data!
-                                .record!
-                                .records![index]
-                                .type!,
-                            promtId: state
-                                .allResourcesModel
-                                .data!
-                                .record!
-                                .records![index]
-                                .sId!);
-                      },
-                    ));*/
-              },
-              child: Row(
-                children: const [
-                  Text(
-                    'Create Flow',
-                    style: TextStyle(fontSize: 9),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
-
         body: SizedBox(
       child: ListView.builder(
         shrinkWrap: true,

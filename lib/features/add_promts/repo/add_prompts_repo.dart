@@ -16,7 +16,7 @@ class AddPromtsRepo {
       {required String resourcesId,
       String? name,
       String? side1,
-      String? side2}) async {
+      String? side2, required String categoryId}) async {
     print('addpromt');
     try {
       final token = await SharedPref().getToken();
@@ -27,6 +27,7 @@ class AddPromtsRepo {
         "side1": side1!,
         "side2": side2!,
         "resourceId": resourcesId,
+        "categoryId": categoryId,
       };
       final gg = jsonEncode(data);
       print(gg);

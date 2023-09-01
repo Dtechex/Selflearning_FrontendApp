@@ -54,8 +54,8 @@ class _AddImageScreenState extends State<AddImageScreen> {
     print('inse image add image');
     return BlocProvider(
       create: (context) => addMediaBloc, child: Scaffold(
-        appBar: AppBar(title: const Text('Create Image')),
-        body: SingleChildScrollView(child: Container(
+        appBar: AppBar(title: const Text('Add Image Resource')),
+        body: Container(
           padding: const EdgeInsets.only(left: 20, right: 20),
           child: BlocConsumer<AddMediaBloc, AddMediaInitial>(
             listener: (context, state) {
@@ -116,19 +116,101 @@ class _AddImageScreenState extends State<AddImageScreen> {
             builder: (context, state) {
               return Column(
                 children: [
+                  const Spacer(),
                   Container(
-                    padding: const EdgeInsets.all(10),
+                    padding: EdgeInsets.all(10),
                     height: context.screenHeight * 0.15,
                     width: context.screenWidth,
                     child: TextField(
                       inputFormatters: [
                         LengthLimitingTextInputFormatter(80),
                       ],
+                      style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.w500, color: Colors.red),
                       controller: textEditingController,
-                      decoration: const InputDecoration(hintText: 'Title'),
+                      decoration: const InputDecoration(
+                        contentPadding: EdgeInsets.symmetric(horizontal: 20.0),
+                        hintText: 'Enter Title here...',
+                        hintStyle: TextStyle(fontSize: 16.0, fontWeight: FontWeight.w500),
+                        fillColor: Colors.white,
+                        filled: true,
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(12.0))
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.red, width: 2.0),
+                          borderRadius: BorderRadius.all(Radius.circular(12.0)),
+                        ),
+                      ),
                     ),
                   ),
-                  state.selectedFilepath!.isEmpty ? GestureDetector(
+
+                  ElevatedButton(
+                    onPressed: () {
+                      showModalBottomSheet(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return SafeArea(
+                            child: Container(
+                              child: Wrap(
+                                children: <Widget>[
+                                  ListTile(
+                                    leading: Icon(Icons.photo_library),
+                                    title: Text('Photo Library'),
+                                    onTap: () {
+                                      ImagePickerHelper.pickImage(
+                                          imageSource: ImageSource.gallery)
+                                          .then((value) {
+                                        if (value != null) {
+                                          addMediaBloc.add(ImagePickEvent(
+                                              image: value.path));
+                                        }
+                                      });
+                                      Navigator.of(context).pop();
+                                    },
+                                  ),
+                                  ListTile(
+                                    leading: Icon(Icons.camera_alt),
+                                    title: Text('Camera'),
+                                    onTap: () {
+                                      ImagePickerHelper.pickImage(
+                                          imageSource: ImageSource.camera)
+                                          .then((value) {
+                                        if (value != null) {
+                                          addMediaBloc.add(ImagePickEvent(
+                                              image: value.path));
+                                        }
+                                      });
+                                      Navigator.of(context).pop();
+                                    },
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        },
+                      );
+                    },
+                    child: const Text('Choose File'),
+                  ),
+                  const Spacer(),
+                  if(state.selectedFilepath!.isNotEmpty) Stack(children: [
+
+                    Container(
+                        decoration: BoxDecoration(
+                            color: Colors.grey,
+                            borderRadius: BorderRadius.circular(10)),
+                        height: context.screenHeight * 0.24,
+                        width: context.screenWidth,
+                        child: Image.file(File(state.selectedFilepath!))
+                    ),
+                    Positioned(
+                        top: 10, right: 10,
+                        child: IconButton(
+                          icon: Icon(Icons.delete), onPressed: () {
+                          addMediaBloc.add(RemoveMedia());
+                        },)),
+                  ],),
+                  /*state.selectedFilepath!.isEmpty ? GestureDetector(
                     child: Container(
                       decoration: BoxDecoration(
                           color: Colors.grey,
@@ -207,7 +289,7 @@ class _AddImageScreenState extends State<AddImageScreen> {
                           icon: Icon(Icons.delete), onPressed: () {
                           addMediaBloc.add(RemoveMedia());
                         },)),
-                  ],),
+                  ],),*/
                   const SizedBox(
                     height: 30,
                   ),
@@ -231,12 +313,13 @@ class _AddImageScreenState extends State<AddImageScreen> {
                         //     ),
                         //         (route) => false);
                       },
-                      child: const Text('Create '))
+                      child: const Text('Upload Resource')),
+                  const Spacer(flex: 3,),
                 ],
               );
             },
           ),
-        ),)),);
+        )),);
   }
 }
 

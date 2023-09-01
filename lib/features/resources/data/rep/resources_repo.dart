@@ -21,7 +21,7 @@ class ResourcesRepo {
   static Future<int?> deleteResource({
     required String rootId,
   }) async {
-    print('dlete');
+    print('delete');
     Response res = await Api().delete(
       endPoint: 'resource/$rootId',
     );

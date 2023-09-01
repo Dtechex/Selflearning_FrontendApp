@@ -20,8 +20,7 @@ class CreateSubCateScreen extends StatefulWidget {
   final String? rootId;
   final String? subCatName;
 
-  const CreateSubCateScreen({Key? key, this.rootId, this.subCatName})
-      : super(key: key);
+  const CreateSubCateScreen({Key? key, this.rootId, this.subCatName}) : super(key: key);
 
   @override
   State<CreateSubCateScreen> createState() => _CreateSubCateScreenState();
