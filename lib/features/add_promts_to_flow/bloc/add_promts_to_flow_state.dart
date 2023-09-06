@@ -4,21 +4,19 @@ abstract class AddPromtsToFlowState extends Equatable {
   const AddPromtsToFlowState();
 }
 
-enum MainCategory{initial, loading, loadSuccess, loadFailed,}
-enum SubCategory{initial, loading, loadSuccess, loadFailed,}
-enum SubCategory1{initial, loading, loadSuccess, loadFailed,}
-enum SubCategory2{initial, loading, loadSuccess, loadFailed,}
+enum APIStatus{initial, loading, loadSuccess, loadFailed,}
 
 class AddPromtsToFlowInitial extends AddPromtsToFlowState {
 
-  MainCategory mainCategory;
-  SubCategory subCategory;
-  SubCategory1 subCategory1;
+  APIStatus mainCategory;
+  APIStatus subCategory;
+  APIStatus subCategory1;
+  APIStatus subCategory2;
+
   AddPromptToFlowModel? mainCategoryData;
   AddPromptToFlowModel? subCategoryData;
   AddPromptToFlowModel? subCategory1Data;
   AddPromptToFlowModel? subCategory2Data;
-  SubCategory2 subCategory2;
 
 
   AddPromtsToFlowInitial({
@@ -32,14 +30,14 @@ class AddPromtsToFlowInitial extends AddPromtsToFlowState {
     this.subCategory2Data});
 
   AddPromtsToFlowInitial copyWith({
-    MainCategory? mainCategory,
-    SubCategory? subCategory,
-    SubCategory1? subCategory1,
+    APIStatus? mainCategory,
+    APIStatus? subCategory,
+    APIStatus? subCategory1,
     AddPromptToFlowModel? mainCategoryData,
     AddPromptToFlowModel? subCategoryData,
     AddPromptToFlowModel? subCategory1Data,
     AddPromptToFlowModel? subCategory2Data,
-    SubCategory2? subCategory2,}){
+    APIStatus? subCategory2,}){
     return AddPromtsToFlowInitial(
         mainCategory: mainCategory?? this.mainCategory,
         subCategory: subCategory?? this.subCategory,

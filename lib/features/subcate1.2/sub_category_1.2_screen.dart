@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:self_learning_app/features/subcate1.2/final_resources_screen.dart';
 import 'package:self_learning_app/utilities/extenstion.dart';
 import 'package:self_learning_app/widgets/add_resources_screen.dart';
 import '../../utilities/colors.dart';
@@ -57,7 +59,7 @@ class _SubCategory2ScreenState extends State<SubCategory2Screen> {
     return DefaultTabController(
       length: 2,
       child: Scaffold(
-          floatingActionButton: (_tabIndex == 0)?SizedBox(height: context.screenHeight*0.1,
+          floatingActionButton: SizedBox(height: context.screenHeight*0.1,
             child: FittedBox(
               child: ElevatedButton(
                 onPressed: () {
@@ -68,25 +70,25 @@ class _SubCategory2ScreenState extends State<SubCategory2Screen> {
                           Subcategory2ResourcesList(rootId: widget.rootId,
                               mediaType: '',
                               title: widget.subCateTitle),));
-                  }/*else {
+                  }else {
                     Navigator.push(
                         context, MaterialPageRoute(builder: (context) {
                       return CreateSubCate2Screen(rootId: widget.rootId,);
                     },));
-                  }*/
+                  }
 
                 },
                 child: Row(
                   children: [
                     Text(
-                      _tabIndex==0?'Create Flow':'Create\n Category',
+                      _tabIndex==0?'Show All':'Create\n Category',
                       textAlign: TextAlign.center,
                       style: TextStyle(fontSize: 9),),
                   ],
                 ),
               ),
             ),
-          ):SizedBox.shrink(),
+          ),
           appBar: AppBar(
               bottom:  TabBar(
                 tabs: [
@@ -180,9 +182,17 @@ class _SubCategory2ScreenState extends State<SubCategory2Screen> {
                             child: ListView.builder(
                               itemCount: state.cateList.length,
                               shrinkWrap: true,
+
                               itemBuilder: (context, index) {
                                 return GestureDetector(
-                                  onTap: () {},
+                                  onTap: () {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(builder: (context) => FinalResourceScreen(
+                                          rootId: state.cateList[index].sId??'',
+                                          //whichResources: 1,
+                                          categoryName: state.cateList[index].name!,),));
+                                  },
                                   child: Padding(
                                       padding: const EdgeInsets.all(10),
                                       child: Container(

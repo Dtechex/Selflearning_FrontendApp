@@ -14,7 +14,8 @@ import '../resources/bloc/resources_bloc.dart';
 import '../resources/maincategory_resources_screen.dart';
 
 class CreateFlowScreen extends StatefulWidget {
-  const CreateFlowScreen({super.key});
+  final String rootId;
+  const CreateFlowScreen({super.key, required this.rootId});
 
   @override
   State<CreateFlowScreen> createState() => _CreateFlowScreenState();
@@ -96,7 +97,7 @@ class _CreateFlowScreenState extends State<CreateFlowScreen> {
                           ),
                           child: ListTile(
                             onTap: () {
-                              Navigator.push(context, MaterialPageRoute(builder: (context) => AddPromptsToFlowScreen(title: 'New', quickAddId: '', mediaType: '',),));
+                              Navigator.push(context, MaterialPageRoute(builder: (context) => AddPromptsToFlowScreen(title: 'New', rootId: widget.rootId,),));
                             },
                             tileColor: Colors.white,
                             shape: RoundedRectangleBorder(
@@ -151,10 +152,19 @@ class _CreateFlowScreenState extends State<CreateFlowScreen> {
               onPressed: () {
                 // Do something with the TextField value
 
-                bloc.add(CreateAndSaveFlow(title: titleController.text));
+                //bloc.add(CreateAndSaveFlow(title: titleController.text));
 
 
-                Navigator.of(context).pop();
+                Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => AddPromptsToFlowScreen(
+                        title: titleController.text,
+                        rootId: widget.rootId,),)).then((value) {
+                          if(value != null && value == true){
+
+                          }
+                });
               },
               child: Text('Submit'),
             ),

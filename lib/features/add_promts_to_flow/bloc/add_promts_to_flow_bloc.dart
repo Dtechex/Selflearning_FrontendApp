@@ -1,7 +1,7 @@
-import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:self_learning_app/features/add_promts_to_flow/bloc/data/model/add_prompt_to_flow_model.dart';
 
 import 'data/repo/add_prompts_to_flow_repo.dart';
@@ -12,30 +12,75 @@ part 'add_promts_to_flow_state.dart';
 class AddPromtsToFlowBloc extends Bloc<AddPromtsToFlowEvent, AddPromtsToFlowInitial> {
   AddPromtsToFlowBloc() : super(
       AddPromtsToFlowInitial(
-        mainCategory: MainCategory.initial,
-        subCategory: SubCategory.initial,
-        subCategory1: SubCategory1.initial,
-        subCategory2: SubCategory2.initial,
+        mainCategory: APIStatus.initial,
+        subCategory: APIStatus.initial,
+        subCategory1: APIStatus.initial,
+        subCategory2: APIStatus.initial,
       )) {
-    on<LoadMainCategoryData>((event, emit) {
+    on<LoadMainCategoryData>((event, emit) async {
       // TODO: implement event handler
-      emit(state.copyWith(mainCategory: MainCategory.loading));
-      /*AddPromptsToFlowRepo.getData(mainCatId: '', emitter: emit).then((value) {
-        if
-      })
-      emit(state.copyWith(mainCategory: MainCategory.loadSuccess, mainCategoryData: ));*/
+      emit(state.copyWith(mainCategory: APIStatus.loading));
+      await AddPromptsToFlowRepo.getData(mainCatId: event.catId).then((value) {
+        if(value == null){
+          emit(state.copyWith(mainCategory: APIStatus.loadFailed,));
+        }else{
+          emit(state.copyWith(mainCategory: APIStatus.loadSuccess, mainCategoryData: value));
+        }
+      });
     });
 
-    on<LoadSubCategoryData>((event, emit) {
+    on<LoadSubCategoryData>((event, emit) async {
       // TODO: implement event handler
+      EasyLoading.show(dismissOnTap: true);
+      emit(state.copyWith(subCategory: APIStatus.loading));
+      await AddPromptsToFlowRepo.getData(mainCatId: event.catId).then((value) {
+        if(value == null){
+          emit(state.copyWith(subCategory: APIStatus.loadFailed,));
+        }else{
+          emit(state.copyWith(
+              subCategory: APIStatus.loadSuccess,
+              subCategoryData: value,
+            subCategory1: APIStatus.initial,
+            subCategory1Data: AddPromptToFlowModel(promptList: [], categoryList: []),
+            subCategory2: APIStatus.initial,
+            subCategory2Data: AddPromptToFlowModel(promptList: [], categoryList: [])
+              ));
+        }
+      });
+      EasyLoading.dismiss();
     });
 
-    on<LoadSubCategory1Data>((event, emit) {
+    on<LoadSubCategory1Data>((event, emit) async {
       // TODO: implement event handler
+      EasyLoading.show(dismissOnTap: true);
+      emit(state.copyWith(subCategory1: APIStatus.loading));
+      await AddPromptsToFlowRepo.getData(mainCatId: event.catId).then((value) {
+        if(value == null){
+          emit(state.copyWith(subCategory1: APIStatus.loadFailed,));
+        }else{
+          emit(state.copyWith(
+              subCategory1: APIStatus.loadSuccess,
+              subCategory1Data: value,
+              subCategory2: APIStatus.initial,
+              subCategory2Data: AddPromptToFlowModel(promptList: [], categoryList: [])
+          ));
+        }
+      });
+      EasyLoading.dismiss();
     });
 
-    on<LoadSubCategory2Data>((event, emit) {
+    on<LoadSubCategory2Data>((event, emit) async {
       // TODO: implement event handler
+      EasyLoading.show(dismissOnTap: true);
+      emit(state.copyWith(subCategory2: APIStatus.loading));
+      await AddPromptsToFlowRepo.getData(mainCatId: event.catId).then((value) {
+        if(value == null){
+          emit(state.copyWith(subCategory2: APIStatus.loadFailed,));
+        }else{
+          emit(state.copyWith(subCategory2: APIStatus.loadSuccess, subCategory2Data: value));
+        }
+      });
+      EasyLoading.dismiss();
     });
   }
 }

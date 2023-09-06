@@ -6,11 +6,11 @@ import 'category_model.dart';
 
 class AddPromptToFlowModel {
 
-  List<PromptModel>? promptList;
-  List<CategoryModel>? categoryList;
+  List<PromptModel> promptList;
+  List<CategoryModel> categoryList;
 
 
-  AddPromptToFlowModel({this.promptList, this.categoryList});
+  AddPromptToFlowModel({required this.promptList, required this.categoryList});
 /*
   AddPromptToFlowModel.fromJson(Map<String, dynamic> json) {
     promptList =  json['prompts'] != null ? PromptModel.fromJson(json['prompts']) : null;

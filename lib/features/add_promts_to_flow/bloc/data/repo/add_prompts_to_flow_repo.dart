@@ -5,35 +5,59 @@
 import 'dart:convert';
 
 import 'package:bloc/src/bloc.dart';
+import 'package:dio/dio.dart';
+import 'package:self_learning_app/features/add_promts_to_flow/bloc/data/model/category_model.dart';
 
-import 'package:self_learning_app/features/add_promts_to_flow/bloc/add_promts_to_flow_bloc.dart';
+import 'package:self_learning_app/features/add_promts_to_flow/bloc/data/model/prompt_model.dart';
 
 import '../../../../../utilities/base_client.dart';
+import '../../../../../utilities/shared_pref.dart';
 import '../model/add_prompt_to_flow_model.dart';
 
 class AddPromptsToFlowRepo {
 
-  /*static Future<AddPromptToFlowModel?> getData({required String mainCatId, required Emitter<AddPromtsToFlowInitial> emit}) async {
-    Response res = await Api().get(
-      endPoint: 'prompt?q=$mainCatId',);
-    print(res.body);
-    var data = await jsonDecode(res.body);
-    final List<PromtModel> list = [];
+  static Future<AddPromptToFlowModel?> getData({required String mainCatId}) async {
+    final token = await SharedPref().getToken();
+    final Options options = Options(
+        headers: {"Authorization": 'Bearer $token'}
+    );
+    Response res = await Dio().get(
+      'https://selflearning.dtechex.com/web/prompt?categoryId=$mainCatId',
+      options: options,
+    );
 
-    final List<dynamic> mylist = data['data']['record'];
-    AddFlowModel.fromJson(data);
-    if (mylist.isNotEmpty) {
-      for (var l in mylist) {
-        list.add(PromtModel.fromJson(l));
+    print('Main Cat ID: $mainCatId');
+    print(res.data);    //var data = await jsonDecode(res.body);
+    final AddPromptToFlowModel list;
+
+    List<PromptModel> promptList = [];
+    List<CategoryModel> categoryList = [];
+    for (var item in res.data['data']['record']) {
+      print(item);
+      if(item != null){
+        promptList.add(PromptModel(
+          promptId: item['_id'],
+          resourceId: item['resourceId']['_id'],
+          title: item['name'],
+          isSelected: item['isActive'],
+        ));
       }
     }
 
-    if(res.status != 200 ) {
+    Response res1 = await Dio().get(
+      'https://selflearning.dtechex.com/web/category/?rootId=$mainCatId',
+      options: options,
+    );
+    print('OK tested');
+    print(res1.data);
+    for (var item in res1.data['data']['record']) {
+      categoryList.add(CategoryModel(categoryId: item['_id'], title: item['name']));
+    }
+
+    list = AddPromptToFlowModel(promptList: promptList, categoryList: categoryList);
+    if(res.statusCode != 200 ) {
       return null;
     }
-    return AddPromptToFlowModel(
-      name: ,
-
-    );
-  }*/
+    return list;
+  }
 }

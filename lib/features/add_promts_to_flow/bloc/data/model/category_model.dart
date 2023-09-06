@@ -2,22 +2,22 @@
 
 class CategoryModel {
 
-  String? title;
-  String? categoryId;
+  String title = '';
+  String categoryId = '';
 
 
   CategoryModel({//this.promptId,
-        this.categoryId,
+        required this.categoryId,
         /*this.createdAt,
       this.updatedAt,*/
-        this.title});
+        required this.title});
 
   CategoryModel.fromJson(Map<String, dynamic> json) {
     //promptId = json['_id'];
-    categoryId = json['rootId'];
+    categoryId = json['rootId']??'';
     /*createdAt = json['createdAt'];
     updatedAt = json['updatedAt'];*/
-    title = json['title'];
+    title = json['title']??'';
   }
 
   Map<String, dynamic> toJson() {

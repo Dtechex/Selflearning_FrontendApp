@@ -1,6 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:self_learning_app/features/category/bloc/category_state.dart';
 import 'package:self_learning_app/features/dashboard/dashboard_screen.dart';
 import 'package:self_learning_app/features/subcategory/create_subcate_screen.dart';
@@ -113,7 +116,7 @@ class _SubCategoryScreenState extends State<SubCategoryScreen> {
               icon: IconButton(
                 icon: Icon(Icons.add),
                 onPressed: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => CreateFlowScreen(),));
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => CreateFlowScreen(rootId: widget.rootId!),));
                 },),
               label: 'Create \n Flow',
               backgroundColor: primaryColor),
@@ -201,7 +204,7 @@ class _SubCategoryScreenState extends State<SubCategoryScreen> {
                 child: Row(
                   children: [
                     Text(
-                      _tabIndex==0?'Create Flow':'Create\n Category',
+                      _tabIndex==0?'Show All':'Create\n Category',
                       textAlign: TextAlign.center,
                       style: TextStyle(fontSize: 9),),
                   ],

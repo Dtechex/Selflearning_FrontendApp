@@ -79,7 +79,7 @@ class _SubCategory1ScreenState extends State<SubCategory1Screen> {
                 child: Row(
                   children: [
                     Text(
-                      _tabIndex==0?'Create Flow':'Create\n Category',
+                      _tabIndex==0?'Show All':'Create\n Category',
                       textAlign: TextAlign.center,
                       style: TextStyle(fontSize: 9),),
                   ],
@@ -161,32 +161,34 @@ class _SubCategory1ScreenState extends State<SubCategory1Screen> {
                             child: const Center(child: Text('No Subcategory added',style: TextStyle(
                                 fontSize: 19,fontWeight: FontWeight.bold
                             ),),),):
-                          ListView.builder(
-                            itemCount: state.cateList.length,
-                            shrinkWrap: true,
-                            itemBuilder: (context, index) {
-                              return GestureDetector(
-                                onTap: () {
-                                  Navigator.push(context, MaterialPageRoute(builder: (context) {
-                                    return SubCategory2Screen(subCateTitle: state.cateList[index].name!,rootId: state.cateList[index].sId!,color: widget.color,keyWords: state.cateList[index].keywords!,);
-                                  },));
-                                },
-                                child: Padding(
-                                    padding: const EdgeInsets.all(10),
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                          borderRadius: BorderRadius.circular(10),
-                                          border: Border.all(color: Color(int.parse(state.cateList[index].styles![1].value!)),width: 3),
-                                          color: Colors.transparent
-                                      ),
-                                      padding: const EdgeInsets.only(left: 10),
-                                      child: ListTile(title: Text(state.cateList[index].name.toString(),style: const TextStyle(
-                                          color: primaryColor
-                                      ),)),
-                                    )),
+                          Expanded(
+                            child: ListView.builder(
+                              itemCount: state.cateList.length,
+                              shrinkWrap: true,
+                              itemBuilder: (context, index) {
+                                return GestureDetector(
+                                  onTap: () {
+                                    Navigator.push(context, MaterialPageRoute(builder: (context) {
+                                      return SubCategory2Screen(subCateTitle: state.cateList[index].name!,rootId: state.cateList[index].sId!,color: widget.color,keyWords: state.cateList[index].keywords!,);
+                                    },));
+                                  },
+                                  child: Padding(
+                                      padding: const EdgeInsets.all(10),
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                            borderRadius: BorderRadius.circular(10),
+                                            border: Border.all(color: Color(int.parse(state.cateList[index].styles![1].value!)),width: 3),
+                                            color: Colors.transparent
+                                        ),
+                                        padding: const EdgeInsets.only(left: 10),
+                                        child: ListTile(title: Text(state.cateList[index].name.toString(),style: const TextStyle(
+                                            color: primaryColor
+                                        ),)),
+                                      )),
 
-                              );
-                            },);
+                                );
+                              },),
+                          );
                       }
                       return const SizedBox();
                     },),
