@@ -35,11 +35,11 @@ class CreateFlowRepo {
     try{
       final token = await SharedPref().getToken();
       response = await Dio().get(
-          'https://selflearning.dtechex.com/web/prompt/prompt?q=$catID',
+          'https://selflearning.dtechex.com/web/flow?categoryId=$catID',
           options: Options(
               headers: {"Authorization": 'Bearer $token'}
           ));
-    } catch (e) {
+    }on DioError catch (e) {
       response = Response(requestOptions: RequestOptions());
       response.data = {
         'msg' : 'Failed to communicate with server!',
@@ -48,6 +48,7 @@ class CreateFlowRepo {
       response.statusCode = 400;
     }
 
+    print('Flowww $response');
     return response;
   }
 

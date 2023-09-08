@@ -38,32 +38,51 @@ class DashBoardScreen extends StatelessWidget {
         builder: (context, state) {
           return Scaffold(
             appBar: AppBar(
-              automaticallyImplyLeading: false,
+              leading: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Card(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8.0),
+                  ),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(8.0),
+                    child: Image.asset('assets/icon.png',),
+                  ),
+                ),
+              ),
               actions: [
                 IconButton(
                     onPressed: () async {
                       context.showNewDialog(AlertDialog(
                         title: const Text(
-                          'Are you sure you want to logout.',
+                          'Are you sure you want to logout?',
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16.0),
                         ),
                         actions: [
+                          MaterialButton(
+                              onPressed: () async {
+                                Navigator.pop(context);
+                              },
+                              shape: OutlineInputBorder(
+                                  borderSide: BorderSide(color: primaryColor)
+                              ),
+                              color: Colors.white,
+                              textColor: primaryColor,
+                              child: Text('Cancel')),
                           ElevatedButton(
                               onPressed: () async {
                                 await SharedPref().clear().then((value) {
                                   Navigator.pushAndRemoveUntil(context,
                                       MaterialPageRoute(
-                                    builder: (context) {
-                                      return const LoginScreen();
-                                    },
-                                  ), (route) => true);
+                                        builder: (context) {
+                                          return const LoginScreen();
+                                        },
+                                      ), (route) => true);
                                 });
                               },
                               child: Text('Logout')),
-                          ElevatedButton(
-                              onPressed: () async {
-                                Navigator.pop(context);
-                              },
-                              child: Text('Cancel'))
                         ],
                       ));
                     },
@@ -96,10 +115,10 @@ class DashBoardScreen extends StatelessWidget {
                     icon: Icon(Icons.message),
                     label: '  Create \n Dailogs',
                     backgroundColor: primaryColor),
-                BottomNavigationBarItem(
+                /*BottomNavigationBarItem(
                     icon: Icon(Icons.add),
                     label: 'Create \n Flow',
-                    backgroundColor: primaryColor),
+                    backgroundColor: primaryColor),*/
                 BottomNavigationBarItem(
                     icon: Icon(Icons.calendar_month_sharp),
                     label: 'Schedule',

@@ -25,7 +25,7 @@ class PromtBloc extends Bloc<PromtEvent, PromtState> {
   _onLoadPromtEvent(LoadPromtEvent event, Emitter<PromtState>emit)async{
     emit(PromtLoading());
      await PromtRepo.getPromts(promtId: event.promtId, fromType: event.fromType).then((value) {
-       emit(PromtLoaded(promtModel: value.promtList,addFlowModel: value.addFlowModel));
+       emit(PromtLoaded(promtModel: value.promtList, addFlowModel: value.addFlowModel));
      });
   }
 

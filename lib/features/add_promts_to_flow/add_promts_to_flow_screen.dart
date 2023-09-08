@@ -5,6 +5,7 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:dropdown_button2/dropdown_button2.dart';
+import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:self_learning_app/features/add_promts_to_flow/bloc/data/model/prompt_model.dart';
@@ -15,19 +16,27 @@ import '../quick_import/bloc/quick_add_bloc.dart';
 import '../subcate1.1/bloc/sub_cate1_bloc.dart';
 import '../subcate1.1/bloc/sub_cate1_event.dart';
 import 'bloc/add_promts_to_flow_bloc.dart';
+import 'package:aligned_dialog/aligned_dialog.dart';
 
 
-class PromptListModel{
+enum BottomSheetShow{subcategory, subcategory1, subcategory2}
+
+class PromptListModel extends Equatable{
   String _name;
   String _id;
+  Color _bgColor;
 
-  PromptListModel(this._name, this._id);
+  PromptListModel(this._name, this._id, this._bgColor);
 
   String get id => _id;
 
   String get name => _name;
 
+  Color get bgColor => _bgColor;
 
+  @override
+  // TODO: implement props
+  List<Object?> get props => [_name, _id];
 }
 class AddPromptsToFlowScreen extends StatefulWidget {
   final String title;
@@ -79,7 +88,30 @@ class _AddPromptsToFlowScreenState extends State<AddPromptsToFlowScreen> {
                   }else if(snapshot.data == 0){
                     return MaterialButton(
                         onPressed: () {
-
+                          showAlignedDialog(
+                              context: context,
+                              builder: _localDialogBuilder,
+                              followerAnchor: Alignment.topRight,
+                              //barrierColor: Colors.transparent,
+                              isGlobal: false,
+                              duration: Duration(milliseconds: 400),
+                              transitionsBuilder: (BuildContext context,
+                                  Animation<double> animation,
+                                  Animation<double> secondaryAnimation,
+                                  Widget child) {
+                                return SlideTransition(
+                                  position: Tween(
+                                      begin: Offset(0.1, -0.02), end: Offset(0, 0.03))
+                                      .animate(animation),
+                                  child: FadeTransition(
+                                    opacity: CurvedAnimation(
+                                      parent: animation,
+                                      curve: Curves.easeOut,
+                                    ),
+                                    child: child,
+                                  ),
+                                );
+                              });
                         },
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8.0),
@@ -115,9 +147,17 @@ class _AddPromptsToFlowScreenState extends State<AddPromptsToFlowScreen> {
         ],
       ),
         body: BlocConsumer<AddPromtsToFlowBloc, AddPromtsToFlowInitial>(
-  listener: (context, state) {
+  listener: (context_, state) {
     // TODO: implement listener
-
+    if(state.subCategory == APIStatus.loading){
+      _subCatBottomSheet(context, BottomSheetShow.subcategory, state.subCategorySelected);
+    }
+    if(state.subCategory1 == APIStatus.loading){
+      _subCatBottomSheet(context, BottomSheetShow.subcategory1, state.subCategory1Selected);
+    }
+    if(state.subCategory2 == APIStatus.loading){
+      _subCatBottomSheet(context, BottomSheetShow.subcategory2, state.subCategory2Selected);
+    }
   },
   builder: (context, state) {
     if(state.mainCategory == APIStatus.loading){
@@ -132,7 +172,7 @@ class _AddPromptsToFlowScreenState extends State<AddPromptsToFlowScreen> {
       }else{
 
         if(state.mainCategoryData!.categoryList.isEmpty && state.mainCategoryData!.promptList.isEmpty){
-          return Center(child: Text('No result found!'),);
+          return Center(child: Text('No Data Available! under this category'),);
         }
         return CustomScrollView(
           slivers: [
@@ -140,7 +180,10 @@ class _AddPromptsToFlowScreenState extends State<AddPromptsToFlowScreen> {
             ///Main category Prompts
             SliverToBoxAdapter(
               child: (state.mainCategoryData!.promptList.isEmpty)
-                  ? Center(child: Text('No Prompts Available'),)
+                  ? Center(child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 50.0),
+                    child: Text('No Prompts Available'),
+                  ),)
                   : ListView.builder(
                 shrinkWrap: true,
                 itemCount: state.mainCategoryData!.promptList.length,
@@ -150,7 +193,10 @@ class _AddPromptsToFlowScreenState extends State<AddPromptsToFlowScreen> {
                     index: index,
                     onTap: (promptData){
                       addOrRemove(data: promptData);
-                    }
+                    },
+                    onCreate: (PromptListModel promptData) {
+                      return promptList.contains(promptData);
+                    },
                   );
                 },),
             ),
@@ -159,235 +205,255 @@ class _AddPromptsToFlowScreenState extends State<AddPromptsToFlowScreen> {
 
             ///Sub categories dropdown
             if (state.mainCategoryData?.categoryList.isNotEmpty??false) SliverToBoxAdapter(
-              child: Column(
-                //crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  SizedBox( height: 10,),
-                  Divider(height: 1, color: Colors.grey,),
-                  SizedBox( height: 20,),
-                  Row(
-                    children: [
-                      const Text(
-                        'Subcategory',
-                        style: TextStyle(
-                            fontSize: 14, fontWeight: FontWeight.bold),
-                      ),
-                      const SizedBox(
-                        width: 20,
-                      ),
-                      Expanded(
-                        child: DropdownButtonFormField2(
-                          isExpanded: true,
-                          hint: const Text(
-                            'Select Category',
-                            style: TextStyle(color: Colors.black),
-                          ),
-                          decoration: InputDecoration(
-                            fillColor: Colors.grey,
-                            contentPadding: const EdgeInsets.only(left: 0, top: 15, bottom: 15),
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(15),
-                            ),
-                          ),
-                          //value: value,
-                          items: state.mainCategoryData!.categoryList.map<DropdownMenuItem<String?>>((e) {
-
-                            return DropdownMenuItem<String>(
-                              onTap: () {
-                                bloc.add(LoadSubCategoryData(catId: e.categoryId));
-                              },
-                              value: e.title,
-                              child: SizedBox(
-                                  width: context.screenWidth/1.5,
-                                  child: Text(e.title!,overflow: TextOverflow.ellipsis,)),
-                            );
-                          }).toList(),
-                          onChanged: (value) {
-                            //isFirstTime=false;
-                            /*context.read<QuickImportBloc>().add(ChangeDropValue(
-                                title: value, list: state.list));
-                            context.read<SubCategoryBloc>().add(SubCategoryLoadEvent(rootId: value));*/
-                          },
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                child: Column(
+                  //crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox( height: 10,),
+                    Divider(height: 1, color: Colors.grey,),
+                    SizedBox( height: 20,),
+                    Row(
+                      children: [
+                        const Text(
+                          'Subcategory',
+                          style: TextStyle(
+                              fontSize: 14, fontWeight: FontWeight.bold),
                         ),
-                      ),
-                    ],
-                  ),
+                        const SizedBox(
+                          width: 20,
+                        ),
+                        Expanded(
+                          child: DropdownButtonFormField2(
+                            isExpanded: true,
+                            hint: const Text(
+                              'Select Category',
+                              style: TextStyle(color: Colors.black),
+                            ),
+                            decoration: InputDecoration(
+                              fillColor: Colors.grey,
+                              contentPadding: const EdgeInsets.only(left: 0, top: 15, bottom: 15),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(15),
+                              ),
+                            ),
+                            //value: value,
+                            items: state.mainCategoryData!.categoryList.map<DropdownMenuItem<String?>>((e) {
 
-                  ///Sub category prompts
-                  if(state.subCategory == APIStatus.loadSuccess)
-                    (state.subCategoryData!.promptList.length == 0)
-                        ? Container(
-                        alignment: Alignment.center,
-                        height: MediaQuery.of(context).size.height * 0.2,
-                        child: Text('No Prompts available!'))
-                        : ListView.builder(
-                    shrinkWrap: true,
-                      itemCount: state.subCategoryData?.promptList.length??0,
-                      itemBuilder: (context, index) {
-                        return PromptTile(data: state.subCategoryData!.promptList[index],
-                            onTap: (promptData){
-                              addOrRemove(data: promptData);
+                              return DropdownMenuItem<String>(
+                                onTap: () {
+                                  bloc.add(LoadSubCategoryData(catId: e.categoryId, catName: e.title));
+                                },
+                                value: e.title,
+                                child: SizedBox(
+                                    width: context.screenWidth/1.5,
+                                    child: Text(e.title!,overflow: TextOverflow.ellipsis,)),
+                              );
+                            }).toList(),
+                            onChanged: (value) {
+                              //isFirstTime=false;
+                              /*context.read<QuickImportBloc>().add(ChangeDropValue(
+                                  title: value, list: state.list));
+                              context.read<SubCategoryBloc>().add(SubCategoryLoadEvent(rootId: value));*/
                             },
-                            index: index);
-                      },
-                  )
-                ],
+                          ),
+                        ),
+                      ],
+                    ),
+/*
+                    ///Sub category prompts
+                    if(state.subCategory == APIStatus.loadSuccess)
+                      (state.subCategoryData!.promptList.length == 0)
+                          ? Container(
+                          alignment: Alignment.center,
+                          height: MediaQuery.of(context).size.height * 0.2,
+                          child: Text('No Prompts available!'))
+                          : ListView.builder(
+                      shrinkWrap: true,
+                        itemCount: state.subCategoryData?.promptList.length??0,
+                        itemBuilder: (context, index) {
+                          return PromptTile(data: state.subCategoryData!.promptList[index],
+                              onTap: (promptData){
+                                addOrRemove(data: promptData);
+                              },
+                              onCreate: (PromptListModel promptData) {
+                                return promptList.contains(promptData);
+                              },
+                              index: index);
+                        },
+                    )*/
+                  ],
+                ),
               ),
             ),
 
             ///Sub-categories1 dropdown
             if (state.subCategoryData?.categoryList.isNotEmpty??false) SliverToBoxAdapter(
-                  child: Column(
-                    children: [
-                      SizedBox( height: 10,),
-                      Divider(height: 1, color: Colors.grey,),
-                      SizedBox( height: 20,),
-                      Row(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                    child: Column(
+                      children: [
+                        SizedBox( height: 10,),
+                        Divider(height: 1, color: Colors.grey,),
+                        SizedBox( height: 20,),
+                        Row(
               children: [
-                      const Text(
-                        'Subcategory1',
-                        style: TextStyle(
-                            fontSize: 14, fontWeight: FontWeight.bold),
-                      ),
-                      const SizedBox(
-                        width: 20,
-                      ),
-                      Expanded(
-                        child: DropdownButtonFormField2(
-                          isExpanded: true,
-                          hint: const Text(
-                            'Select Category',
-                            style: TextStyle(color: Colors.black),
-                          ),
-                          decoration: InputDecoration(
-                            fillColor: Colors.grey,
-                            contentPadding: const EdgeInsets.only(left: 0, top: 15, bottom: 15),
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(15),
-                            ),
-                          ),
-                          //value: value,
-                          items: state.subCategoryData!.categoryList.map<DropdownMenuItem<String?>>((e) {
-
-                            return DropdownMenuItem<String>(
-                              onTap: () {
-                                bloc.add(LoadSubCategory1Data(catId: e.categoryId));
-                              },
-                              value: e.title,
-                              child: SizedBox(
-                                  width: context.screenWidth/1.5,
-                                  child: Text(e.title!,overflow: TextOverflow.ellipsis,)),
-                            );
-                          }).toList(),
-                          onChanged: (value) {
-                            //isFirstTime=false;
-                            /*context.read<QuickImportBloc>().add(ChangeDropValue(
-                                        title: value, list: state.list));
-                                    context.read<SubCategoryBloc>().add(SubCategoryLoadEvent(rootId: value));*/
-                          },
+                        const Text(
+                          'Subcategory1',
+                          style: TextStyle(
+                              fontSize: 14, fontWeight: FontWeight.bold),
                         ),
-                      ),
+                        const SizedBox(
+                          width: 20,
+                        ),
+                        Expanded(
+                          child: DropdownButtonFormField2(
+                            isExpanded: true,
+                            hint: const Text(
+                              'Select Category',
+                              style: TextStyle(color: Colors.black),
+                            ),
+                            decoration: InputDecoration(
+                              fillColor: Colors.grey,
+                              contentPadding: const EdgeInsets.only(left: 0, top: 15, bottom: 15),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(15),
+                              ),
+                            ),
+                            //value: value,
+                            items: state.subCategoryData!.categoryList.map<DropdownMenuItem<String?>>((e) {
+
+                              return DropdownMenuItem<String>(
+                                onTap: () {
+                                  bloc.add(LoadSubCategory1Data(catId: e.categoryId, catName: e.title));
+                                },
+                                value: e.title,
+                                child: SizedBox(
+                                    width: context.screenWidth/1.5,
+                                    child: Text(e.title!,overflow: TextOverflow.ellipsis,)),
+                              );
+                            }).toList(),
+                            onChanged: (value) {
+                              //isFirstTime=false;
+                              /*context.read<QuickImportBloc>().add(ChangeDropValue(
+                                          title: value, list: state.list));
+                                      context.read<SubCategoryBloc>().add(SubCategoryLoadEvent(rootId: value));*/
+                            },
+                          ),
+                        ),
               ],
             ),
-                      ///sub category1 prompts
-                      if(state.subCategory1 == APIStatus.loadSuccess)
-                        (state.subCategory1Data!.promptList.length == 0)
-                            ? Container(
-                          alignment: Alignment.center,
-                            height: MediaQuery.of(context).size.height * 0.2,
-                            child: Text('No Prompts available!'))
-                            : ListView.builder(
-                          shrinkWrap: true,
-                          itemCount: state.subCategory1Data!.promptList.length,
-                          itemBuilder: (context, index) {
-                            return PromptTile(data: state.subCategory1Data!.promptList[index],
-                                onTap: (promptData){
-                                  addOrRemove(data: promptData);
-                                }
-                                , index: index);
-                          },
-                        ),
-                    ],
+        /*              ///sub category1 prompts
+                        if(state.subCategory1 == APIStatus.loadSuccess)
+                          (state.subCategory1Data!.promptList.length == 0)
+                              ? Container(
+                            alignment: Alignment.center,
+                              height: MediaQuery.of(context).size.height * 0.2,
+                              child: Text('No Prompts available!'))
+                              : ListView.builder(
+                            shrinkWrap: true,
+                            itemCount: state.subCategory1Data!.promptList.length,
+                            itemBuilder: (context, index) {
+                              return PromptTile(data: state.subCategory1Data!.promptList[index],
+                                  onTap: (promptData){
+                                    addOrRemove(data: promptData);
+                                  },
+                                  onCreate: (PromptListModel promptData) {
+                                    return promptList.contains(promptData);
+                                  },
+                                  index: index);
+                            },
+                          ),*/
+                      ],
+                    ),
                   ),
                 ),
 
             ///Sub-categories2 dropdown
             if (state.subCategory1Data?.categoryList.isNotEmpty??false) SliverToBoxAdapter(
-              child: Column(
-                //crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  SizedBox( height: 10,),
-                  Divider(height: 1, color: Colors.grey,),
-                  SizedBox( height: 20,),
-                  Row(
-                    children: [
-                      const Text(
-                        'Subcategory2',
-                        style: TextStyle(
-                            fontSize: 14, fontWeight: FontWeight.bold),
-                      ),
-                      const SizedBox(
-                        width: 20,
-                      ),
-                      Expanded(
-                        child: DropdownButtonFormField2(
-                          isExpanded: true,
-                          hint: const Text(
-                            'Select Category',
-                            style: TextStyle(color: Colors.black),
-                          ),
-                          decoration: InputDecoration(
-                            fillColor: Colors.grey,
-                            contentPadding: const EdgeInsets.only(left: 0, top: 15, bottom: 15),
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(15),
-                            ),
-                          ),
-                          //value: value,
-                          items: state.subCategory1Data!.categoryList.map<DropdownMenuItem<String?>>((e) {
-
-                            return DropdownMenuItem<String>(
-                              onTap: () {
-                                bloc.add(LoadSubCategory2Data(catId: e.categoryId));
-                              },
-                              value: e.title,
-                              child: SizedBox(
-                                  width: context.screenWidth/1.5,
-                                  child: Text(e.title!,overflow: TextOverflow.ellipsis,)),
-                            );
-                          }).toList(),
-                          onChanged: (value) {
-                            //isFirstTime=false;
-                            /*context.read<QuickImportBloc>().add(ChangeDropValue(
-                                title: value, list: state.list));
-                            context.read<SubCategoryBloc>().add(SubCategoryLoadEvent(rootId: value));*/
-                          },
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                child: Column(
+                  //crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox( height: 10,),
+                    Divider(height: 1, color: Colors.grey,),
+                    SizedBox( height: 20,),
+                    Row(
+                      children: [
+                        const Text(
+                          'Subcategory2',
+                          style: TextStyle(
+                              fontSize: 14, fontWeight: FontWeight.bold),
                         ),
-                      ),
-                    ],
-                  ),
+                        const SizedBox(
+                          width: 20,
+                        ),
+                        Expanded(
+                          child: DropdownButtonFormField2(
+                            isExpanded: true,
+                            hint: const Text(
+                              'Select Category',
+                              style: TextStyle(color: Colors.black),
+                            ),
+                            decoration: InputDecoration(
+                              fillColor: Colors.grey,
+                              contentPadding: const EdgeInsets.only(left: 0, top: 15, bottom: 15),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(15),
+                              ),
+                            ),
+                            //value: value,
+                            items: state.subCategory1Data!.categoryList.map<DropdownMenuItem<String?>>((e) {
 
-                  ///subcategory2 prompts
-                  if(state.subCategory2 == APIStatus.loadSuccess)
-                    (state.subCategory2Data!.promptList.length == 0)
-                        ? Container(
-                        alignment: Alignment.center,
-                        height: MediaQuery.of(context).size.height * 0.2,
-                        child: Text('No Prompts available!'))
-                        : ListView.builder(
-                        shrinkWrap: true,
-                        itemCount: state.subCategory2Data?.promptList.length??0,
-                        itemBuilder: (context, index) {
-                          return PromptTile(data: state.subCategory2Data!.promptList[index],
-                              onTap: (promptData){
-                                addOrRemove(data: promptData);
-                              },
-                              index: index);
-                        },
-                      ),
-                ],
+                              return DropdownMenuItem<String>(
+                                onTap: () {
+                                  bloc.add(LoadSubCategory2Data(catId: e.categoryId, catName: e.title));
+                                },
+                                value: e.title,
+                                child: SizedBox(
+                                    width: context.screenWidth/1.5,
+                                    child: Text(e.title,overflow: TextOverflow.ellipsis,)),
+                              );
+                            }).toList(),
+                            onChanged: (value) {
+                              //isFirstTime=false;
+                              /*context.read<QuickImportBloc>().add(ChangeDropValue(
+                                  title: value, list: state.list));
+                              context.read<SubCategoryBloc>().add(SubCategoryLoadEvent(rootId: value));*/
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+/*
+                    ///subcategory2 prompts
+                    if(state.subCategory2 == APIStatus.loadSuccess)
+                      (state.subCategory2Data!.promptList.length == 0)
+                          ? Container(
+                          alignment: Alignment.center,
+                          height: MediaQuery.of(context).size.height * 0.2,
+                          child: Text('No Prompts available!'))
+                          : ListView.builder(
+                          shrinkWrap: true,
+                          itemCount: state.subCategory2Data?.promptList.length??0,
+                          itemBuilder: (context, index) {
+                            return PromptTile(data: state.subCategory2Data!.promptList[index],
+                                onTap: (promptData){
+                                  addOrRemove(data: promptData);
+                                },
+                                onCreate: (PromptListModel promptData) {
+                                  return promptList.contains(promptData);
+                                },
+                                index: index);
+                          },
+                        ),*/
+                  ],
+                ),
               ),
             ),
+
+            SliverToBoxAdapter(child: SizedBox(height: 150.0,),)
 
 /*
             SliverToBoxAdapter(
@@ -423,6 +489,150 @@ class _AddPromptsToFlowScreenState extends State<AddPromptsToFlowScreen> {
 );
   }
 
+
+  void _subCatBottomSheet(BuildContext context_, BottomSheetShow category, String title){
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      /*shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20.0)),
+      ),*/
+      builder: (context) {
+
+        if(category == BottomSheetShow.subcategory) {
+          return Container(
+            //margin: EdgeInsets.only(top: MediaQuery.paddingOf(_context).top),
+              //padding: EdgeInsets.only(top: 20.0),
+              height: MediaQuery.of(context_).size.height * 0.7,
+              child: Scaffold(
+                appBar: AppBar(
+                  title: Text(title),
+                ),
+                body: BlocBuilder<AddPromtsToFlowBloc, AddPromtsToFlowInitial>(
+                  bloc: bloc,
+                  builder: (BuildContext context, state) {
+
+                    return (state.subCategory == APIStatus.loadFailed)
+                        ? Container(
+                        alignment: Alignment.center,
+                        height: MediaQuery.of(context).size.height * 0.2,
+                        child: Text('Unable to load data'))
+                        : (state.subCategory == APIStatus.loading)
+                        ? Center(child: CircularProgressIndicator(),)
+                        : (state.subCategoryData!.promptList.length == 0)
+                        ? Container(
+                        alignment: Alignment.center,
+                        height: MediaQuery.of(context).size.height * 0.2,
+                        child: Text('No Prompts available!'))
+                        : ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: state.subCategoryData?.promptList.length??0,
+                      itemBuilder: (context, index) {
+                        return PromptTile(data: state.subCategoryData!.promptList[index],
+                            onTap: (promptData){
+                              addOrRemove(data: promptData);
+                            },
+                            onCreate: (PromptListModel promptData) {
+                              return promptList.contains(promptData);
+                            },
+                            index: index);
+                      },
+                    );
+                  },),
+              )
+          );
+        }
+        if(category == BottomSheetShow.subcategory1) {
+          return Container(
+            //margin: EdgeInsets.only(top: MediaQuery.paddingOf(_context).top),
+              //padding: EdgeInsets.only(top: 20.0),
+              height: MediaQuery.of(context_).size.height * 0.7,
+              child: Scaffold(
+                appBar: AppBar(
+                  title: Text(title),
+                ),
+                body: BlocBuilder<AddPromtsToFlowBloc, AddPromtsToFlowInitial>(
+                  bloc: bloc,
+                  builder: (BuildContext context, state) {
+
+                    return (state.subCategory1 == APIStatus.loadFailed)
+                        ? Container(
+                        alignment: Alignment.center,
+                        height: MediaQuery.of(context).size.height * 0.2,
+                        child: Text('Unable to load data'))
+                        : (state.subCategory1 == APIStatus.loading)
+                        ? Center(child: CircularProgressIndicator(),)
+                        : (state.subCategory1Data!.promptList.length == 0)
+                        ? Container(
+                        alignment: Alignment.center,
+                        height: MediaQuery.of(context).size.height * 0.2,
+                        child: Text('No Prompts available!'))
+                        : ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: state.subCategory1Data?.promptList.length??0,
+                      itemBuilder: (context, index) {
+                        return PromptTile(data: state.subCategory1Data!.promptList[index],
+                            onTap: (promptData){
+                              addOrRemove(data: promptData);
+                            },
+                            onCreate: (PromptListModel promptData) {
+                              return promptList.contains(promptData);
+                            },
+                            index: index);
+                      },
+                    );
+                  },),
+              )
+          );
+        }
+        if(category == BottomSheetShow.subcategory2) {
+          return Container(
+            //margin: EdgeInsets.only(top: MediaQuery.paddingOf(_context).top),
+              //padding: EdgeInsets.only(top: 20.0),
+              height: MediaQuery.of(context_).size.height * 0.7,
+              color: Colors.red,
+              child: Scaffold(
+                appBar: AppBar(
+                  title: Text(title),
+                ),
+                body: BlocBuilder<AddPromtsToFlowBloc, AddPromtsToFlowInitial>(
+                  bloc: bloc,
+                  builder: (BuildContext context, state) {
+
+                    return (state.subCategory2 == APIStatus.loadFailed)
+                        ? Container(
+                        alignment: Alignment.center,
+                        height: MediaQuery.of(context).size.height * 0.2,
+                        child: Text('Unable to load data'))
+                        : (state.subCategory2 == APIStatus.loading)
+                        ? Center(child: CircularProgressIndicator(),)
+                        : (state.subCategory2Data!.promptList.length == 0)
+                        ? Container(
+                        alignment: Alignment.center,
+                        height: MediaQuery.of(context).size.height * 0.2,
+                        child: Text('No Prompts available!'))
+                        : ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: state.subCategory2Data?.promptList.length??0,
+                      itemBuilder: (context, index) {
+                        return PromptTile(data: state.subCategory2Data!.promptList[index],
+                            onTap: (promptData){
+                              addOrRemove(data: promptData);
+                            },
+                            onCreate: (PromptListModel promptData) {
+                              return promptList.contains(promptData);
+                            },
+                            index: index);
+                      },
+                    );
+                  },),
+              )
+          );
+        }
+        return const SizedBox.shrink();
+      },);
+  }
+
   void addOrRemove({required PromptListModel data}) {
     print(promptList.length.toString());
     if(promptList.contains(data)){
@@ -431,6 +641,35 @@ class _AddPromptsToFlowScreenState extends State<AddPromptsToFlowScreen> {
       promptList.add(data);
     }
     _counterStreamController.add(promptList.length);
+  }
+
+
+  WidgetBuilder get _localDialogBuilder {
+    return (BuildContext context) {
+      return GestureDetector(
+        onTap: () {
+          Navigator.of(context).pop();
+        },
+        child: Container(
+          padding: EdgeInsets.symmetric(horizontal: 10),
+          width: MediaQuery.of(context).size.width * 0.7,
+          decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.all(Radius.circular(4))),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Spacer(),
+              Text('No prompts are selected', style: TextStyle(color: Colors.black),),
+              Spacer(),
+              IconButton(onPressed: (){
+                Navigator.pop(context);
+              }, icon: Icon(Icons.close, color: Colors.black,))
+            ],
+          ),
+        ),
+      );
+    };
   }
 }
 
@@ -450,7 +689,10 @@ class PromptTile extends StatefulWidget {
   final PromptModel data;
   final int index;
   final Function(PromptListModel promptData) onTap;
-  const PromptTile({super.key, required this.data, required this.index, required this.onTap});
+  final bool Function(PromptListModel promptData) onCreate;
+  const PromptTile({super.key, required this.data, required this.index,
+    required this.onCreate,
+    required this.onTap,});
 
   @override
   State<PromptTile> createState() => _PromptTileState();
@@ -464,7 +706,10 @@ class _PromptTileState extends State<PromptTile> {
     // TODO: implement initState
     super.initState();
     color = generateRandomColor();
-    _isSelected = false; //widget.data.isSelected??
+
+    setState(() {
+      _isSelected = widget.onCreate(PromptListModel(widget.data.title!, widget.data.promptId!, color));
+    });//widget.data.isSelected??
   }
   @override
   Widget build(BuildContext context) {
@@ -472,7 +717,7 @@ class _PromptTileState extends State<PromptTile> {
       padding: const EdgeInsets.all(4.0),
       child: ListTile(
         onTap: () {
-          widget.onTap(PromptListModel(widget.data.title!, widget.data.promptId!));
+          widget.onTap(PromptListModel(widget.data.title!, widget.data.promptId!, color));
           setState(() {
             _isSelected = !_isSelected;
           });

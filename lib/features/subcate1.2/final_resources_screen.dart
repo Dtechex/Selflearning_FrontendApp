@@ -36,7 +36,7 @@ class _FinalResourceScreenState extends State<FinalResourceScreen> {
             child: Row(
               children: [
                 Text(
-                  'Show All',
+                  'View All',
                   textAlign: TextAlign.center,
                   style: TextStyle(fontSize: 9),),
               ],

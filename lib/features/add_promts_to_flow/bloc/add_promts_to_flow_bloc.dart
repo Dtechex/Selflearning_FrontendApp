@@ -31,11 +31,11 @@ class AddPromtsToFlowBloc extends Bloc<AddPromtsToFlowEvent, AddPromtsToFlowInit
 
     on<LoadSubCategoryData>((event, emit) async {
       // TODO: implement event handler
-      EasyLoading.show(dismissOnTap: true);
-      emit(state.copyWith(subCategory: APIStatus.loading));
+      //EasyLoading.show(dismissOnTap: true);
+      emit(state.copyWith(subCategory: APIStatus.loading, subCategorySelected: event.catName));
       await AddPromptsToFlowRepo.getData(mainCatId: event.catId).then((value) {
         if(value == null){
-          emit(state.copyWith(subCategory: APIStatus.loadFailed,));
+          emit(state.copyWith(subCategory: APIStatus.loadFailed, subCategorySelected: event.catName));
         }else{
           emit(state.copyWith(
               subCategory: APIStatus.loadSuccess,
@@ -43,44 +43,46 @@ class AddPromtsToFlowBloc extends Bloc<AddPromtsToFlowEvent, AddPromtsToFlowInit
             subCategory1: APIStatus.initial,
             subCategory1Data: AddPromptToFlowModel(promptList: [], categoryList: []),
             subCategory2: APIStatus.initial,
+              subCategory2Selected: event.catName,
             subCategory2Data: AddPromptToFlowModel(promptList: [], categoryList: [])
               ));
         }
       });
-      EasyLoading.dismiss();
+      //EasyLoading.dismiss();
     });
 
     on<LoadSubCategory1Data>((event, emit) async {
       // TODO: implement event handler
-      EasyLoading.show(dismissOnTap: true);
-      emit(state.copyWith(subCategory1: APIStatus.loading));
+      //EasyLoading.show(dismissOnTap: true);
+      emit(state.copyWith(subCategory1: APIStatus.loading, subCategory1Selected: event.catName));
       await AddPromptsToFlowRepo.getData(mainCatId: event.catId).then((value) {
         if(value == null){
-          emit(state.copyWith(subCategory1: APIStatus.loadFailed,));
+          emit(state.copyWith(subCategory1: APIStatus.loadFailed, subCategory1Selected: event.catName));
         }else{
           emit(state.copyWith(
               subCategory1: APIStatus.loadSuccess,
               subCategory1Data: value,
               subCategory2: APIStatus.initial,
+              subCategory1Selected: event.catName,
               subCategory2Data: AddPromptToFlowModel(promptList: [], categoryList: [])
           ));
         }
       });
-      EasyLoading.dismiss();
+      //EasyLoading.dismiss();
     });
 
     on<LoadSubCategory2Data>((event, emit) async {
       // TODO: implement event handler
-      EasyLoading.show(dismissOnTap: true);
-      emit(state.copyWith(subCategory2: APIStatus.loading));
+      //EasyLoading.show(dismissOnTap: true);
+      emit(state.copyWith(subCategory2: APIStatus.loading, subCategory2Selected: event.catName));
       await AddPromptsToFlowRepo.getData(mainCatId: event.catId).then((value) {
         if(value == null){
-          emit(state.copyWith(subCategory2: APIStatus.loadFailed,));
+          emit(state.copyWith(subCategory2: APIStatus.loadFailed, subCategory2Selected: event.catName));
         }else{
-          emit(state.copyWith(subCategory2: APIStatus.loadSuccess, subCategory2Data: value));
+          emit(state.copyWith(subCategory2: APIStatus.loadSuccess, subCategory2Selected: event.catName, subCategory2Data: value));
         }
       });
-      EasyLoading.dismiss();
+      //EasyLoading.dismiss();
     });
   }
 }

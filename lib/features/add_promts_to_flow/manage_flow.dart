@@ -119,13 +119,12 @@ class PromptsTile extends StatefulWidget {
 }
 
 class _PromptsTileState extends State<PromptsTile> {
-  late final Color color;
+
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    color = generateRandomColor();
   }
   @override
   Widget build(BuildContext context) {
@@ -136,7 +135,7 @@ class _PromptsTileState extends State<PromptsTile> {
     return ListTile(
       leading: CircleAvatar(
         maxRadius: 17,
-        backgroundColor: color,
+        backgroundColor: widget.prompt.bgColor,
         foregroundColor: Colors.white,
         child: Text(
           extractFirstLetter(widget.prompt.name),
@@ -150,33 +149,6 @@ class _PromptsTileState extends State<PromptsTile> {
         ],
       ),
     );
-  }
-
-
-
-  Color generateRandomColor() {
-    final Random random = Random();
-    Color color;
-
-    do {
-      color = Color.fromARGB(
-        255,
-        random.nextInt(256),
-        random.nextInt(256),
-        random.nextInt(256),
-      );
-    } while (_isBright(color) || color == Colors.white);
-
-    return color;
-  }
-
-  bool _isBright(Color color) {
-    // Calculate the luminance of the color using the formula
-    // Luminance = 0.299 * Red + 0.587 * Green + 0.114 * Blue
-    double luminance = 0.299 * color.red + 0.587 * color.green + 0.114 * color.blue;
-
-    // Return true if the luminance is greater than a threshold (adjust as needed)
-    return luminance > 180;
   }
 
   String extractFirstLetter(String text) {

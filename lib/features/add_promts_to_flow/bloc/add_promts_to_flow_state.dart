@@ -13,6 +13,10 @@ class AddPromtsToFlowInitial extends AddPromtsToFlowState {
   APIStatus subCategory1;
   APIStatus subCategory2;
 
+  String subCategorySelected;
+  String subCategory1Selected;
+  String subCategory2Selected;
+
   AddPromptToFlowModel? mainCategoryData;
   AddPromptToFlowModel? subCategoryData;
   AddPromptToFlowModel? subCategory1Data;
@@ -24,6 +28,9 @@ class AddPromtsToFlowInitial extends AddPromtsToFlowState {
     required this.subCategory,
     required this.subCategory1,
     required this.subCategory2,
+    this.subCategorySelected = '',
+    this.subCategory1Selected = '',
+    this.subCategory2Selected = '',
     this.subCategoryData,
     this.mainCategoryData,
     this.subCategory1Data,
@@ -33,6 +40,9 @@ class AddPromtsToFlowInitial extends AddPromtsToFlowState {
     APIStatus? mainCategory,
     APIStatus? subCategory,
     APIStatus? subCategory1,
+    String? subCategorySelected,
+    String? subCategory1Selected,
+    String? subCategory2Selected,
     AddPromptToFlowModel? mainCategoryData,
     AddPromptToFlowModel? subCategoryData,
     AddPromptToFlowModel? subCategory1Data,
@@ -43,6 +53,9 @@ class AddPromtsToFlowInitial extends AddPromtsToFlowState {
         subCategory: subCategory?? this.subCategory,
         subCategory1: subCategory1 ?? this.subCategory1,
         subCategory2: subCategory2 ?? this.subCategory2,
+      subCategorySelected: subCategorySelected?? '',
+      subCategory1Selected: subCategory1Selected?? '',
+      subCategory2Selected: subCategory2Selected?? '',
       mainCategoryData: mainCategoryData ?? this.mainCategoryData,
       subCategoryData: subCategoryData ?? this.subCategoryData,
       subCategory1Data: subCategory1Data ?? this.subCategory1Data,

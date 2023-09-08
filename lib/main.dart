@@ -22,6 +22,7 @@ import 'package:self_learning_app/features/search_category/bloc/search_cat_bloc.
 import 'package:self_learning_app/features/subcategory/bloc/sub_cate_bloc.dart';
 import 'package:self_learning_app/utilities/colors.dart';
 import 'package:self_learning_app/utilities/shared_pref.dart';
+import 'features/create_flow/bloc/create_flow_screen_bloc.dart';
 import 'features/dashboard/bloc/dashboard_bloc.dart';
 import 'features/login/bloc/login_bloc.dart';
 import 'features/subcate1.1/bloc/sub_cate1_bloc.dart';
@@ -90,6 +91,7 @@ class MyApp extends StatelessWidget {
           BlocProvider<QuickImportBloc>(create: (context) => QuickImportBloc()),
           BlocProvider<ResourcesBloc>(create: (context) => ResourcesBloc()),
           BlocProvider<PromtBloc>(create: (context) => PromtBloc()),
+          BlocProvider<CreateFlowBloc>(create: (context) => CreateFlowBloc()),
           // BlocProvider<AddPromptsBloc>(create: (context) => AddPromptsBloc()),
         ],
         child: GlobalLoaderOverlay(

@@ -5,7 +5,9 @@ import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:self_learning_app/features/category/bloc/category_state.dart';
+import 'package:self_learning_app/features/create_flow/bloc/create_flow_screen_bloc.dart';
 import 'package:self_learning_app/features/dashboard/dashboard_screen.dart';
+import 'package:self_learning_app/features/flow_screen/start_flow_screen.dart';
 import 'package:self_learning_app/features/subcategory/create_subcate_screen.dart';
 import 'package:self_learning_app/utilities/colors.dart';
 import 'package:self_learning_app/utilities/extenstion.dart';
@@ -14,6 +16,7 @@ import 'package:self_learning_app/widgets/add_resources_screen.dart';
 
 import '../category/bloc/category_bloc.dart';
 import '../create_flow/create_flow_screen.dart';
+import '../create_flow/flow_screen.dart';
 import '../promt/promts_screen.dart';
 import '../resources/maincategory_resources_screen.dart';
 import '../subcate1.1/sub_category_1.1_screen.dart';
@@ -47,6 +50,7 @@ class _SubCategoryScreenState extends State<SubCategoryScreen> {
   @override
   void initState() {
     context.read<SubCategoryBloc>().add(SubCategoryLoadEvent(rootId: widget.rootId));
+    context.read<CreateFlowBloc>().add(LoadAllFlowEvent(catID: widget.rootId!));
     super.initState();
   }
 
@@ -74,7 +78,7 @@ class _SubCategoryScreenState extends State<SubCategoryScreen> {
     return DefaultTabController(
       length: 2,
       child: Scaffold(
-        bottomNavigationBar: BottomNavigationBar(
+        /*bottomNavigationBar: BottomNavigationBar(
             type: BottomNavigationBarType.shifting,
             enableFeedback: true,
             showUnselectedLabels: true,
@@ -85,14 +89,7 @@ class _SubCategoryScreenState extends State<SubCategoryScreen> {
            //   context.read<DashboardBloc>().ChangeIndex(value);
             },
             unselectedItemColor: Colors.white,
-
             items:  [
-          BottomNavigationBarItem(
-              icon: IconButton(onPressed: () {
-                Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => DashBoardScreen(),), (route) => false);
-                }, icon: Icon(Icons.home)),
-              label: 'Home',
-              backgroundColor: primaryColor),
           BottomNavigationBarItem(
               icon: IconButton(
                 icon: Icon(Icons.create),
@@ -109,7 +106,18 @@ class _SubCategoryScreenState extends State<SubCategoryScreen> {
               label: 'Create',
               backgroundColor: primaryColor),
           BottomNavigationBarItem(
-              icon: Icon(Icons.play_circle),
+              icon: IconButton(
+                  onPressed: () {
+                Navigator.push(context, MaterialPageRoute(
+                  builder: (context) {
+                    return FlowScreen(
+                      rootId: widget.rootId!,
+                    );
+                  },
+                ));
+              },
+              icon: Icon(Icons.play_circle)
+              ),
               label: '  Start Flow',
               backgroundColor: primaryColor),
           BottomNavigationBarItem(
@@ -121,14 +129,10 @@ class _SubCategoryScreenState extends State<SubCategoryScreen> {
               label: 'Create \n Flow',
               backgroundColor: primaryColor),
           BottomNavigationBarItem(
-              icon: Icon(Icons.add_card_rounded),
-              label: 'create prompts',
-              backgroundColor: primaryColor),
-          BottomNavigationBarItem(
               icon: Icon(Icons.calendar_month_sharp),
               label: 'Schedule',
               backgroundColor: primaryColor),
-        ]),
+        ]),*/
           appBar: AppBar(
               bottom: TabBar(
                 tabs: [
@@ -154,31 +158,122 @@ class _SubCategoryScreenState extends State<SubCategoryScreen> {
                 isScrollable: false,
 
               ),
-              title: Text(widget.categoryName??"Subcategory"), actions: [
-            IconButton(
-                onPressed: () {
-                  Navigator.push(context, MaterialPageRoute(
-                    builder: (context) {
-                      return UpdateCateScreen(
-                        rootId: widget.rootId,
-                        selectedColor: widget.color,
-                        categoryTitle: widget.categoryName,
-                        tags: widget.tags,
-                      );
+              centerTitle: false,
+              title: Text(widget.categoryName??"Subcategory", overflow: TextOverflow.ellipsis,),
+              actions: [
+                IconButton(
+                  icon: Icon(Icons.add),
+                  onPressed: () {
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => CreateFlowScreen(rootId: widget.rootId!),));
+                  },),
+                IconButton(
+                    onPressed: () {
+                      Navigator.push(context, MaterialPageRoute(
+                        builder: (context) {
+                          return FlowScreen(
+                            rootId: widget.rootId!,
+                          );
+                        },
+                      ));
                     },
-                  ));
-                },
-                icon: Row(
-                  children: const [
-                    Text(
-                      'Edit',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
+                    icon: Icon(Icons.play_circle)
+                ),
+                IconButton(onPressed: () {  }, icon: Icon(Icons.calendar_month_sharp)),
+
+
+                PopupMenuButton(
+                  icon: Icon(Icons.more_vert,color: Colors.white,),
+                  itemBuilder: (context) {
+                    return [
+                      const PopupMenuItem(
+                          value: 'createFlow',
+                          child: InkWell(
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  Icon(Icons.add_circle_rounded, color: primaryColor,),
+                                  SizedBox(width: 8.0,),
+                                  Text("Create New Flow"),
+                                ],
+                              ))
                       ),
-                    ),
-                  ],
-                ))
-          ]),
+
+                      const PopupMenuItem(
+                          value: 'startFlow',
+                          child: InkWell(
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  Icon(Icons.play_circle, color: primaryColor,),
+                                  SizedBox(width: 8.0,),
+                                  Text("Start Flow"),
+                                ],
+                              ))
+                      ),
+                      const PopupMenuItem(
+                          value: 'schedule',
+                          child: InkWell(
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  Icon(Icons.calendar_month_sharp, color: primaryColor,),
+                                  SizedBox(width: 8.0,),
+                                  Text("Schedule"),
+                                ],
+                              ))
+                      ),
+                      const PopupMenuItem(
+                          value: 'edit',
+                          child: InkWell(
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  Icon(Icons.edit, color: primaryColor,),
+                                  SizedBox(width: 8.0,),
+                                  Text("Edit Category"),
+                                ],
+                              ))
+                      )
+                    ];
+                  },
+                  onSelected: (String value) {
+                    switch(value){
+                      case 'edit':
+                        Navigator.push(context, MaterialPageRoute(
+                          builder: (context) {
+                            return UpdateCateScreen(
+                              rootId: widget.rootId,
+                              selectedColor: widget.color,
+                              categoryTitle: widget.categoryName,
+                              tags: widget.tags,
+                            );
+                          },
+                        ));
+                        break;
+                      case 'schedule':
+
+                        break;
+                      case 'startFlow':
+                        Navigator.push(context, MaterialPageRoute(
+                          builder: (context) {
+                            return FlowScreen(
+                              rootId: widget.rootId!,
+                            );
+                          },
+                        ));
+                        break;
+                      case 'createFlow':
+                        Navigator.push(context, MaterialPageRoute(
+                          builder: (context) {
+                            return CreateFlowScreen(
+                                rootId: widget.rootId!
+                            );
+                          }));
+                        break;
+                    }
+                  },
+                ),
+              ]),
           floatingActionButton: SizedBox(height: context.screenHeight*0.1,
             child: FittedBox(
               child: ElevatedButton(
@@ -204,7 +299,7 @@ class _SubCategoryScreenState extends State<SubCategoryScreen> {
                 child: Row(
                   children: [
                     Text(
-                      _tabIndex==0?'Show All':'Create\n Category',
+                      _tabIndex==0?'View All':'Create\n Category',
                       textAlign: TextAlign.center,
                       style: TextStyle(fontSize: 9),),
                   ],
@@ -218,7 +313,7 @@ class _SubCategoryScreenState extends State<SubCategoryScreen> {
             child: TabBarView(
               physics: NeverScrollableScrollPhysics(),
               children: [
-                // tab 1 
+                // tab 1
                 AddResourceScreen(rootId: widget.rootId??'',whichResources: 1, categoryName: widget.categoryName??"Subcategory"),
                 // tab 2
                 Column(

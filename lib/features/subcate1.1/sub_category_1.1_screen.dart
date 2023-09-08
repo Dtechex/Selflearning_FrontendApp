@@ -79,7 +79,7 @@ class _SubCategory1ScreenState extends State<SubCategory1Screen> {
                 child: Row(
                   children: [
                     Text(
-                      _tabIndex==0?'Show All':'Create\n Category',
+                      _tabIndex==0?'View All':'Create\n Category',
                       textAlign: TextAlign.center,
                       style: TextStyle(fontSize: 9),),
                   ],

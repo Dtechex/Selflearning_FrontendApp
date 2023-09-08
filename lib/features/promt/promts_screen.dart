@@ -10,7 +10,7 @@ import '../flow_screen/start_flow_screen.dart';
 import 'bloc/promt_bloc.dart';
 import 'data/model/flow_model.dart';
 
-enum Prompt{fromResource, fromCategory}
+enum Prompt{fromResource, fromCategory, fromFlow}
 class PromtsScreen extends StatefulWidget {
   final String? mediaType;
   final String promtId;
@@ -112,10 +112,10 @@ class _PromtsScreenState extends State<PromtsScreen> {
                           promtId: widget.promtId,
                         );},));
                       },
-                      child: Row(
-                        children: const [
+                      child: const Row(
+                        children: [
                           Text(
-                            'Create Flow',
+                            'Start Flow',
                             style: TextStyle(fontSize: 9),
                           ),
                         ],

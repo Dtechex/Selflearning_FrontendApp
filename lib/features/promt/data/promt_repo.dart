@@ -18,12 +18,13 @@ import 'model/promt_model.dart';
 
 
 class PromtRepo {
-
   static Future<PromtAndAddFlowModel> getPromts(
       {required String promtId, required Prompt fromType}) async {
     String idType;
     if(fromType == Prompt.fromResource){
       idType = 'resourceId';
+    }else if(fromType == Prompt.fromFlow){
+      idType = 'flowId';
     }else{
       idType = 'categoryId';
     }

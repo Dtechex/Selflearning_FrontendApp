@@ -13,42 +13,48 @@ import '../data/repo/create_flow_screen_repo.dart';
 part 'create_flow_screen_event.dart';
 part 'create_flow_screen_state.dart';
 class CreateFlowBloc extends Bloc<CreateFlowEvent,CreateFlowState> {
-  CreateFlowBloc(): super(
-      CreateFlowState(
-      showAddDialog: false,
-      showLoading: false, apiStatus: APIStatus.initial
-  )){
-    on<AddFlow>(_showAddFlowDialog);
-    on<CreateAndSaveFlow>(_saveFlow);
-    on<LoadAllFlowEvent>((event, emit){
-      CreateFlowRepo.getAllFlow(catID: event.catID).then((value) {
+  CreateFlowBloc(): super(FlowLoading()){
 
-        if(value.statusCode == 400){
-          emit(state.copyWith(apiStatus: APIStatus.failed));
-        }else{
-          List<FlowModel> flowList = [];
-          for(var item in value.data['']){
-            flowList.add(FlowModel(title: item[''], id: item['']));
-          }
-          emit(state.copyWith(apiStatus: APIStatus.successful, flowList: flowList));
+    on<LoadAllFlowEvent>((event, emit) async {
+      emit(FlowLoading());
+      Response response = await CreateFlowRepo.getAllFlow(catID: event.catID);
+
+      print('123456');
+      print(response);
+      if(response.statusCode == 400){
+        emit(LoadFailed());
+      }else{
+        List<FlowModel> flowList = [];
+        for(var item in response.data['data']['record']){
+          flowList.add(FlowModel(title: item['title'], id: item['_id']));
         }
-      });
+        emit(LoadSuccess(flowList));
+      }
     });
   }
-
-  _showAddFlowDialog(AddFlow event, Emitter<CreateFlowState> emit){
-    emit(state.copyWith(showAddDialog: event.showDialog));
-  }
-  _saveFlow(CreateAndSaveFlow event, Emitter<CreateFlowState> emit) async {
-    EasyLoading.show();
-    await Future.delayed(const Duration(seconds: 3),);
-    //Response? response = await CreateFlowRepo.createFlow(title: event.title);
-    EasyLoading.dismiss();
-
-    /*if(response == null){
-
-    }else{
-
-    }*/
-  }
 }
+
+
+/// List<FlowModel> flowList = []
+/*for(var item in response.data['data']['record']){
+List<FlowDataModel> flowData = [];
+
+for (var flow in item['flow']){
+flowData.add(FlowDataModel(
+resourceTitle: flow['resource']['title'],
+resourceType: flow['resource']['type'],
+resourceContent: flow['resource']['content'],
+side1Title: flow['side1']['title'],
+side1Type: flow['side1']['type'],
+side1Content: flow['side1']['content'],
+side2Title: flow['side2']['title'],
+side2Type: flow['side2']['type'],
+side2Content: flow['side2']['content']));
+}
+flowList.add(FlowModel(
+title: item['title'],
+id: item['_id'],
+categoryId: item['categoryId'],
+flowList: flowData,
+));
+}*/

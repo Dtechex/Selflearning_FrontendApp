@@ -13,31 +13,18 @@ import '../promt/promts_screen.dart';
 import '../resources/bloc/resources_bloc.dart';
 import '../resources/maincategory_resources_screen.dart';
 
-class CreateFlowScreen extends StatefulWidget {
+class FlowScreen extends StatefulWidget {
   final String rootId;
-  const CreateFlowScreen({super.key, required this.rootId});
+  const FlowScreen({super.key, required this.rootId});
 
   @override
-  State<CreateFlowScreen> createState() => _CreateFlowScreenState();
+  State<FlowScreen> createState() => _FlowScreenState();
 }
 
-class _CreateFlowScreenState extends State<CreateFlowScreen> {
+class _FlowScreenState extends State<FlowScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      floatingActionButton: InkWell(
-        onTap: () {
-          _showDialog(context);
-        },
-        child: Container(
-          padding: EdgeInsets.all(8.0),
-          decoration: BoxDecoration(
-            color: Colors.red,
-            borderRadius: BorderRadius.circular(12.0)
-          ),
-          child: Icon(Icons.add, color: Colors.white,),
-        ),
-      ),
       appBar: AppBar(
         title: Text('Main Category Flow'),
       ),
@@ -71,7 +58,6 @@ class _CreateFlowScreenState extends State<CreateFlowScreen> {
             }else{
               return ListView.builder(
                   shrinkWrap: true,
-                  //physics: NeverScrollableScrollPhysics(),
                   itemCount: state.flowList.length,
                   itemBuilder: (context, index) {
 
@@ -84,7 +70,7 @@ class _CreateFlowScreenState extends State<CreateFlowScreen> {
                       ),
                       child: ListTile(
                         onTap: () {
-                          Navigator.push(context, MaterialPageRoute(builder: (context) => AddPromptsToFlowScreen(title: title, rootId: widget.rootId,),));
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => PromtsScreen(promtId: state.flowList[index].id, fromType: Prompt.fromFlow,),));
                         },
                         tileColor: Colors.white,
                         shape: RoundedRectangleBorder(
@@ -95,7 +81,7 @@ class _CreateFlowScreenState extends State<CreateFlowScreen> {
                               ?'${title.substring(0,1).toUpperCase()}${title.substring(1)}'
                               : 'Untitled',
                           style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.w500),),
-                        leading: const Icon(Icons.create_new_folder, color: Colors.orange, size: 30.0,),),
+                        leading: const Icon(Icons.folder, color: Colors.orange, size: 30.0,),),
                     );
                   });
             }
@@ -105,64 +91,4 @@ class _CreateFlowScreenState extends State<CreateFlowScreen> {
       ),
     );
   }
-
-
-  void _showDialog(BuildContext context) {
-    TextEditingController titleController = TextEditingController(text: '');
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Add new Flow'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              TextField(
-                controller: titleController,
-                decoration: InputDecoration(
-                  hintText: 'Enter Flow name...',
-                ),
-              ),
-            ],
-          ),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: Text('Cancel'),
-            ),
-            TextButton(
-              onPressed: () {
-                // Do something with the TextField value
-
-                //bloc.add(CreateAndSaveFlow(title: titleController.text));
-
-
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => AddPromptsToFlowScreen(
-                        title: titleController.text,
-                        rootId: widget.rootId,),)).then((value) {
-                          if(value != null && value == true){
-                            Navigator.pop(context, true);
-                          }else{
-                            Navigator.pop(context, false);
-                          }
-                });
-              },
-              child: Text('Submit'),
-            ),
-          ],
-        );
-      },
-    ).then((value) {
-      if(value != null && value == true){
-        Future.delayed(Duration(seconds: 1));
-        context.read<CreateFlowBloc>().add(LoadAllFlowEvent(catID: widget.rootId));
-      }
-    });
-  }
-
 }
