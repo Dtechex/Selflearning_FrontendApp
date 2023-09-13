@@ -52,4 +52,26 @@ class CreateFlowRepo {
     return response;
   }
 
+  static Future<Response> deleteFlow({required String flowId}) async {
+    Response response;
+
+    try{
+      final token = await SharedPref().getToken();
+      response = await Dio().delete(
+          'https://selflearning.dtechex.com/web/flow/$flowId',
+          options: Options(
+              headers: {"Authorization": 'Bearer $token'}
+          ));
+    }on DioError catch (e) {
+      response = Response(requestOptions: RequestOptions());
+      response.data = {
+        'msg' : 'Failed to communicate with server!',
+        'errorMsg' : e.toString(),
+      };
+      response.statusCode = 400;
+    }
+
+    return response;
+  }
+
 }

@@ -10,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:self_learning_app/features/add_promts_to_flow/bloc/data/model/prompt_model.dart';
 import 'package:self_learning_app/features/add_promts_to_flow/manage_flow.dart';
+import 'package:self_learning_app/features/create_flow/data/model/flow_model.dart';
 import 'package:self_learning_app/utilities/extenstion.dart';
 
 import '../quick_import/bloc/quick_add_bloc.dart';
@@ -41,7 +42,10 @@ class PromptListModel extends Equatable{
 class AddPromptsToFlowScreen extends StatefulWidget {
   final String title;
   final String rootId;
-  const AddPromptsToFlowScreen({super.key, required this.title, required this.rootId});
+  final List<PromptListModel> promptList;
+  final bool update;
+  final String flowId;
+  const AddPromptsToFlowScreen({super.key, required this.title, required this.rootId, required this.promptList, this.update = false, this.flowId = ''});
 
   @override
   State<AddPromptsToFlowScreen> createState() => _AddPromptsToFlowScreenState();
@@ -57,6 +61,7 @@ class _AddPromptsToFlowScreenState extends State<AddPromptsToFlowScreen> {
   void initState() {
     context.read<QuickImportBloc>().add(LoadQuickTypeEvent());
     context.read<SubCategory1Bloc>().add(SubCategory1LoadEmptyEvent());
+    promptList = widget.promptList;
     bloc.add(LoadMainCategoryData(catId: widget.rootId));
     super.initState();
   }
@@ -128,6 +133,8 @@ class _AddPromptsToFlowScreenState extends State<AddPromptsToFlowScreen> {
                           title: widget.title,
                           rootId: widget.rootId,
                           promptList: promptList,
+                          update: widget.update,
+                          flowId: widget.flowId,
                         ),)).then((value) {
                           if(value != null && value == true){
                             Navigator.pop(context, true);

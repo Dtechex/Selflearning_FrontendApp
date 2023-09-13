@@ -14,6 +14,7 @@ import '../quick_add/quick_add_screen.dart';
 import '../search_category/bloc/search_cate_event.dart';
 import '../search_category/cate_search_delegate.dart';
 import '../subcategory/bloc/sub_cate_bloc.dart';
+import '../update_category/update_cate_screen.dart';
 
 class AllCateScreen extends StatefulWidget {
   const AllCateScreen({Key? key}) : super(key: key);
@@ -203,18 +204,81 @@ class _AllCateScreenState extends State<AllCateScreen> {
 
                     return GestureDetector(
                       child: Container(
-                        padding: const EdgeInsets.all(8),
+                        //padding: const EdgeInsets.all(8),
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(10),
                           color: Colors.transparent,
                           border: Border.all(color: currentColor, width: 3),
                         ),
-                        child: Center(
-                          child: Text(state.cateList[index].name.toString(),
-                              textAlign: TextAlign.center,
-                              overflow: TextOverflow.ellipsis,
-                              maxLines: 2,
-                              style: const TextStyle(color: primaryColor)),
+                        child: Stack(
+                          children: [
+                            Center(
+                              child: Text(state.cateList[index].name.toString(),
+                                  textAlign: TextAlign.center,
+                                  overflow: TextOverflow.ellipsis,
+                                  maxLines: 2,
+                                  style: const TextStyle(color: primaryColor)),
+                            ),
+                            Align(
+                              alignment: Alignment.topRight,
+                              child: PopupMenuButton(
+                                icon: Icon(Icons.more_vert,color: Colors.red,),
+                                itemBuilder: (context) {
+                                  return [
+
+                                    const PopupMenuItem(
+                                        value: 'update',
+                                        child: InkWell(
+                                            child: Row(
+                                              mainAxisAlignment: MainAxisAlignment.start,
+                                              children: [
+                                                Icon(Icons.update, color: primaryColor,),
+                                                SizedBox(width: 8.0,),
+                                                Text("Update"),
+                                              ],
+                                            ))
+                                    ),
+                                    const PopupMenuItem(
+                                        value: 'delete',
+                                        child: InkWell(
+                                            child: Row(
+                                              mainAxisAlignment: MainAxisAlignment.start,
+                                              children: [
+                                                Icon(Icons.delete, color: primaryColor,),
+                                                SizedBox(width: 8.0,),
+                                                Text("Delete"),
+                                              ],
+                                            ))
+                                    )
+                                  ];
+                                },
+                                onSelected: (String value) {
+                                  switch(value){
+                                    case 'update':
+                                      Navigator.push(context, MaterialPageRoute(
+                                        builder: (context) {
+                                          return UpdateCateScreen(
+                                            rootId: state.cateList[index].sId,
+                                            selectedColor: currentColor,
+                                            categoryTitle: state.cateList[index].name,
+                                            tags: state.cateList[index].keywords,
+                                          );
+                                        },
+                                      ));
+                                      break;
+                                    case 'delete':
+                                      context.read<CategoryBloc>().add(CategoryDeleteEvent(
+                                        rootId: state.cateList[index].sId??'',
+                                        context: context,
+                                        catList: state.cateList,
+                                        deleteIndex: index,
+                                      ));
+                                      break;
+                                  }
+                                },
+                              ),
+                            )
+                          ],
                         ),
                       ),
                       onTap: () {
@@ -231,6 +295,9 @@ class _AllCateScreenState extends State<AllCateScreen> {
                             );
                           },
                         ));
+                      },
+                      onLongPress: () {
+
                       },
                     );
                   },

@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:self_learning_app/features/create_flow/bloc/create_flow_screen_bloc.dart';
+import 'package:self_learning_app/features/create_flow/show_prompts_screen.dart';
 
 import '../add_promts/add_promts_screen.dart';
 import '../add_promts_to_flow/add_promts_to_flow_screen.dart';
@@ -70,7 +71,7 @@ class _FlowScreenState extends State<FlowScreen> {
                       ),
                       child: ListTile(
                         onTap: () {
-                          Navigator.push(context, MaterialPageRoute(builder: (context) => PromtsScreen(promtId: state.flowList[index].id, fromType: Prompt.fromFlow,),));
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => ShowPromtsScreen(flowList: state.flowList[index].flowList,),));
                         },
                         tileColor: Colors.white,
                         shape: RoundedRectangleBorder(

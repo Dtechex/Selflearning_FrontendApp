@@ -17,8 +17,12 @@ class ManageFlow extends StatefulWidget {
   final String rootId;
 
   final List<PromptListModel> promptList;
+  final bool update;
+  final String flowId;
 
-  const ManageFlow({super.key, required this.title, required this.rootId, required this.promptList});
+  const ManageFlow({super.key, required this.title,
+    required this.update,
+    required this.rootId, required this.promptList, required this.flowId});
 
   @override
   State<ManageFlow> createState() => _ManageFlowState();
@@ -40,6 +44,8 @@ class _ManageFlowState extends State<ManageFlow> {
                     catId: widget.rootId,
                   title: widget.title,
                   data: widget.promptList,
+                  update: widget.update,
+                  flowId: widget.flowId,
                 );
               },
               color: Colors.white,
@@ -79,7 +85,7 @@ class _ManageFlowState extends State<ManageFlow> {
     );
   }
 
-  Future<void> saveFlow({required String catId, required String title, required List<PromptListModel> data}) async {
+  Future<void> saveFlow({required String catId, required String title, required List<PromptListModel> data, required bool update, required String flowId}) async {
     EasyLoading.show(dismissOnTap: true);
     final token = await SharedPref().getToken();
     final Options options = Options(
@@ -88,17 +94,31 @@ class _ManageFlowState extends State<ManageFlow> {
     final List<Map<String, String>> dataToSend = data
         .map((data) => {'promptId': data.id})
         .toList();
-    Response response = await Dio().post(
-      'https://selflearning.dtechex.com/web/flow',
-      data: {
-        'categoryId': catId,
-        'title': title,
-        'flow': dataToSend,
-      },
-      options: options,
+    Response response;
+    if(!update){
+      response = await Dio().post(
+        'https://selflearning.dtechex.com/web/flow',
+        data: {
+          'categoryId': catId,
+          'title': title,
+          'flow': dataToSend,
+        },
+        options: options,
 
-    );
-    print('Successful $response');
+      );
+    }else{
+      response = await Dio().put(
+        'https://selflearning.dtechex.com/web/flow/update/$flowId',
+        data: {
+          'categoryId': catId,
+          'title': title,
+          'flow': dataToSend,
+        },
+        options: options,
+
+      );
+    }
+    print('Successful $response, code: ${response.statusCode}');
     if(response.statusCode == 200 || response.statusCode == 201){
       Navigator.pop(context, true);
     }else{

@@ -1,11 +1,14 @@
 
 
+import 'dart:math';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:self_learning_app/features/create_flow/bloc/create_flow_screen_bloc.dart';
+import 'package:self_learning_app/utilities/colors.dart';
 
 import '../add_promts/add_promts_screen.dart';
 import '../add_promts_to_flow/add_promts_to_flow_screen.dart';
@@ -76,6 +79,7 @@ class _CreateFlowScreenState extends State<CreateFlowScreen> {
                   itemBuilder: (context, index) {
 
                     final title = state.flowList[index].title;
+                    final flowId = state.flowList[index].id;
                     print('content');
 
                     return Card(
@@ -84,9 +88,35 @@ class _CreateFlowScreenState extends State<CreateFlowScreen> {
                       ),
                       child: ListTile(
                         onTap: () {
-                          Navigator.push(context, MaterialPageRoute(builder: (context) => AddPromptsToFlowScreen(title: title, rootId: widget.rootId,),));
+
+                          List<PromptListModel> promptList = [];
+                          state.flowList[index].flowList.forEach((item) {
+                            promptList.add(PromptListModel(item.promptName, item.promptId, generateRandomColor()));
+                          });
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => AddPromptsToFlowScreen(
+                            update: true,
+                            title: title,
+                            flowId: flowId,
+                            promptList: promptList,
+                            rootId: widget.rootId,
+                          ),)).then((value) {
+                            context.read<CreateFlowBloc>().add(LoadAllFlowEvent(catID: widget.rootId));
+                          });
                         },
                         tileColor: Colors.white,
+                        trailing: IconButton(
+                          icon: Icon(Icons.delete, color: primaryColor,),
+                          onPressed: () {
+                            context.read<CreateFlowBloc>().add(
+                                DeleteFlow(
+                                    flowId: state.flowList[index].id,
+                                  flowList: state.flowList,
+                                  deleteIndex: index,
+                                  context: context
+                                )
+                            );
+                          },
+                        ),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12.0),
                         ),
@@ -105,6 +135,37 @@ class _CreateFlowScreenState extends State<CreateFlowScreen> {
       ),
     );
   }
+
+  Color generateRandomColor() {
+    Random random = Random();
+
+    // Define RGB value ranges for white, blue, and gray colors
+    final whiteRange = Range(200, 256); // RGB values between 200-255
+    final blueRange = Range(0, 100);    // RGB values between 0-100
+    final grayRange = Range(150, 200);  // RGB values between 150-199
+
+    Color randomColor;
+
+    do {
+      // Generate random RGB values
+      int red = random.nextInt(256);
+      int green = random.nextInt(256);
+      int blue = random.nextInt(256);
+
+      randomColor = Color.fromRGBO(red, green, blue, 1.0);
+    } while (whiteRange.contains(randomColor.red) &&
+        whiteRange.contains(randomColor.green) &&
+        whiteRange.contains(randomColor.blue) ||
+        blueRange.contains(randomColor.red) &&
+            blueRange.contains(randomColor.green) &&
+            blueRange.contains(randomColor.blue) ||
+        grayRange.contains(randomColor.red) &&
+            grayRange.contains(randomColor.green) &&
+            grayRange.contains(randomColor.blue));
+
+    return randomColor;
+  }
+
 
 
   void _showDialog(BuildContext context) {
@@ -144,7 +205,7 @@ class _CreateFlowScreenState extends State<CreateFlowScreen> {
                     MaterialPageRoute(
                       builder: (context) => AddPromptsToFlowScreen(
                         title: titleController.text,
-                        rootId: widget.rootId,),)).then((value) {
+                        rootId: widget.rootId, promptList: [],),)).then((value) {
                           if(value != null && value == true){
                             Navigator.pop(context, true);
                           }else{

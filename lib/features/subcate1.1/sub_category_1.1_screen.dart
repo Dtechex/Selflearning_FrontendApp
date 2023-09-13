@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:self_learning_app/features/create_flow/bloc/create_flow_screen_bloc.dart';
 import 'package:self_learning_app/features/resources/subcategory_resources_screen.dart';
 import 'package:self_learning_app/features/subcate1.2/bloc/sub_cate2_bloc.dart';
 import 'package:self_learning_app/features/subcategory/create_subcate_screen.dart';
@@ -9,6 +10,8 @@ import 'package:self_learning_app/utilities/extenstion.dart';
 
 import '../../utilities/colors.dart';
 import '../../widgets/add_resources_screen.dart';
+import '../create_flow/create_flow_screen.dart';
+import '../create_flow/flow_screen.dart';
 import '../subcate1.2/sub_category_1.2_screen.dart';
 import 'bloc/sub_cate1_bloc.dart';
 import 'bloc/sub_cate1_event.dart';
@@ -43,12 +46,14 @@ class _SubCategory1ScreenState extends State<SubCategory1Screen> {
     Icons.text_increase
   ];
   int _tabIndex = 0;
+  CreateFlowBloc _flowBloc = CreateFlowBloc();
 
 
   @override
   void initState() {
     context.read<SubCategory1Bloc>().add(SubCategory1LoadEvent(rootId: widget.rootId));
     super.initState();
+    _flowBloc.add(LoadAllFlowEvent(catID: widget.rootId));
   }
 
   @override
@@ -110,22 +115,108 @@ class _SubCategory1ScreenState extends State<SubCategory1Screen> {
                 },
                 isScrollable: false,
               ),
-              title: Text(widget.subCateTitle),actions: [
-            IconButton(
-                onPressed: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) {
-                    return UpdateSubCateScreen(rootId: widget.rootId,selectedColor: widget.color!,categoryTitle: widget.subCateTitle,keyWords: widget.keyWords,);
-                  },));
+              title: Text(widget.subCateTitle),
+              actions: [
+                IconButton(
+                  icon: Icon(Icons.add),
+                  onPressed: () {
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => BlocProvider<CreateFlowBloc>.value(value: _flowBloc, child: CreateFlowScreen(rootId: widget.rootId!)),));
+                  },),
+                IconButton(
+                    onPressed: () {
+                      Navigator.push(context, MaterialPageRoute(
+                        builder: (context) {
+                          return BlocProvider<CreateFlowBloc>.value(value: _flowBloc, child: FlowScreen(
+                            rootId: widget.rootId!,
+                          ));
+                        },
+                      ));
+                    },
+                    icon: Icon(Icons.play_circle)
+                ),
 
-                }, icon: Row(
-              children: const [
-                Text('Edit',style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                ),),
+                PopupMenuButton(
+                  icon: Icon(Icons.more_vert,color: Colors.white,),
+                  itemBuilder: (context) {
+                    return [
+                      const PopupMenuItem(
+                          value: 'createFlow',
+                          child: InkWell(
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  Icon(Icons.add_circle_rounded, color: primaryColor,),
+                                  SizedBox(width: 8.0,),
+                                  Text("Create New Flow"),
+                                ],
+                              ))
+                      ),
 
-              ],
-            ))
-          ]),
+                      const PopupMenuItem(
+                          value: 'startFlow',
+                          child: InkWell(
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  Icon(Icons.play_circle, color: primaryColor,),
+                                  SizedBox(width: 8.0,),
+                                  Text("Start Flow"),
+                                ],
+                              ))
+                      ),
+                      const PopupMenuItem(
+                          value: 'edit',
+                          child: InkWell(
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  Icon(Icons.edit, color: primaryColor,),
+                                  SizedBox(width: 8.0,),
+                                  Text("Edit Category"),
+                                ],
+                              ))
+                      )
+                    ];
+                  },
+                  onSelected: (String value) {
+                    switch(value){
+                      case 'edit':
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) {
+                                return UpdateSubCateScreen(
+                                  rootId: widget.rootId,
+                                  selectedColor: widget.color!,
+                                  categoryTitle: widget.subCateTitle,
+                                  keyWords: widget.keyWords,);
+                        },));
+                        break;
+                      case 'schedule':
+
+                        break;
+                      case 'startFlow':
+                        Navigator.push(context, MaterialPageRoute(
+                          builder: (context) {
+                            return FlowScreen(
+                              rootId: widget.rootId!,
+                            );
+                          },
+                        ));
+                        break;
+                      case 'createFlow':
+                        Navigator.push(context, MaterialPageRoute(
+                            builder: (context) {
+                              return CreateFlowScreen(
+                                  rootId: widget.rootId!
+                              );
+                            }));
+                        break;
+                    }
+                  },
+                ),
+              ]
+          ),
           body: TabBarView(
             physics: NeverScrollableScrollPhysics(),
             children: [

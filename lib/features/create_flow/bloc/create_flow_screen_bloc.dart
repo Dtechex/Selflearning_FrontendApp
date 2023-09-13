@@ -2,6 +2,7 @@
 
 
 import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
@@ -15,6 +16,18 @@ part 'create_flow_screen_state.dart';
 class CreateFlowBloc extends Bloc<CreateFlowEvent,CreateFlowState> {
   CreateFlowBloc(): super(FlowLoading()){
 
+    on<DeleteFlow>((event, emit) async {
+      EasyLoading.show(dismissOnTap: true);
+      Response response = await CreateFlowRepo.deleteFlow(flowId: event.flowId);
+      if(response.statusCode == 400){
+        ScaffoldMessenger.of(event.context).showSnackBar(SnackBar(content: Text('Delete Failed!')));
+      }else{
+        event.flowList.removeAt(event.deleteIndex);
+        EasyLoading.dismiss();
+        ScaffoldMessenger.of(event.context).showSnackBar(SnackBar(content: Text('Deleted Successfully!')));
+        emit(LoadSuccess(event.flowList));
+      }
+    });
     on<LoadAllFlowEvent>((event, emit) async {
       emit(FlowLoading());
       Response response = await CreateFlowRepo.getAllFlow(catID: event.catID);
@@ -25,8 +38,34 @@ class CreateFlowBloc extends Bloc<CreateFlowEvent,CreateFlowState> {
         emit(LoadFailed());
       }else{
         List<FlowModel> flowList = [];
-        for(var item in response.data['data']['record']){
+        /*for(var item in response.data['data']['record']){
           flowList.add(FlowModel(title: item['title'], id: item['_id']));
+        }*/
+        for(var item in response.data['data']['record']){
+          List<FlowDataModel> flowData = [];
+
+          for (var flow in item['flow']){
+
+            flowData.add(FlowDataModel(
+                promptName: flow['promptId']['name'],
+                promptId: flow['promptId']['_id'],
+                resourceTitle: flow['promptId']['resourceId']?['title']?? '',
+                resourceType: flow['promptId']['resourceId']?['type']??'',
+                resourceContent: flow['promptId']['resourceId']?['content']??'',
+                side1Title: flow['promptId']['side1']['title'],
+                side1Type: flow['promptId']['side1']['type'],
+                side1Content: flow['promptId']['side1']['content'],
+                side2Title: flow['promptId']['side2']['title'],
+                side2Type: flow['promptId']['side2']['type'],
+                side2Content: flow['promptId']['side2']['content']));
+
+          }
+          flowList.add(FlowModel(
+            title: item['title'],
+            id: item['_id'],
+            categoryId: item['categoryId'],
+            flowList: flowData,
+          ));
         }
         emit(LoadSuccess(flowList));
       }
@@ -36,25 +75,4 @@ class CreateFlowBloc extends Bloc<CreateFlowEvent,CreateFlowState> {
 
 
 /// List<FlowModel> flowList = []
-/*for(var item in response.data['data']['record']){
-List<FlowDataModel> flowData = [];
 
-for (var flow in item['flow']){
-flowData.add(FlowDataModel(
-resourceTitle: flow['resource']['title'],
-resourceType: flow['resource']['type'],
-resourceContent: flow['resource']['content'],
-side1Title: flow['side1']['title'],
-side1Type: flow['side1']['type'],
-side1Content: flow['side1']['content'],
-side2Title: flow['side2']['title'],
-side2Type: flow['side2']['type'],
-side2Content: flow['side2']['content']));
-}
-flowList.add(FlowModel(
-title: item['title'],
-id: item['_id'],
-categoryId: item['categoryId'],
-flowList: flowData,
-));
-}*/

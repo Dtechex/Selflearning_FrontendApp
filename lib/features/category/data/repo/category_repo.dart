@@ -1,10 +1,36 @@
 import 'dart:convert';
+import 'package:dio/dio.dart' as dio;
 import 'package:http/http.dart';
 import 'package:self_learning_app/features/category/data/model/category_model.dart';
 import 'package:self_learning_app/features/subcategory/model/sub_cate_model.dart';
 import '../../../../utilities/base_client.dart';
+import '../../../../utilities/shared_pref.dart';
 
 class CategoryRepo {
+
+  static Future<dio.Response> deleteCategory({required String rootId}) async {
+    var token = await SharedPref().getToken();
+    dio.Response res;
+    try {
+      res = await dio.Dio().delete(
+        'https://selflearning.dtechex.com/web/category/${rootId}',
+        options: dio.Options(
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer $token'
+          },
+        )
+      );
+
+      //print(res.body);
+      //print('data');
+    } on dio.DioError catch (_) {
+      res = dio.Response(requestOptions: dio.RequestOptions());
+      res.statusCode = 400;
+    }
+
+    return res;
+  }
 
   static Future<List<CategoryModel>> getAllCategory() async {
     Response res = await Api().get(

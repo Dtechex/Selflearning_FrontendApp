@@ -37,7 +37,7 @@ class AddPromptsToFlowRepo {
       if(item != null){
         promptList.add(PromptModel(
           promptId: item['_id'],
-          resourceId: item['resourceId']['_id'],
+          resourceId: item['resourceId']?['_id']??'',
           title: item['name'],
           isSelected: item['isActive'],
         ));

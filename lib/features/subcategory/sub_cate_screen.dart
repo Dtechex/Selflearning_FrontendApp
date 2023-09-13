@@ -273,7 +273,8 @@ class _SubCategoryScreenState extends State<SubCategoryScreen> {
                     }
                   },
                 ),
-              ]),
+              ]
+          ),
           floatingActionButton: SizedBox(height: context.screenHeight*0.1,
             child: FittedBox(
               child: ElevatedButton(

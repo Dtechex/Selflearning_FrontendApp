@@ -17,6 +17,19 @@ class AddFlow extends CreateFlowEvent {
 
 }
 
+class DeleteFlow extends CreateFlowEvent {
+
+  final String flowId;
+  final List<FlowModel> flowList;
+  final int deleteIndex;
+  final context;
+  DeleteFlow({required this.flowId, required this.flowList, required this.deleteIndex, required this.context});
+  @override
+  // TODO: implement props
+  List<Object?> get props => [flowId, flowList, deleteIndex];
+
+}
+
 class CreateAndSaveFlow extends CreateFlowEvent {
 
   final String title;
