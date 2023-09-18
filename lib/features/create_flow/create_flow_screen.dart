@@ -42,7 +42,7 @@ class _CreateFlowScreenState extends State<CreateFlowScreen> {
         ),
       ),
       appBar: AppBar(
-        title: Text('Main Category Flow'),
+        title: Text('Show Category Flow'),
       ),
       body: BlocConsumer<CreateFlowBloc, CreateFlowState>(
         listener: (context, state) {},
@@ -92,7 +92,8 @@ class _CreateFlowScreenState extends State<CreateFlowScreen> {
                           List<PromptListModel> promptList = [];
                           state.flowList[index].flowList.forEach((item) {
                             promptList.add(PromptListModel(item.promptName, item.promptId, generateRandomColor()));
-                          });
+                          }
+                          );
                           Navigator.push(context, MaterialPageRoute(builder: (context) => AddPromptsToFlowScreen(
                             update: true,
                             title: title,

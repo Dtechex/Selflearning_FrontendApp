@@ -27,7 +27,7 @@
 		<key>LSRequiresIPhoneOS</key>
 		<true/>
 		<key>NSCameraUsageDescription</key>
-		<string>Self Larning wants to use your Camera</string>
+		<string>Self Larning wants to use your Camera for taking images to add resources</string>
 		<key>NSMicrophoneUsageDescription</key>
 		<string>Self Larning wants to use your MicroPhone</string>
 		<key>NSPhotoLibraryUsageDescription</key>

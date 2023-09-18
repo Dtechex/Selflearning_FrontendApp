@@ -54,7 +54,8 @@ class _AddImageScreenState extends State<AddImageScreen> {
     print('inse image add image');
     return BlocProvider(
       create: (context) => addMediaBloc, child: Scaffold(
-        appBar: AppBar(title: const Text('Add Image Resource')),
+        appBar: AppBar(title: const Text('Add Image Resource'),
+        ),
         body: Container(
           padding: const EdgeInsets.only(left: 20, right: 20),
           child: BlocConsumer<AddMediaBloc, AddMediaInitial>(

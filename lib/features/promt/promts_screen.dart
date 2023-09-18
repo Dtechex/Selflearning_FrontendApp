@@ -74,7 +74,9 @@ class _PromtsScreenState extends State<PromtsScreen> {
     var w = MediaQuery.of(context).size.width;
     print("https://selflearning.dtechex.com/public/${widget.mediaType}/${widget.content}");
     return Scaffold(
-      appBar: AppBar(title: const Text('Prompts')),
+      appBar: AppBar(title: const Text('Prompts'),
+      // backgroundColor: Colors.green,
+      ),
       body: BlocConsumer<PromtBloc, PromtState>(
         listener: (context, state) {
           if (state is PromtLoaded) {

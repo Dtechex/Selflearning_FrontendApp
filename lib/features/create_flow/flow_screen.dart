@@ -28,6 +28,7 @@ class _FlowScreenState extends State<FlowScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Main Category Flow'),
+        backgroundColor: Colors.blue,
       ),
       body: BlocConsumer<CreateFlowBloc, CreateFlowState>(
         listener: (context, state) {},
@@ -71,7 +72,7 @@ class _FlowScreenState extends State<FlowScreen> {
                       ),
                       child: ListTile(
                         onTap: () {
-                          Navigator.push(context, MaterialPageRoute(builder: (context) => ShowPromtsScreen(flowList: state.flowList[index].flowList,),));
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => ShowPromtsScreen(flowList: state.flowList[index].flowList, flowName: state.flowList[index].title,),));
                         },
                         tileColor: Colors.white,
                         shape: RoundedRectangleBorder(

@@ -12,8 +12,8 @@ import 'data/model/flow_model.dart';
 
 class ShowPromtsScreen extends StatefulWidget {
   final List<FlowDataModel> flowList;
-
-  const ShowPromtsScreen({Key? key, required this.flowList,}) : super(key: key);
+  final String flowName;
+  const ShowPromtsScreen({Key? key, required this.flowList, required this.flowName}) : super(key: key);
 
   @override
   State<ShowPromtsScreen> createState() => _ShowPromtsScreenState();
@@ -52,7 +52,10 @@ class _ShowPromtsScreenState extends State<ShowPromtsScreen> {
     var h = MediaQuery.of(context).size.height;
     var w = MediaQuery.of(context).size.width;
     return Scaffold(
-      appBar: AppBar(title: const Text('Prompts')),
+      appBar: AppBar(title: const Text('Prompts'),
+        backgroundColor: Colors.green,
+
+      ),
       body: Scaffold(
         floatingActionButton: SizedBox(
           height: context.screenHeight * 0.1,
@@ -62,7 +65,7 @@ class _ShowPromtsScreenState extends State<ShowPromtsScreen> {
 
                 Navigator.push(context, MaterialPageRoute( builder: (context) {
                   return SlideShowScreen(
-                  flowList: widget.flowList,
+                  flowList: widget.flowList, flowName: widget.flowName,
                 );},));
               },
               child: const Row(

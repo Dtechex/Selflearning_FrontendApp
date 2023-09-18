@@ -37,7 +37,7 @@ dependencies:
   connectivity_plus:
   equatable:
   formz: ^0.4.0
-  http:
+  http: ^1.1.0
   email_validator: ^2.1.17
   flutter_screenutil: ^5.7.0
   flutter_colorpicker: ^1.0.3
@@ -52,7 +52,7 @@ dependencies:
   dropdown_button2: ^2.1.0
   file_picker:
   image_picker:
-  dio:
+  dio: ^5.3.2
   video_player: ^2.6.1
   just_audio: ^0.9.34
   mime: ^1.0.4
@@ -77,6 +77,8 @@ dependencies:
   flick_video_player: ^0.5.0
   video_thumbnail: ^0.5.3
   aligned_dialog: ^0.0.7
+  bloc: ^8.1.2
+  blurrycontainer: ^1.0.2
 
 dev_dependencies:
   flutter_test:

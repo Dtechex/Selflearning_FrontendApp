@@ -76,7 +76,9 @@ class _StartFlowScreenState extends State<StartFlowScreen> {
     var w = MediaQuery.of(context).size.width;
     //print("https://selflearning.dtechex.com/public/${widget.mediaType}/${widget.content}");
     return Scaffold(
-      appBar: AppBar(title: const Text('Prompts')),
+      appBar: AppBar(title: const Text('Prompts'),
+      // backgroundColor: Colors.blue,
+      ),
       body: Scaffold(
         body: BlocConsumer<PromtBloc, PromtState>(
           listener: (context, state) {

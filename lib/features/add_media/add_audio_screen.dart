@@ -99,10 +99,13 @@ class _AddAudioScreenState extends State<AddAudioScreen> {
       if (audioPlayer.playerState.processingState == ProcessingState.completed) {
         await audioPlayer.seek(Duration.zero);
       }
+
       await audioPlayer.setFilePath(audioPath);
-      await audioPlayer.play();
+      await audioPlayer.pause();
     }
   }
+
+
 
   void _playerStateChanged() {
     audioPlayer.playerStateStream.listen((playerState) {
@@ -226,9 +229,10 @@ class _AddAudioScreenState extends State<AddAudioScreen> {
                               ?FloatingActionButton(onPressed: () {stopRecording();},child: Icon(Icons.stop))
                               :FloatingActionButton(onPressed: () {startRecording();},child: Icon(Icons.mic)),
                           SizedBox(height: 8.0,),
-                          /*_isRecording==true
+
+                          _isRecording==true
                               ? Text('Stop Recording')
-                              : Text('Start Recording'),*/
+                              : Text('Start Recording'),
                         ],
                       ),
                       const Spacer(flex: 1,),
