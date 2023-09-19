@@ -85,7 +85,7 @@ class _AddPromptsScreenState extends State<AddPromptsScreen> {
       child: Scaffold(
         appBar: AppBar(
           title: const Text('Add Prompt', style: TextStyle(fontSize: 17)),
-          backgroundColor: primaryColor,
+          backgroundColor: Colors.yellow,
         ),
         backgroundColor: Colors.grey.shade100,
         body: SafeArea(
@@ -148,7 +148,17 @@ class _AddPromptsScreenState extends State<AddPromptsScreen> {
                                     titleIsEmty =false;
                                   });
                                 },
-                                onTap: () {},
+                                onTap: () {
+                                  if(state.resource1status == Resource1Status.selected && state.side1Id == ''){
+                                    saveResource1(state);
+                                  }else if(side1_Controller.text != '' && state.side1Id == '' || side2_Controller.text!='' && state.side2Id == ''){
+                                    saveResource1(state);
+                                  }else{
+                                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Resource 1 is not saved!')));
+                                  }
+
+
+                                },
                                 textAlign: TextAlign.center,
                                 style: TextStyle(fontWeight: FontWeight.w600, fontSize: 20.0, letterSpacing: 1),
                                 decoration: InputDecoration(
@@ -623,13 +633,13 @@ class _AddPromptsScreenState extends State<AddPromptsScreen> {
                                                   controller: side2_Controller,
                                                   focusNode: _answerFocusNode,
                                                   onTap: () {
-                                                    /*if(state.resource1status == Resource1Status.selected && state.side1Id == ''){
+                                                    if(state.resource1status == Resource1Status.selected && state.side1Id == ''){
                                                 saveResource1(state);
                                               }else if(side1_Controller.text != '' && state.side1Id == ''){
                                                 saveResource1(state);
                                               }else{
                                                 ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Resource 1 is not saved!')));
-                                              }*/
+                                              }
 
 
                                                   },
@@ -885,7 +895,7 @@ class _AddPromptsScreenState extends State<AddPromptsScreen> {
 
                           GestureDetector(
                             onTap: (){
-                              if(state.side1ResourceUrl!.isEmpty && state.side2ResourceUrl!.isEmpty){
+                              if(state.side1Id!.isEmpty && state.side2Id!.isEmpty){
                                print("field is empty");
                               }
                               else {

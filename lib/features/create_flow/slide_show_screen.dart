@@ -446,12 +446,15 @@ class _FrontPageWidgetState extends State<FrontPageWidget> {
                                     borderRadius: BorderRadius.circular(4.0)
                                 ),
                                 height: widget.h * 0.2,
+                                width: widget.w*0.6,
                                 child: FlickVideoPlayer(
                                   flickVideoWithControls: FlickVideoWithControls(
                                     videoFit: BoxFit.fitHeight,
                                     controls: const FlickPortraitControls(),
+
                                   ),
                                   flickManager: flickManager!,
+                                  
                                 ),// Return an empty widget if _chewieController is null
                               ),
                               Spacer(),
@@ -798,8 +801,30 @@ class BackPage2Widget extends StatefulWidget {
 
 class _BackPage2WidgetState extends State<BackPage2Widget> {
 
-  ChewieController? _chewieController;
+  // ChewieController? _chewieController;
   AudioPlayer? _audioPlayer;
+   FlickManager? flickManager;
+
+  Future<void> _initializeVideoPlayer() async {
+
+    //final videoPlayerController = VideoPlayerController.file(File(videoPath));
+    //await videoPlayerController.initialize();
+
+    flickManager = FlickManager(
+      videoPlayerController:
+      VideoPlayerController.network("https://selflearning.dtechex.com/public/video/${widget.content}"),
+    );
+    /*_chewieController = ChewieController(
+      videoPlayerController: videoPlayerController,
+      autoPlay: true,
+      looping: true,
+      // Other ChewieController configurations...
+    );*/
+
+    /*setState(() {
+      _isPlaying = true;
+    });*/
+  }
 
 
 
@@ -808,7 +833,8 @@ class _BackPage2WidgetState extends State<BackPage2Widget> {
   void initState() {
     // TODO: implement initState
     if(getMediaType(widget.content) == 'video'){
-      _chewieController = _createChewieController('https://selflearning.dtechex.com/public/video/${widget.content}');
+      _initializeVideoPlayer();
+      // _chewieController = _createChewieController('https://selflearning.dtechex.com/public/video/${widget.content}');
     }else if(getMediaType(widget.content) == 'audio'){
       _audioPlayer = AudioPlayer();
       initAudio();
@@ -849,10 +875,11 @@ class _BackPage2WidgetState extends State<BackPage2Widget> {
           width: MediaQuery.of(context).size.width,
           child: Column(
             children: [
+              Text("FlickVideoPlayer"),
               Expanded(
                 child: Column(
                   children: [
-                    if(_chewieController == null) Spacer(),
+                    if(flickManager == null) Spacer(),
                     widget.content.contains('.jpeg') ||
                         widget.content.contains('.jpg') ||
                         widget.content.contains('.png') ||
@@ -874,8 +901,13 @@ class _BackPage2WidgetState extends State<BackPage2Widget> {
                             borderRadius: BorderRadius.circular(4.0)
                         ),
                         height: widget.h * 0.3,
-                        child: _chewieController != null
-                            ? Chewie(controller: _chewieController! ):const SizedBox.shrink(), // Return an empty widget if _chewieController is null
+                        child: flickManager != null
+                            ? FlickVideoPlayer(
+                            flickVideoWithControls: FlickVideoWithControls(
+                              videoFit: BoxFit.fitHeight,
+                              controls: FlickPortraitControls(),
+                            ),
+                            flickManager: flickManager!):const SizedBox.shrink(), // Return an empty widget if _chewieController is null
                       ),
                     )
                         : getMediaType(widget.content) == 'audio'
@@ -903,7 +935,7 @@ class _BackPage2WidgetState extends State<BackPage2Widget> {
                       ],
                     )
                         : Flexible(child: Text(widget.title, style: TextStyle(fontSize: 19.0, fontWeight: FontWeight.bold),)),
-                    if(_chewieController == null) Spacer(),
+                    if(flickManager == null) Spacer(),
                   ],
                 ),
               ),
