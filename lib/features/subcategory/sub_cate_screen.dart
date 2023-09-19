@@ -44,6 +44,7 @@ class SubCategoryScreen extends StatefulWidget {
 }
 
 class _SubCategoryScreenState extends State<SubCategoryScreen> {
+  final TextEditingController _searchController = TextEditingController();
 
 
 
@@ -52,6 +53,12 @@ class _SubCategoryScreenState extends State<SubCategoryScreen> {
     context.read<SubCategoryBloc>().add(SubCategoryLoadEvent(rootId: widget.rootId));
     context.read<CreateFlowBloc>().add(LoadAllFlowEvent(catID: widget.rootId!));
     super.initState();
+    _searchController.addListener(() {
+      // Filter the category list based on the search query.
+
+      // Update the state to re-render the list view.
+      setState(() {});
+    });
   }
 
   int _tabIndex = 0;
@@ -60,6 +67,9 @@ class _SubCategoryScreenState extends State<SubCategoryScreen> {
     SharedPref().savesubcateId(widget.rootId!);
   }
   static const TextStyle optionStyle = TextStyle(fontSize: 20, fontWeight: FontWeight.bold);
+  List<String> searchList = []; // Define searchList at the top of your widget
+  List<String> resultList = []; // Results of the search
+
 
   static const List<Widget> _widgetOptions = <Widget>[
     Text('Create Dailogs', style: optionStyle,),
@@ -72,6 +82,7 @@ class _SubCategoryScreenState extends State<SubCategoryScreen> {
       style: optionStyle,
     ),
   ];
+
 
   @override
   Widget build(BuildContext context) {
@@ -318,84 +329,130 @@ class _SubCategoryScreenState extends State<SubCategoryScreen> {
                 AddResourceScreen(rootId: widget.rootId??'',whichResources: 1, categoryName: widget.categoryName??"Subcategory"),
                 // tab 2
                 Column(
-                  children: [  const SizedBox(
+                  children: [
+                    const SizedBox(
                     height: 20,
                   ),
                     SizedBox(
                       width: context.screenWidth,
                       height: context.screenHeight * 0.08,
-                      child: CupertinoSearchTextField(
-                        backgroundColor: Colors.grey.withOpacity(0.2),
-                        placeholder: 'Search',
-                      ),
+                      child: BlocBuilder<SubCategoryBloc, SubCategoryState>(
+                    builder: (context, state) {
+
+                      if(state is SubCategoryLoading){
+                        return const Center(child: CircularProgressIndicator());
+                      }
+                      else if( state is SubCategoryLoaded) {
+                        searchList = state.cateList.map((item) => item.name.toString()).toList();
+                        return Column(
+                          children: [
+                            CupertinoSearchTextField(
+                              backgroundColor: Colors.grey.withOpacity(0.2),
+                              placeholder: 'Search',
+                              controller: _searchController,
+                              onChanged: (value) {
+                                setState(() {
+                                  // Call the search function with the user's input
+                                  search(value);
+                                });
+                              },
+                            ),
+
+                          ],
+                        );
+                      }
+
+                      return SizedBox();
+                         },
+
+          ),
                     ),
                     const SizedBox(
                       height: 20,
                     ),
-                    BlocBuilder<SubCategoryBloc, SubCategoryState>(
-                      builder: (context, state) {
-                        if (state is SubCategoryLoading) {
-                          return const Center(child: CircularProgressIndicator());
-                        } else if (state is SubCategoryLoaded) {
-                          return state.cateList.isEmpty
-                              ? SizedBox(
-                            height: context.screenHeight / 2,
-                            child: const Center(
-                              child: Text(
-                                'No Subcategory added',
-                                style: TextStyle(
-                                    fontSize: 19, fontWeight: FontWeight.bold),
-                              ),
+
+                if(_searchController.text.isEmpty)
+                  BlocBuilder<SubCategoryBloc, SubCategoryState>(
+                    builder: (context, state) {
+                      if (state is SubCategoryLoading) {
+                        return const Center(child: CircularProgressIndicator());
+                      } else if (state is SubCategoryLoaded) {
+                        return state.cateList.isEmpty
+                            ? SizedBox(
+                          height: context.screenHeight / 2,
+                          child: const Center(
+                            child: Text(
+                              'No Subcategory added',
+                              style: TextStyle(
+                                  fontSize: 19, fontWeight: FontWeight.bold),
                             ),
-                          )
-                              : ListView.builder(
-                            itemCount: state.cateList.length,
-                            shrinkWrap: true,
-                            itemBuilder: (context, index) {
-                              return GestureDetector(
-                                onTap: () async{
-                                  //   await SharedPref().savesubcateId(state.cateList[index].sId!);
-                                  Navigator.push(context, MaterialPageRoute(
-                                    builder: (context) {
-                                      return SubCategory1Screen(
-                                        subCateTitle:
-                                        state.cateList[index].name!,
-                                        rootId: state.cateList[index].sId!,
-                                        color: widget.color,
-                                        keyWords:
-                                        state.cateList[index].keywords!,
-                                      );
-                                    },
-                                  ));
-                                },
-                                child: Padding(
-                                    padding: const EdgeInsets.all(10),
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                          borderRadius:
-                                          BorderRadius.circular(10),
-                                          border: Border.all(
-                                              color: Color(int.parse(state
-                                                  .cateList[index]
-                                                  .styles![1]
-                                                  .value!)),
-                                              width: 3),
-                                          color: Colors.transparent),
-                                      padding: const EdgeInsets.only(left: 10),
-                                      child: ListTile(
-                                          title: Text(
-                                            state.cateList[index].name.toString(),
-                                            style: const TextStyle(
-                                                color: primaryColor),
-                                          )),
-                                    )),
-                              );
-                            },
-                          );
-                        }
-                        return const SizedBox(child: Text('Something went wrong'),);
-                      },
-                    ),],
+                          ),
+                        )
+                            : ListView.builder(
+                          itemCount: state.cateList.length,
+                          shrinkWrap: true,
+                          itemBuilder: (context, index) {
+                            return GestureDetector(
+                              onTap: () async{
+                                //   await SharedPref().savesubcateId(state.cateList[index].sId!);
+                                Navigator.push(context, MaterialPageRoute(
+                                  builder: (context) {
+                                    return SubCategory1Screen(
+                                      subCateTitle:
+                                      state.cateList[index].name!,
+                                      rootId: state.cateList[index].sId!,
+                                      color: widget.color,
+                                      keyWords:
+                                      state.cateList[index].keywords!,
+                                    );
+                                  },
+                                ));
+                              },
+                              child: Padding(
+                                  padding: const EdgeInsets.all(10),
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                        borderRadius:
+                                        BorderRadius.circular(10),
+                                        border: Border.all(
+                                            color: Color(int.parse(state
+                                                .cateList[index]
+                                                .styles![1]
+                                                .value!)),
+                                            width: 3),
+                                        color: Colors.transparent),
+                                    padding: const EdgeInsets.only(left: 10),
+                                    child: ListTile(
+                                        title: Text(
+                                          state.cateList[index].name.toString(),
+                                          style: const TextStyle(
+                                              color: primaryColor),
+                                        )),
+                                  )),
+                            );
+                          },
+                        );
+                      }
+                      return const SizedBox(child: Text('Something went wrong'),);
+                    },
+                  ),
+                    if(_searchController.text.isNotEmpty)  Column(
+                      children: resultList
+                          .map(
+                            (item) => Card(
+                              margin: EdgeInsets.symmetric(vertical: 5),
+                               color: Colors.redAccent,
+                              elevation: 5,
+                              child: ListTile(
+                          title: Text(item, style: TextStyle(color: Colors.white),),
+                        ),
+                            ),
+                      )
+                          .toList(),
+                    ),
+
+
+                  ],
                 ),
 
               ],
@@ -403,5 +460,15 @@ class _SubCategoryScreenState extends State<SubCategoryScreen> {
           )),
     );
   }
+  void search(String query) {
+    setState(() {
+      // Filter the searchList based on the query
+      resultList = searchList
+          .where((item) => item.toLowerCase().contains(query.toLowerCase()))
+          .toList();
+    });
 
+    // Print the filtered list
+    print("filteredList $resultList");
+  }
 }

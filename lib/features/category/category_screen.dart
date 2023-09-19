@@ -90,6 +90,7 @@ class _AllCateScreenState extends State<AllCateScreen> {
 
   @override
   Widget build(BuildContext context) {
+    print("Category Screen");
     return Column(
       children: [
       const SizedBox(
