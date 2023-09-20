@@ -149,14 +149,7 @@ class _AddPromptsScreenState extends State<AddPromptsScreen> {
                                   });
                                 },
                                 onTap: () {
-                                  if(state.resource1status == Resource1Status.selected && state.side1Id == ''){
-                                    saveResource1(state);
-                                  }else if(side1_Controller.text != '' && state.side1Id == '' || side2_Controller.text!='' && state.side2Id == ''){
-                                    saveResource1(state);
-                                  }else{
-                                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Resource 1 is not saved!')));
-                                  }
-
+                                  ////// .........................................>---->
 
                                 },
                                 textAlign: TextAlign.center,
@@ -633,7 +626,7 @@ class _AddPromptsScreenState extends State<AddPromptsScreen> {
                                                   controller: side2_Controller,
                                                   focusNode: _answerFocusNode,
                                                   onTap: () {
-                                                    if(state.resource1status == Resource1Status.selected && state.side1Id == ''){
+                                                    if(state.resource1status == Resource1Status.selected && side1_Controller.text!=""){
                                                 saveResource1(state);
                                               }else if(side1_Controller.text != '' && state.side1Id == ''){
                                                 saveResource1(state);
@@ -898,9 +891,12 @@ class _AddPromptsScreenState extends State<AddPromptsScreen> {
                               if(state.side1Id!.isEmpty && state.side2Id!.isEmpty){
                                print("field is empty");
                               }
-                              else {
+                              if(side2_Controller.text != '' && side2_Controller.text.isNotEmpty){
+                                saveResource2(state);
                                 onAddPromptPressed(state, context);
+
                               }
+
                             },
                             child: Container(
                               margin: EdgeInsets.only(top: 20),
