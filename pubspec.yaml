@@ -79,6 +79,8 @@ dependencies:
   aligned_dialog: ^0.0.7
   bloc: ^8.1.2
   blurrycontainer: ^1.0.2
+  firebase_crashlytics: ^3.3.6
+  firebase_core: ^2.16.0
 
 dev_dependencies:
   flutter_test:

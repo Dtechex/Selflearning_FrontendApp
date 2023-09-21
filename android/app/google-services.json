@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "889481453393",
+    "firebase_url": "https://self-learning-d2ecd-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "self-learning-d2ecd",
+    "storage_bucket": "self-learning-d2ecd.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:889481453393:android:af2ae2bf5ce61e4387bd70",
+        "android_client_info": {
+          "package_name": "com.self.learn"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC6eSK1SsFJMVZHEjDvrodXip6dRH-psHw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

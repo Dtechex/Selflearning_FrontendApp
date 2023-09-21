@@ -85,7 +85,7 @@ class _AddPromptsScreenState extends State<AddPromptsScreen> {
       child: Scaffold(
         appBar: AppBar(
           title: const Text('Add Prompt', style: TextStyle(fontSize: 17)),
-          backgroundColor: Colors.yellow,
+          // backgroundColor: Colors.yellow,
         ),
         backgroundColor: Colors.grey.shade100,
         body: SafeArea(
@@ -150,6 +150,19 @@ class _AddPromptsScreenState extends State<AddPromptsScreen> {
                                 },
                                 onTap: () {
                                   ////// .........................................>---->
+                                  if(side1_Controller.text.isNotEmpty ){
+                                    print("Condition first is run");
+                                    saveResource1(state);
+                                  }
+                                  if(side2_Controller.text.isNotEmpty){
+                                    print("condition 2 is run");
+                                    saveResource2(state);
+                                  }
+                                  if( side1_Controller.text.isNotEmpty || side1_Controller.text.isNotEmpty){
+                                    print("------->---< or condition3");
+                                    saveResource1(state);
+                                    saveResource2(state);
+                                  }
 
                                 },
                                 textAlign: TextAlign.center,
@@ -887,14 +900,16 @@ class _AddPromptsScreenState extends State<AddPromptsScreen> {
 
 
                           GestureDetector(
-                            onTap: (){
+
+                            onTap: () async {
                               if(state.side1Id!.isEmpty && state.side2Id!.isEmpty){
                                print("field is empty");
                               }
-                              if(side2_Controller.text != '' && side2_Controller.text.isNotEmpty){
+                              else if(side2_Controller.text.isNotEmpty) {
                                 saveResource2(state);
+                                if(state.side2Id!.isNotEmpty || state.side2Id != ""){
                                 onAddPromptPressed(state, context);
-
+                                }
                               }
 
                             },
@@ -902,7 +917,7 @@ class _AddPromptsScreenState extends State<AddPromptsScreen> {
                               margin: EdgeInsets.only(top: 20),
                               padding: EdgeInsets.all(10),
                               decoration: BoxDecoration(
-                                  color: state.side1Id!.isEmpty && state.side2Id!.isEmpty?Colors.grey:primaryColor,
+                                  color: state.side1Id!.isEmpty || state.side2Id!.isEmpty?Colors.grey:primaryColor,
                                   borderRadius: BorderRadius.circular(10)),
                               width: 100,
                               height: 40,

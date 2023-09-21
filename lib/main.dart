@@ -2,6 +2,8 @@ import 'dart:developer';
 
 import 'package:device_preview/device_preview.dart';
 import 'package:dio/dio.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:loader_overlay/loader_overlay.dart';
@@ -38,7 +40,11 @@ BaseOptions baseOptions = BaseOptions(
 );
 Dio dio = Dio(baseOptions);
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  await Firebase.initializeApp();
+  FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
   dio.interceptors.add(LogInterceptor(
       responseBody: true,
       responseHeader: false,
@@ -49,11 +55,14 @@ void main() {
       logPrint: (text) {
         log(text.toString());
       }));
+
   configLoading();
+
+
   runApp(
-    const MyApp(), // Wrap your app
-  );
+    const MyApp(),);
 }
+
 
 void configLoading() {
   EasyLoading.instance
@@ -70,6 +79,8 @@ void configLoading() {
     ..userInteractions = false
     ..dismissOnTap = false;
     //..customAnimation = CustomAnimation();
+      (error, stack) =>
+      FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
 }
 
 class MyApp extends StatelessWidget {
