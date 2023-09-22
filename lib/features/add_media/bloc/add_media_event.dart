@@ -12,6 +12,7 @@ class ImagePickEvent extends AddMediaEvent{
 class AudioPickEvent extends AddMediaEvent{
   final String ? audio;
   AudioPickEvent({this.audio});
+
 }
 
 class VideoPickEvent extends AddMediaEvent{

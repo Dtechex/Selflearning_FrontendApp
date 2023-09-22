@@ -86,13 +86,6 @@ class _AddAudioScreenState extends State<AddAudioScreen> {
   }
 
 
-  @override
-  void dispose() {
-    super.dispose();
-
-    audioPlayer.dispose();
-    addMediaBloc.close();
-  }
 
   Future<void> _togglePlayPause(String audioPath) async {
     if (_isPlaying) {
@@ -134,6 +127,14 @@ class _AddAudioScreenState extends State<AddAudioScreen> {
     textEditingController.text='';
     super.initState();
     _playerStateChanged();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+
+    audioPlayer.dispose();
+    addMediaBloc.close();
   }
 
   @override

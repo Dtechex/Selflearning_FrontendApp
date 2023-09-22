@@ -29,6 +29,7 @@ import 'features/dashboard/bloc/dashboard_bloc.dart';
 import 'features/login/bloc/login_bloc.dart';
 import 'features/subcate1.1/bloc/sub_cate1_bloc.dart';
 import 'features/subcate1.2/bloc/sub_cate2_bloc.dart';
+import 'firebase_option.dart';
 
 BaseOptions baseOptions = BaseOptions(
   baseUrl: 'https://selflearning.dtechex.com/',
@@ -43,7 +44,9 @@ Dio dio = Dio(baseOptions);
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  await Firebase.initializeApp();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
   dio.interceptors.add(LogInterceptor(
       responseBody: true,
