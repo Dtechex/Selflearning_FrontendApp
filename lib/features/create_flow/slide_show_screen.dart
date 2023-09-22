@@ -173,7 +173,7 @@ class _SlideShowScreenState extends State<SlideShowScreen> {
                   //             Navigator.pushAndRemoveUntil(
                   //               context,
                   //               MaterialPageRoute(builder: (context) {
-                  //                 return const DashBoardScreen();
+                  //                 return const ssssfDashBoardScreen();
                   //               }),
                   //                   (route) => false,
                   //             );
