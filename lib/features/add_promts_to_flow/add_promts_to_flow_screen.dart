@@ -80,7 +80,6 @@ class _AddPromptsToFlowScreenState extends State<AddPromptsToFlowScreen> {
       create: (context) => bloc,
       child: Scaffold(
         appBar: AppBar(
-          backgroundColor: Colors.green,
           title: Text(
             widget.title,
             overflow: TextOverflow.ellipsis,
@@ -92,6 +91,7 @@ class _AddPromptsToFlowScreenState extends State<AddPromptsToFlowScreen> {
                 stream: _counterStreamController.stream,
                 initialData: promptList.length,
                 builder: (context, snapshot) {
+                  print("total length of book $promptList.length");
                   if (snapshot.hasError) {
                     return Text('Error: ${snapshot.error}');
                   } else if (!snapshot.hasData) {

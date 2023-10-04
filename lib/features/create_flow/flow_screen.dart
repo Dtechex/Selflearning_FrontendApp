@@ -28,10 +28,19 @@ class _FlowScreenState extends State<FlowScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Main Category Flow'),
-        backgroundColor: Colors.blue,
+        backgroundColor: Colors.yellow,
       ),
       body: BlocConsumer<CreateFlowBloc, CreateFlowState>(
-        listener: (context, state) {},
+        listener: (context, state) {
+         // if(state is flowSelected){
+         //   print("flow select from flow screen");
+         // }
+         // if(state is flowSelectionFailed){
+         //   ScaffoldMessenger(child: Text("opps sorry is selected"),);
+         //
+         // }
+
+        },
         builder: (context, state) {
           if (state is FlowLoading) {
             return Container(
@@ -64,6 +73,7 @@ class _FlowScreenState extends State<FlowScreen> {
                   itemBuilder: (context, index) {
 
                     final title = state.flowList[index].title;
+
                     print('content');
 
                     return Card(
@@ -71,6 +81,10 @@ class _FlowScreenState extends State<FlowScreen> {
                         borderRadius: BorderRadius.circular(12.0),
                       ),
                       child: ListTile(
+                        onLongPress: (){
+                          context.read<CreateFlowBloc>().add(FlowSelected(flowId: state.flowList[index].id, type: "primary"));
+
+                        },
                         onTap: () {
                           Navigator.push(context, MaterialPageRoute(builder: (context) => ShowPromtsScreen(flowList: state.flowList[index].flowList, flowName: state.flowList[index].title,),));
                         },

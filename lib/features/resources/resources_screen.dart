@@ -89,6 +89,7 @@ class _AllResourcesListState extends State<AllResourcesList> {
           backgroundColor: const Color(0xFFEEEEEE),
           appBar: AppBar(
               title: const Text('Resources'),
+            backgroundColor: Colors.green,
             leading: IconButton(
               icon: Icon(Icons.arrow_back),
               onPressed: () {

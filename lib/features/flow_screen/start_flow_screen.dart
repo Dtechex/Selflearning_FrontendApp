@@ -561,6 +561,7 @@ class _FrontPageWidgetState extends State<FrontPageWidget> {
               (position, bufferedPosition, duration) => PositionData(
               position, bufferedPosition, duration ?? Duration.zero));
 
+/*
   ChewieController _createChewieController(String videoUrl) {
     final videoPlayerController = VideoPlayerController.network(videoUrl);
     ChewieController chewieController = ChewieController(
@@ -579,6 +580,7 @@ class _FrontPageWidgetState extends State<FrontPageWidget> {
     );
     return chewieController!;
   }
+*/
 
   @override
   void dispose() {

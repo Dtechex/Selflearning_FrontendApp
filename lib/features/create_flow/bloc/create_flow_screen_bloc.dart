@@ -1,6 +1,4 @@
 
-
-
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -28,6 +26,20 @@ class CreateFlowBloc extends Bloc<CreateFlowEvent,CreateFlowState> {
         emit(LoadSuccess(event.flowList));
       }
     });
+    on<FlowSelected>((event, emit) async{
+      Response? response = await CreateFlowRepo.selectFlow(flowId: event.flowId,flowType: event.type);
+      if(response?.statusCode == 400){
+          print("___===++invalid request");
+          emit(flowSelectionFailed(errormsg: "sorry to select flow"));
+      }
+      if(response?.statusCode == 200){
+        EasyLoading.showToast(duration: Duration(seconds: 2),"Primary flow selected");
+
+
+        print("flow selected");
+        // emit(flowSelected());
+      }
+    });
     on<LoadAllFlowEvent>((event, emit) async {
       emit(FlowLoading());
       Response response = await CreateFlowRepo.getAllFlow(catID: event.catID);
@@ -36,7 +48,8 @@ class CreateFlowBloc extends Bloc<CreateFlowEvent,CreateFlowState> {
       print(response);
       if(response.statusCode == 400){
         emit(LoadFailed());
-      }else{
+      }
+      else{
         List<FlowModel> flowList = [];
         /*for(var item in response.data['data']['record']){
           flowList.add(FlowModel(title: item['title'], id: item['_id']));
@@ -69,6 +82,15 @@ class CreateFlowBloc extends Bloc<CreateFlowEvent,CreateFlowState> {
         }
         emit(LoadSuccess(flowList));
       }
+    });
+
+    on<promptSelectedEvent>((event, emit)async{
+      Response response = await CreateFlowRepo.selectedPrompts(flowId: event.flowId);
+
+      final dynamic data = response.data['data']['record'];
+
+
+
     });
   }
 }

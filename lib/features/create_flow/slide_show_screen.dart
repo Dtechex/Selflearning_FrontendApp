@@ -97,11 +97,7 @@ class _SlideShowScreenState extends State<SlideShowScreen> {
                     Navigator.pop(context);
                   } else {
                     //controller.flipRight();
-                    controller.flipLeft();
-                    await Future.delayed(Duration(milliseconds: 500));
 
-                    controller.flipLeft();
-                    await Future.delayed(Duration(milliseconds: 500));
                     setState(() {
                       _currentPage += 1;
                     });
@@ -338,7 +334,7 @@ class _FrontPageWidgetState extends State<FrontPageWidget> {
                       style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 19), overflow: TextOverflow.ellipsis,),
-                  IconButton(onPressed: widget.onNextButtonPressed, icon: Icon(Icons.arrow_forward)),
+
 
                 ],
               ),
@@ -516,6 +512,22 @@ class _FrontPageWidgetState extends State<FrontPageWidget> {
                                       .blueAccent)),
                           child: const Text(
                               "     View\n  resource",
+                              style: TextStyle(
+                                  fontSize: 12,
+                                  color:
+                                  Colors.white)))),
+
+                  SizedBox(
+                      width: context.screenWidth * 0.2,
+                      child: TextButton(
+                          onPressed: widget.onNextButtonPressed,
+                          style: const ButtonStyle(
+                              backgroundColor:
+                              MaterialStatePropertyAll(
+                                  Colors
+                                      .green)),
+                          child: const Text(
+                              "Next prompt",
                               style: TextStyle(
                                   fontSize: 12,
                                   color:

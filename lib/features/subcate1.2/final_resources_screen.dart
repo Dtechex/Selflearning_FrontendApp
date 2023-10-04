@@ -10,6 +10,8 @@ import '../../widgets/add_resources_screen.dart';
 import '../create_flow/bloc/create_flow_screen_bloc.dart';
 import '../create_flow/create_flow_screen.dart';
 import '../create_flow/flow_screen.dart';
+import '../resources/subcategory_resources_screen.dart';
+import '../subcategory/primaryflow/primaryflow.dart';
 
 class FinalResourceScreen extends StatefulWidget {
   final String categoryName;
@@ -37,6 +39,7 @@ class _FinalResourceScreenState extends State<FinalResourceScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+
       floatingActionButton: SizedBox(height: context.screenHeight*0.1,
         child: FittedBox(
           child: ElevatedButton(
@@ -60,22 +63,19 @@ class _FinalResourceScreenState extends State<FinalResourceScreen> {
         ),
       ),
       appBar: AppBar(
-          title: Text(widget.categoryName),
+          elevation: 0,
+          automaticallyImplyLeading: false,
           actions: [
+/*
             IconButton(
               icon: Icon(Icons.add),
               onPressed: () {
                 Navigator.push(context, MaterialPageRoute(builder: (context) => BlocProvider<CreateFlowBloc>.value(value: _flowBloc, child: CreateFlowScreen(rootId: widget.rootId!)),));
               },),
+*/
             IconButton(
                 onPressed: () {
-                  Navigator.push(context, MaterialPageRoute(
-                    builder: (context) {
-                      return BlocProvider<CreateFlowBloc>.value(value: _flowBloc, child: FlowScreen(
-                        rootId: widget.rootId!,
-                      ));
-                    },
-                  ));
+                  Navigator.push(context, MaterialPageRoute(builder: (context)=>PrimaryFlow(CatId: widget.rootId.toString(),flowId: "0",)));
                 },
                 icon: Icon(Icons.play_circle)
             ),
@@ -84,6 +84,18 @@ class _FinalResourceScreenState extends State<FinalResourceScreen> {
               icon: Icon(Icons.more_vert,color: Colors.white,),
               itemBuilder: (context) {
                 return [
+                  const PopupMenuItem(
+                      value: 'viewResources',
+                      child: InkWell(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              Icon(Icons.add_circle_rounded, color: primaryColor,),
+                              SizedBox(width: 8.0,),
+                              Text("View Resources"),
+                            ],
+                          ))
+                  ),
                   const PopupMenuItem(
                       value: 'createFlow',
                       child: InkWell(
@@ -125,6 +137,13 @@ class _FinalResourceScreenState extends State<FinalResourceScreen> {
               },
               onSelected: (String value) {
                 switch(value){
+                  case 'viewResources':
+                    Navigator.push(context, MaterialPageRoute(
+                      builder: (context) =>
+                          SubcategoryResourcesList(rootId: widget.rootId,
+                              mediaType: '',
+                              title: widget.categoryName),));
+                    break;
                   case 'edit':
                     Navigator.push(
                         context,

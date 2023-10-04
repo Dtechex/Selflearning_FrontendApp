@@ -27,6 +27,7 @@ import 'package:self_learning_app/utilities/shared_pref.dart';
 import 'features/create_flow/bloc/create_flow_screen_bloc.dart';
 import 'features/dashboard/bloc/dashboard_bloc.dart';
 import 'features/login/bloc/login_bloc.dart';
+import 'features/search_subcategory/bloc/search_cat_bloc.dart';
 import 'features/subcate1.1/bloc/sub_cate1_bloc.dart';
 import 'features/subcate1.2/bloc/sub_cate2_bloc.dart';
 import 'firebase_option.dart';
@@ -44,10 +45,10 @@ Dio dio = Dio(baseOptions);
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  await Firebase.initializeApp(
+/*  await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
+  FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;*/
   dio.interceptors.add(LogInterceptor(
       responseBody: true,
       responseHeader: false,
@@ -68,6 +69,7 @@ Future<void> main() async {
 
 
 void configLoading() {
+  SharedPref.init();
   EasyLoading.instance
     ..displayDuration = const Duration(milliseconds: 2000)
     ..indicatorType = EasyLoadingIndicatorType.fadingCircle
@@ -98,6 +100,7 @@ class MyApp extends StatelessWidget {
           BlocProvider<CategoryBloc>(create: (context) => CategoryBloc()..add(CategoryLoadEvent())),
           BlocProvider<SignUpBloc>(create: (context) => SignUpBloc(singUpRepo: SignUpRepo())),
           BlocProvider<SearchCategoryBloc>(create: (context) => SearchCategoryBloc()),
+          BlocProvider<SearchSubCategoryBloc>(create: (context) => SearchSubCategoryBloc()),
           BlocProvider<SubCategoryBloc>(create: (context) => SubCategoryBloc()),
           //BlocProvider<CameraBloc>(create: (context) => CameraBloc()),
           BlocProvider<SubCategory1Bloc>(create: (context) => SubCategory1Bloc()),

@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flick_video_player/flick_video_player.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -13,6 +14,7 @@ import 'package:self_learning_app/features/resources/subcategory_resources_scree
 import 'package:self_learning_app/features/subcategory/model/resources_model.dart';
 import 'package:self_learning_app/utilities/extenstion.dart';
 import 'package:mime/mime.dart';
+import 'package:video_player/video_player.dart';
 import '../../utilities/colors.dart';
 import '../../utilities/shared_pref.dart';
 import '../../widgets/add_resources_screen.dart';
@@ -43,12 +45,26 @@ class _MaincategoryResourcesListState extends State<MaincategoryResourcesList> {
   final ResourcesBloc resourcesBloc = ResourcesBloc();
   TextEditingController textEditingController = TextEditingController();
   bool _resourcesVisible = true;
+  late FlickManager flickManager;
+  bool _isLoading = true;
+  String? videoContent;
+  Future<void> initVideo() async{
+    print('https://selflearning.dtechex.com/public/video/${videoContent}');
+    flickManager = FlickManager(
+      videoPlayerController: VideoPlayerController.network('https://selflearning.dtechex.com/public/video/${videoContent}'),
+    );
+    setState(() { _isLoading = false;});
+  }
+
+
 
   @override
   void initState() {
     resourcesBloc.add(LoadResourcesEvent(rootId: widget.rootId, mediaType: widget.mediaType));
+
     super.initState();
   }
+
 
   static Future<String?> addPrompt(
       {required String resourcesId,
@@ -80,8 +96,10 @@ class _MaincategoryResourcesListState extends State<MaincategoryResourcesList> {
     } catch (e) {}
   }
 
+
   @override
   Widget build(BuildContext context) {
+
     return BlocProvider(
       create: (context) => resourcesBloc,
       child: Scaffold(
@@ -140,6 +158,7 @@ class _MaincategoryResourcesListState extends State<MaincategoryResourcesList> {
                     );
                   }
                   if (state is ResourcesLoaded) {
+
                     if (state.allResourcesModel.data!.record!.records!.isEmpty) {
                       return Container(
                         height: MediaQuery.of(context).size.height * 0.9,
@@ -148,6 +167,7 @@ class _MaincategoryResourcesListState extends State<MaincategoryResourcesList> {
                         ),
                       );
                     } else {
+
                       return ListView.builder(
                           shrinkWrap: true,
                           physics: NeverScrollableScrollPhysics(),
@@ -160,6 +180,18 @@ class _MaincategoryResourcesListState extends State<MaincategoryResourcesList> {
                                 .records![index].title;
                             print(content);
                             print('content');
+                            // if(getMediaType(content) == 'video'){
+                            //   print('%%%$content');
+                            //   flickManager = FlickManager(
+                            //     videoPlayerController: VideoPlayerController.network('https://selflearning.dtechex.com/public/video/$content!'),
+                            //   );
+                              print('try1');
+                              // setState(() {
+                              //   videoContent = content;
+                              // });
+                              // initVideo();
+                            // }
+
 
                             return Card(
                               shape: RoundedRectangleBorder(
@@ -170,77 +202,147 @@ class _MaincategoryResourcesListState extends State<MaincategoryResourcesList> {
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(12.0),
                                 ),
-                                leading: Container(
-                                  margin: const EdgeInsets.all(8.0),
-                                  padding: const EdgeInsets.all(4.0),
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(12.0),
-                                    color: const Color(0xFFF5F5F5),
+                                leading: GestureDetector(
+                                  onTap: (){
+                                    _showImageDialog(context,content, title.toString() );
+
+                                  },
+                                  child: Container(
+                                    margin: const EdgeInsets.all(8.0),
+                                    padding: const EdgeInsets.all(4.0),
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(12.0),
+                                      color: const Color(0xFFF5F5F5),
+                                    ),
+                                    child: getFileType(content)=='Photo'
+                                        ? CachedNetworkImage(
+                                      imageUrl: 'https://selflearning.dtechex.com/public/image/$content',
+                                      fit: BoxFit.fitHeight,
+                                      height: 35,
+                                      width: 35,
+                                      progressIndicatorBuilder: (context, url,
+                                          downloadProgress) =>
+                                          Center(
+                                            child: CircularProgressIndicator(
+                                                value: downloadProgress.progress),
+                                          ),
+                                      errorWidget: (context, url, error) =>
+                                          Icon(Icons.error),
+                                    )
+                                        :getMediaType(content) == 'video'
+                                        ? const Icon(Icons.video_camera_back_outlined, size: 35,)
+                                        : getMediaType(content) == 'audio'
+                                        ? const Icon(Icons.audiotrack, size: 35)
+                                        : const Icon(Icons.text_format_sharp, size: 35),
                                   ),
-                                  child: getFileType(content)=='Photo'
-                                      ? CachedNetworkImage(
-                                    imageUrl: 'https://selflearning.dtechex.com/public/image/$content',
-                                    fit: BoxFit.fitHeight,
-                                    height: 35,
-                                    width: 35,
-                                    progressIndicatorBuilder: (context, url,
-                                        downloadProgress) =>
-                                        Center(
-                                          child: CircularProgressIndicator(
-                                              value: downloadProgress.progress),
-                                        ),
-                                    errorWidget: (context, url, error) =>
-                                        Icon(Icons.error),
-                                  )
-                                      :getMediaType(content) == 'video'
-                                      ? const Icon(Icons.video_camera_back_outlined, size: 35,)
-                                      : getMediaType(content) == 'audio'
-                                      ? const Icon(Icons.audiotrack, size: 35)
-                                      : const Icon(Icons.text_format_sharp, size: 35),
                                 ),
                                 title: Text(
                                   title != null
                                       ?'${title.substring(0,1).toUpperCase()}${title.substring(1)}'
                                       : 'Untitled',
                                   style: TextStyle(fontSize: 20.0, letterSpacing: 1, fontWeight: FontWeight.w600),),
-                                trailing: IconButton(
-                                  onPressed: () {
-                                    print(state.allResourcesModel.data!
-                                        .record!.records![index].content);
+                                trailing: PopupMenuButton(
+                                  icon: Icon(Icons.more_vert,color: Colors.red,),
+                                  itemBuilder: (context) {
+                                    return [
+                                      const PopupMenuItem(
+                                          value: 'play',
+                                          child: InkWell(
+                                              child: Row(
+                                                mainAxisAlignment: MainAxisAlignment.start,
+                                                children: [
+                                                  Icon(Icons.update, color: primaryColor,),
+                                                  SizedBox(width: 8.0,),
+                                                  Text("Play prompts"),
+                                                ],
+                                              ))
+                                      ),
 
-                                    Navigator.push(context,
-                                        MaterialPageRoute(
-                                          builder: (context) {
-                                            return PromtsScreen(
-                                                content: state
-                                                    .allResourcesModel
-                                                    .data!
-                                                    .record!
-                                                    .records![index]
-                                                    .content ??
-                                                    state
-                                                        .allResourcesModel
-                                                        .data!
-                                                        .record!
-                                                        .records![index]
-                                                        .title,
-                                                mediaType: state
-                                                    .allResourcesModel
-                                                    .data!
-                                                    .record!
-                                                    .records![index]
-                                                    .type!,
-                                                promtId: state
-                                                    .allResourcesModel
-                                                    .data!
-                                                    .record!
-                                                    .records![index]
-                                                    .sId!,
-                                              fromType: Prompt.fromResource,);
-                                          },
-                                        ));
+                                      const PopupMenuItem(
+                                          value: 'add',
+                                          child: InkWell(
+                                              child: Row(
+                                                mainAxisAlignment: MainAxisAlignment.start,
+                                                children: [
+                                                  Icon(Icons.update, color: primaryColor,),
+                                                  SizedBox(width: 8.0,),
+                                                  Text("Add prompts"),
+                                                ],
+                                              ))
+                                      ),
+                                      const PopupMenuItem(
+                                          value: 'remove',
+                                          child: InkWell(
+                                              child: Row(
+                                                mainAxisAlignment: MainAxisAlignment.start,
+                                                children: [
+                                                  Icon(Icons.delete, color: primaryColor,),
+                                                  SizedBox(width: 8.0,),
+                                                  Text("Remove prompts"),
+                                                ],
+                                              ))
+                                      ),
+                                    ];
                                   },
-                                  icon: const Icon(Icons.play_circle,), color: Colors.blue, iconSize: 35.0,),
+                                  onSelected: (String value) {
+                                    switch(value){
+                                      case 'play':
+                                        Navigator.push(context,
+                                            MaterialPageRoute(
+                                              builder: (context) {
+                                                return PromtsScreen(
+                                                  content: state
+                                                      .allResourcesModel
+                                                      .data!
+                                                      .record!
+                                                      .records![index]
+                                                      .content ??
+                                                      state
+                                                          .allResourcesModel
+                                                          .data!
+                                                          .record!
+                                                          .records![index]
+                                                          .title,
+                                                  mediaType: state
+                                                      .allResourcesModel
+                                                      .data!
+                                                      .record!
+                                                      .records![index]
+                                                      .type!,
+                                                  promtId: state
+                                                      .allResourcesModel
+                                                      .data!
+                                                      .record!
+                                                      .records![index]
+                                                      .sId!,
+                                                  fromType: Prompt.fromResource,);
+                                              },
+                                            ));
+
+                                        break;
+                                      case 'add':
+                                        context.push(AddPromptsScreen(
+                                          resourceId: state.allResourcesModel.data!.record!.records![index].sId.toString(),
+                                          categoryId: widget.rootId,
+                                        ));
+
+                                        break;
+                                      case 'remove':
+
+                                        resourcesBloc.add(
+                                            DeleteResourcesEvent(
+                                                rootId: state
+                                                    .allResourcesModel
+                                                    .data!
+                                                    .record!
+                                                    .records![index]
+                                                    .sId
+                                                    .toString()));
+                                        break;
+
+                                    }
+                                  },
+                                ),
                               ),
                             );
                             /*return SizedBox(
@@ -467,6 +569,44 @@ class _MaincategoryResourcesListState extends State<MaincategoryResourcesList> {
 
         ),
       );
+  }
+  Future<void> _showImageDialog(BuildContext context, String content, String title) async {
+    return showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          content: Container(
+            width: double.maxFinite,
+            height: 400,
+            child:getFileType(content)=='Photo'?
+            Image.network(
+              "https://selflearning.dtechex.com/public/image/$content",
+              fit: BoxFit.contain,
+            ):
+            getFileType(content)=='video'?
+            Text(title.toString(), style: TextStyle(fontSize: 20),):
+              FlickVideoPlayer(
+              flickVideoWithControls: FlickVideoWithControls(
+                videoFit: BoxFit.contain,
+                controls: FlickPortraitControls(),
+              ),
+              flickManager: FlickManager(
+                videoPlayerController: VideoPlayerController.network('https://selflearning.dtechex.com/public/video/$content!'),
+              ),
+            )
+
+          ),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('Close'),
+            ),
+          ],
+        );
+      },
+    );
   }
 }
 

@@ -1,6 +1,12 @@
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SharedPref {
+  static late SharedPreferences _preferences;
+
+  static Future init() async {
+    _preferences = await SharedPreferences.getInstance();
+  }
+
   String tokenkey = "token";
 
   Future<void> saveToken(String getToken) async {
@@ -27,6 +33,11 @@ class SharedPref {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     var token = prefs.getString(tokenkey);
     return token;
+  }
+  static String getUserToken() {
+
+    String? s = _preferences.getString("token") ?? '';
+    return s!;
   }
 
   Future<void> clear() async {

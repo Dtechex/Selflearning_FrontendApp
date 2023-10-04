@@ -49,6 +49,24 @@ class _AddResourceScreenState extends State<AddResourceScreen> {
     print(widget.rootId);
     print('rootId');
     return Scaffold(
+      floatingActionButton: SizedBox(
+          height: context.screenHeight*0.1,
+        child: FittedBox(
+          child: ElevatedButton(
+            onPressed: (){
+              Navigator.push(context, MaterialPageRoute(
+                builder: (context) =>
+                    MaincategoryResourcesList(rootId: widget.rootId!,
+                        mediaType: '',
+                        title: widget.categoryName!),));
+            },
+            child: Text("View All", style: TextStyle(fontSize: 9),),
+          ),
+        ),
+      ),
+      appBar: AppBar(
+        title: Text("Add resource ${widget.categoryName}"),
+      ),
         body: SizedBox(
       child: ListView.builder(
         shrinkWrap: true,

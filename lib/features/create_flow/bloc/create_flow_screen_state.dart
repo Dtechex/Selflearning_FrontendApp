@@ -21,3 +21,13 @@ class LoadSuccess extends CreateFlowState{
 
   LoadSuccess(this.flowList);
 }
+
+class promptsLoaded extends CreateFlowState{
+
+}
+class flowSelected extends CreateFlowState {
+}
+class flowSelectionFailed extends CreateFlowState{
+  final String errormsg;
+  flowSelectionFailed({required this.errormsg});
+}
