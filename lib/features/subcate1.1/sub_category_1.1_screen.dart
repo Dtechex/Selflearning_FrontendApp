@@ -14,6 +14,7 @@ import '../../utilities/colors.dart';
 import '../../widgets/add_resources_screen.dart';
 import '../create_flow/create_flow_screen.dart';
 import '../create_flow/flow_screen.dart';
+import '../resources/maincategory_resources_screen.dart';
 import '../search_subcategory/search_sub_cat.dart';
 import '../subcate1.2/sub_category_1.2_screen.dart';
 import '../subcategory/primaryflow/primaryflow.dart';
@@ -200,22 +201,23 @@ class _SubCategory1ScreenState extends State<SubCategory1Screen> {
                                 children: [
                                   Icon(Icons.play_circle, color: primaryColor,),
                                   SizedBox(width: 8.0,),
-                                  Text("Start Flow"),
+                                  Text("Select Primary Flow"),
                                 ],
                               ))
                       ),
                       const PopupMenuItem(
-                          value: 'edit',
+                          value: 'schedule',
                           child: InkWell(
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 children: [
-                                  Icon(Icons.edit, color: primaryColor,),
+                                  Icon(Icons.schedule, color: primaryColor,),
                                   SizedBox(width: 8.0,),
-                                  Text("Edit Category"),
+                                  Text("schedule"),
                                 ],
                               ))
-                      )
+                      ),
+
                     ];
                   },
                   onSelected: (String value) {
@@ -297,8 +299,8 @@ class _SubCategory1ScreenState extends State<SubCategory1Screen> {
                                 borderRadius: BorderRadius.circular(10)
                             ),
 
-                            child: Align(
-                              alignment: Alignment.centerLeft,
+                            child: Padding(
+                              padding: EdgeInsets.only(left: 20,top: 10,bottom: 10),
                               child: Text('Search..', style: TextStyle(
                                   color: Colors.black.withOpacity(0.5)
                               ),),
@@ -365,7 +367,7 @@ class _SubCategory1ScreenState extends State<SubCategory1Screen> {
                                       SlidableAction(onPressed:  (BuildContext context){
                                         Navigator.push(context, MaterialPageRoute(
                                           builder: (context) =>
-                                              SubcategoryResourcesList(rootId: state.cateList[index].sId!,
+                                              MaincategoryResourcesList(rootId: state.cateList[index].sId!,
                                                   mediaType: '',
                                                   title: state.cateList[index].name!),));
                                       },

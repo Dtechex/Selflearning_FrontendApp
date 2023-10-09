@@ -116,8 +116,8 @@ class _AllCateScreenState extends State<AllCateScreen> {
                         borderRadius: BorderRadius.circular(10)
                     ),
 
-                    child: Align(
-                      alignment: Alignment.centerLeft,
+                    child: Padding(
+                      padding: EdgeInsets.only(left: 20,top: 10,bottom: 10),
                       child: Text('Search..',style: TextStyle(
                           color: Colors.black.withOpacity(0.5)
                       ),),

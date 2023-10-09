@@ -47,6 +47,7 @@ class _PrimaryFlowState extends State<PrimaryFlow> {
   }
 Future<void> primaryflowdatalist() async{
   try{
+
     final primarydatalist = await primaryflow(mainCatId: widget.CatId);
 
     await Future.delayed(Duration(milliseconds: 8));
@@ -68,8 +69,11 @@ Future<void> primaryflowdatalist() async{
 }
 Future<void> fetchdataList() async{
     try{
+      EasyLoading.show();
       final datalist = await fetchList(mainCatId: widget.CatId);
          datalist;
+      await Future.delayed(Duration(milliseconds: 8));
+     EasyLoading.dismiss();
       setState(() {
         flowList = datalist;
 
@@ -301,7 +305,9 @@ Future<void> fetchdataList() async{
         body: Column(
           children: [
             Expanded(
-                child:flowList.length>0?
+                child:flowList.length>=0?Align(
+                    alignment: Alignment.center,
+                    child: Text("No primary flow found", style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold, fontSize: 24),)):
                 ReorderableListView(
                   padding: const EdgeInsets.symmetric(
                       horizontal: 10, vertical: 10),
@@ -339,12 +345,6 @@ Future<void> fetchdataList() async{
                       state.promtModel!.insert(newIndex, model);*/
                     });
                   },
-                ):Align(
-                  alignment: Alignment.center,
-                  child: Container(
-                      width: 100,
-                      height: 100,
-                      child: Center(child: CircularProgressIndicator())),
                 )
 
 
