@@ -186,7 +186,7 @@ class _SubCategoryScreenState extends State<SubCategoryScreen> {
                   Navigator.push(context, MaterialPageRoute(
                       builder: (context) =>
                           PrimaryFlow(
-                            CatId: widget.rootId.toString(), flowId: "0",)));
+                            CatId: widget.rootId.toString(), flowId: "1",)));
                   // AddPromptsToPrimaryFlowRepo.getData(mainCatId: widget.rootId.toString());
 
                 },
@@ -490,10 +490,13 @@ class _SubCategoryScreenState extends State<SubCategoryScreen> {
                           shadowColor: Colors.grey.shade50,
                           child:
                           Slidable(
+                            enabled: true,
                             key: const ValueKey(0),
                             startActionPane: ActionPane(
                               motion: const ScrollMotion(),
-                              dismissible: DismissiblePane(onDismissed: () {}),
+
+
+                              // dismissible: DismissiblePane(onDismissed: () {}),
                               children: [
                                 // A SlidableAction can have an icon and/or a label.
                                 SlidableAction(
@@ -536,7 +539,7 @@ class _SubCategoryScreenState extends State<SubCategoryScreen> {
                             ),
                             endActionPane: ActionPane(
                               motion: const ScrollMotion(),
-                              dismissible: DismissiblePane(onDismissed: () {}),
+                              // dismissible: DismissiblePane(onDismissed: () {}),
                               children: [
                                 SlidableAction(
                                   // An action can be bigger than the others.

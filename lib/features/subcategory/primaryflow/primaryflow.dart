@@ -4,6 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:self_learning_app/features/create_flow/bloc/create_flow_screen_bloc.dart';
 import 'package:self_learning_app/features/create_flow/slide_show_screen.dart';
 import 'package:self_learning_app/utilities/extenstion.dart';
@@ -29,20 +30,42 @@ class PrimaryFlow extends StatefulWidget {
 class _PrimaryFlowState extends State<PrimaryFlow> {
   List<String> names = [];
   List<FlowDataModel> flowList = [];
-  bool showdefaultFlow= false;
+  List<FlowDataModel> primaryflowList =[];
+  bool showdefaultFlow= true;
 
   @override
   void initState() {
     super.initState();
-      if(widget.flowId == "0"){
-        setState(() {
-          showdefaultFlow = true;
-        });
-      }
+      // if(widget.flowId == "0"){
+      //   setState(() {
+      //     showdefaultFlow = true;
+      //   });
+      // }
+    primaryflowdatalist();
     fetchData();
     fetchdataList();
   }
+Future<void> primaryflowdatalist() async{
+  try{
+    final primarydatalist = await primaryflow(mainCatId: widget.CatId);
 
+    await Future.delayed(Duration(milliseconds: 8));
+
+
+    setState(() {
+      primaryflowList = primarydatalist;
+
+    });
+
+
+    print("0-0-0-${flowList.length}");
+
+
+  }
+  catch (error) {
+    print('Error: $error');
+  }
+}
 Future<void> fetchdataList() async{
     try{
       final datalist = await fetchList(mainCatId: widget.CatId);
@@ -88,8 +111,8 @@ Future<void> fetchdataList() async{
       if (res.statusCode == 200) {
         final data = res.data;
         final records = data['data']['record'];
-        print("#########${records}");
-        print("######break");
+        // print("#########${records}");
+        // print("######break");
 
         List<String> names = records.map<String>((record) => record['name'].toString()).toList();
 /*
@@ -139,9 +162,10 @@ Future<void> fetchdataList() async{
 
       if (res.statusCode == 200) {
         final data = res.data;
+        // print("res===$res");
         final records = data['data']['record'];
-        print("#########${records}");
-        print("######break");
+        // print("#########${records}");
+        // print("######break");
 
         List<FlowDataModel> flowDataList = records.map<FlowDataModel>((item) {
           return FlowDataModel(
@@ -172,6 +196,61 @@ Future<void> fetchdataList() async{
       throw error;
     }
   }
+
+  Future<List<FlowDataModel>> primaryflow({required String mainCatId}) async {
+    final token = await SharedPref.getUserToken();
+    final Options options = Options(
+      headers: {"Authorization": 'Bearer $token'},
+    );
+    try {
+      Response res = await Dio().get(
+        'https://selflearning.dtechex.com/web/flow?categoryId=$mainCatId&type=primary',
+        options: options,
+        data: {'type':'primary'}
+      );
+      if (res.statusCode == 200 && res.data['data']['record'][0]['type'] == 'primary') {
+        setState(() {
+          showdefaultFlow = false;
+        });
+        final data = res.data;
+        print("#######start");
+        print("------>showprimaryflow $data");
+
+        print("######break");
+
+        List<FlowDataModel> flowData = [];
+        for(var item in res.data['data']['record']){
+
+          for (var flow in item['flow']){
+
+            flowData.add(FlowDataModel(
+                promptName: flow['promptId']['name'],
+                promptId: flow['promptId']['_id'],
+                resourceTitle: flow['promptId']['resourceId']?['title']?? '',
+                resourceType: flow['promptId']['resourceId']?['type']??'',
+                resourceContent: flow['promptId']['resourceId']?['content']??'',
+                side1Title: flow['promptId']['side1']['title'],
+                side1Type: flow['promptId']['side1']['type'],
+                side1Content: flow['promptId']['side1']['content'],
+                side2Title: flow['promptId']['side2']['title'],
+                side2Type: flow['promptId']['side2']['type'],
+                side2Content: flow['promptId']['side2']['content']));
+
+          }
+
+        }
+        return flowData;
+      }
+      else {
+        throw Exception('Failed to fetch data from the API');
+      }
+    }catch(e){
+      print("catch error");
+      print(e);
+      throw e;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
 
@@ -222,7 +301,7 @@ Future<void> fetchdataList() async{
         body: Column(
           children: [
             Expanded(
-                child:
+                child:flowList.length>0?
                 ReorderableListView(
                   padding: const EdgeInsets.symmetric(
                       horizontal: 10, vertical: 10),
@@ -260,16 +339,100 @@ Future<void> fetchdataList() async{
                       state.promtModel!.insert(newIndex, model);*/
                     });
                   },
-                )),
+                ):Align(
+                  alignment: Alignment.center,
+                  child: Container(
+                      width: 100,
+                      height: 100,
+                      child: Center(child: CircularProgressIndicator())),
+                )
+
+
+            ),
           ],
         ),
-      ):Scaffold(
+      ): Scaffold(
       appBar: AppBar(title: const Text('Prompts'),
         backgroundColor: Colors.green,
 
       ),
-      body: Center(
-        child: Text("no data found"),
+      floatingActionButton: SizedBox(
+        height: context.screenHeight * 0.1,
+        child: FittedBox(
+          child: ElevatedButton(
+
+            onPressed: () {
+              if(primaryflowList.isEmpty){
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('Opps sorry no data is found'),
+                  ),
+                );
+              }
+
+              if(primaryflowList.isNotEmpty) {
+                Navigator.push(context, MaterialPageRoute(builder: (context) {
+                  return SlideShowScreen(
+                    flowList: primaryflowList, flowName: "MainCategoryFlow",
+                  );
+                },));
+              }
+
+            },
+            child: const Row(
+              children: [
+                Text(
+                  'Start Flow',
+                  style: TextStyle(fontSize: 9),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+      body: Column(
+        children: [
+          Expanded(
+              child:
+              ReorderableListView(
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 10, vertical: 10),
+                children: <Widget>[
+                  for (int index = 0;
+                  index < primaryflowList.length;
+                  index += 1)
+                    ListTile(
+                      leading: CircleAvatar(
+                        maxRadius: 17, backgroundColor: generateRandomColor(),
+                        foregroundColor: Colors.white,
+                        child: Text(
+                          extractFirstLetter(primaryflowList[index].resourceTitle.toString()),
+                          style: TextStyle(fontWeight: FontWeight.bold),)
+                        ,),
+                      trailing: Icon(Icons.menu),
+                      key: Key('$index'),
+                      tileColor: index.isOdd ? oddItemColor : evenItemColor,
+                      title: Row(
+                        children: [
+                          Text('${primaryflowList[index].promptName.toString()}')
+                        ],
+                      ),
+                    ),
+                ],
+                onReorder: (int oldIndex, int newIndex) {
+                  setState(() {
+                    if (oldIndex < newIndex) {
+                      newIndex -= 1;
+                    }
+                    FlowDataModel item = primaryflowList.removeAt(oldIndex);
+                    primaryflowList.insert(newIndex, item);
+
+                    /*  PromtModel model = state.promtModel!.removeAt(oldIndex);
+                      state.promtModel!.insert(newIndex, model);*/
+                  });
+                },
+              )),
+        ],
       ),
     );
 

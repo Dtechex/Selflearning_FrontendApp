@@ -340,6 +340,8 @@ class _FrontPageWidgetState extends State<FrontPageWidget> {
 
   @override
   Widget build(BuildContext context) {
+    print("1print prompt model index =====${widget.index}");
+    print("2print prompt model index =====${widget.promtModel.last}");
     return Card(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20.0),
@@ -359,71 +361,6 @@ class _FrontPageWidgetState extends State<FrontPageWidget> {
                   style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 19)),
-              /*SizedBox(
-                width: w,
-                //height: h * 0.3,
-                child: promtModel![index].side1!.content!.contains("jpg") ||
-                    promtModel![index].side1!.content!
-                        .contains("png") ||
-                    promtModel![index].side1!.content!
-                        .contains("jpeg")
-                    ? Center(
-                  child: CachedNetworkImage(
-                    imageUrl:
-                    "https://selflearning.dtechex.com/public/image/${promtModel![index].side1!.content}",
-                    fit: BoxFit.fill,
-                    height: h * 0.2,
-                    width: w / 1.5,
-                    progressIndicatorBuilder: (context,
-                        url,
-                        downloadProgress) =>
-                        Center(
-                          child: CircularProgressIndicator(
-                            value: downloadProgress
-                                .progress,
-                          ),
-                        ),
-                    errorWidget: (context, url,
-                        error) =>
-                    const Icon(Icons.error),
-                  ),
-                )
-                    : promtModel![index].side1!.content!.contains("mp3") ||
-                    promtModel![index].side1!.content!
-                        .contains("wav") ||
-                    promtModel![index].side1!.content!
-                        .contains("aac") ||
-                    promtModel![index]
-                        .side1!.content!
-                        .contains("ogg")
-                    ? AudioPlayerPage(
-                  audioUrl:
-                  "https://selflearning.dtechex.com/public/audio/${promtModel![index].side1!.content}",
-                )
-                // : widget.mediaType == 'video'
-
-                    : promtModel![index].side1!.content!.contains("mp4") ||
-                    promtModel![index]
-                        .side1!.content!
-                        .contains("mkv") ||
-                    promtModel![index]
-                        .side1!.content!
-                        .contains("mov") ||
-                    promtModel![index]
-                        .side1!.content!
-                        .contains("avi")
-                    ?
-                // Chewie(
-                //     controller:
-                //         _createChewieController(
-                //       "https://selflearning.dtechex.com/public/${widget.mediaType}/${state.promtModel![index].side1!.content}",
-                //     ),
-                //   )
-                VideoPlayerWidget(videoUrl: "https://selflearning.dtechex.com/public/video/${promtModel![index].side1!.content}")
-
-                // : Text(state.promtModel![index].side1!.content!),
-                    : Text(promtModel![index].side1!.content.toString(), style: TextStyle(fontSize: 16),),
-              ),*/
               Expanded(
                 child: _isLoading
                     ? Center(child: CircularProgressIndicator(),)
@@ -517,7 +454,9 @@ class _FrontPageWidgetState extends State<FrontPageWidget> {
                   ),
                   SizedBox(
                       width: context.screenWidth * 0.2,
-                      child: ElevatedButton(
+                      child: widget.index == widget.promtModel.length-1?
+                      null:
+                          ElevatedButton(
                           onPressed: widget.onNextButtonPressed,
                           style: const ButtonStyle(
                               backgroundColor:
@@ -538,7 +477,7 @@ class _FrontPageWidgetState extends State<FrontPageWidget> {
                                   Colors
                                       .blueAccent)),
                           child: const Text(
-                              "     View\n  resource",
+                              "View\n  resource",
                               style: TextStyle(
                                   fontSize: 12,
                                   color:

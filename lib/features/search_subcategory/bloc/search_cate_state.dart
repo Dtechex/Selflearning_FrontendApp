@@ -12,8 +12,8 @@ class SearchSubCategoryLoading extends SearchSubCategoryState {}
 
 class SearchSubCategoryLoaded extends SearchSubCategoryState {
   final List<SearchCategoryModel> cateList;
-
   SearchSubCategoryLoaded({required this.cateList});
+
 }
 
 class SearchSubCategoryFailed extends SearchSubCategoryState {

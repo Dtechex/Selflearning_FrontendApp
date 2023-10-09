@@ -36,7 +36,6 @@ class CustomSubCatSearchDelegate extends SearchDelegate
 
 
   }
-
   @override
   Widget buildLeading(BuildContext context) {
     return IconButton(onPressed: () {
@@ -46,9 +45,7 @@ class CustomSubCatSearchDelegate extends SearchDelegate
 
   @override
   Widget buildResults(BuildContext context) {
-    if(query.isNotEmpty) {
       context.read<SearchSubCategoryBloc>().add(SearchSubCategoryLoadEvent(rootId: rootId, query: query));
-    }
     return BlocBuilder<SearchSubCategoryBloc, SearchSubCategoryState>(
       builder: (context, state) {
         if (state is SearchSubCategoryLoading) {
@@ -57,6 +54,7 @@ class CustomSubCatSearchDelegate extends SearchDelegate
           );
         }
         else if (state is SearchSubCategoryLoaded) {
+
           if (state.cateList.isNotEmpty) {
             return Container(
               padding: const EdgeInsets.only(left: 20, right: 20),

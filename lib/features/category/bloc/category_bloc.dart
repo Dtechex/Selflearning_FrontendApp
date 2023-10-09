@@ -21,6 +21,7 @@ class CategoryBloc extends Bloc<CategoryEvent, CategoryState> {
       Response response = await CategoryRepo.deleteCategory(rootId: event.rootId);
       EasyLoading.dismiss();
       if(response.statusCode == 400) {
+        print("sorry to delete category");
         event.context.showSnackBar(SnackBar(content: Text('Something went wrong!')));
       }else{
         event.context.showSnackBar(SnackBar(content: Text('Category deleted Successfully')));

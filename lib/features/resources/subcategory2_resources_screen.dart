@@ -179,43 +179,109 @@ class _Subcategory2ResourcesListState extends State<Subcategory2ResourcesList> {
                                       ?'${title.substring(0,1).toUpperCase()}${title.substring(1)}'
                                       : 'Untitled',
                                   style: TextStyle(fontSize: 20.0, letterSpacing: 1, fontWeight: FontWeight.w600),),
-                                trailing: IconButton(
-                                  onPressed: () {
-                                    print(state.allResourcesModel.data!
-                                        .record!.records![index].content);
+                                trailing:
+                                PopupMenuButton(
+                                  icon: Icon(Icons.more_vert,color: Colors.red,),
+                                  itemBuilder: (context) {
+                                    return [
+                                      const PopupMenuItem(
+                                          value: 'play',
+                                          child: InkWell(
+                                              child: Row(
+                                                mainAxisAlignment: MainAxisAlignment.start,
+                                                children: [
+                                                  Icon(Icons.update, color: primaryColor,),
+                                                  SizedBox(width: 8.0,),
+                                                  Text("Play prompts"),
+                                                ],
+                                              ))
+                                      ),
 
-                                    Navigator.push(context,
-                                        MaterialPageRoute(
-                                          builder: (context) {
-                                            return PromtsScreen(
-                                                content: state
-                                                    .allResourcesModel
-                                                    .data!
-                                                    .record!
-                                                    .records![index]
-                                                    .content ??
-                                                    state
-                                                        .allResourcesModel
-                                                        .data!
-                                                        .record!
-                                                        .records![index]
-                                                        .title,
-                                                mediaType: state
-                                                    .allResourcesModel
-                                                    .data!
-                                                    .record!
-                                                    .records![index]
-                                                    .type!,
-                                                promtId: state
-                                                    .allResourcesModel
-                                                    .data!
-                                                    .record!
-                                                    .records![index]
-                                                    .sId!, fromType: Prompt.fromResource,);
-                                          },
-                                        ));
+                                      const PopupMenuItem(
+                                          value: 'add',
+                                          child: InkWell(
+                                              child: Row(
+                                                mainAxisAlignment: MainAxisAlignment.start,
+                                                children: [
+                                                  Icon(Icons.update, color: primaryColor,),
+                                                  SizedBox(width: 8.0,),
+                                                  Text("Add prompts"),
+                                                ],
+                                              ))
+                                      ),
+                                      const PopupMenuItem(
+                                          value: 'remove',
+                                          child: InkWell(
+                                              child: Row(
+                                                mainAxisAlignment: MainAxisAlignment.start,
+                                                children: [
+                                                  Icon(Icons.delete, color: primaryColor,),
+                                                  SizedBox(width: 8.0,),
+                                                  Text("Remove prompts"),
+                                                ],
+                                              ))
+                                      ),
+                                    ];
                                   },
-                                  icon: const Icon(Icons.play_circle,), color: Colors.blue, iconSize: 35.0,),
+                                  onSelected: (String value) {
+                                    switch(value){
+                                      case 'play':
+                                        Navigator.push(context,
+                                            MaterialPageRoute(
+                                              builder: (context) {
+                                                return PromtsScreen(
+                                                  content: state
+                                                      .allResourcesModel
+                                                      .data!
+                                                      .record!
+                                                      .records![index]
+                                                      .content ??
+                                                      state
+                                                          .allResourcesModel
+                                                          .data!
+                                                          .record!
+                                                          .records![index]
+                                                          .title,
+                                                  mediaType: state
+                                                      .allResourcesModel
+                                                      .data!
+                                                      .record!
+                                                      .records![index]
+                                                      .type!,
+                                                  promtId: state
+                                                      .allResourcesModel
+                                                      .data!
+                                                      .record!
+                                                      .records![index]
+                                                      .sId!,
+                                                  fromType: Prompt.fromResource,);
+                                              },
+                                            ));
+
+                                        break;
+                                      case 'add':
+                                        context.push(AddPromptsScreen(
+                                          resourceId: state.allResourcesModel.data!.record!.records![index].sId.toString(),
+                                          categoryId: widget.rootId,
+                                        ));
+
+                                        break;
+                                      case 'remove':
+
+                                        resourcesBloc.add(
+                                            DeleteResourcesEvent(
+                                                rootId: state
+                                                    .allResourcesModel
+                                                    .data!
+                                                    .record!
+                                                    .records![index]
+                                                    .sId
+                                                    .toString()));
+                                        break;
+
+                                    }
+                                  },
+                                ),
                               ),
                             );
                             /*return SizedBox(

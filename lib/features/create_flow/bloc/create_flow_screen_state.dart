@@ -26,6 +26,7 @@ class promptsLoaded extends CreateFlowState{
 
 }
 class flowSelected extends CreateFlowState {
+
 }
 class flowSelectionFailed extends CreateFlowState{
   final String errormsg;

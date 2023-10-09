@@ -27,15 +27,14 @@ class CreateFlowBloc extends Bloc<CreateFlowEvent,CreateFlowState> {
       }
     });
     on<FlowSelected>((event, emit) async{
-      Response? response = await CreateFlowRepo.selectFlow(flowId: event.flowId,flowType: event.type);
+      Response? response = await CreateFlowRepo.selectFlow(flowId: event.flowId,flowType: event.type, rootId: event.rootId);
       if(response?.statusCode == 400){
           print("___===++invalid request");
           emit(flowSelectionFailed(errormsg: "sorry to select flow"));
       }
       if(response?.statusCode == 200){
         EasyLoading.showToast(duration: Duration(seconds: 2),"Primary flow selected");
-
-
+        // emit(LoadSuccess(event.flowList));
         print("flow selected");
         // emit(flowSelected());
       }

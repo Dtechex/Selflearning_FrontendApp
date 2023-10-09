@@ -351,7 +351,7 @@ class _SubCategory1ScreenState extends State<SubCategory1Screen> {
                                   key: const ValueKey(0),
                                   startActionPane: ActionPane(
                                     motion: const ScrollMotion(),
-                                    dismissible: DismissiblePane(onDismissed: (){},),
+                                    // dismissible: DismissiblePane(onDismissed: (){},),
                                     children: [
                                       SlidableAction(onPressed: (BuildContext context){
                                         Navigator.push(context, MaterialPageRoute(builder: (context)=> AddResourceScreen(rootId: state.cateList[index].sId!,whichResources: 1, categoryName: state.cateList[index].name!,)

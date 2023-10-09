@@ -58,9 +58,13 @@ class promptSelectedEvent extends CreateFlowEvent{
 }
 
 class FlowSelected extends CreateFlowEvent{
+  List<FlowModel> flowList;
   final String flowId;
   final String type;
-  FlowSelected({required this.flowId, required this.type});
+  final int index;
+  final String rootId;
+
+  FlowSelected({required this.flowId, required this.type, required this.flowList,required this.index, required this.rootId});
 
   @override
   // TODO: implement props
