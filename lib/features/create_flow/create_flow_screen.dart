@@ -26,6 +26,13 @@ class CreateFlowScreen extends StatefulWidget {
 
 class _CreateFlowScreenState extends State<CreateFlowScreen> {
   @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    final createflowbloc = BlocProvider.of<CreateFlowBloc>(context);
+    createflowbloc.add(LoadAllFlowEvent(catID: widget.rootId));
+  }
+  @override
   Widget build(BuildContext context) {
     print("create flow root id ---${widget.rootId}");
     return Scaffold(

@@ -83,61 +83,6 @@ class _SubCategoryScreenState extends State<SubCategoryScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      /*bottomNavigationBar: BottomNavigationBar(
-          type: BottomNavigationBarType.shifting,
-          enableFeedback: true,
-          showUnselectedLabels: true,
-          selectedItemColor: Colors.white,
-          elevation: 0,
-          currentIndex: 0,
-          onTap: (value) {
-         //   context.read<DashboardBloc>().ChangeIndex(value);
-          },
-          unselectedItemColor: Colors.white,
-          items:  [
-        BottomNavigationBarItem(
-            icon: IconButton(
-              icon: Icon(Icons.create),
-              onPressed: () {
-                Navigator.push(context, MaterialPageRoute(
-                  builder: (context) {
-                    return CreateSubCateScreen(
-                      rootId: widget.rootId,
-                    );
-                  },
-                ));
-              },
-            ),
-            label: 'Create',
-            backgroundColor: primaryColor),
-        BottomNavigationBarItem(
-            icon: IconButton(
-                onPressed: () {
-              Navigator.push(context, MaterialPageRoute(
-                builder: (context) {
-                  return FlowScreen(
-                    rootId: widget.rootId!,
-                  );
-                },
-              ));
-            },
-            icon: Icon(Icons.play_circle)
-            ),
-            label: '  Start Flow',
-            backgroundColor: primaryColor),
-        BottomNavigationBarItem(
-            icon: IconButton(
-              icon: Icon(Icons.add),
-              onPressed: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => CreateFlowScreen(rootId: widget.rootId!),));
-              },),
-            label: 'Create \n Flow',
-            backgroundColor: primaryColor),
-        BottomNavigationBarItem(
-            icon: Icon(Icons.calendar_month_sharp),
-            label: 'Schedule',
-            backgroundColor: primaryColor),
-      ]),*/
       appBar: AppBar(
         // bottom: TabBar(
         //   tabs: [
@@ -192,8 +137,7 @@ class _SubCategoryScreenState extends State<SubCategoryScreen> {
                 },
                 icon: Icon(Icons.play_circle)
             ),
-            IconButton(
-                onPressed: () {}, icon: Icon(Icons.calendar_month_sharp)),
+
 
 
             PopupMenuButton(
@@ -248,35 +192,23 @@ class _SubCategoryScreenState extends State<SubCategoryScreen> {
                             children: [
                               Icon(Icons.play_circle, color: primaryColor,),
                               SizedBox(width: 8.0,),
-                              Text("Start Flow"),
+                              Text("Select Primary Flow"),
                             ],
                           ))
                   ),
+
                   const PopupMenuItem(
                       value: 'schedule',
                       child: InkWell(
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
-                              Icon(Icons.calendar_month_sharp,
-                                color: primaryColor,),
+                              Icon(Icons.schedule, color: primaryColor,),
                               SizedBox(width: 8.0,),
-                              Text("Schedule"),
+                              Text("schedule"),
                             ],
                           ))
                   ),
-                  const PopupMenuItem(
-                      value: 'edit',
-                      child: InkWell(
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              Icon(Icons.edit, color: primaryColor,),
-                              SizedBox(width: 8.0,),
-                              Text("Edit Category"),
-                            ],
-                          ))
-                  )
                 ];
               },
               onSelected: (String value) {
@@ -417,8 +349,8 @@ class _SubCategoryScreenState extends State<SubCategoryScreen> {
                                       borderRadius: BorderRadius.circular(10)
                                   ),
 
-                                  child: Align(
-                                    alignment: Alignment.centerLeft,
+                                  child: Padding(
+                                    padding: EdgeInsets.only(left: 20,bottom: 10, top: 10),
                                     child: Text('Search..', style: TextStyle(
                                         color: Colors.black.withOpacity(0.5)
                                     ),),
@@ -442,8 +374,15 @@ class _SubCategoryScreenState extends State<SubCategoryScreen> {
             height: 20,
           ),
 
-          Text("Subcategory of${widget.categoryName}",
-            style: TextStyle(fontWeight: FontWeight.w500),),
+          BlocBuilder<SubCategoryBloc, SubCategoryState>(
+            builder: (context, state) {
+               if(state is SubCategoryLoaded){
+                return state.cateList.isEmpty?SizedBox():Text("Subcategory of ${widget.categoryName}",
+                  style: TextStyle(fontWeight: FontWeight.w500),);
+              }
+               return SizedBox();
+            },
+          ),
           SizedBox(height: 10,),
 
           if(_searchController.text.isEmpty)
@@ -521,7 +460,7 @@ class _SubCategoryScreenState extends State<SubCategoryScreen> {
                                   onPressed: (BuildContext context) {
                                     Navigator.push(context, MaterialPageRoute(
                                       builder: (context) =>
-                                          SubcategoryResourcesList(
+                                          MaincategoryResourcesList(
                                               rootId: state.cateList[index]
                                                   .sId!,
                                               mediaType: '',
