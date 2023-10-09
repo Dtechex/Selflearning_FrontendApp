@@ -56,7 +56,8 @@ class CustomSubCatSearchDelegate extends SearchDelegate
         else if (state is SearchSubCategoryLoaded) {
 
           if (state.cateList.isNotEmpty) {
-            return Container(
+            return
+              Container(
               padding: const EdgeInsets.only(left: 20, right: 20),
               child: Column(
                 children: [

@@ -18,13 +18,21 @@ import '../resources/maincategory_resources_screen.dart';
 
 class CreateFlowScreen extends StatefulWidget {
   final String rootId;
-  const CreateFlowScreen({super.key, required this.rootId});
+  const
+  CreateFlowScreen({super.key, required this.rootId});
 
   @override
   State<CreateFlowScreen> createState() => _CreateFlowScreenState();
 }
 
 class _CreateFlowScreenState extends State<CreateFlowScreen> {
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    final createflowbloc = BlocProvider.of<CreateFlowBloc>(context);
+    createflowbloc.add(LoadAllFlowEvent(catID: widget.rootId));
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
