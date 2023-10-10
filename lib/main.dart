@@ -98,12 +98,9 @@ class MyApp extends StatelessWidget {
           BlocProvider<SignUpBloc>(create: (context) => SignUpBloc(singUpRepo: SignUpRepo())),
           BlocProvider<SearchCategoryBloc>(create: (context) => SearchCategoryBloc()),
           BlocProvider<SubCategoryBloc>(create: (context) => SubCategoryBloc()),
-<<<<<<< HEAD
           BlocProvider<SearchSubCategoryBloc>(create:(context)=> SearchSubCategoryBloc(),),
-=======
           BlocProvider<PrimaryBloc>(create: (context) => PrimaryBloc()),
 
->>>>>>> origin/main
           //BlocProvider<CameraBloc>(create: (context) => CameraBloc()),
           BlocProvider<SubCategory1Bloc>(create: (context) => SubCategory1Bloc()),
           BlocProvider<SubCategory2Bloc>(create: (context) => SubCategory2Bloc()),
