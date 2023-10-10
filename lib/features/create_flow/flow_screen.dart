@@ -19,7 +19,8 @@ import '../resources/maincategory_resources_screen.dart';
 
 class FlowScreen extends StatefulWidget {
   final String rootId;
-  const FlowScreen({super.key, required this.rootId});
+  final String categoryname;
+  const FlowScreen({super.key, required this.rootId, required this.categoryname});
 
   @override
   State<FlowScreen> createState() => _FlowScreenState();
@@ -96,9 +97,9 @@ class _FlowScreenState extends State<FlowScreen> {
   Widget build(BuildContext context) {
     print("ui is refresh");
     return Scaffold(
+
       appBar: AppBar(
-        title: Text('Main Category Flow'),
-        backgroundColor: Colors.yellow,
+        title: Text('Select Primary flow for ${widget.categoryname}'),
       ),
       body: BlocConsumer<CreateFlowBloc, CreateFlowState>(
         listener: (context, state) {

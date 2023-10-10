@@ -18,7 +18,8 @@ import '../resources/maincategory_resources_screen.dart';
 
 class CreateFlowScreen extends StatefulWidget {
   final String rootId;
-  const CreateFlowScreen({super.key, required this.rootId});
+  final String categoryName;
+  const CreateFlowScreen({super.key, required this.rootId, required this.categoryName});
 
   @override
   State<CreateFlowScreen> createState() => _CreateFlowScreenState();
@@ -50,7 +51,7 @@ class _CreateFlowScreenState extends State<CreateFlowScreen> {
         ),
       ),
       appBar: AppBar(
-        title: Text('Show Category Flow'),
+        title: Text('Create flow for ${widget.categoryName}'),
       ),
       body: BlocConsumer<CreateFlowBloc, CreateFlowState>(
         listener: (context, state) {},

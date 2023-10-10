@@ -131,7 +131,9 @@ class _SubCategoryScreenState extends State<SubCategoryScreen> {
                   Navigator.push(context, MaterialPageRoute(
                       builder: (context) =>
                           PrimaryFlow(
-                            CatId: widget.rootId.toString(), flowId: "1",)));
+                            CatId: widget.rootId.toString(), flowId: "1",
+                          categoryName: widget.categoryName??"",
+                          )));
                   // AddPromptsToPrimaryFlowRepo.getData(mainCatId: widget.rootId.toString());
 
                 },
@@ -251,6 +253,7 @@ class _SubCategoryScreenState extends State<SubCategoryScreen> {
                       builder: (context) {
                         return FlowScreen(
                           rootId: widget.rootId!,
+                          categoryname: widget.categoryName??"",
                         );
                       },
                     ));
@@ -259,7 +262,7 @@ class _SubCategoryScreenState extends State<SubCategoryScreen> {
                     Navigator.push(context, MaterialPageRoute(
                         builder: (context) {
                           return CreateFlowScreen(
-                              rootId: widget.rootId!
+                              rootId: widget.rootId!, categoryName: widget.categoryName.toString(),
                           );
                         }));
                     break;
@@ -487,7 +490,7 @@ class _SubCategoryScreenState extends State<SubCategoryScreen> {
                                     Navigator.push(context, MaterialPageRoute(
                                         builder: (context) {
                                           return CreateFlowScreen(
-                                              rootId: state.cateList[index].sId!
+                                              rootId: state.cateList[index].sId!, categoryName: widget.categoryName??"",
                                           );
                                         }));
                                   },
@@ -503,6 +506,7 @@ class _SubCategoryScreenState extends State<SubCategoryScreen> {
                                       builder: (context) {
                                         return FlowScreen(
                                           rootId: state.cateList[index].sId!,
+                                          categoryname: widget.categoryName??"",
                                         );
                                       },
                                     ));
