@@ -146,7 +146,9 @@ class _SubCategory1ScreenState extends State<SubCategory1Screen> {
                         },
                       ));
 */
-                      Navigator.push(context, MaterialPageRoute(builder: (context)=>PrimaryFlow(CatId: widget.rootId.toString(),flowId: "0",)));
+                      Navigator.push(context, MaterialPageRoute(builder: (context)=>PrimaryFlow(
+                        categoryName: widget.subCateTitle,
+                        CatId: widget.rootId.toString(),flowId: "0",)));
 
                     },
                     icon: Icon(Icons.play_circle)
@@ -255,6 +257,7 @@ class _SubCategory1ScreenState extends State<SubCategory1Screen> {
                           builder: (context) {
                             return FlowScreen(
                               rootId: widget.rootId!,
+                              categoryname: widget.subCateTitle,
                             );
                           },
                         ));
@@ -263,7 +266,8 @@ class _SubCategory1ScreenState extends State<SubCategory1Screen> {
                         Navigator.push(context, MaterialPageRoute(
                             builder: (context) {
                               return CreateFlowScreen(
-                                  rootId: widget.rootId!
+                                  rootId: widget.rootId!,
+                                categoryName: widget.subCateTitle,
                               );
                             }));
                         break;
@@ -386,7 +390,8 @@ class _SubCategory1ScreenState extends State<SubCategory1Screen> {
                                           Navigator.push(context, MaterialPageRoute(
                                               builder: (context) {
                                                 return CreateFlowScreen(
-                                                    rootId: state.cateList[index].sId!
+                                                    rootId: state.cateList[index].sId!,
+                                                  categoryName: widget.subCateTitle,
                                                 );
                                               }));
                                         },
@@ -399,7 +404,7 @@ class _SubCategory1ScreenState extends State<SubCategory1Screen> {
                                           onPressed:  (BuildContext context){
                                             Navigator.push(context, MaterialPageRoute(
                                               builder: (context) {
-                                                return FlowScreen(
+                                                return FlowScreen(categoryname: widget.subCateTitle,
                                                   rootId: state.cateList[index].sId!,
                                                 );
                                               },

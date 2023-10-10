@@ -75,7 +75,7 @@ class _FinalResourceScreenState extends State<FinalResourceScreen> {
 */
             IconButton(
                 onPressed: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context)=>PrimaryFlow(CatId: widget.rootId.toString(),flowId: "0",)));
+                  Navigator.push(context, MaterialPageRoute(builder: (context)=>PrimaryFlow(CatId: widget.rootId.toString(),flowId: "0",categoryName: widget.categoryName,)));
                 },
                 icon: Icon(Icons.play_circle)
             ),
@@ -164,6 +164,7 @@ class _FinalResourceScreenState extends State<FinalResourceScreen> {
                       builder: (context) {
                         return FlowScreen(
                           rootId: widget.rootId!,
+                          categoryname: widget.categoryName,
                         );
                       },
                     ));
@@ -172,7 +173,8 @@ class _FinalResourceScreenState extends State<FinalResourceScreen> {
                     Navigator.push(context, MaterialPageRoute(
                         builder: (context) {
                           return CreateFlowScreen(
-                              rootId: widget.rootId!
+                              rootId: widget.rootId!,
+                            categoryName: widget.categoryName,
                           );
                         }));
                     break;

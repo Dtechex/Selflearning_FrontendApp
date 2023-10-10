@@ -16,8 +16,9 @@ import '../../create_flow/data/model/flow_model.dart';
 class PrimaryFlow extends StatefulWidget {
   final String CatId;
   final String flowId;
+  final String categoryName;
 
-  const PrimaryFlow({super.key, required this.CatId, required this.flowId});
+  const PrimaryFlow({super.key, required this.CatId, required this.flowId, required this.categoryName});
 
   @override
   State<PrimaryFlow> createState() => _PrimaryFlowState();
@@ -268,8 +269,7 @@ Future<void> fetchdataList() async{
     var w = MediaQuery.of(context).size.width;
     return showdefaultFlow?
       Scaffold(
-        appBar: AppBar(title: const Text('Prompts'),
-          backgroundColor: Colors.green,
+        appBar: AppBar(title:  Text('Primary flow of ${widget.categoryName}'),
 
         ),
         floatingActionButton: SizedBox(
@@ -387,8 +387,7 @@ Future<void> fetchdataList() async{
 
 
     Scaffold(
-      appBar: AppBar(title: const Text('Prompts'),// primary prompts here
-        backgroundColor: Colors.green,
+      appBar: AppBar(title:  Text('Primary flow of ${widget.categoryName}'),// primary prompts here
 
       ),
       floatingActionButton: SizedBox(
