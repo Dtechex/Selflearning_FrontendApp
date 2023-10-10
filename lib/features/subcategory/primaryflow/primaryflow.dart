@@ -7,6 +7,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:self_learning_app/features/create_flow/bloc/create_flow_screen_bloc.dart';
 import 'package:self_learning_app/features/create_flow/slide_show_screen.dart';
+import 'package:self_learning_app/features/subcategory/primaryflow/bloc/primary_bloc.dart';
 import 'package:self_learning_app/utilities/extenstion.dart';
 
 import '../../../utilities/shared_pref.dart';
@@ -69,11 +70,9 @@ Future<void> primaryflowdatalist() async{
 }
 Future<void> fetchdataList() async{
     try{
-      EasyLoading.show();
       final datalist = await fetchList(mainCatId: widget.CatId);
          datalist;
       await Future.delayed(Duration(milliseconds: 8));
-     EasyLoading.dismiss();
       setState(() {
         flowList = datalist;
 
@@ -165,6 +164,8 @@ Future<void> fetchdataList() async{
       );
 
       if (res.statusCode == 200) {
+        context.read<PrimaryBloc>().add(DefaultPrimaryEvent(rootId: widget.CatId!));
+
         final data = res.data;
         // print("res===$res");
         final records = data['data']['record'];
@@ -192,7 +193,8 @@ Future<void> fetchdataList() async{
           print("---------->${flowDataModel.side2Content}");
         }
         return flowDataList;
-      } else {
+      }
+      else {
         throw Exception('Failed to fetch data from the API');
       }
     } catch (error) {
@@ -213,6 +215,7 @@ Future<void> fetchdataList() async{
         data: {'type':'primary'}
       );
       if (res.statusCode == 200 && res.data['data']['record'][0]['type'] == 'primary') {
+        context.read<PrimaryBloc>().add(LoadAllPrimaryEvent(rootId: widget.CatId!));
         setState(() {
           showdefaultFlow = false;
         });
@@ -302,12 +305,32 @@ Future<void> fetchdataList() async{
             ),
           ),
         ),
-        body: Column(
+        body: BlocConsumer<PrimaryBloc, PrimaryState>(
+  listener: (context, state) {
+    // TODO: implement listener
+  },
+  builder: (context, state) {
+    if(state is Primaryflowfailedstate){
+      return Text("Opps something went wrong");
+    }
+    if(state is PrimaryflowLoading){
+      return  Container(
+        height: MediaQuery.of(context).size.height * 0.9,
+        child: const Center(
+          child: CircularProgressIndicator(),
+        ),
+      );}
+    if(state is PrimarySuccessState ){
+      if(state.flowList.isEmpty || state.flowList.length==0){
+        return Align(
+            alignment: Alignment.center,
+            child: Text("Sorry no prompts is found",style: TextStyle(color: Colors.red, fontSize: 24)));
+      }
+      else {
+        return Column(
           children: [
             Expanded(
-                child:flowList.length>=0?Align(
-                    alignment: Alignment.center,
-                    child: Text("No primary flow found", style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold, fontSize: 24),)):
+                child:
                 ReorderableListView(
                   padding: const EdgeInsets.symmetric(
                       horizontal: 10, vertical: 10),
@@ -341,7 +364,7 @@ Future<void> fetchdataList() async{
                       FlowDataModel item = flowList.removeAt(oldIndex);
                       flowList.insert(newIndex, item);
 
-                    /*  PromtModel model = state.promtModel!.removeAt(oldIndex);
+                      /*  PromtModel model = state.promtModel!.removeAt(oldIndex);
                       state.promtModel!.insert(newIndex, model);*/
                     });
                   },
@@ -350,9 +373,21 @@ Future<void> fetchdataList() async{
 
             ),
           ],
-        ),
-      ): Scaffold(
-      appBar: AppBar(title: const Text('Prompts'),
+        );
+      }
+      }
+    return Text("Something went wrong");
+
+
+  },
+),
+      ):
+
+
+
+
+    Scaffold(
+      appBar: AppBar(title: const Text('Prompts'),// primary prompts here
         backgroundColor: Colors.green,
 
       ),
@@ -390,7 +425,26 @@ Future<void> fetchdataList() async{
           ),
         ),
       ),
-      body: Column(
+      body: BlocBuilder<PrimaryBloc, PrimaryState>(
+  builder: (context, state) {
+    if(state is Primaryflowfailedstate){
+      return Text("Opps something went wrong");
+    }
+    if(state is PrimaryflowLoading){
+      return  Container(
+        height: MediaQuery.of(context).size.height * 0.9,
+        child: const Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
+    if(state is PrimarySuccessState) {
+      if(state.flowList.isEmpty || state.flowList.length==0){
+        return Center(
+            child: Text("Sorry no prompts is found", style: TextStyle(color: Colors.red, fontSize: 24),));
+      }
+      else{
+      return Column(
         children: [
           Expanded(
               child:
@@ -406,7 +460,8 @@ Future<void> fetchdataList() async{
                         maxRadius: 17, backgroundColor: generateRandomColor(),
                         foregroundColor: Colors.white,
                         child: Text(
-                          extractFirstLetter(primaryflowList[index].resourceTitle.toString()),
+                          extractFirstLetter(
+                              primaryflowList[index].resourceTitle.toString()),
                           style: TextStyle(fontWeight: FontWeight.bold),)
                         ,),
                       trailing: Icon(Icons.menu),
@@ -414,7 +469,8 @@ Future<void> fetchdataList() async{
                       tileColor: index.isOdd ? oddItemColor : evenItemColor,
                       title: Row(
                         children: [
-                          Text('${primaryflowList[index].promptName.toString()}')
+                          Text(
+                              '${primaryflowList[index].promptName.toString()}')
                         ],
                       ),
                     ),
@@ -433,7 +489,12 @@ Future<void> fetchdataList() async{
                 },
               )),
         ],
-      ),
+      );
+      }
+    }
+    return Text("Something went wrong");
+  },
+),
     );
 
   }

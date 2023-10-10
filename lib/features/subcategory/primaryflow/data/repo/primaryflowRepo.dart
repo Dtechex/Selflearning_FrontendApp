@@ -12,6 +12,23 @@ class AddPromptsToPrimaryFlowRepo {
     );
 
     Response res = await Dio().get(
+        'https://selflearning.dtechex.com/web/flow?categoryId=$mainCatId&type=primary',
+        options: options,
+        data: {'type':'primary'}
+    );
+    print("@----$res");
+    print("break");
+
+    return res;
+  }
+  static Future<Response> defalutPrimaryflow({required String mainCatId}) async {
+    final token = await SharedPref().getToken();
+
+    final Options options = Options(
+      headers: {"Authorization": 'Bearer $token'},
+    );
+
+    Response res = await Dio().get(
       'https://selflearning.dtechex.com/web/prompt?categoryId=$mainCatId',
       options: options,
     );
@@ -20,4 +37,5 @@ class AddPromptsToPrimaryFlowRepo {
 
     return res;
   }
+
 }

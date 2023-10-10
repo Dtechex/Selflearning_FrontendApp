@@ -22,6 +22,7 @@ import 'package:self_learning_app/features/registration/data/repo/signup_repo.da
 import 'package:self_learning_app/features/resources/bloc/resources_bloc.dart';
 import 'package:self_learning_app/features/search_category/bloc/search_cat_bloc.dart';
 import 'package:self_learning_app/features/subcategory/bloc/sub_cate_bloc.dart';
+import 'package:self_learning_app/features/subcategory/primaryflow/bloc/primary_bloc.dart';
 import 'package:self_learning_app/utilities/colors.dart';
 import 'package:self_learning_app/utilities/shared_pref.dart';
 import 'features/create_flow/bloc/create_flow_screen_bloc.dart';
@@ -102,6 +103,8 @@ class MyApp extends StatelessWidget {
           BlocProvider<SearchCategoryBloc>(create: (context) => SearchCategoryBloc()),
           BlocProvider<SearchSubCategoryBloc>(create: (context) => SearchSubCategoryBloc()),
           BlocProvider<SubCategoryBloc>(create: (context) => SubCategoryBloc()),
+          BlocProvider<PrimaryBloc>(create: (context) => PrimaryBloc()),
+
           //BlocProvider<CameraBloc>(create: (context) => CameraBloc()),
           BlocProvider<SubCategory1Bloc>(create: (context) => SubCategory1Bloc()),
           BlocProvider<SubCategory2Bloc>(create: (context) => SubCategory2Bloc()),

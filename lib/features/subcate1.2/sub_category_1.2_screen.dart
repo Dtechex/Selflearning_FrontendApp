@@ -72,6 +72,7 @@ class _SubCategory2ScreenState extends State<SubCategory2Screen> {
 
   @override
   Widget build(BuildContext context) {
+    print("last categoryid${widget.rootId}");
     return Scaffold(
       floatingActionButton: SizedBox(
         height: context.screenHeight * 0.1,
@@ -107,30 +108,7 @@ class _SubCategory2ScreenState extends State<SubCategory2Screen> {
         ),
       ),
       appBar: AppBar(
-/*
-            bottom:  TabBar(
-              tabs: [
-                Column(
-                  children: const [
-                    Tab(icon: Icon(Icons.perm_media,)),
-                    Text('Resources')
-                  ],
-                ),
-                Column(
-                  children: const [
-                    Tab(icon: Icon(Icons.list_alt,)),
-                    Text('Subcategory list')
-                  ],
-                ),
-              ],
-              onTap: (value) {
-                setState(() {
-                  _tabIndex = value;
-                });
-              },
-              isScrollable: false,
-            ),
-*/
+
           title: Text(widget.subCateTitle),
           actions: [
 /*
