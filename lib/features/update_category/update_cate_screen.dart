@@ -84,6 +84,7 @@ class _UpdateCateScreenState extends State<UpdateCateScreen> {
     payload.addAll({"keywords": keywords});
     payload.addAll({"styles": styles});
     var token = await SharedPref().getToken();
+    print("keyword for main category$keywords");
     try {
       var res = await http.patch(
         Uri.parse(
@@ -94,6 +95,7 @@ class _UpdateCateScreenState extends State<UpdateCateScreen> {
           'Authorization': 'Bearer $token'
         },
       );
+      print("main category update ${res.body}");
       if (res.statusCode == 200) {
         context.showSnackBar(
             SnackBar(content: Text('Category update Successfully')));

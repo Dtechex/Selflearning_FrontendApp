@@ -21,7 +21,7 @@ class SearchSubCategoryRepo {
           },
         )
     );
-
+    print("categoryid ---$rootId");
     print("Query:${query}");
     print('-0-0-0-${res.data}');
     var data =  res.data;
