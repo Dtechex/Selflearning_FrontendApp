@@ -1,3 +1,6 @@
+import 'dart:math';
+
+import 'package:blurrycontainer/blurrycontainer.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -81,8 +84,24 @@ class _AllCateScreenState extends State<AllCateScreen> {
           );
         });
   }
+  Color lightenRandomColor(Color color, double factor) {
+    assert(factor >= 0 && factor <= 1.0);
+    final int red = (color.red + (255 - color.red) * factor).round();
+    final int green = (color.green + (255 - color.green) * factor).round();
+    final int blue = (color.blue + (255 - color.blue) * factor).round();
+    return Color.fromARGB(255, red, green, blue);
+  }
 
-  @override
+  Color generateRandomColor() {
+    final Random random = Random();
+    final int red = random.nextInt(256); // 0-255 for the red channel
+    final int green = random.nextInt(256); // 0-255 for the green channel
+    final int blue = random.nextInt(256); // 0-255 for the blue channel
+    final originalColor = Color.fromARGB(255, red, green, blue);
+    final pastelColor = lightenRandomColor(originalColor, 0.8); // 30% lighter
+
+    return pastelColor;
+  }  @override
   void initState() {
     context.read<CategoryBloc>().add(CategoryLoadEvent());
     super.initState();
@@ -90,6 +109,7 @@ class _AllCateScreenState extends State<AllCateScreen> {
 
   @override
   Widget build(BuildContext context) {
+
     print("Category Screen");
     return Column(
       children: [
@@ -108,32 +128,43 @@ class _AllCateScreenState extends State<AllCateScreen> {
                       delegate: CustomSearchDelegate(),
                     );
                   },
-                  child: Container(
-                    margin: const EdgeInsets.only(left: 15),
-                    height:   context.screenHeight * 0.058,
-                    decoration: BoxDecoration(
-                        color: Colors.grey.withOpacity(0.5),
-                        borderRadius: BorderRadius.circular(10)
-                    ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: BlurryContainer(
+                      elevation: 1,
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(20),
+                      height:   context.screenHeight * 0.058,
 
-                    child: Padding(
-                      padding: EdgeInsets.only(left: 20,top: 10,bottom: 10),
-                      child: Text('Search..',style: TextStyle(
-                          color: Colors.black.withOpacity(0.5)
-                      ),),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text('Search..',style: TextStyle(
+                              color: Colors.black
+                          ),),
+                          Icon(Icons.search)
+                        ],
+                      ),
                     ),
                   ),
                 )
             ),
           ),
-          IconButton(
-              onPressed: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) {
-                  return AddResourceScreen2(resourceId: '',whichResources: 0,);
-                },));
-                //_displayTextInputDialog(context);
-              },
-              icon: const Icon(Icons.add)),
+          Card(
+            elevation: 2,
+            shape: RoundedRectangleBorder(
+
+              borderRadius: BorderRadius.circular(8.0), //<-- SEE HERE
+            ),
+            child: IconButton(
+                onPressed: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) {
+                    return AddResourceScreen2(resourceId: '',whichResources: 0,);
+                  },));
+                  //_displayTextInputDialog(context);
+                },
+                icon: const Icon(Icons.add)),
+          ),
         ],
       ),
       const SizedBox(
@@ -204,13 +235,21 @@ class _AllCateScreenState extends State<AllCateScreen> {
                     }
 
                     return GestureDetector(
-                      child: Container(
-                        //padding: const EdgeInsets.all(8),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          color: Colors.transparent,
-                          border: Border.all(color: currentColor, width: 3),
+                      child: Card(
+                        shape: RoundedRectangleBorder(
+
+                          borderRadius: BorderRadius.circular(10.0), //<-- SEE HERE
                         ),
+                        color: generateRandomColor(),
+                        //padding: const EdgeInsets.all(8),
+                        // decoration: BoxDecoration(
+                        //
+                        //   borderRadius: BorderRadius.circular(10),
+                        //   color: generateRandomColor(),
+                        //   border: Border.all(color: currentColor, width: 3),
+                        //
+                        // ),
+                        elevation: 2,
                         child: Stack(
                           children: [
                             Center(
@@ -218,11 +257,12 @@ class _AllCateScreenState extends State<AllCateScreen> {
                                   textAlign: TextAlign.center,
                                   overflow: TextOverflow.ellipsis,
                                   maxLines: 2,
-                                  style: const TextStyle(color: primaryColor)),
+                                  style:  TextStyle(color: primaryColor, fontWeight: FontWeight.w500,letterSpacing: 1)),
                             ),
                             Align(
                               alignment: Alignment.topRight,
                               child: PopupMenuButton(
+
                                 icon: Icon(Icons.more_vert,color: Colors.red,),
                                 itemBuilder: (context) {
                                   return [

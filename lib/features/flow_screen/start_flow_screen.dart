@@ -464,9 +464,9 @@ class _FrontPageWidgetState extends State<FrontPageWidget> {
                                   Colors
                                       .greenAccent)),
                           child: const Text(
-                              "   Next \n Prompt",
+                              "   Next\nPrompt",
                               style: TextStyle(
-                                  fontSize: 12)))),
+                                  fontSize: 11)))),
                   SizedBox(
                       width: context.screenWidth * 0.2,
                       child: TextButton(

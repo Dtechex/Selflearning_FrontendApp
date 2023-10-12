@@ -142,11 +142,11 @@ class _SlideShowScreenState extends State<SlideShowScreen> {
                     Navigator.pop(context);
                   } else {
                     //controller.flipRight();
-                    controller.flipRight();
-                    await Future.delayed(Duration(milliseconds: 500));
-
-                    controller.flipRight();
-                    await Future.delayed(Duration(milliseconds: 500));
+                    // controller.flipRight();
+                    // await Future.delayed(Duration(milliseconds: 500));
+                    //
+                    // controller.flipRight();
+                    // await Future.delayed(Duration(milliseconds: 500));
 
                     setState(() {
                       _currentPage -= 1;
@@ -415,20 +415,21 @@ class _FrontPageWidgetState extends State<FrontPageWidget> {
                 children: [
                   SizedBox(
                       width: context.screenWidth * 0.2,
-                      child: TextButton(
-                          onPressed: widget.onViewResourcePressed,
+                      child: widget.index == 0?
+                      null:
+                      TextButton(
+                          onPressed: widget.onPrevButtonPressed,
                           style: const ButtonStyle(
                               backgroundColor:
                               MaterialStatePropertyAll(
                                   Colors
-                                      .blueAccent)),
+                                      .green)),
                           child: const Text(
-                              "     View\n  resource",
+                              "Previous\n prompt",
                               style: TextStyle(
                                   fontSize: 12,
                                   color:
                                   Colors.white)))),
-
                   SizedBox(
                       width: context.screenWidth * 0.2,
                       child: widget.index == widget.promtModel.length-1?
@@ -446,6 +447,33 @@ class _FrontPageWidgetState extends State<FrontPageWidget> {
                                   fontSize: 12,
                                   color:
                                   Colors.white)))),
+
+
+                ],
+              ),
+              SizedBox(height: 10,),
+              Row(
+                mainAxisAlignment:
+                MainAxisAlignment.spaceBetween,
+                children: [
+                  SizedBox(
+                      width: context.screenWidth * 0.2,
+                      child: TextButton(
+                          onPressed: widget.onViewResourcePressed,
+                          style: const ButtonStyle(
+                              backgroundColor:
+                              MaterialStatePropertyAll(
+                                  Colors
+                                      .blueAccent)),
+                          child: const Text(
+                              "     View\n  resource",
+                              style: TextStyle(
+                                  fontSize: 12,
+                                  color:
+                                  Colors.white)))),
+
+
+
                   SizedBox(
                     width: context.screenWidth * 0.2,
                     child: TextButton(

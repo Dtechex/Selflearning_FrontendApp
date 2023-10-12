@@ -75,7 +75,7 @@ class _PromtsScreenState extends State<PromtsScreen> {
     print("https://selflearning.dtechex.com/public/${widget.mediaType}/${widget.content}");
     return Scaffold(
       appBar: AppBar(title: const Text('Prompts'),
-      // backgroundColor: Colors.green,
+
       ),
       body: BlocConsumer<PromtBloc, PromtState>(
         listener: (context, state) {
@@ -141,14 +141,17 @@ class _PromtsScreenState extends State<PromtsScreen> {
                                   foregroundColor: Colors.white,
                                   child: Text(
                                     extractFirstLetter(state.addFlowModel!.flow![index].name!),
-                                    style: TextStyle(fontWeight: FontWeight.bold),)
+                                    style: TextStyle(fontWeight: FontWeight.bold,color: Colors.white),)
                                   ,),
                                 trailing: Icon(Icons.menu),
                                 key: Key('$index'),
                                 tileColor: index.isOdd ? oddItemColor : evenItemColor,
-                                title: Row(
+                                title: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Text('${state.addFlowModel!.flow![index].name}')
+                                    Text('${state.addFlowModel!.flow![index].name}',
+
+                                    )
                                   ],
                                 ),
                               ),
