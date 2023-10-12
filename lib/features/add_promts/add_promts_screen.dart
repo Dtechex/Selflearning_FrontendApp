@@ -1040,21 +1040,6 @@ class _AddPromptsScreenState extends State<AddPromptsScreen> {
       EasyLoading.show();
       addPromptsBloc.add(
         AddResource(
-          // mediaUrl:
-          //     // state.side2ResourceUrl,
-          //     state.side2selectedMediaType ==
-          //             'Text'
-          //         ? "text-side2"
-          //         : state.side2selectedMediaType ==
-          //                 'Image'
-          //             ? "image-side2"
-          //             : state.side2selectedMediaType ==
-          //             'Video'
-          //         ? "video-side2"
-          //         : state.side2selectedMediaType ==
-          //             'Audio'
-          //         ? "audio-side2"
-          //         : "other",
           mediaUrl:
           // state.side1ResourceUrl,
           state.side2selectedMediaType ==
@@ -1200,122 +1185,10 @@ String getFileType(String format) {
 
   return 'Unknown'; // Return 'Unknown' if no matching format is found.
 
-  /*GestureDetector(
-    onTap: () {
-      if(state.resource2status == Resource2Status.initial || state.resource2status == Resource2Status.failed){
-        if (state.side2selectedMediaType == 'Image') {
-          ImagePickerHelper.pickImage(imageSource: ImageSource.camera)
-              .then((value) {
-            print(value!.path);
-            print("value");
-            addPromptsBloc.add(
-                PickResource(
-                    mediaUrl: value.path,
-                    whichSide: 1));
-          });
-        } else if (state.side2selectedMediaType == 'Video') {
-          ImagePickerHelper.pickVideo(imageSource: ImageSource.camera)
-              .then((value) {
-            addPromptsBloc.add(
-                PickResource(
-                    mediaUrl: value!.path,
-                    whichSide: 1));
-          });
-        } else if (state.side2selectedMediaType == 'Audio') {
-          ImagePickerHelper.pickFile()
-              .then((value) {
-            addPromptsBloc.add(
-                PickResource(
-                    mediaUrl: value,
-                    whichSide: 1));
-          });
-        }
-      }
-    },
-    child: Container(
-      color: Colors.grey,
-      height: context.screenHeight / 5,
-      child: getFileType(state.side2ResourceUrl!) == 'Photo'
-          ? Image.file(File(state.side2ResourceUrl!),
-        fit: BoxFit.fill,
-      )
-          : getFileType(state.side2ResourceUrl!) == 'Video'
-          ? FutureBuilder<Uint8List?>(
-        future: loadVideoThumbnail(File(state.side2ResourceUrl!).path),
-        builder: (context, snapshot) {
-          if(snapshot.hasData){
-            if(snapshot.data != null){
-              return Image.memory(snapshot.data!, fit: BoxFit.fitHeight,);
-            }
-          }else if(snapshot.hasError){
-            return Icon(Icons.error_outline);
-          }
-          return Center(child: CircularProgressIndicator(),);
-        },
-      )
-          : Center(
-        child: Text(state.side2selectedMediaType == 'Image'
-            ? 'Upload Image'
-            : state.side2selectedMediaType == 'Video'
-            ? "Upload Video"
-            : state.side2selectedMediaType == 'Audio'
-            ? 'Upload Audio'
-            : ''),
-      ),
-    ),
-  )*/
 
 
 
 
-  /*GestureDetector(
-    onTap: () {
-      //print(state.side1selectedMediaType);
-      if(state.resource1status == Resource1Status.initial || state.resource1status == Resource1Status.failed){
-        if (state.side1selectedMediaType == 'Image') {
-          ImagePickerHelper.pickImage(imageSource: ImageSource.camera)
-              .then((value) {
-            addPromptsBloc.add(
-                PickResource(
-                    mediaUrl: value!.path,
-                    whichSide: 0));
-          });
-        } else if (state.side1selectedMediaType == 'Video') {
-          ImagePickerHelper.pickVideo(imageSource: ImageSource.camera)
-              .then((value) {
-
-            addPromptsBloc.add(
-                PickResource(
-                    mediaUrl: value!.path,
-                    whichSide: 0));
-          });
-        } else if (state.side1selectedMediaType == 'Audio') {
-          ImagePickerHelper.pickFile()
-              .then((value) {
-            addPromptsBloc.add(
-                PickResource(
-                    mediaUrl: value,
-                    whichSide: 0));
-          });
-        }
-      }
-    },
-    child: Container(
-      color: Colors.grey,
-      height: context.screenHeight / 5,
-      child: getFileType(state.side1ResourceUrl!) == 'Photo'
-          ? Image.file(File(state.side1ResourceUrl!), fit: BoxFit.fill,)
-          : Center(
-        child: Text(state.side1selectedMediaType == 'Image'
-            ? 'Upload Image'
-            : state.side1selectedMediaType == 'Video'
-            ? "Upload Video"
-            : state.side1selectedMediaType == 'Audio'
-            ? 'Upload Audio'
-            : ''),
-      ),
-    ),
-  ),*/
 }
 
 
