@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:loader_overlay/loader_overlay.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:self_learning_app/utilities/extenstion.dart';
 import '../../utilities/image_picker_helper.dart';
@@ -54,8 +55,13 @@ class _AddAudioScreenState extends State<AddAudioScreen> {
     await Permission.audio.request();
     await Permission.accessMediaLocation.request();
     await Permission.manageExternalStorage.request();
-    String downloadPath = await ExternalPath.getExternalStoragePublicDirectory(ExternalPath.DIRECTORY_DOWNLOADS);
-
+    String downloadPath;
+    if (Platform.isIOS) {
+      var directory = await getApplicationDocumentsDirectory();
+      downloadPath = directory.path + '/';
+    } else {
+      downloadPath = await ExternalPath.getExternalStoragePublicDirectory(ExternalPath.DIRECTORY_DOWNLOADS);
+    }
     print(downloadPath);
 
 
@@ -383,3 +389,4 @@ class _AddAudioScreenState extends State<AddAudioScreen> {
               position, bufferedPosition, duration ?? Duration.zero));
 
 }
+// audio file
