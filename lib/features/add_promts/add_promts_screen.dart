@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:record/record.dart';
 import 'package:self_learning_app/features/add_media/bloc/add_media_bloc.dart';
@@ -1090,7 +1091,14 @@ class _AddPromptsScreenState extends State<AddPromptsScreen> {
     await Permission.audio.request();
     await Permission.accessMediaLocation.request();
     await Permission.manageExternalStorage.request();
-    String downloadPath = await ExternalPath.getExternalStoragePublicDirectory(ExternalPath.DIRECTORY_DOWNLOADS);
+    String downloadPath;
+
+    if (Platform.isIOS) {
+      var directory = await getApplicationDocumentsDirectory();
+      downloadPath = directory.path + '/';
+    } else {
+      downloadPath = await ExternalPath.getExternalStoragePublicDirectory(ExternalPath.DIRECTORY_DOWNLOADS);
+    }
 
     print(downloadPath);
 
