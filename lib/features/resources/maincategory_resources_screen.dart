@@ -560,8 +560,11 @@ class _MaincategoryResourcesListState extends State<MaincategoryResourcesList> {
       );
   }
   Future<void> _showImageDialog(BuildContext context, String content, String title) async {
+    FlickManager? _flickManager;
     final audioPlayer = AudioPlayer();
-    bool isVideoPlaying = false;
+    _flickManager = FlickManager(
+      videoPlayerController: VideoPlayerController.network('https://selflearning.dtechex.com/public/video/$content'),
+    );
 
     print("getfilecontent==>${getFileType(content)}");
  print("content$content");
@@ -591,13 +594,13 @@ class _MaincategoryResourcesListState extends State<MaincategoryResourcesList> {
                 controls: FlickPortraitControls(),
               ),
 
-              flickManager: FlickManager(
-                videoPlayerController: VideoPlayerController.network('https://selflearning.dtechex.com/public/video/$content'),
-              ),
+              flickManager:
+              _flickManager!,
 
             )
                 : getFileType(content) == "Audio"
-                ? Container(
+                ?
+            Container(
               color: Colors.white,
                   child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -609,6 +612,7 @@ class _MaincategoryResourcesListState extends State<MaincategoryResourcesList> {
                       final playing = processingState == ProcessingState.ready;
                       final buffering = processingState == ProcessingState.buffering;
                       final audioCompleted = processingState == ProcessingState.completed;
+                      bool _isPlaying = false;
 
                       // Display different icons based on the processing state
                       return BlurryContainer(
@@ -617,7 +621,8 @@ class _MaincategoryResourcesListState extends State<MaincategoryResourcesList> {
                         elevation: 5,
                         borderRadius: BorderRadius.circular(90),
 
-                        child: IconButton(
+                        child:
+                        IconButton(
                           icon: buffering
                               ? CircularProgressIndicator()
                               : playing
@@ -625,6 +630,7 @@ class _MaincategoryResourcesListState extends State<MaincategoryResourcesList> {
                               : Icon(Icons.play_arrow),
                           onPressed: () async {
                             if (playing) {
+
                               audioPlayer.pause();
                             } else {
                               audioPlayer.setUrl("https://selflearning.dtechex.com/public/audio/$content");
@@ -681,6 +687,7 @@ class _MaincategoryResourcesListState extends State<MaincategoryResourcesList> {
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
+                _flickManager?.dispose();
 
               },
               child: Text('Close'),

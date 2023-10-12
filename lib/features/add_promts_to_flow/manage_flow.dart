@@ -107,6 +107,7 @@ class _ManageFlowState extends State<ManageFlow> {
 
       );
     }else{
+      print("update flow conditon is run");
       response = await Dio().put(
         'https://selflearning.dtechex.com/web/flow/update/$flowId',
         data: {
@@ -118,6 +119,7 @@ class _ManageFlowState extends State<ManageFlow> {
 
       );
     }
+    print("dataToSend===>$dataToSend");
     print('Successful $response, code: ${response.statusCode}');
     if(response.statusCode == 200 || response.statusCode == 201){
       Navigator.pop(context, true);
@@ -163,7 +165,8 @@ class _PromptsTileState extends State<PromptsTile> {
         ,),
       trailing: Icon(Icons.menu),
       tileColor: widget.index.isOdd ? oddItemColor : evenItemColor,
-      title: Row(
+      title: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text('${widget.prompt.name}')
         ],

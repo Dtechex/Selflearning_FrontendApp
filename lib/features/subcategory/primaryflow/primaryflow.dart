@@ -349,7 +349,8 @@ Future<void> fetchdataList() async{
                         trailing: Icon(Icons.menu),
                         key: Key('$index'),
                         tileColor: index.isOdd ? oddItemColor : evenItemColor,
-                        title: Row(
+                        title: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text('${flowList[index].resourceTitle.toString()}')
                           ],
@@ -466,7 +467,8 @@ Future<void> fetchdataList() async{
                       trailing: Icon(Icons.menu),
                       key: Key('$index'),
                       tileColor: index.isOdd ? oddItemColor : evenItemColor,
-                      title: Row(
+                      title: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
                               '${primaryflowList[index].promptName.toString()}')
