@@ -31,7 +31,7 @@ class CreateFlowRepo {
   static Future<Response?> selectFlow({required String flowId,required String flowType, required String rootId }) async {
     try {
       final token = await SharedPref.getUserToken();
-      print("---$token");
+      print("---my token $token");
       Response res = await Dio().put(
           'https://selflearning.dtechex.com/web/flow/update/$flowId',
           data: {
@@ -40,6 +40,7 @@ class CreateFlowRepo {
           options: Options(
               headers: {"Authorization": 'Bearer $token'}
           ));
+      print("status code of flow select${res.statusCode}");
       print(res.data);
       return res;
     }catch(e){

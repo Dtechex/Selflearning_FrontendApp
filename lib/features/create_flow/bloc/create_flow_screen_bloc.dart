@@ -79,7 +79,7 @@ class CreateFlowBloc extends Bloc<CreateFlowEvent,CreateFlowState> {
             flowList: flowData,
           ));
         }
-        emit(LoadSuccess(flowList));
+        emit(LoadSuccess(flowList).copyWith(flowList: flowList));
       }
     });
 

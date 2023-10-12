@@ -14,6 +14,9 @@ class SearchSubCategoryLoaded extends SearchSubCategoryState {
   final List<SearchCategoryModel> cateList;
   SearchSubCategoryLoaded({required this.cateList});
 
+  SearchSubCategoryLoaded copyWith({List<SearchCategoryModel>? cateList}){
+    return SearchSubCategoryLoaded(cateList: cateList?? this.cateList);
+  }
 }
 
 class SearchSubCategoryFailed extends SearchSubCategoryState {

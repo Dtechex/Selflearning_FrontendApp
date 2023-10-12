@@ -46,10 +46,6 @@ Dio dio = Dio(baseOptions);
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-/*  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
-  FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;*/
   dio.interceptors.add(LogInterceptor(
       responseBody: true,
       responseHeader: false,
@@ -101,8 +97,8 @@ class MyApp extends StatelessWidget {
           BlocProvider<CategoryBloc>(create: (context) => CategoryBloc()..add(CategoryLoadEvent())),
           BlocProvider<SignUpBloc>(create: (context) => SignUpBloc(singUpRepo: SignUpRepo())),
           BlocProvider<SearchCategoryBloc>(create: (context) => SearchCategoryBloc()),
-          BlocProvider<SearchSubCategoryBloc>(create: (context) => SearchSubCategoryBloc()),
           BlocProvider<SubCategoryBloc>(create: (context) => SubCategoryBloc()),
+          BlocProvider<SearchSubCategoryBloc>(create:(context)=> SearchSubCategoryBloc(),),
           BlocProvider<PrimaryBloc>(create: (context) => PrimaryBloc()),
 
           //BlocProvider<CameraBloc>(create: (context) => CameraBloc()),
