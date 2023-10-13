@@ -192,6 +192,7 @@ class _MaincategoryResourcesListState extends State<MaincategoryResourcesList> {
                                 ),
                                 leading: GestureDetector(
                                   onTap: (){
+                                    print("popupmenuIcon dailogbox");
                                     _showImageDialog(context,content, title.toString() );
 
                                   },

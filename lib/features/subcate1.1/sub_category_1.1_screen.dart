@@ -233,7 +233,7 @@ class _SubCategory1ScreenState extends State<SubCategory1Screen> {
                       case 'viewResources':
                         Navigator.push(context, MaterialPageRoute(
                           builder: (context) =>
-                              SubcategoryResourcesList(rootId: widget.rootId,
+                              MaincategoryResourcesList(rootId: widget.rootId,
                                   mediaType: '',
                                   title: widget.subCateTitle),));
                         break;

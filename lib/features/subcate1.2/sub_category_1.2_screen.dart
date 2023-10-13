@@ -248,7 +248,7 @@ class _SubCategory2ScreenState extends State<SubCategory2Screen> {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => Subcategory2ResourcesList(
+                          builder: (context) => MaincategoryResourcesList(
                               rootId: widget.rootId,
                               mediaType: '',
                               title: widget.subCateTitle),
