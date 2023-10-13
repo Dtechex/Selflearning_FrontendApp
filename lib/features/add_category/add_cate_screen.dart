@@ -80,6 +80,7 @@ class _AddCateScreenState extends State<AddCateScreen> {
           'Authorization': 'Bearer $token'
         },
       );
+      print("respone of create category ${res.body}");
       if (res.statusCode == 201) {
         context.showSnackBar(SnackBar(
             duration: Duration(seconds: 1),

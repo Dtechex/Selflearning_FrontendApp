@@ -108,8 +108,8 @@ class _QuickTypeScreenState extends State<QuickTypeScreen> {
                                                  return QuickAddImportScreen(
                                                    mediaType: getType(list[index].type.toString()),
                                                    quickAddId: list[index].sId!,
-                                                   title: list[index].title ??
-                                                       'Image Type',
+                                                   title: list[index].title ?? 'Image Type',
+                                                   resourcecontent: list[index].content??"resource content",
                                                  );
                                                },
                                              ));

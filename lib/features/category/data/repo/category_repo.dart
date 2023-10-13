@@ -47,6 +47,7 @@ class CategoryRepo {
         recordList.add(CategoryModel.fromJson(element));
       }
     }
+    print("we are printing recorddata${recordata}");
     return recordList;
   }
 

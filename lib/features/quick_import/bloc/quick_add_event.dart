@@ -13,7 +13,8 @@ class ButtonPressedEvent extends QuickImportEvent {
   final String? quickAddId;
   final String? rootId;
   final String ? mediaType;
-  ButtonPressedEvent({this.title,this.quickAddId,this.rootId,this.mediaType});
+  final String ? resourceContent;
+  ButtonPressedEvent({this.title,this.quickAddId,this.rootId,this.mediaType, this.resourceContent});
 }
 
 class ChangeDropValue extends QuickImportEvent {
