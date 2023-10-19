@@ -16,6 +16,7 @@ class AddPromptsBloc extends Bloc<AddPrompts, AddPromptsInitial> {
     on<PickResource>(_onPickResource);
     on<AddResource>(_onAddResource);
     on<AddPromptEvent>(_onAddPromptEvent);
+    on<AddPromptEventforQuickPrompt>(_onAddQuickPrompt);
     on<ResetFileUploadStatus>((event, emit) {
       emit(state.copyWith(uploadStatus: UploadStatus.initial));
     },);
@@ -115,7 +116,16 @@ class AddPromptsBloc extends Bloc<AddPrompts, AddPromptsInitial> {
       emit(AddPromptsInitial(uploadStatus: UploadStatus.uploaded));
     });
   }
+  _onAddQuickPrompt( AddPromptEventforQuickPrompt event, Emitter<AddPromptsInitial> emit) async {
+    await AddPromtsRepo.quickAddPrompt(name: event.Promptname,
+        side1:state.side1Id,
+        side2: state.side2Id).then((value) async{
+      emit(AddPromptsInitial(uploadStatus: UploadStatus.uploaded));
+    });
+
+  }
 }
+
 
 int convertMediaTypeToInt(String mediaType) {
   switch (mediaType.toLowerCase()) {

@@ -1,0 +1,394 @@
+import 'dart:convert';
+import 'dart:io';
+import 'package:flutter/services.dart';
+import 'package:http/http.dart' as http;
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_colorpicker/flutter_colorpicker.dart';
+import 'package:self_learning_app/utilities/extenstion.dart';
+import 'package:self_learning_app/utilities/shared_pref.dart';
+import 'package:textfield_tags/textfield_tags.dart';
+
+import '../category/bloc/category_bloc.dart';
+import '../dashboard/bloc/dashboard_bloc.dart';
+import '../dashboard/dashboard_screen.dart';
+
+class AddDailogScreen extends StatefulWidget {
+  const AddDailogScreen({Key? key}) : super(key: key);
+
+  @override
+  State<AddDailogScreen> createState() => _AddDailogScreenState();
+}
+
+class _AddDailogScreenState extends State<AddDailogScreen> {
+  TextEditingController categoryNameController = TextEditingController();
+
+  final TextfieldTagsController? _controller = TextfieldTagsController();
+
+  Color? pickedColor = Colors.green;
+  bool? isLoading = false;
+
+  void pickColor({required BuildContext context}) {
+    context.showNewDialog(
+      AlertDialog(
+        title: const Text('Pick a color!'),
+        content: SingleChildScrollView(
+          child: ColorPicker(
+            portraitOnly: true,
+            pickerColor: Colors.green,
+            onColorChanged: (value) {
+              setState(() {
+                pickedColor = value;
+                print(pickedColor!.value);
+                print('pickedColor');
+              });
+            },
+          ),
+        ),
+        actions: <Widget>[
+          ElevatedButton(
+            child: const Text('Got it'),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<int?> addCategory() async {
+    isLoading = true;
+    Map<String, dynamic> payload = {};
+    List<String> keywords = _controller!.getTags!;
+    List<Map<String, String>> styles = [
+      {"key": "font-size", "value": "2rem"},
+      {"key": "background-color", "value": pickedColor!.value.toString()}
+    ];
+    payload.addAll({
+      "name": categoryNameController.text,
+    });
+    payload.addAll({"keywords": keywords});
+    payload.addAll({"styles": styles});
+    var token = await SharedPref().getToken();
+    try {
+      var res = await http.post(
+        Uri.parse('https://selflearning.dtechex.com/web/category/create'),
+        body: jsonEncode(payload),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token'
+        },
+      );
+      print("respone of create category ${res.body}");
+      if (res.statusCode == 201) {
+        context.showSnackBar(SnackBar(
+            duration: Duration(seconds: 1),
+            content: Text('Category added Successfully')));
+        context.read<CategoryBloc>().add(CategoryLoadEvent());
+        context.read<DashboardBloc>().ChangeIndex(0);
+      } else {
+        context
+            .showSnackBar(SnackBar(content: Text('opps something went worng')));
+      }
+      print(res.body);
+      print('data');
+    } on SocketException catch (e) {
+      context.showSnackBar(const SnackBar(content: Text('No Internet')));
+    } finally {
+      isLoading = false;
+    }
+    return null;
+  }
+ bool isExpandable = false;
+
+  List<String> resourceList = ["amit", "vipin", "deepak", "shubham", "atul", "jake", "sandeep", "prem" ];
+  List<checkModel> _list =[];
+
+  @override
+  Widget build(BuildContext context) {
+    for (String name in resourceList) {
+      _list.add(checkModel(name, false));
+    }
+    return Scaffold(
+      appBar: AppBar(title: Text("Create Dailog")),
+        body: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.only(left: 10, right: 10),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                const SizedBox(
+                  height: 30,
+                ),
+                const Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    'Create Dailog',
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.grey,
+                        fontSize: 16),
+                  ),
+                ),
+                const SizedBox(
+                  height: 8,
+                ),
+                Container(
+                    padding: const EdgeInsets.only(left: 10, right: 5),
+                    height: context.screenHeight * 0.07,
+                    decoration: BoxDecoration(
+                        color: Colors.grey.withOpacity(0.4),
+                        borderRadius: BorderRadius.circular(10)),
+                    child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: TextFormField(
+                          inputFormatters: [
+                            LengthLimitingTextInputFormatter(80),
+                          ],
+                          controller: categoryNameController,
+                          onChanged: (value) {},
+                          decoration: InputDecoration(
+                            hintText: 'Title',
+                            border: InputBorder.none,
+                            icon: Icon(
+                              Icons.add,
+                              size: context.screenWidth * 0.06,
+                            ),
+                            // errorText: state.email.invalid
+                            //     ? 'Please ensure the email entered is valid'
+                            //     : null,
+                          ),
+                          keyboardType: TextInputType.emailAddress,
+                          onFieldSubmitted: (value) {},
+                          textInputAction: TextInputAction.next,
+                        ))),
+                SizedBox(
+                  height: context.screenHeight * 0.03,
+                ),
+                TextFieldTags(
+                  textfieldTagsController: _controller,
+                  initialTags: const ['tags'],
+                  textSeparators: const [' ', ','],
+                  letterCase: LetterCase.normal,
+                  validator: (String tag) {
+                    if (tag == 'php') {
+                      return 'No, please just no';
+                    } else if (_controller!.getTags!.contains(tag)) {
+                      return 'you already entered that';
+                    }
+                    return null;
+                  },
+                  inputfieldBuilder:
+                      (context, tec, fn, error, onChanged, onSubmitted) {
+                    return ((context, sc, tags, onTagDelete) {
+                      return Padding(
+                        padding: const EdgeInsets.all(10.0),
+                        child: TextField(
+                          controller: tec,
+                          focusNode: fn,
+                          decoration: InputDecoration(
+                            isDense: true,
+                            border: const OutlineInputBorder(
+                              borderSide: BorderSide(
+                                color: Color.fromARGB(255, 74, 137, 92),
+                                width: 3.0,
+                              ),
+                            ),
+                            focusedBorder: const OutlineInputBorder(
+                              borderSide: BorderSide(
+                                color: Color.fromARGB(255, 74, 137, 92),
+                                width: 3.0,
+                              ),
+                            ),
+                            helperStyle: const TextStyle(
+                              color: Color.fromARGB(255, 74, 137, 92),
+                            ),
+                            hintText: _controller!.hasTags
+                                ? ''
+                                : "Enter tag...(Optional)",
+                            errorText: error,
+                            prefixIconConstraints: BoxConstraints(
+                                maxWidth: context.screenWidth * 0.74),
+                            prefixIcon: tags.isNotEmpty
+                                ? SingleChildScrollView(
+                              controller: sc,
+                              scrollDirection: Axis.horizontal,
+                              child: Row(
+                                  children: tags.map((String tag) {
+                                    return Container(
+                                      decoration: const BoxDecoration(
+                                        borderRadius: BorderRadius.all(
+                                          Radius.circular(20.0),
+                                        ),
+                                        color: Color.fromARGB(255, 74, 137, 92),
+                                      ),
+                                      margin: const EdgeInsets.symmetric(
+                                          horizontal: 5.0),
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 10.0, vertical: 5.0),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          InkWell(
+                                            child: Text(
+                                              '#$tag',
+                                              style: const TextStyle(
+                                                  color: Colors.white),
+                                            ),
+                                            onTap: () {
+                                              print("$tag selected");
+                                            },
+                                          ),
+                                          const SizedBox(width: 4.0),
+                                          InkWell(
+                                            child: const Icon(
+                                              Icons.cancel,
+                                              size: 14.0,
+                                              color: Color.fromARGB(
+                                                  255, 233, 233, 233),
+                                            ),
+                                            onTap: () {
+                                              onTagDelete(tag);
+                                            },
+                                          )
+                                        ],
+                                      ),
+                                    );
+                                  }).toList()),
+                            )
+                                : null,
+                          ),
+                          onChanged: onChanged,
+                          onSubmitted: onSubmitted,
+                        ),
+                      );
+                    });
+                  },
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    GestureDetector(
+                        onTap: () {
+                          pickColor(context: context);
+                        },
+                        child: Container(
+                            height: 25,
+                            width: 25,
+                            color: pickedColor ?? Colors.green)),
+                    const Text('  Choose Color ')
+                  ],
+                ),
+                SizedBox(height: 20,),
+
+                ExpansionPanelList(
+                  animationDuration: Duration(milliseconds:1000),
+                  dividerColor:Colors.red,
+                  elevation:1,
+                  children: [
+                    ExpansionPanel(
+                      body: Container(
+                        padding: EdgeInsets.all(10),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment:CrossAxisAlignment.start,
+                          children: <Widget>[
+
+                            Container(
+                              height: 300,
+                              width: double.infinity,
+                              child: ListView.builder(
+                                itemCount: resourceList.length,
+                                itemBuilder: (context, index) {
+
+                                  return
+                                    Container(
+                                      margin: EdgeInsets.symmetric(vertical: 2),
+                                      color: Colors.blue[50],
+                                      child: CheckboxListTile(
+                                        activeColor: Colors.red,
+                                        checkColor: Colors.white,
+                                        // value: _saved.contains(context), // changed
+                                        value: _list[index].isCheck,
+                                        onChanged: (val) {
+                                          print("object  ${val}");
+                                          setState(() {
+                                            _list[index].isCheck = val!;
+                                          });
+                                        },
+                                        title: Text(resourceList[index]),
+                                      )
+                                    );
+                                },
+                              ),
+                        ),
+
+
+
+
+                          ],
+                        ),
+                      ),
+                      headerBuilder: (BuildContext context, bool isExpanded) {
+                        return Container(
+                          padding: EdgeInsets.all(10),
+                          child: Text(
+                            "Select resource and prompt",
+                            style: TextStyle(
+                              color:Colors.grey,
+                              fontSize: 18,
+                            ),
+                          ),
+                        );
+                      },
+                      isExpanded: isExpandable,
+                    )
+                  ],
+                  expansionCallback: (int item, bool status) {
+                    setState(() {
+                      isExpandable = !isExpandable;
+                    });
+                  },
+                )  ,        const SizedBox(
+                  height: 35,
+                ),
+                SizedBox(
+                  width: context.screenWidth * 0.35,
+                  height: context.screenHeight * 0.068,
+                  child: ElevatedButton(
+                      style: ButtonStyle(
+                          shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                              RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(18.0),
+                                  side: const BorderSide(color: Colors.red)))),
+                      onPressed: () {
+                        print(_controller!.getTags);
+                        if (categoryNameController.text.isEmpty) {
+                          context.showSnackBar(const SnackBar(
+                              content: Text('Category name is requried')));
+                        } else {
+                          addCategory();
+                        }
+                      },
+                      child: isLoading == true
+                          ? const CircularProgressIndicator()
+                          : Text('Save Dailog')),
+                )
+              ],
+            ),
+          ),
+        ));
+  }
+}
+class checkModel{
+  String name;
+  bool isCheck;
+
+  checkModel(this.name, this.isCheck);
+
+}

@@ -18,6 +18,8 @@ class AddPromtsRepo {
       String? side1,
       String? side2, required String categoryId}) async {
     print('addpromt');
+    print("amit side1${side1}");
+
     try {
       final token = await SharedPref().getToken();
       print(name);
@@ -31,7 +33,7 @@ class AddPromtsRepo {
       };
       final gg = jsonEncode(data);
       print(gg);
-      print("gg");
+      print("this is prompt repo");
       var request = await http.post(
           Uri.parse('https://selflearning.dtechex.com/web/prompt/'),
           body: data,
@@ -43,6 +45,41 @@ class AddPromtsRepo {
     return null;
   }
 
+  static Future<http.Response?> quickAddPrompt(
+      {
+        String? name,
+        String? side1,
+        String? side2,
+        }) async {
+    print('addpromt');
+    print("amit side1${side1}");
+    final mytoken = await SharedPref.getUserToken();
+    print("my token ${mytoken}");
+
+    try {
+      final token = await SharedPref().getToken();
+      print("my token ${token}");
+      print(name);
+      final userId = SharedPref.getUserId();
+      final data = {
+        "name": name ?? 'Untitled',
+        "side1": side1!,
+        "side2": side2!,
+        // "userId":userId
+      };
+      final gg = jsonEncode(data);
+      print(gg);
+      print("this is prompt repo");
+      var request = await http.post(
+          Uri.parse('https://selflearning.dtechex.com/web/prompt/'),
+          body: data,
+          headers: {"Authorization": 'Bearer $token'});
+      return request;
+    } catch (e) {
+      print(e);
+    }
+    return null;
+  }
   static Future<http.Response> addResourcesForSide(
       {required int whichSide,
       String? content,
@@ -54,14 +91,14 @@ class AddPromtsRepo {
       "POST",
       Uri.parse('https://selflearning.dtechex.com/web/resource/'),
     );
-    print("mediaType ===>>> $mediaType");
-    print("content ===>>> $content");
+    // print("mediaType ===>>> $mediaType");
+    // print("content ===>>> $content");
     request.headers['Authorization'] = 'Bearer $token';
     request.fields['rootId'] = resourceId;
     request.fields["content"] = content ?? 'untitled';
     request.fields["title"] = 'unittled';
-    print(mediaType);
-    print("mediaType");
+    // print(mediaType);
+    // print("mediaType");
 
     // if (whichSide == 0) {
     //   request.fields['type'] = 'text-side1';
@@ -70,7 +107,7 @@ class AddPromtsRepo {
     // }
     bool isText = false;
     if (whichSide == 0) {
-      print('side 1');
+      // print('side 1');
 
       switch (mediaType) {
         case 0:
@@ -123,7 +160,7 @@ class AddPromtsRepo {
     }
 
     // print(imagePath!.isEmpty);
-    print('imagePath');
+    // print('imagePath');
     if (!isText) {
       if (content!.isNotEmpty) {
         print('inside multitpart');
@@ -138,16 +175,16 @@ class AddPromtsRepo {
       }
     }
 
-    print(request.files);
-    print(request.fields);
-    print("request.fields");
+    // print(request.files);
+    // print(request.fields);
+    // print("request.fields");
 
     var streamedResponse = await request.send();
     var response = await http.Response.fromStream(streamedResponse);
 
     final data = await jsonDecode(response.body);
 
-    print(response.body);
+    // print(response.body);
 
     return response;
   }

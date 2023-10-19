@@ -13,6 +13,11 @@ class SharedPref {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setString(tokenkey, getToken);
   }
+  Future<void> saveUserId(String userId) async {
+    _preferences.setString("userId", userId);
+
+  }
+
 
   Future<void> savesubcateId(String subcatid) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -37,6 +42,11 @@ class SharedPref {
   static String getUserToken() {
 
     String? s = _preferences.getString("token") ?? '';
+    return s!;
+  }
+
+  static String getUserId(){
+    String ? s = _preferences.getString("userId")??"";
     return s!;
   }
 

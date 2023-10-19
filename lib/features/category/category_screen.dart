@@ -13,6 +13,7 @@ import 'package:self_learning_app/features/subcategory/sub_cate_screen.dart';
 import 'package:self_learning_app/utilities/colors.dart';
 import 'package:self_learning_app/utilities/extenstion.dart';
 import 'package:self_learning_app/widgets/add_resources_screen.dart';
+import '../../utilities/shared_pref.dart';
 import '../quick_add/quick_add_screen.dart';
 import '../search_category/bloc/search_cate_event.dart';
 import '../search_category/cate_search_delegate.dart';
@@ -31,6 +32,52 @@ class _AllCateScreenState extends State<AllCateScreen> {
   List<String> titles = ['All Categories', 'Dialogs','QuickAdd List '];
   TextEditingController controller = TextEditingController(text: "  Search");
   TextEditingController quickaddcontroller = TextEditingController();
+
+  void _showCustomDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: <Widget>[
+                  IconButton(
+                    icon: Icon(Icons.close),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ],
+              ),
+              TextButton(
+                onPressed: () {
+                  String token =  SharedPref.getUserToken();
+                  print("my token${token}");
+                    Navigator.push(context, MaterialPageRoute(builder: (context) {
+                    return AddResourceScreen2(resourceId: '',whichResources: 0,number: true,);
+                  },));                  // Add your resource handling logic here
+                },
+                child: Text("Add Resource"),
+              ),
+              TextButton(
+                onPressed: () {
+                  // Handle "Add Prompt" button click
+                  Navigator.push(context, MaterialPageRoute(builder: (context) {
+                    return AddResourceScreen2(resourceId: '',whichResources: 0,number: false,);
+                  },));                   // Add your prompt handling logic here
+                },
+                child: Text("Add Prompt"),
+              ),
+              SizedBox(height: 20,)
+            ],
+          ),
+        );
+      },
+    );
+  }
 
   Future<void> _displayTextInputDialog(BuildContext context) async {
     return showDialog(
@@ -158,9 +205,8 @@ class _AllCateScreenState extends State<AllCateScreen> {
             ),
             child: IconButton(
                 onPressed: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) {
-                    return AddResourceScreen2(resourceId: '',whichResources: 0,);
-                  },));
+                  _showCustomDialog();
+
                   //_displayTextInputDialog(context);
                 },
                 icon: const Icon(Icons.add)),
