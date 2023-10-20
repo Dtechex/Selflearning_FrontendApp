@@ -47,54 +47,6 @@ class _DailogScreenState extends State<DailogScreen> {
       body:
       CustomScrollView(
         slivers: <Widget>[
-/*
-          SliverAppBar(
-            expandedHeight: 0, // Set the height of the header when expanded
-            flexibleSpace: FlexibleSpaceBar(
-              background: Stack(
-                fit: StackFit.expand,
-                children: <Widget>[
-
-
-                  Container(
-                    color: Colors.black.withOpacity(0.3),
-                  ),
-                  // Add the title with scaling and fading effect
-                  Align(
-                    alignment: Alignment.bottomLeft,
-                    child: Padding(
-                      padding: EdgeInsets.only(left: 16, bottom: 16),
-                      child: TweenAnimationBuilder<double>(
-                        tween: Tween<double>(begin: 1.0, end: 0.0),
-                        duration: Duration(milliseconds: 500),
-                        builder: (BuildContext context, double value,
-                            Widget? child) {
-                          return Transform.scale(
-                            scale: 1 + value, // Scale factor for the title
-                            child: Opacity(
-                              opacity:
-                              1 - value, // Opacity factor for the title
-                              child: Text(
-                                'Dailogs',
-                                style: TextStyle(
-                                  fontSize: 24,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.white,
-                                ),
-                              ),
-                            ),
-                          );
-                        },
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            // Other properties like pinned, floating, elevation, etc.
-            // can be customized as needed
-          ),
-*/
           SliverToBoxAdapter(child: Container(
             padding: EdgeInsets.symmetric(horizontal: 10),
             alignment: Alignment.center,

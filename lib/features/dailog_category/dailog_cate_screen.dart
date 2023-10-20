@@ -30,10 +30,12 @@ class _DailogCategoryScreenState extends State<DailogCategoryScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
         floatingActionButton: SpeedDial(
+          animationDuration: Duration(seconds: 500),
           animatedIcon: AnimatedIcons.list_view,
           overlayColor: Colors.transparent,
           elevation: 10,
-          curve: Curves.bounceIn,
+          curve: Curves.easeInSine,
+          animationAngle:0.5,
           shape: CircleBorder(),
           animatedIconTheme: IconThemeData(size: 22.0),
           activeBackgroundColor: Colors.blue,
@@ -162,7 +164,7 @@ class _DailogCategoryScreenState extends State<DailogCategoryScreen> {
                       }));*/
                     },
                     child: Container(
-                      margin: EdgeInsets.symmetric(vertical: 5),
+                      margin: EdgeInsets.symmetric(vertical: 5, horizontal: 20),
                       height: 70,
                       child: Card(
                         color: Colors.blue[50],
@@ -177,12 +179,12 @@ class _DailogCategoryScreenState extends State<DailogCategoryScreen> {
 
                               },
                               child: Container(
-                                margin: const EdgeInsets.all(8.0),
-                                padding: const EdgeInsets.all(4.0),
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(12.0),
-                                  color: const Color(0xFFF5F5F5),
-                                ),
+                                  alignment: Alignment.center,
+                                  width: 45,
+                                  decoration: BoxDecoration(
+                                    color: Colors.deepOrange[300],
+                                    borderRadius: BorderRadius.circular(90),
+                                  ),
                                 child: getFileType(content)=='Photo'
                                     ? CachedNetworkImage(
                                   imageUrl: 'https://selflearning.dtechex.com/public/image/$content',
@@ -202,7 +204,7 @@ class _DailogCategoryScreenState extends State<DailogCategoryScreen> {
                                     ? const Icon(Icons.video_camera_back_outlined, size: 35,)
                                     : getMediaType(content) == 'audio'
                                     ? const Icon(Icons.audiotrack, size: 35)
-                                    : const Icon(Icons.text_format_sharp, size: 35),
+                                    : Text("R", style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold ),),
                               ),
                             ),
                             trailing:PopupMenuButton(
@@ -278,7 +280,7 @@ class _DailogCategoryScreenState extends State<DailogCategoryScreen> {
                       }));*/
                     },
                     child: Container(
-                      margin: EdgeInsets.symmetric(vertical: 5),
+                      margin: EdgeInsets.symmetric(vertical: 5, horizontal: 20),
                       height: 70,
                       child: Card(
                         color: Colors.teal[50],
