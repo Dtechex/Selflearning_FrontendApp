@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:self_learning_app/features/add_media/add_audio_screen.dart';
 import 'package:self_learning_app/features/add_media/add_text_screen.dart';
 import 'package:self_learning_app/features/add_media/add_video_screen.dart';
 import 'package:self_learning_app/features/resources/bloc/resources_bloc.dart';
 import 'package:self_learning_app/features/resources/subcategory_resources_screen.dart';
+import 'package:self_learning_app/utilities/colors.dart';
 import 'package:self_learning_app/utilities/extenstion.dart';
 
 import '../features/add_media/add_image_screen.dart';
@@ -256,7 +258,29 @@ class AddResourceScreen2 extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(title: const Text('Add resources'),
+        appBar: AppBar(title: const Text('Quick Add'),
+
+        ),
+        floatingActionButton: SpeedDial(
+          backgroundColor: primaryColor,
+          animatedIcon: AnimatedIcons.list_view,
+          overlayColor: Colors.transparent,
+          elevation: 10,
+          overlayOpacity: 0.1,
+          animatedIconTheme: IconThemeData.fallback(),
+          foregroundColor: Colors.yellow,
+          useRotationAnimation:true ,
+          children: [
+            SpeedDialChild(
+              label: "Add prompt",
+              backgroundColor: Colors.green[400],
+              child: Icon(Icons.file_copy, color: Colors.white,),
+              onTap: (){
+                Navigator.push(context, MaterialPageRoute(builder: (context)=>AddPromptsAddResourceScreen(categoryId: "1",resourceId: "1",)));
+
+              }
+            ),
+          ],
 
         ),
         body: Column(

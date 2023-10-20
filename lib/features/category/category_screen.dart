@@ -37,42 +37,60 @@ class _AllCateScreenState extends State<AllCateScreen> {
     showDialog(
       context: context,
       builder: (BuildContext context) {
+        double dialogWidth = 0.5; // Set the desired width as a fraction of the screen width
+        double dailogHight = 0.3;
+        if (MediaQuery.of(context).size.width >= 600) {
+          // If the screen width is at least 600, consider it as a tablet
+          dialogWidth = 0.7; // Set the width to 50% for tablets
+           dailogHight = 0.3;
+        }
+        if(MediaQuery.of(context).size.width<=600){
+          dailogHight= 0.2;
+          dialogWidth = 0.5;
+
+        }
         return Dialog(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: <Widget>[
-                  IconButton(
-                    icon: Icon(Icons.close),
+          child: Container(
+            width: MediaQuery.of(context).size.width * dialogWidth, // Set the dialog width based on the screen size
+            height: MediaQuery.of(context).size.height * dailogHight,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: <Widget>[
+                    IconButton(
+                      icon: Icon(Icons.close),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                  ],
+                ),
+                ElevatedButton(
                     onPressed: () {
-                      Navigator.of(context).pop();
+                      String token =  SharedPref.getUserToken();
+                      print("my token${token}");
+                        Navigator.push(context, MaterialPageRoute(builder: (context) {
+                        return AddResourceScreen2(resourceId: '',whichResources: 0,number: true,);
+                      },));                  // Add your resource handling logic here
                     },
+                    child: Text("Add Resource"),
                   ),
-                ],
-              ),
-              TextButton(
-                onPressed: () {
-                  String token =  SharedPref.getUserToken();
-                  print("my token${token}");
-                    Navigator.push(context, MaterialPageRoute(builder: (context) {
-                    return AddResourceScreen2(resourceId: '',whichResources: 0,number: true,);
-                  },));                  // Add your resource handling logic here
-                },
-                child: Text("Add Resource"),
-              ),
-              TextButton(
-                onPressed: () {
-                  // Handle "Add Prompt" button click
-                  Navigator.push(context, MaterialPageRoute(builder: (context) {
-                    return AddResourceScreen2(resourceId: '',whichResources: 0,number: false,);
-                  },));                   // Add your prompt handling logic here
-                },
-                child: Text("Add Prompt"),
-              ),
-              SizedBox(height: 20,)
-            ],
+                SizedBox(height: 20,),
+                ElevatedButton(
+                    onPressed: () {
+                      // Handle "Add Prompt" button click
+                      Navigator.push(context, MaterialPageRoute(builder: (context) {
+                        return AddResourceScreen2(resourceId: '',whichResources: 0,number: false,);
+                      },));
+
+                    },
+                    child: Text("Add Prompt"),
+                  ),
+                SizedBox(height: 20,)
+              ],
+            ),
           ),
         );
       },
@@ -205,7 +223,10 @@ class _AllCateScreenState extends State<AllCateScreen> {
             ),
             child: IconButton(
                 onPressed: () {
-                  _showCustomDialog();
+                  Navigator.push(context, MaterialPageRoute(builder: (context) {
+                    return AddResourceScreen2(resourceId: '',whichResources: 0,number: true,);
+                  },));
+                  // _showCustomDialog();
 
                   //_displayTextInputDialog(context);
                 },
@@ -307,7 +328,8 @@ class _AllCateScreenState extends State<AllCateScreen> {
                             ),
                             Align(
                               alignment: Alignment.topRight,
-                              child: PopupMenuButton(
+                              child:
+                              PopupMenuButton(
 
                                 icon: Icon(Icons.more_vert,color: Colors.red,),
                                 itemBuilder: (context) {

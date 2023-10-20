@@ -102,6 +102,7 @@ class _MaincategoryResourcesListState extends State<MaincategoryResourcesList> {
     return BlocProvider(
       create: (context) => resourcesBloc,
       child: Scaffold(
+
         backgroundColor: const Color(0xFFEEEEEE),
         floatingActionButton: SizedBox(
           height: context.screenHeight * 0.1,
