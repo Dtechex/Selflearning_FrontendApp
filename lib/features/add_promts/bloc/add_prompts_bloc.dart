@@ -15,6 +15,7 @@ class AddPromptsBloc extends Bloc<AddPrompts, AddPromptsInitial> {
     on<ChangeMediaType>(_onChangeMediaType);
     on<PickResource>(_onPickResource);
     on<AddResource>(_onAddResource);
+    on<QuickAddResource>(_onAddQuickResource);
     on<AddPromptEvent>(_onAddPromptEvent);
     on<AddPromptEventforQuickPrompt>(_onAddQuickPrompt);
     on<ResetFileUploadStatus>((event, emit) {
@@ -48,7 +49,7 @@ class AddPromptsBloc extends Bloc<AddPrompts, AddPromptsInitial> {
     // print("====>>>>> ${convertMediaTypeToInt(event.mediaUrl!)}");
     print("====>>>>> ${event.mediaUrl!} content ${event.content}");
     await AddPromtsRepo.addResourcesForSide(
-            resourceId: event.resourceId!,
+            resourceId: event.resourceId!??"",
             whichSide: event.whichSide!,
             // mediaType: convertMediaTypeToInt(state.side1selectedMediaType!),
             // mediaType: convertMediaTypeToInt(event.mediaUrl!),
@@ -94,6 +95,61 @@ class AddPromptsBloc extends Bloc<AddPrompts, AddPromptsInitial> {
             state.copyWith(
                 side2Id: data['data']['_id'].toString(),
                 uploadStatus: UploadStatus.resourceAdded,
+              resource2status: Resource2Status.uploaded,
+            ),
+          );
+        }
+      }
+    });
+  }
+  _onAddQuickResource(QuickAddResource event, Emitter<AddPromptsInitial> emit) async{
+    print("====>>>>> ${event.mediaUrl!} content ${event.content}");
+    await AddPromtsRepo.quickAddResourcesForSides(
+        whichSide: event.whichSide!,
+        // mediaType: convertMediaTypeToInt(state.side1selectedMediaType!),
+        // mediaType: convertMediaTypeToInt(event.mediaUrl!),
+        mediaType: event.mediaUrl!,
+        content: event.content)
+        .then((value) async {
+      final data = await jsonDecode(value.body);
+      if (event.whichSide == 0) {
+        print('saved side1 _id');
+        print(data);
+        try {
+          print('try');
+          emit(state.copyWith(
+            side1Id: data['data'][0]['_id'].toString(),
+            uploadStatus: UploadStatus.resourceAdded,
+            resource1status: Resource1Status.uploaded,
+          )
+          );
+        } catch (e) {
+
+          print('catch  - $e');
+          emit(state.copyWith(
+            side1Id: data['data']['_id'].toString(),
+            uploadStatus: UploadStatus.resourceAdded,
+            resource1status: Resource1Status.uploaded,
+
+          ));
+        }
+      } else {
+        print('saved side2 _id');
+        print(data);
+        try {
+          emit(
+            state.copyWith(
+              side2Id: data['data'][0]['_id'].toString(),
+              uploadStatus: UploadStatus.resourceAdded,
+              resource2status: Resource2Status.uploaded,
+
+            ),
+          );
+        } catch (e) {
+          emit(
+            state.copyWith(
+              side2Id: data['data']['_id'].toString(),
+              uploadStatus: UploadStatus.resourceAdded,
               resource2status: Resource2Status.uploaded,
             ),
           );

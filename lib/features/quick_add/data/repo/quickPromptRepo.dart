@@ -1,0 +1,42 @@
+ import 'package:dio/dio.dart';
+import 'package:self_learning_app/utilities/shared_pref.dart';
+class QuickAddPromptRepo {
+ static Future<Response?> quickAddPrompt() async {
+    final Dio _dio = Dio();
+
+    try {
+
+      final token = SharedPref.getUserToken();
+
+      final Map<String, dynamic> headers = {
+        'Authorization': 'Bearer $token',
+      };
+
+      Response res = await _dio.get("https://selflearning.dtechex.com/web/prompt/", options: Options(headers: headers));
+      print("promptgetResponse == ${res}");
+      return res;
+    } catch (e) {
+      print("Error: $e");
+      return null; // You can handle the error as needed
+    }
+  }
+ static Future<Response?> quickDeletePrompt({required String promptId}) async {
+   final Dio _dio = Dio();
+
+   try {
+
+     final token = SharedPref.getUserToken();
+
+     final Map<String, dynamic> headers = {
+       'Authorization': 'Bearer $token',
+     };
+         print("promptId is $promptId");
+     Response res = await _dio.delete("https://selflearning.dtechex.com/web/prompt/$promptId", options: Options(headers: headers));
+     print("promptgetResponse == ${res}");
+     return res;
+   } catch (e) {
+     print("Error: $e");
+     return null; // You can handle the error as needed
+   }
+ }
+}

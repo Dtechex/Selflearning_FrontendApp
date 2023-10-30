@@ -129,34 +129,6 @@ class _StartFlowScreenState extends State<StartFlowScreen> {
                               _currentPage += 1;
                             });
                           }
-                          // Container(
-                          //   height: 60,
-                          //   child: Row(
-                          //     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          //     children: [
-                          //       _promtModelLength!=0?   ElevatedButton(
-                          //         onPressed: () {
-                          //           if (isLastPage()) {
-                          //             // Handle Finish button press
-                          //             Navigator.pushAndRemoveUntil(
-                          //               context,
-                          //               MaterialPageRoute(builder: (context) {
-                          //                 return const DashBoardScreen();
-                          //               }),
-                          //                   (route) => false,
-                          //             );
-                          //           } else {
-                          //             _pageController.nextPage(
-                          //               duration: const Duration(milliseconds: 300),
-                          //               curve: Curves.ease,
-                          //             );
-                          //           }
-                          //         },
-                          //         child: Text(isLastPage() ? 'Finish' : 'Next'),
-                          //       ):const SizedBox()
-                          //     ],
-                          //   ),
-                          // )
                         },
                         onViewResourcePressed: () {
                           //BlocProvider.of<PromtBloc>(context).add(ViewResourceEvent(showResource: true));

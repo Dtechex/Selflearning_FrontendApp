@@ -1,10 +1,13 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:dio/dio.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
+import 'package:self_learning_app/features/add_Dailog/dailog_screen.dart';
 import 'package:self_learning_app/utilities/extenstion.dart';
 import 'package:self_learning_app/utilities/shared_pref.dart';
 import 'package:textfield_tags/textfield_tags.dart';
@@ -12,6 +15,9 @@ import 'package:textfield_tags/textfield_tags.dart';
 import '../category/bloc/category_bloc.dart';
 import '../dashboard/bloc/dashboard_bloc.dart';
 import '../dashboard/dashboard_screen.dart';
+import '../quick_add/data/repo/model/quick_type_model.dart';
+import '../quick_add/data/repo/model/quick_type_prompt_model.dart';
+import 'bloc/create_dailog_bloc/create_dailog_bloc.dart';
 
 class AddDailogScreen extends StatefulWidget {
   const AddDailogScreen({Key? key}) : super(key: key);
@@ -56,11 +62,17 @@ class _AddDailogScreenState extends State<AddDailogScreen> {
       ),
     );
   }
+  void addDailog(){
+    List<String> keywords = _controller!.getTags!;
 
+    context.read<CreateDailogBloc>().add(AddDailogEvent(color:pickedColor!.value.toString() , dailogName:categoryNameController.text,promtIds: selectedPromptIds,
+      resourceIds: selectedResourceIds, tags: keywords,
+    ));
+  }
   Future<int?> addCategory() async {
     isLoading = true;
     Map<String, dynamic> payload = {};
-    List<String> keywords = _controller!.getTags!;
+    List<String> keywords = _controller!.getTags!.toList();
     List<Map<String, String>> styles = [
       {"key": "font-size", "value": "2rem"},
       {"key": "background-color", "value": pickedColor!.value.toString()}
@@ -68,25 +80,27 @@ class _AddDailogScreenState extends State<AddDailogScreen> {
     payload.addAll({
       "name": categoryNameController.text,
     });
+    payload.addAll({"resourceIds": selectedResourceIds});
+    payload.addAll({'promptIds':selectedPromptIds});
     payload.addAll({"keywords": keywords});
     payload.addAll({"styles": styles});
+    print("keywrods-==$payload");
     var token = await SharedPref().getToken();
+
     try {
       var res = await http.post(
-        Uri.parse('https://selflearning.dtechex.com/web/category/create'),
+        Uri.parse('https://selflearning.dtechex.com/web/category/create-dialog'),
         body: jsonEncode(payload),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $token'
         },
       );
-      print("respone of create category ${res.body}");
+      print("respone of create dailog ${res.body}");
       if (res.statusCode == 201) {
         context.showSnackBar(SnackBar(
             duration: Duration(seconds: 1),
             content: Text('Category added Successfully')));
-        context.read<CategoryBloc>().add(CategoryLoadEvent());
-        context.read<DashboardBloc>().ChangeIndex(0);
       } else {
         context
             .showSnackBar(SnackBar(content: Text('opps something went worng')));
@@ -101,15 +115,182 @@ class _AddDailogScreenState extends State<AddDailogScreen> {
     return null;
   }
  bool isExpandable = false;
+  bool isResourceExpandable = false;
+
+  final Dio _dio = Dio();
+  List<QuickPromptModel> quickPromptList = [];
+  List<QuickResourceModel> quickResourceList = [];
+
+  bool isLoadingPrompt = true;
+  void getQuickPromptList() async {
+    try {
+      final token = SharedPref.getUserToken();
+      final Map<String, dynamic> headers = {
+        'Authorization': 'Bearer $token',
+      };
+
+      Response res = await _dio.get(
+        "https://selflearning.dtechex.com/web/prompt/",
+        options: Options(headers: headers),
+      );
+
+      final jsonResponse = res?.data;
+      print("promtpId checking$jsonResponse");
+      final data = jsonResponse['data'];
+      final recordList = data['record'] as List;
+
+      for (var record in recordList) {
+        String id = record['_id'];
+        String name = record['name'];
+
+        quickPromptList.add(QuickPromptModel(
+          promptid: id,
+          promptname: name,
+        ));
+      }
+
+      // Update the UI and set isLoading to false.
+      setState(() {
+        isLoadingPrompt = false;
+      });
+    } catch (e) {
+      print("Error: $e");
+      // You can handle the error as needed
+      setState(() {
+        isLoadingPrompt = false; // Make sure to set isLoading to false in case of an error.
+      });
+    }
+  }
+  void getQuickResourceList() async {
+    try {
+      final token = SharedPref.getUserToken();
+      final Map<String, dynamic> headers = {
+        'Authorization': 'Bearer $token',
+      };
+
+      Response res = await _dio.get(
+        "https://selflearning.dtechex.com/web/resource/quickAdd",
+        options: Options(headers: headers),
+      );
+
+      final jsonResponse = res?.data;
+
+      if (jsonResponse != null && jsonResponse['data'] != null) {
+        final data = jsonResponse['data'];
+        final record = data['record'];
+        final records = record['records'] as List;
+
+        for (var resource in records) {
+          String resourceId = resource['_id'];
+          String resourceName = resource['title'];
+
+          quickResourceList.add(QuickResourceModel(
+            resourceId: resourceId,
+            resourceName: resourceName,
+          ));
+        }
+      } else {
+        print("Error: Invalid response format"); // Handle the error as needed
+      }
+
+      // Update the UI and set isLoading to false.
+      setState(() {
+        isLoading = false;
+      });
+    } catch (e) {
+      print("Error: $e");
+      // You can handle the error as needed
+      setState(() {
+        isLoading = false; // Make sure to set isLoading to false in case of an error.
+      });
+    }
+  }
+
 
   List<String> resourceList = ["amit", "vipin", "deepak", "shubham", "atul", "jake", "sandeep", "prem" ];
   List<checkModel> _list =[];
-
+  List<resourceCheckModel> _resList = [];
+  List<String> selectedPromptIds = [];
+  List<String> selectedResourceIds =[];
+  @override
+  void initState() {
+    getQuickPromptList();
+    getQuickResourceList();
+    super.initState();
+  }
+  void updateSelectedResourceIds(String resourceId, bool isChecked) {
+    if (isChecked) {
+      if (!selectedResourceIds.contains(resourceId)) {
+        setState(() {
+          selectedResourceIds.add(resourceId);
+        });
+      }
+    } else {
+      setState(() {
+        selectedResourceIds.remove(resourceId);
+      });
+    }
+  }
   @override
   Widget build(BuildContext context) {
     for (String name in resourceList) {
       _list.add(checkModel(name, false));
     }
+    return BlocConsumer<CreateDailogBloc, CreateDailogState>(
+  listener: (context, state) {
+    if(state is DailogCreateSuccessState){
+      showDialog(
+        context: context,
+        builder: (context) {
+          return Dialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12.0),
+            ),
+            elevation: 5, // Adjust the elevation as needed
+            backgroundColor: Colors.white, // Background overlay color
+            child: Container(
+              height: MediaQuery.of(context).size.height*0.3,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(20.0),
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  Padding(
+                    padding: EdgeInsets.all(16.0),
+                    child: Text("Dialog created successfully", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),),
+                  ),
+                  SizedBox(height: 10,),
+                  Container(
+                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                    decoration: BoxDecoration(
+                      color: Colors.blue[50],
+                      borderRadius: BorderRadius.circular(90)
+                    ),
+                    child: Icon(
+                      Icons.check,
+                      color: Colors.green,
+                      size: 48,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
+      );
+
+
+      // Automatically close the dialog after 5 seconds
+      Future.delayed(Duration(seconds: 4), () {
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>DashBoardScreen())); // Close the dialog
+
+      });
+
+    }
+  },
+  builder: (context, state) {
     return Scaffold(
       appBar: AppBar(title: Text("Create Dailog")),
         body: SingleChildScrollView(
@@ -168,7 +349,7 @@ class _AddDailogScreenState extends State<AddDailogScreen> {
                 ),
                 TextFieldTags(
                   textfieldTagsController: _controller,
-                  initialTags: const ['tags'],
+                  initialTags: const ['flag-dialog'],
                   textSeparators: const [' ', ','],
                   letterCase: LetterCase.normal,
                   validator: (String tag) {
@@ -303,7 +484,7 @@ class _AddDailogScreenState extends State<AddDailogScreen> {
                               height: 300,
                               width: double.infinity,
                               child: ListView.builder(
-                                itemCount: resourceList.length,
+                                itemCount: quickPromptList.length,
                                 itemBuilder: (context, index) {
 
                                   return
@@ -319,9 +500,15 @@ class _AddDailogScreenState extends State<AddDailogScreen> {
                                           print("object  ${val}");
                                           setState(() {
                                             _list[index].isCheck = val!;
+                                            if (val) {
+                                              selectedPromptIds.add(quickPromptList[index].promptid.toString());
+                                            } else {
+                                              // If the checkbox is unchecked, remove the promptId from the list.
+                                              selectedPromptIds.remove(quickPromptList[index].promptid.toString());
+                                            }
                                           });
                                         },
-                                        title: Text(resourceList[index]),
+                                        title: Text(quickPromptList![index].promptname.toString()),
                                       )
                                     );
                                 },
@@ -338,7 +525,7 @@ class _AddDailogScreenState extends State<AddDailogScreen> {
                         return Container(
                           padding: EdgeInsets.all(10),
                           child: Text(
-                            "Select resource and prompt",
+                            "Select prompt",
                             style: TextStyle(
                               color:Colors.grey,
                               fontSize: 18,
@@ -347,14 +534,88 @@ class _AddDailogScreenState extends State<AddDailogScreen> {
                         );
                       },
                       isExpanded: isExpandable,
-                    )
+                    ),
+
                   ],
                   expansionCallback: (int item, bool status) {
                     setState(() {
                       isExpandable = !isExpandable;
                     });
                   },
-                )  ,        const SizedBox(
+                )  ,
+                SizedBox(height: 10,),
+                ExpansionPanelList(
+                  animationDuration: Duration(milliseconds: 1000),
+                  dividerColor: Colors.red,
+                  elevation: 1,
+                  children: [
+                    ExpansionPanel(
+                      body: Container(
+                        padding: EdgeInsets.all(10),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Container(
+                              height: 300,
+                              width: double.infinity,
+                              child:
+                              ListView.builder(
+                                itemCount: quickResourceList.length,
+                                itemBuilder: (context, index) {
+                                  _resList.add(resourceCheckModel(selectedResourceIds.toString(), false));
+                                  // plese check name and id of resmodel
+                                  if (index >= 0 && index < _resList.length) { // Check index bounds
+                                    return Container(
+                                      margin: EdgeInsets.symmetric(vertical: 2),
+                                      color: Colors.blue[50],
+                                      child: CheckboxListTile(
+                                        activeColor: Colors.green,
+                                        checkColor: Colors.red,
+                                        value: _resList[index].isCheck,
+                                        onChanged: (val) {
+                                          setState(() {
+                                            _resList[index].isCheck = val!;
+                                            updateSelectedResourceIds(
+                                              quickResourceList[index].resourceId.toString(),
+                                              val,
+                                            );
+                                          });
+                                        },
+                                        title: Text(quickResourceList[index].resourceName.toString()),
+                                      ),
+                                    );
+                                  } else {
+                                    return Container( child: Text("Empty not data "),); // Placeholder for an invalid index
+                                  }
+                                },
+                              )
+                            ),
+                          ],
+                        ),
+                      ),
+                      headerBuilder: (BuildContext context, bool isExpanded) {
+                        return Container(
+                          padding: EdgeInsets.all(10),
+                          child: Text(
+                            "Select resource",
+                            style: TextStyle(
+                              color: Colors.grey,
+                              fontSize: 18,
+                            ),
+                          ),
+                        );
+                      },
+                      isExpanded: isResourceExpandable,
+                    ),
+                  ],
+                  expansionCallback: (int item, bool status) {
+                    setState(() {
+                      isResourceExpandable = !isResourceExpandable;
+                    });
+                  },
+                ),
+                const SizedBox(
                   height: 35,
                 ),
                 SizedBox(
@@ -368,11 +629,21 @@ class _AddDailogScreenState extends State<AddDailogScreen> {
                                   side: const BorderSide(color: Colors.red)))),
                       onPressed: () {
                         print(_controller!.getTags);
+                       /* for(var item in selectedResourceIds){
+                          EasyLoading.showToast(item);
+                        }*/
                         if (categoryNameController.text.isEmpty) {
                           context.showSnackBar(const SnackBar(
                               content: Text('Category name is requried')));
                         } else {
-                          addCategory();
+                        /*  for(var item in selectedResourceIds){
+                            EasyLoading.showSuccess("items is selectedResource$item");
+                          }*/
+                          List<String> keywords = _controller!.getTags!;
+
+                          context.read<CreateDailogBloc>().add(AddDailogEvent(color:pickedColor!.value.toString() , dailogName:categoryNameController.text,promtIds: selectedPromptIds,
+                            resourceIds: selectedResourceIds, tags: keywords,
+                          ));
                         }
                       },
                       child: isLoading == true
@@ -383,6 +654,8 @@ class _AddDailogScreenState extends State<AddDailogScreen> {
             ),
           ),
         ));
+  },
+);
   }
 }
 class checkModel{
@@ -390,5 +663,13 @@ class checkModel{
   bool isCheck;
 
   checkModel(this.name, this.isCheck);
+
+}
+
+class resourceCheckModel{
+  String name;
+  bool isCheck;
+
+  resourceCheckModel(this.name, this.isCheck);
 
 }

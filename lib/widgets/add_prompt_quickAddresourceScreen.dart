@@ -973,11 +973,11 @@ class _AddPromptsAddResourceScreenState extends State<AddPromptsAddResourceScree
       if(_side1TextformKey.currentState!.validate()){
         EasyLoading.show();
         addPromptsBloc.add(
-          AddResource(
+          QuickAddResource(
               mediaUrl: 0,
               whichSide: 0,
               name: 'Unitited 1',
-              content: side1_Controller.text
+              content: side1_Controller.text,
           ),
         );
       }else{
@@ -990,7 +990,7 @@ class _AddPromptsAddResourceScreenState extends State<AddPromptsAddResourceScree
       print('Hii1');
       EasyLoading.show();
       addPromptsBloc.add(
-        AddResource(
+        QuickAddResource(
           mediaUrl:
           // state.side1ResourceUrl,
           state.side1selectedMediaType == 'Text'
@@ -1021,7 +1021,7 @@ class _AddPromptsAddResourceScreenState extends State<AddPromptsAddResourceScree
       if(_side2TextformKey.currentState!.validate()){
         EasyLoading.show();
         addPromptsBloc.add(
-          AddResource(
+          QuickAddResource(
               mediaUrl: 0,
               whichSide: 1,
               name: 'United 2',
@@ -1037,7 +1037,7 @@ class _AddPromptsAddResourceScreenState extends State<AddPromptsAddResourceScree
       print('Hii4');
       EasyLoading.show();
       addPromptsBloc.add(
-        AddResource(
+        QuickAddResource(
           mediaUrl:
           // state.side1ResourceUrl,
           state.side2selectedMediaType ==

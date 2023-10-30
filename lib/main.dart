@@ -7,6 +7,7 @@ import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:loader_overlay/loader_overlay.dart';
+import 'package:self_learning_app/features/add_Dailog/bloc/get_dailog_bloc/get_dailog_bloc.dart';
 import 'package:self_learning_app/features/add_promts/bloc/add_prompts_bloc.dart';
 import 'package:self_learning_app/features/category/bloc/category_bloc.dart';
 import 'package:self_learning_app/features/dashboard/dashboard_screen.dart';
@@ -25,9 +26,11 @@ import 'package:self_learning_app/features/subcategory/bloc/sub_cate_bloc.dart';
 import 'package:self_learning_app/features/subcategory/primaryflow/bloc/primary_bloc.dart';
 import 'package:self_learning_app/utilities/colors.dart';
 import 'package:self_learning_app/utilities/shared_pref.dart';
+import 'features/add_Dailog/bloc/create_dailog_bloc/create_dailog_bloc.dart';
 import 'features/create_flow/bloc/create_flow_screen_bloc.dart';
 import 'features/dashboard/bloc/dashboard_bloc.dart';
 import 'features/login/bloc/login_bloc.dart';
+import 'features/quick_add/PromptBloc/quick_prompt_bloc.dart';
 import 'features/search_subcategory/bloc/search_cat_bloc.dart';
 import 'features/subcate1.1/bloc/sub_cate1_bloc.dart';
 import 'features/subcate1.2/bloc/sub_cate2_bloc.dart';
@@ -101,8 +104,9 @@ class MyApp extends StatelessWidget {
           BlocProvider<SubCategoryBloc>(create: (context) => SubCategoryBloc()),
           BlocProvider<SearchSubCategoryBloc>(create:(context)=> SearchSubCategoryBloc(),),
           BlocProvider<PrimaryBloc>(create: (context) => PrimaryBloc()),
-
-          //BlocProvider<CameraBloc>(create: (context) => CameraBloc()),
+          BlocProvider<QuickPromptBloc>(create: (context) => QuickPromptBloc()),
+          BlocProvider<QuickAddBloc>(create: (context) => QuickAddBloc()),
+          BlocProvider<CreateDailogBloc>(create: (context) => CreateDailogBloc()),
           BlocProvider<SubCategory1Bloc>(create: (context) => SubCategory1Bloc()),
           BlocProvider<SubCategory2Bloc>(create: (context) => SubCategory2Bloc()),
           BlocProvider<QuickImportBloc>(create: (context) => QuickImportBloc()),
