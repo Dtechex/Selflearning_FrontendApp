@@ -2,14 +2,14 @@ import 'dart:developer';
 
 import 'package:device_preview/device_preview.dart';
 import 'package:dio/dio.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import 'package:self_learning_app/features/add_Dailog/bloc/get_dailog_bloc/get_dailog_bloc.dart';
 import 'package:self_learning_app/features/add_promts/bloc/add_prompts_bloc.dart';
 import 'package:self_learning_app/features/category/bloc/category_bloc.dart';
+import 'package:self_learning_app/features/dailog_category/bloc/add_prompt_res_cubit.dart';
 import 'package:self_learning_app/features/dashboard/dashboard_screen.dart';
 import 'package:self_learning_app/features/login/data/repo/login_repo.dart';
 import 'package:self_learning_app/features/login/login_screen.dart';
@@ -85,8 +85,8 @@ void configLoading() {
     ..userInteractions = false
     ..dismissOnTap = false;
     //..customAnimation = CustomAnimation();
-      (error, stack) =>
-      FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
+/*      (error, stack) =>
+      FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);*/
 }
 
 class MyApp extends StatelessWidget {
@@ -114,6 +114,8 @@ class MyApp extends StatelessWidget {
           BlocProvider<PromtBloc>(create: (context) => PromtBloc()),
           BlocProvider<CreateFlowBloc>(create: (context) => CreateFlowBloc()),
           // BlocProvider<AddPromptsBloc>(create: (context) => AddPromptsBloc()),
+          BlocProvider<AddPromptResCubit>(create: (context) => AddPromptResCubit()),
+
         ],
         child: GlobalLoaderOverlay(
           child: MaterialApp(
@@ -153,3 +155,4 @@ class MyApp extends StatelessWidget {
         ));
   }
 }
+//kkk

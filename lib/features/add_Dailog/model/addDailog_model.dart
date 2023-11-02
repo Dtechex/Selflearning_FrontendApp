@@ -15,8 +15,11 @@ class AddResourceListModel{
   String resourceName;
   String resourceType;
   String resourceContent;
+  List<PromptListforResourceModel> resPromptList;
 
-  AddResourceListModel({required this.resourceId, required this.resourceName, required this.resourceType, required this.resourceContent});
+  AddResourceListModel({required this.resourceId, required this.resourceName, required this.resourceType, required this.resourceContent,
+
+    required this.resPromptList});
 
 }
 class AddPromptListModel{
@@ -29,4 +32,15 @@ class AddPromptListModel{
   required this.promptSide2Content
   });
 
+}
+
+class PromptListforResourceModel{
+  String promptId;
+  String parentPromptId;
+  String promptTitle;
+  String promptSide1Content;
+  String promptSide2Content;
+  PromptListforResourceModel({required this.promptId, required this.parentPromptId, required this.promptTitle, required this.promptSide1Content,
+    required this.promptSide2Content
+  });
 }

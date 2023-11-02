@@ -481,9 +481,9 @@ class _AddDailogScreenState extends State<AddDailogScreen> {
                           children: <Widget>[
 
                             Container(
-                              height: 300,
+                              height: quickPromptList.length==0?100:250,
                               width: double.infinity,
-                              child: ListView.builder(
+                              child: quickPromptList.length==0?Text("No data"):ListView.builder(
                                 itemCount: quickPromptList.length,
                                 itemBuilder: (context, index) {
 
@@ -557,10 +557,10 @@ class _AddDailogScreenState extends State<AddDailogScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
                             Container(
-                              height: 300,
+                              height: quickResourceList.length==0?80:300,
                               width: double.infinity,
                               child:
-                              ListView.builder(
+                              quickResourceList.length==0?Center(child: Text("No data")):  ListView.builder(
                                 itemCount: quickResourceList.length,
                                 itemBuilder: (context, index) {
                                   _resList.add(resourceCheckModel(selectedResourceIds.toString(), false));

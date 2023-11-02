@@ -31,25 +31,39 @@ class GetDailogBloc extends Bloc<GetDailogEvent, GetDailogState> {
       List<AddDailogModel> getlist = [];
       List<AddResourceListModel> getResourceList = [];
       List<AddPromptListModel> getPromptList = [];
-     getResourceList.add(AddResourceListModel(resourceId: "1", resourceName: "amit", resourceType: "Video", resourceContent: "videoUrl"));
-      getResourceList.add(AddResourceListModel(resourceId: "2", resourceName: "vipin", resourceType: "Audio", resourceContent: "audioUrl"));
-      getResourceList.add(AddResourceListModel(resourceId: "3", resourceName: "Rakesh", resourceType: "Image", resourceContent: "imageUrl"));
-      getResourceList.add(AddResourceListModel(resourceId: "4", resourceName: "atul", resourceType: "Text", resourceContent: "noramal"));
-      getResourceList.add(AddResourceListModel(resourceId: "1", resourceName: "amit", resourceType: "Video", resourceContent: "videoUrl"));
-      getResourceList.add(AddResourceListModel(resourceId: "2", resourceName: "vipin", resourceType: "Audio", resourceContent: "audioUrl"));
-      getResourceList.add(AddResourceListModel(resourceId: "3", resourceName: "Rakesh", resourceType: "Image", resourceContent: "imageUrl"));
-      getResourceList.add(AddResourceListModel(resourceId: "4", resourceName: "atul", resourceType: "Text", resourceContent: "noramal"));
-      getResourceList.add(AddResourceListModel(resourceId: "1", resourceName: "amit", resourceType: "Video", resourceContent: "videoUrl"));
-      getResourceList.add(AddResourceListModel(resourceId: "2", resourceName: "vipin", resourceType: "Audio", resourceContent: "audioUrl"));
-      getResourceList.add(AddResourceListModel(resourceId: "3", resourceName: "Rakesh", resourceType: "Image", resourceContent: "imageUrl"));
-      getResourceList.add(AddResourceListModel(resourceId: "4", resourceName: "atul", resourceType: "Text", resourceContent: "noramal"));
-      getResourceList.add(AddResourceListModel(resourceId: "1", resourceName: "amit", resourceType: "Video", resourceContent: "videoUrl"));
-      getResourceList.add(AddResourceListModel(resourceId: "2", resourceName: "vipin", resourceType: "Audio", resourceContent: "audioUrl"));
-      getResourceList.add(AddResourceListModel(resourceId: "3", resourceName: "Rakesh", resourceType: "Image", resourceContent: "imageUrl"));
-      getResourceList.add(AddResourceListModel(resourceId: "4", resourceName: "atul", resourceType: "Text", resourceContent: "noramal"));
-      getPromptList.add(AddPromptListModel(promptId: "1", parentPromptId: "1a", promptTitle: "promptTitle1",
+      List<PromptListforResourceModel> getResPromptList=[];
+      getResPromptList.add(PromptListforResourceModel(promptId: "1", parentPromptId: "1", promptTitle: "promptTitle1", promptSide1Content: "youtube", promptSide2Content: "Movie"));
+      getResPromptList.add(PromptListforResourceModel(promptId: "2", parentPromptId: "2", promptTitle: "promptTitle2", promptSide1Content: "flipkart", promptSide2Content: "Shoping"));
+      getResPromptList.add(PromptListforResourceModel(promptId: "3", parentPromptId: "3", promptTitle: "promptTitle3", promptSide1Content: "Discovery", promptSide2Content: "Animal"));
+      getResPromptList.add(PromptListforResourceModel(promptId: "4", parentPromptId: "4", promptTitle: "promptTitle4", promptSide1Content: "History", promptSide2Content: "Harrapa"));
+      getResPromptList.add(PromptListforResourceModel(promptId: "5", parentPromptId: "5", promptTitle: "promptTitle5", promptSide1Content: "Britain", promptSide2Content: "Londan"));
+      getResPromptList.add(PromptListforResourceModel(promptId: "6", parentPromptId: "6", promptTitle: "promptTitle6", promptSide1Content: "Usa", promptSide2Content: "Newyork"));
+
+
+
+
+
+      getResourceList.add(AddResourceListModel(resourceId: "1", resourceName: "amit", resourceType: "Video", resourceContent: "videoUrl",
+     resPromptList: getResPromptList));
+      getResourceList.add(AddResourceListModel(resourceId: "2", resourceName: "vipin", resourceType: "Audio", resourceContent: "audioUrl",
+      resPromptList: getResPromptList
+      ));
+      getResourceList.add(AddResourceListModel(resourceId: "3", resourceName: "Rakesh", resourceType: "Image", resourceContent: "imageUrl",
+      resPromptList: getResPromptList
+      ));
+      getResourceList.add(AddResourceListModel(resourceId: "4", resourceName: "atul", resourceType: "Text", resourceContent: "noramal",
+      resPromptList: getResPromptList
+      ));
+      getResourceList.add(AddResourceListModel(resourceId: "5", resourceName: "prem", resourceType: "Image", resourceContent: "imageUrl",
+          resPromptList: getResPromptList
+      ));
+      getResourceList.add(AddResourceListModel(resourceId: "6", resourceName: "shubham", resourceType: "Text", resourceContent: "noramal",
+          resPromptList: getResPromptList
+      ));
+
+      getPromptList.add(AddPromptListModel(promptId: "123", parentPromptId: "1a", promptTitle: "book",
           promptSide1Content: "promptSide1Content", promptSide2Content: "promptSide2Content"));
-      getPromptList.add(AddPromptListModel(promptId: "2", parentPromptId: "1b", promptTitle: "promptTitle2",
+      getPromptList.add(AddPromptListModel(promptId: "456", parentPromptId: "1b", promptTitle: "youtube",
           promptSide1Content: "promptSide1Content2", promptSide2Content: "promptSide2Content2"));
 
       // Iterate through the dialogs and populate getlist

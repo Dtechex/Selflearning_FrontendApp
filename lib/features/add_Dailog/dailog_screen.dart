@@ -47,7 +47,7 @@ class _DailogScreenState extends State<DailogScreen> {
     return pastelColor;
   }
 
-
+  TextEditingController dailog_search_controller = TextEditingController();
   @override
   void initState() {
     // TODO: implement initState
@@ -124,171 +124,184 @@ class _DailogScreenState extends State<DailogScreen> {
                   MaterialPageRoute(builder: (context) => AddDailogScreen()));
             },
             child: Icon(Icons.add)),
-        body: CustomScrollView(
-          slivers: <Widget>[
-            SliverToBoxAdapter(
-                child: Container(
+        body: Column(
+          children: [
+            Container(
               padding: EdgeInsets.symmetric(horizontal: 10),
               alignment: Alignment.center,
               height: 100,
               color: Colors.red,
               child: BlurryContainer(
-                width: searchwidth,
                 height: 50,
                 color: Colors.white,
                 elevation: 5,
                 borderRadius: BorderRadius.circular(20),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [Text("Search"), Icon(Icons.search)],
-                ),
+                child:  TextField(
+                  controller: dailog_search_controller,
+                  onChanged: (val){
+                    EasyLoading.showToast(val);
+                  },
+                  decoration: InputDecoration(
+                    hintText: 'Search',
+                    hintStyle: TextStyle(color: Colors.grey),
+                    filled: true,
+                    fillColor: Colors.transparent, // Set the background color to transparent
+                    border: InputBorder.none, // Remove the border
+                    contentPadding: EdgeInsets.symmetric(horizontal: 10), // Adjust padding as needed
+                    suffixIcon: Icon(Icons.search),
+                  ),
+                )
               ),
-            )),
-            SliverToBoxAdapter(
-              child: BlocBuilder<GetDailogBloc, GetDailogState>(
-           builder: (context, state) {
-             print(state);
+            ),
 
-             print("Checking condion");
-               if(state is GetDailogLoadingState){
-                 print("Checking condion 2");
+            Expanded(
+              child: CustomScrollView(
+                slivers: <Widget>[
+                  SliverToBoxAdapter(
+                    child: BlocBuilder<GetDailogBloc, GetDailogState>(
+                 builder: (context, state) {
+                   print(state);
 
-                 return Center(child: Container(
-                   width: 50,
-                   height: 50,
-                   child: CircularProgressIndicator(color: Colors.black),
-                 ),);
-               }
-               if(state is GetDailogSuccessState){
-                 if(state.dailogList!.isEmpty){
-                   print("Checking condion 3");
+                   print("Checking condion");
+                     if(state is GetDailogLoadingState){
+                       print("Checking condion 2");
 
-                   return Center(child: Text("Dailog is empty\nCreate Dailog"),);
-                 }
-                 else{
-                   print("Checking condion 4");
+                       return Center(child: Container(
+                         width: 50,
+                         height: 50,
+                         child: CircularProgressIndicator(color: Colors.black),
+                       ),);
+                     }
+                     if(state is GetDailogSuccessState){
+                       if(state.dailogList!.isEmpty){
+                         print("Checking condion 3");
 
-                   return
-                     Container(
-                       width: double.infinity,
-                       height: MediaQuery.of(context).size.height*0.8,
-                       child: GridView.builder(
-                         padding: EdgeInsets.symmetric(vertical: 4.0, horizontal: 2.0),
-                         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                         crossAxisCount: MediaQuery.of(context).size.width < 600
-                             ? 2
-                             : MediaQuery.of(context).size.width < 1200
-                             ? 3
-                             : 6,
-                         childAspectRatio: 3 / 2,
-                       ),                         itemCount: state.dailogList!.length,
-                         itemBuilder: (context, index) {
-                           double containerHeight=
-                       MediaQuery.of(context).size.width < 600
-                               ? 140.0
-                               : MediaQuery.of(context).size.width < 1200
-                               ? 200.0
-                               : 300.0;
-                           double containerWidth =
-                           MediaQuery.of(context).size.width < 600
-                               ? 150.0
-                               : MediaQuery.of(context).size.width < 1200
-                               ? 300.0
-                               : 300.0;
-                           return
+                         return Center(child: Text("Dailog is empty\nCreate Dailog"),);
+                       }
+                       else{
+                         print("Checking condion 4");
+
+                         return
                            Container(
-                             margin: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-                             padding: EdgeInsets.zero,
-                             height: 200,
-                             width: 200,
-                             child: GestureDetector(
-                               onTap: () {
-                                 Navigator.push(
-                                     context,
-                                     MaterialPageRoute(
-                                         builder: (context) => DailogCategoryScreen(promptList: state.promptList!,resourceList: state.resourceList!,)));
-                               },
-                               child: Card(
-                                   elevation: 2.0,
-                                   color: generateRandomColor(),
-                                   child: Stack(
-                                     children: [
-                                       Center(
-                                         child: Text(state.dailogList![index].dailogName),
-                                       ),
-                                       Align(
-                                         alignment: Alignment.topRight,
-                                         child: PopupMenuButton(
-                                           icon: Icon(
-                                             Icons.more_vert,
-                                             color: Colors.red,
-                                           ),
-                                           itemBuilder: (context) {
-                                             return [
-                                               const PopupMenuItem(
-                                                   value: 'update',
-                                                   child: InkWell(
-                                                       child: Row(
-                                                         mainAxisAlignment:
-                                                         MainAxisAlignment.start,
-                                                         children: [
-                                                           Icon(
-                                                             Icons.update,
-                                                             color: primaryColor,
-                                                           ),
-                                                           SizedBox(
-                                                             width: 8.0,
-                                                           ),
-                                                           Text("Update"),
-                                                         ],
-                                                       ))),
-                                               const PopupMenuItem(
-                                                   value: 'delete',
-                                                   child: InkWell(
-                                                       child: Row(
-                                                         mainAxisAlignment:
-                                                         MainAxisAlignment.start,
-                                                         children: [
-                                                           Icon(
-                                                             Icons.delete,
-                                                             color: primaryColor,
-                                                           ),
-                                                           SizedBox(
-                                                             width: 8.0,
-                                                           ),
-                                                           Text("Delete"),
-                                                         ],
-                                                       )))
-                                             ];
-                                           },
-                                           onSelected: (String value) {
-                                             switch (value) {
-                                               case 'update':
-                                               /*Navigator.push(context, MaterialPageRoute(
-                                            builder: (context) {
-                                              return UpdateCateScreen(
-                                                rootId: state.cateList[index].sId,
-                                                selectedColor: currentColor,
-                                                categoryTitle: state.cateList[index].name,
-                                                tags: state.cateList[index].keywords,
-                                              );
-                                            },
-                                          ));*/
-                                                 break;
-                                               case 'delete':
-                                                 showDeleteDailog(dailogName: state.dailogList![index].dailogName, index: index,
-                                                     dailogId: state.dailogList![index].dailogId, context: context);
+                             width: double.infinity,
+                             height: MediaQuery.of(context).size.height*0.8,
+                             child: GridView.builder(
+                               padding: EdgeInsets.symmetric(vertical: 4.0, horizontal: 2.0),
+                               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                               crossAxisCount: MediaQuery.of(context).size.width < 600
+                                   ? 2
+                                   : MediaQuery.of(context).size.width < 1200
+                                   ? 3
+                                   : 6,
+                               childAspectRatio: 3 / 2,
+                             ),                         itemCount: state.dailogList!.length,
+                               itemBuilder: (context, index) {
+                                 double containerHeight=
+                             MediaQuery.of(context).size.width < 600
+                                     ? 140.0
+                                     : MediaQuery.of(context).size.width < 1200
+                                     ? 200.0
+                                     : 300.0;
+                                 double containerWidth =
+                                 MediaQuery.of(context).size.width < 600
+                                     ? 150.0
+                                     : MediaQuery.of(context).size.width < 1200
+                                     ? 300.0
+                                     : 300.0;
+                                 return
+                                 Container(
+                                   margin: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+                                   padding: EdgeInsets.zero,
+                                   height: 200,
+                                   width: 200,
+                                   child: GestureDetector(
+                                     onTap: () {
+                                       Navigator.push(
+                                           context,
+                                           MaterialPageRoute(
+                                               builder: (context) => DailogCategoryScreen(promptList: state.promptList!,resourceList: state.resourceList!,)));
+                                     },
+                                     child: Card(
+                                         elevation: 2.0,
+                                         color: generateRandomColor(),
+                                         child: Stack(
+                                           children: [
+                                             Center(
+                                               child: Text(state.dailogList![index].dailogName),
+                                             ),
+                                             Align(
+                                               alignment: Alignment.topRight,
+                                               child: PopupMenuButton(
+                                                 icon: Icon(
+                                                   Icons.more_vert,
+                                                   color: Colors.red,
+                                                 ),
+                                                 itemBuilder: (context) {
+                                                   return [
+                                                     const PopupMenuItem(
+                                                         value: 'update',
+                                                         child: InkWell(
+                                                             child: Row(
+                                                               mainAxisAlignment:
+                                                               MainAxisAlignment.start,
+                                                               children: [
+                                                                 Icon(
+                                                                   Icons.update,
+                                                                   color: primaryColor,
+                                                                 ),
+                                                                 SizedBox(
+                                                                   width: 8.0,
+                                                                 ),
+                                                                 Text("Update"),
+                                                               ],
+                                                             ))),
+                                                     const PopupMenuItem(
+                                                         value: 'delete',
+                                                         child: InkWell(
+                                                             child: Row(
+                                                               mainAxisAlignment:
+                                                               MainAxisAlignment.start,
+                                                               children: [
+                                                                 Icon(
+                                                                   Icons.delete,
+                                                                   color: primaryColor,
+                                                                 ),
+                                                                 SizedBox(
+                                                                   width: 8.0,
+                                                                 ),
+                                                                 Text("Delete"),
+                                                               ],
+                                                             )))
+                                                   ];
+                                                 },
+                                                 onSelected: (String value) {
+                                                   switch (value) {
+                                                     case 'update':
+                                                     /*Navigator.push(context, MaterialPageRoute(
+                                                  builder: (context) {
+                                                    return UpdateCateScreen(
+                                                      rootId: state.cateList[index].sId,
+                                                      selectedColor: currentColor,
+                                                      categoryTitle: state.cateList[index].name,
+                                                      tags: state.cateList[index].keywords,
+                                                    );
+                                                  },
+                                                ));*/
+                                                       break;
+                                                     case 'delete':
+                                                       showDeleteDailog(dailogName: state.dailogList![index].dailogName, index: index,
+                                                           dailogId: state.dailogList![index].dailogId, context: context);
 
-                                                 break;
-                                             }
-                                           },
-                                         ),
-                                       )
-                                     ],
-                                   )),
+                                                       break;
+                                                   }
+                                                 },
+                                               ),
+                                             )
+                                           ],
+                                         )),
+                                   ),
+                                 );                         },
                              ),
-                           );                         },
-                       ),
 
 //                        SliverGrid(
 //                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
@@ -414,24 +427,27 @@ class _DailogScreenState extends State<DailogScreen> {
 //                          childCount: state.dailogList!.length, // Number of items in the list
 //                        ),
 //                    ),
-                     );
+                           );
 
-                 }
-               }
+                       }
+                     }
 
-               if(state is GetDailogErrorState){
-                 print("Checking condion 5");
+                     if(state is GetDailogErrorState){
+                       print("Checking condion 5");
 
-                 return Center(child: Text("Something went wrong"),);
+                       return Center(child: Text("Something went wrong"),);
 
-               }
-               print(state);
-             print("Checking condion 6");
+                     }
+                     print(state);
+                   print("Checking condion 6");
 
-             return Center(child: Text("Something went wrong"),);
+                   return Center(child: Text("Something went wrong"),);
 
-           },
+                 },
 ),
+                  ),
+                ],
+              ),
             ),
           ],
         )),
