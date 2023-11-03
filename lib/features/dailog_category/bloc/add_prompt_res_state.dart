@@ -10,6 +10,10 @@ class AddPromptResSuccess extends AddPromptResState{
   String resourceName;
   AddPromptResSuccess({required this.promptName, required this.resourceName});
 }
+class GetResourcePromptDailog extends AddPromptResState{
+  List<AddResourceListModel> res_prompt_list;
+  GetResourcePromptDailog({required this.res_prompt_list});
+}
 class AddPromptResError extends AddPromptResState{
   String errorMessage;
   AddPromptResError({required this.errorMessage});

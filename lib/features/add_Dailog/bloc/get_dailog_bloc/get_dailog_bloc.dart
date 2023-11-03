@@ -24,8 +24,7 @@ class GetDailogBloc extends Bloc<GetDailogEvent, GetDailogState> {
     print("status code ${res?.statusCode}");
     print("get dailog ${res?.data}");
     if(res?.statusCode == 200){
-
-      List<dynamic> dialogs = res!.data['dialogs'];
+          print("empty dailog response == ${res!.data}");
 
       // Create a list to store AddDailogModel objects
       List<AddDailogModel> getlist = [];
@@ -67,18 +66,29 @@ class GetDailogBloc extends Bloc<GetDailogEvent, GetDailogState> {
           promptSide1Content: "promptSide1Content2", promptSide2Content: "promptSide2Content2"));
 
       // Iterate through the dialogs and populate getlist
-      for (var dialog in dialogs) {
-        String dailogId = dialog['_id'];
-        String userId = dialog['userId'];
-        String dailogName = dialog['name'];
+          if(res.data['message']=="No Dialogs found!!"){
+            emit(GetDailogSuccessState(dailogList: [], resourceList: [], promptList: []));
 
-        getlist.add(AddDailogModel(
-          dailogName: dailogName,
-          dailogId: dailogId,
-          userId: userId,
-        ));
-      }
-      emit(GetDailogSuccessState(dailogList: getlist, resourceList: getResourceList, promptList: getPromptList));
+          }
+          else {
+            List<dynamic> dialogs = res!.data['dialogs'];
+
+            for (var dialog in dialogs) {
+              String dailogId = dialog['_id'];
+              String userId = dialog['userId'];
+              String dailogName = dialog['name'];
+              print("dailogId=$dailogId");
+
+              getlist.add(AddDailogModel(
+                dailogName: dailogName,
+                dailogId: dailogId,
+                userId: userId,
+              ));
+            }
+            emit(GetDailogSuccessState(dailogList: getlist,
+                resourceList: getResourceList,
+                promptList: getPromptList));
+          }
        }
 
 

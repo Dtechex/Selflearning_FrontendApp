@@ -4,12 +4,44 @@ import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:meta/meta.dart';
 
+import '../../add_Dailog/model/addDailog_model.dart';
 import '../repo/promptResRepo.dart';
 
 part 'add_prompt_res_state.dart';
 
 class AddPromptResCubit extends Cubit<AddPromptResState> {
   AddPromptResCubit() : super(AddPromptResInitial());
+  getResPrompt({required String dailogId}) async {
+    emit(  AddPromptResLoading());
+    Future.delayed(Duration(seconds: 5));
+   // var res = await PromptResRepo.get_Res_Prompt();
+    bool res = true;
+    print("getProntRes Function is hit");
+    if( res ==true){
+      print("inside true");
+      List<AddResourceListModel> getListRes_prompt = [];
+      getListRes_prompt.add(AddResourceListModel(resourceId: "1",
+          resourceName: 'book',
+          resourceType: "text",
+          resourceContent: "video",
+          resPromptList: []));
+      getListRes_prompt.add(AddResourceListModel(resourceId: "2",
+          resourceName: 'youtube',
+          resourceType: "abc",
+          resourceContent: "def",
+          resPromptList: []));
+      emit(GetResourcePromptDailog(res_prompt_list: getListRes_prompt));
+
+    }
+    else {
+      emit(AddPromptResError(errorMessage: "Failed to fetch data"));
+
+
+
+    }
+
+
+  }
 
   addpromptRes({required String promptId, required String promptName, required String resourceId, required String resourceName, required BuildContext context})async{
     print("Cubit function hit");

@@ -481,7 +481,7 @@ class _AddDailogScreenState extends State<AddDailogScreen> {
                           children: <Widget>[
 
                             Container(
-                              height: quickPromptList.length==0?100:250,
+                              height: quickPromptList.length==2?100:200,
                               width: double.infinity,
                               child: quickPromptList.length==0?Text("No data"):ListView.builder(
                                 itemCount: quickPromptList.length,
@@ -557,7 +557,7 @@ class _AddDailogScreenState extends State<AddDailogScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
                             Container(
-                              height: quickResourceList.length==0?80:300,
+                              height: quickResourceList.length>=2?100:200,
                               width: double.infinity,
                               child:
                               quickResourceList.length==0?Center(child: Text("No data")):  ListView.builder(
