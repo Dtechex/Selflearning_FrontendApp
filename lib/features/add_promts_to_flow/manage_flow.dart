@@ -94,6 +94,8 @@ class _ManageFlowState extends State<ManageFlow> {
     final List<Map<String, String>> dataToSend = data
         .map((data) => {'promptId': data.id})
         .toList();
+    print("dataToSend==$dataToSend");
+    print("category id $catId");
     Response response;
     if(!update){
       response = await Dio().post(

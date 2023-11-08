@@ -125,6 +125,7 @@ class _MaincategoryResourcesListState extends State<MaincategoryResourcesList> {
           ),
         ),
         appBar: AppBar(
+          backgroundColor: Colors.yellow,
             title: Text('${widget.title} Resources'),
           leading: IconButton(
             icon: Icon(Icons.arrow_back),

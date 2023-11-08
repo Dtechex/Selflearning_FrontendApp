@@ -1,8 +1,10 @@
 import 'package:bloc/bloc.dart';
+import 'package:equatable/equatable.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:meta/meta.dart';
+import 'package:self_learning_app/features/create_flow/data/model/flow_model.dart';
 
 import '../../add_Dailog/model/addDailog_model.dart';
 import '../repo/promptResRepo.dart';
@@ -12,35 +14,42 @@ part 'add_prompt_res_state.dart';
 class AddPromptResCubit extends Cubit<AddPromptResState> {
   AddPromptResCubit() : super(AddPromptResInitial());
   getResPrompt({required String dailogId}) async {
-    emit(  AddPromptResLoading());
-    Future.delayed(Duration(seconds: 5));
-   // var res = await PromptResRepo.get_Res_Prompt();
-    bool res = true;
-    print("getProntRes Function is hit");
-    if( res ==true){
-      print("inside true");
+    emit(AddPromptResLoading());
+    var res = await PromptResRepo.get_Res_Prompt(dailogId: dailogId);
+
+    print("getPromptRes Function is hit");
+    if (res!.statusCode == 200) {
+      print("check for prompt res ${res.data}");
       List<AddResourceListModel> getListRes_prompt = [];
-      getListRes_prompt.add(AddResourceListModel(resourceId: "1",
-          resourceName: 'book',
-          resourceType: "text",
-          resourceContent: "video",
-          resPromptList: []));
-      getListRes_prompt.add(AddResourceListModel(resourceId: "2",
-          resourceName: 'youtube',
-          resourceType: "abc",
-          resourceContent: "def",
-          resPromptList: []));
-      emit(GetResourcePromptDailog(res_prompt_list: getListRes_prompt));
+      List<AddPromptListModel> getPromotList = [];
+      List<dynamic> resourcesList = res.data['dialogList']['resourcesList'];
 
+      for (var resource in resourcesList) {
+        getListRes_prompt.add(AddResourceListModel(
+          resourceId: resource['_id'],
+          resourceName: resource['title'],
+          resourceType: resource['type'],
+          resourceContent: '', resPromptList: [], // Empty string for resourceContent
+        ));
+      }
+
+      List<dynamic> promptList = res.data['dialogList']['promptList'];
+
+      for (var prompt in promptList) {
+        getPromotList.add(AddPromptListModel(
+          promptId: prompt['_id'],
+          promptTitle: prompt['name'],
+          promptSide1Content: prompt['side1'],
+          promptSide2Content: prompt['side2'],
+          parentPromptId: '1a',
+        ));
+      }
+
+      emit(GetResourcePromptDailog(
+        res_prompt_list: getListRes_prompt,
+        def_prompt_list: getPromotList,
+      ));
     }
-    else {
-      emit(AddPromptResError(errorMessage: "Failed to fetch data"));
-
-
-
-    }
-
-
   }
 
   addpromptRes({required String promptId, required String promptName, required String resourceId, required String resourceName, required BuildContext context})async{
@@ -103,4 +112,42 @@ class AddPromptResCubit extends Cubit<AddPromptResState> {
 
 
   }
+
+
+getPromptFromResource({required String resourceId})async{
+
+    var res = await PromptResRepo.getPrompResource(resourceId: resourceId);
+    List<FlowDataModel> getPromptData = [];
+    print("resourceId --$resourceId");
+    if(res!.statusCode==200){
+
+      print("resource prompt is ${res.data}");
+      List<dynamic> resPrompt = res.data['data']['record'];
+      List<FlowDataModel> flowModel=[];
+      for(var list in resPrompt){
+       flowModel.add(FlowDataModel(
+           resourceTitle: list['resourceId']['title'],
+           resourceType: list['resourceId']['type'],
+           resourceContent: "resourceContent",
+           side1Title: list['side1']['title'],
+           side1Type: list['side1']['type'],
+           side1Content: list['side1']['content'],
+           side2Title: list['side2']['title'],
+           side2Type: list['side2']['type'],
+           side2Content: list['side2']['content'],
+           promptName: list['name'], promptId: list["_id"])) ;
+      }
+      emit(GetPromptFromResourceSuccess(flowModel: flowModel));
+    }
+
+}
+deleteResource({required String resourceId}) async{
+    var res = await PromptResRepo.deleteResource(resourceId: resourceId);
+    if(res.statusCode==200){
+     emit(ResourceDeletedSuccess());
+    }
+    else{
+      EasyLoading.showToast("Sorry to delete failed");
+    }
+}
 }

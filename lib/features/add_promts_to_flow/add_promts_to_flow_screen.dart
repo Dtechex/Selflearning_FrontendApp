@@ -84,7 +84,7 @@ class _AddPromptsToFlowScreenState extends State<AddPromptsToFlowScreen> {
             widget.title,
             overflow: TextOverflow.ellipsis,
           ),
-          backgroundColor: Colors.green,
+          backgroundColor: Colors.red,
           actions: [
             Container(
               margin: EdgeInsets.symmetric(vertical: 8.0, horizontal: 8.0),

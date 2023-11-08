@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import 'package:self_learning_app/features/add_media/bloc/add_media_bloc.dart';
+import 'package:self_learning_app/features/dailog_category/bloc/add_prompt_res_cubit.dart';
 
 import 'package:self_learning_app/utilities/extenstion.dart';
 import 'package:self_learning_app/utilities/image_picker_helper.dart';
@@ -21,7 +22,7 @@ class AddImageScreen extends StatefulWidget {
   final String rootId;
   final int  whichResources;
 
-  const AddImageScreen({Key? key, required this.rootId,required this.whichResources,}) : super(key: key);
+   AddImageScreen({Key? key, required this.rootId,required this.whichResources}) : super(key: key);
 
   @override
   State<AddImageScreen> createState() => _AddImageScreenState();
@@ -65,8 +66,9 @@ class _AddImageScreenState extends State<AddImageScreen> {
                 print(state.wichResources);
                 print('state.wichResources');
                 context.read<ResourcesBloc>().add(LoadResourcesEvent(rootId: widget.rootId, mediaType: ''));
+                context.read<AddPromptResCubit>()..getResPrompt(dailogId: widget.rootId);
 
-                Navigator.pop(context);
+
                 /*switch (state.wichResources) {
                   case 0:
                     {

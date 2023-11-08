@@ -223,7 +223,7 @@ class _DailogScreenState extends State<DailogScreen> {
                                        Navigator.push(
                                            context,
                                            MaterialPageRoute(
-                                               builder: (context) => DailogCategoryScreen(promptList: state.promptList!,resourceList: state.resourceList!,dailogId: state.dailogList![index].dailogId,)));
+                                               builder: (context) => DailogCategoryScreen(promptList: state.promptList!,resourceList: state.resourceList!,dailoId: state.dailogList![index].dailogId,)));
                                      },
                                      child: Card(
                                          elevation: 2.0,

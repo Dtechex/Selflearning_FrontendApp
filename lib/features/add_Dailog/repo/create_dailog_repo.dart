@@ -1,6 +1,10 @@
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:self_learning_app/features/dailog_category/dailog_cate_screen.dart';
 import 'package:self_learning_app/utilities/shared_pref.dart';
 
 class DailogRepo{
@@ -99,5 +103,45 @@ class DailogRepo{
     return res;
   }
 
+  static Future<Response> saveDailog({required String dailogId, required String title, required List<String> promptId, required BuildContext context}) async {
+    var token = await SharedPref().getToken();
+    Response res;
+    final List<Map<String, String>> dataToSend = promptId
+        .map((promptId) => {'promptId': promptId})
+        .toList();
+    try {
+      res = await _dio.post(
+          'https://selflearning.dtechex.com/web/flow',
+          data: {
+            'categoryId': dailogId,
+            'title': title,
+            'flow': dataToSend,
+            'type':'dialog'
+          },
+
+          options: Options(
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer $token'
+            },
+          )
+      );
+      print("flow created success response$res");
+      print(res.statusCode);
+      if (res.statusCode==201){
+       EasyLoading.showSuccess("Dailog Created Success", duration: Duration(seconds: 3));
+       Navigator.pop(context);
+
+      }
+
+      //print(res.body);
+      //print('data');
+    } on DioError catch (_) {
+      res = Response(requestOptions: RequestOptions());
+      res.statusCode = 400;
+    }
+
+    return res;
+  }
 
 }
