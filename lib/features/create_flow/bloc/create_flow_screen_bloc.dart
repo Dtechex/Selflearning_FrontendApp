@@ -27,7 +27,9 @@ class CreateFlowBloc extends Bloc<CreateFlowEvent,CreateFlowState> {
       }
     });
     on<FlowSelected>((event, emit) async{
-      Response? response = await CreateFlowRepo.selectFlow(flowId: event.flowId,flowType: event.type, rootId: event.rootId);
+      print("1--->${event.flowId}");
+      Response? response = await CreateFlowRepo.selectFlow(flowId: event.flowId,flowType: event.type, rootId: event.rootId, flowTitle: event.flowList[event.index].title);
+      print("SelectFlow----${response!.data}");
       if(response?.statusCode == 400){
           print("___===++invalid request");
           emit(flowSelectionFailed(errormsg: "sorry to select flow"));

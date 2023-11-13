@@ -64,6 +64,7 @@ class _FlowScreenState extends State<FlowScreen> {
       print("checking flow id in this data ${response.data}");
       print("checkPrimaryResponse====${response.data["data"]["record"][0]['type']}");
       print("--------->Break");
+      print("catId ---$catId");
 
       if(response.statusCode == 400){
         throw Exception('Failed to fetch data from the API');
@@ -100,6 +101,7 @@ class _FlowScreenState extends State<FlowScreen> {
 
       appBar: AppBar(
         title: Text('Select Primary flow for ${widget.categoryname}'),
+        backgroundColor: Colors.greenAccent,
       ),
       body: BlocConsumer<CreateFlowBloc, CreateFlowState>(
         listener: (context, state) {
@@ -169,10 +171,10 @@ class _FlowScreenState extends State<FlowScreen> {
                                   index: index,
                                 rootId: widget.rootId
                               ));
-                            await Future.delayed(Duration(seconds: 1));
+                            await Future.delayed(Duration(seconds: 10));
                              PrimaryfetchData();
 
-                            // getPrimaryflow(catId: widget.rootId);
+                            getPrimaryflow(catId: widget.rootId);
 
 
 

@@ -30,3 +30,14 @@ class GetPromptFromResourceSuccess extends AddPromptResState{
 }
 class ResourceDeletedSuccess extends AddPromptResState{
 }
+class GetFlowSuccess extends AddPromptResState{
+  List<FlowModel> flowList;
+
+  GetFlowSuccess(this.flowList);
+
+  GetFlowSuccess copyWith({List<FlowModel>? flowList}){
+    return GetFlowSuccess(flowList??this.flowList);
+  }
+}
+class GetFlowDeletedSuccess extends AddPromptResState{
+}

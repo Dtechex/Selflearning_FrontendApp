@@ -5,6 +5,7 @@ import 'package:self_learning_app/utilities/colors.dart';
 import 'package:self_learning_app/utilities/extenstion.dart';
 import 'package:self_learning_app/utilities/shared_pref.dart';
 import '../add_Dailog/dailog_screen.dart';
+import '../add_Dailog/newDialog.dart';
 import '../add_category/add_cate_screen.dart';
 import '../category/category_screen.dart';
 import 'bloc/dashboard_bloc.dart';
@@ -18,7 +19,8 @@ class DashBoardScreen extends StatelessWidget {
   static const List<Widget> _widgetOptions = <Widget>[
     AllCateScreen(),
     AddCateScreen(),
-    DailogScreen(),
+    NewDialog(),
+    // DailogScreen(),
     Text(
       'Create Flow',
       style: optionStyle,

@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import 'package:blurrycontainer/blurrycontainer.dart';
@@ -22,7 +24,9 @@ import '../add_Dailog/createflowfordailog/createDailogFlow.dart';
 import '../add_Dailog/dailogPrompt/dailog_prompt.dart';
 import '../add_Dailog/model/addDailog_model.dart';
 import '../add_promts/add_promts_screen.dart';
+import '../add_promts_to_flow/add_promts_to_flow_screen.dart';
 import '../category/bloc/category_bloc.dart';
+import '../create_flow/bloc/create_flow_screen_bloc.dart';
 import '../create_flow/create_flow_screen.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 
@@ -58,102 +62,11 @@ class _DailogCategoryScreenState extends State<DailogCategoryScreen> {
   ];
   TextEditingController dailog_create_controller = TextEditingController();
 
-  AwesomeDialog createDailog() {
-    return AwesomeDialog(
-      context: context,
-      headerAnimationLoop: true,
-      animType: AnimType.TOPSLIDE,
-      // Set the desired animation type
-      // Adjust the animation duration
-      dialogType: DialogType.SUCCES,
-      customHeader: Container(
-        width: double.infinity,
-        height: double.infinity,
-        decoration: BoxDecoration(
-            color: Colors.blue[100], borderRadius: BorderRadius.circular(90)),
-        child: Icon(
-          Icons.file_copy, // Change this to the desired icon
-          size: 48.0, // Adjust the icon size
-          color: Colors.red, // Change the icon color
-        ),
-      ),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Text(
-            'Create Flow',
-            style: TextStyle(fontStyle: FontStyle.italic),
-          ),
-          SizedBox(
-            height: 10,
-          ),
-          Container(
-            margin: EdgeInsets.symmetric(horizontal: 10),
-            child: TextFormField(
-              controller: dailog_create_controller,
-              decoration: InputDecoration(
-                hintText: 'Dialog Name',
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10.0),
-                  borderSide: BorderSide(color: Colors.red, width: 1.0),
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10.0),
-                  borderSide: BorderSide(color: Colors.red, width: 1.0),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10.0),
-                  borderSide: BorderSide(color: Colors.red, width: 1.0),
-                ),
-              ),
-            ),
-          )
-        ],
-      ),
-      title: 'This is Ignored',
-      desc: 'This is also Ignored',
-      btnOkOnPress: () {
-        if (dailog_create_controller.text.isEmpty) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              /// need to set following properties for best effect of awesome_snackbar_content
-              elevation: 0,
 
-              duration: Duration(seconds: 5),
-              behavior: SnackBarBehavior.floating,
-              backgroundColor: Colors.transparent,
-              content: AwesomeSnackbarContent(
-                title: "Error",
-                message: 'Dailog is not be empty!',
-
-                /// change contentType to ContentType.success, ContentType.warning, or ContentType.help for variants
-                contentType: ContentType.failure,
-              ),
-            ),
-          );
-        } else {
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => CreateDailogFlow(
-                        reswithPromptList: widget.resourceList,
-                        dailog_flow_name: dailog_create_controller.text,
-                    promptList: def_prompt_list,
-                    dailogId: widget.dailoId,
-                      )));
-        }
-      },
-      btnOkColor: Colors.green,
-      closeIcon: Icon(Icons.close),
-      btnCancelOnPress: () {},
-      btnOkText: "Create dailog",
-    )..show();
-  }
-  final AddPromptResCubit  cubitAddPromptRes = AddPromptResCubit();
+  final AddPromptResCubit cubitAddPromptRes = AddPromptResCubit();
 
   List<ListItem> itemCheck = [];
-  List<AddPromptListModel> def_prompt_list=[];
+  List<AddPromptListModel> def_prompt_list = [];
 
   AwesomeDialog successDailog(
       {required String promptName,
@@ -173,19 +86,21 @@ class _DailogCategoryScreenState extends State<DailogCategoryScreen> {
       desc: 'This is also Ignored',
     )..show();
   }
-@override
 
+  @override
   Widget build(BuildContext context) {
     print("Dailog id is ${widget.dailoId.toString()}");
     return BlocProvider(
       create: (context) =>
-      cubitAddPromptRes..getResPrompt(dailogId: widget.dailoId),
+          cubitAddPromptRes..getResPrompt(dailogId: widget.dailoId),
       child: BlocListener<AddPromptResCubit, AddPromptResState>(
         listener: (context, state) {
           if (state is AddPromptResSuccess) {}
-          if(state is ResourceDeletedSuccess){
+          if (state is ResourceDeletedSuccess) {
             EasyLoading.showToast("Delete Successfull");
-            context.read<AddPromptResCubit>().getResPrompt(dailogId: widget.dailoId);
+            context
+                .read<AddPromptResCubit>()
+                .getResPrompt(dailogId: widget.dailoId);
           }
         },
         child: DefaultTabController(
@@ -233,7 +148,13 @@ class _DailogCategoryScreenState extends State<DailogCategoryScreen> {
                         color: primaryColor,
                       ),
                       onTap: () {
-                        createDailog();
+                        showModalBottomSheet(
+                            context: context,
+                            isScrollControlled: true, // To allow scrolling if the content is too tall
+                            builder: (context) {
+                              return BottomSheetForCreateFlow(dailogId: widget.dailoId,  promptList: widget.promptList,reswithPromptList: widget.resourceList,);
+                            });
+                        // createDailog();
                         /* Navigator.push(context,
                           MaterialPageRoute(builder: (context) {
                         return CreateFlowScreen(
@@ -246,7 +167,14 @@ class _DailogCategoryScreenState extends State<DailogCategoryScreen> {
                       label: "select primary flow",
                       backgroundColor: Colors.green[100],
                       child: Icon(Icons.play_arrow, color: primaryColor),
-                      onTap: () {}),
+                      onTap: () {
+                        showModalBottomSheet(
+                            context: context,
+                            isScrollControlled: true, // To allow scrolling if the content is too tall
+                            builder: (context) {
+                              return BottomSheetForPrimaryFlow(dailogId: widget.dailoId, );
+                            });
+                      }),
                   SpeedDialChild(
                       label: "schedule",
                       backgroundColor: Colors.green[100],
@@ -313,11 +241,14 @@ class _DailogCategoryScreenState extends State<DailogCategoryScreen> {
                       child: TabBarView(
                     children: <Widget>[
                       BlocBuilder<AddPromptResCubit, AddPromptResState>(
-                        buildWhen:  (previous, current) => previous != current && current is GetResourcePromptDailog,
+                        buildWhen: (previous, current) =>
+                            previous != current &&
+                            current is GetResourcePromptDailog,
                         builder: (context, state) {
                           if (state is AddPromptResLoading) {
                             return Container(
-                                height: MediaQuery.of(context).size.height*0.8,
+                                height:
+                                    MediaQuery.of(context).size.height * 0.8,
                                 alignment: Alignment.center,
                                 child: CircularProgressIndicator());
                           }
@@ -378,7 +309,7 @@ class _DailogCategoryScreenState extends State<DailogCategoryScreen> {
                                                                 .circular(90),
                                                       ),
                                                       child: Text("R"),
-                                                  /*    getFileType(
+                                                      /*    getFileType(
                                                                   content) ==
                                                               'Photo'
                                                           ? CachedNetworkImage(
@@ -512,7 +443,13 @@ class _DailogCategoryScreenState extends State<DailogCategoryScreen> {
 
                                                           break;
                                                         case 'dltres':
-                                                          context.read<AddPromptResCubit>()..deleteResource(resourceId: state.res_prompt_list[index].resourceId);
+                                                          context.read<
+                                                              AddPromptResCubit>()
+                                                            ..deleteResource(
+                                                                resourceId: state
+                                                                    .res_prompt_list[
+                                                                        index]
+                                                                    .resourceId);
 
                                                           break;
                                                         case 'ViewPrompt':
@@ -520,7 +457,10 @@ class _DailogCategoryScreenState extends State<DailogCategoryScreen> {
                                                               "ResPromptListLength=${widget.resourceList[index].resPromptList.length}");
                                                           SideSheet.left(
                                                               body: SideSheetDrawer(
-                                                                resourceId: state.res_prompt_list[index].resourceId,
+                                                                  resourceId: state
+                                                                      .res_prompt_list[
+                                                                          index]
+                                                                      .resourceId,
                                                                   resPromptList: widget
                                                                       .resourceList[
                                                                           index]
@@ -553,31 +493,46 @@ class _DailogCategoryScreenState extends State<DailogCategoryScreen> {
                       ),
                       BlocBuilder<AddPromptResCubit, AddPromptResState>(
                         builder: (context, state) {
-                          if(state is AddPromptResLoading){
+                          if (state is AddPromptResLoading) {
                             return Container(
-                              height: MediaQuery.of(context).size.height*0.8,
+                              height: MediaQuery.of(context).size.height * 0.8,
                               width: double.infinity,
                               child: CircularProgressIndicator(),
                             );
                           }
-                          if(state is GetResourcePromptDailog){
-
-                            if(state.def_prompt_list.length ==0){
+                          if (state is GetResourcePromptDailog) {
+                            if (state.def_prompt_list.length == 0) {
                               return Container(
-                                height: MediaQuery.of(context).size.height*0.8,
+                                height:
+                                    MediaQuery.of(context).size.height * 0.8,
                                 width: double.infinity,
                                 alignment: Alignment.center,
                                 child: Text("Sorry No Prompt"),
                               );
-                            }
-                            else{
+                            } else {
                               return CustomScrollView(
                                 slivers: <Widget>[
                                   SliverList(
                                     delegate: SliverChildBuilderDelegate(
-                                          (BuildContext context, int index) {
-                                            def_prompt_list.add(AddPromptListModel(promptId:state.def_prompt_list[index].promptId, parentPromptId: state.def_prompt_list[index].parentPromptId, promptTitle: state.def_prompt_list[index].promptTitle,
-                                                promptSide1Content: state.def_prompt_list[index].promptSide1Content, promptSide2Content:state.def_prompt_list[index].promptSide2Content));
+                                      (BuildContext context, int index) {
+                                        def_prompt_list.add(AddPromptListModel(
+
+                                            promptId: state
+                                                .def_prompt_list[index]
+                                                .promptId,
+                                            parentPromptId: state
+                                                .def_prompt_list[index]
+                                                .parentPromptId,
+                                            promptTitle: state
+                                                .def_prompt_list[index]
+                                                .promptTitle,
+                                            promptSide1Content: state
+                                                .def_prompt_list[index]
+                                                .promptSide1Content,
+                                            promptSide2Content: state
+                                                .def_prompt_list[index]
+                                                .promptSide2Content,
+                                        ));
 
                                         // If the item is an integer, display it as a card that navigates to a different screen
                                         return GestureDetector(
@@ -588,8 +543,8 @@ class _DailogCategoryScreenState extends State<DailogCategoryScreen> {
                                 }));*/
                                           },
                                           child: Container(
-                                            margin:
-                                            EdgeInsets.symmetric(vertical: 5),
+                                            margin: EdgeInsets.symmetric(
+                                                vertical: 5),
                                             height: 70,
                                             child: Card(
                                               color: Colors.teal[50],
@@ -599,21 +554,23 @@ class _DailogCategoryScreenState extends State<DailogCategoryScreen> {
                                                   title: Text(
                                                       'Prompt: ${state.def_prompt_list[index].promptTitle}'),
                                                   leading: Container(
-                                                    margin: EdgeInsets.symmetric(
-                                                        vertical: 2),
+                                                    margin:
+                                                        EdgeInsets.symmetric(
+                                                            vertical: 2),
                                                     alignment: Alignment.center,
                                                     width: 45,
                                                     decoration: BoxDecoration(
                                                       color: Colors.pink[200],
                                                       borderRadius:
-                                                      BorderRadius.circular(90),
+                                                          BorderRadius.circular(
+                                                              90),
                                                     ),
                                                     child: Text(
                                                       "P",
                                                       style: TextStyle(
                                                           color: Colors.white,
                                                           fontWeight:
-                                                          FontWeight.bold),
+                                                              FontWeight.bold),
                                                     ),
                                                   ),
                                                   trailing: PopupMenuButton(
@@ -624,63 +581,65 @@ class _DailogCategoryScreenState extends State<DailogCategoryScreen> {
                                                     itemBuilder: (context) {
                                                       return [
                                                         const PopupMenuItem(
-                                                            value: 'AddResource',
+                                                            value:
+                                                                'AddResource',
                                                             child: InkWell(
                                                                 child: Row(
-                                                                  mainAxisAlignment:
+                                                              mainAxisAlignment:
                                                                   MainAxisAlignment
                                                                       .start,
-                                                                  children: [
-                                                                    Icon(
-                                                                      Icons.update,
-                                                                      color:
+                                                              children: [
+                                                                Icon(
+                                                                  Icons.update,
+                                                                  color:
                                                                       primaryColor,
-                                                                    ),
-                                                                    SizedBox(
-                                                                      width: 8.0,
-                                                                    ),
-                                                                    Text(
-                                                                        "Add to Resource"),
-                                                                  ],
-                                                                ))),
+                                                                ),
+                                                                SizedBox(
+                                                                  width: 8.0,
+                                                                ),
+                                                                Text(
+                                                                    "Add to Resource"),
+                                                              ],
+                                                            ))),
                                                         const PopupMenuItem(
                                                             value: 'viewprompt',
                                                             child: InkWell(
                                                                 child: Row(
-                                                                  mainAxisAlignment:
+                                                              mainAxisAlignment:
                                                                   MainAxisAlignment
                                                                       .start,
-                                                                  children: [
-                                                                    Icon(
-                                                                      Icons.update,
-                                                                      color:
+                                                              children: [
+                                                                Icon(
+                                                                  Icons.update,
+                                                                  color:
                                                                       primaryColor,
-                                                                    ),
-                                                                    SizedBox(
-                                                                      width: 8.0,
-                                                                    ),
-                                                                    Text("View Prompt"),
-                                                                  ],
-                                                                ))),
+                                                                ),
+                                                                SizedBox(
+                                                                  width: 8.0,
+                                                                ),
+                                                                Text(
+                                                                    "View Prompt"),
+                                                              ],
+                                                            ))),
                                                         const PopupMenuItem(
                                                             value: 'delete',
                                                             child: InkWell(
                                                                 child: Row(
-                                                                  mainAxisAlignment:
+                                                              mainAxisAlignment:
                                                                   MainAxisAlignment
                                                                       .start,
-                                                                  children: [
-                                                                    Icon(
-                                                                      Icons.delete,
-                                                                      color:
+                                                              children: [
+                                                                Icon(
+                                                                  Icons.delete,
+                                                                  color:
                                                                       primaryColor,
-                                                                    ),
-                                                                    SizedBox(
-                                                                      width: 8.0,
-                                                                    ),
-                                                                    Text("Delete"),
-                                                                  ],
-                                                                )))
+                                                                ),
+                                                                SizedBox(
+                                                                  width: 8.0,
+                                                                ),
+                                                                Text("Delete"),
+                                                              ],
+                                                            )))
                                                       ];
                                                     },
                                                     onSelected: (String value) {
@@ -692,28 +651,41 @@ class _DailogCategoryScreenState extends State<DailogCategoryScreen> {
                                                               return BottomSheet(
                                                                 promptName: widget
                                                                     .promptList[
-                                                                index]
+                                                                        index]
                                                                     .promptTitle,
                                                                 resourceList: widget
                                                                     .resourceList,
                                                                 promptId: widget
                                                                     .promptList[
-                                                                index]
+                                                                        index]
                                                                     .promptId,
                                                               );
                                                             },
                                                           );
                                                           break;
                                                         case 'viewprompt':
-                                                          Navigator.push(context,
+                                                          Navigator.push(
+                                                              context,
                                                               MaterialPageRoute(
-                                                                builder: (context) {
-                                                                  return DailogPrompt(promptTitle: state.def_prompt_list[index].promptTitle,
-                                                                  side2contentTitle: state.def_prompt_list[index].promptSide2Content,
-                                                                    side1contentTitle: state.def_prompt_list[index].promptSide1Content,
-                                                                  );
-                                                                },
-                                                              ));
+                                                            builder: (context) {
+                                                              return DailogPrompt(
+                                                                side1type: "",
+                                                                promptTitle: state
+                                                                    .def_prompt_list[
+                                                                        index]
+                                                                    .promptTitle,
+                                                                side2contentTitle: state
+                                                                    .def_prompt_list[
+                                                                        index]
+                                                                    .promptSide2Content,
+                                                                side1contentTitle: state
+                                                                    .def_prompt_list[
+                                                                        index]
+                                                                    .promptSide1Content,
+                                                                side2type: "",
+                                                              );
+                                                            },
+                                                          ));
                                                           break;
                                                         case 'delete':
                                                           break;
@@ -731,7 +703,6 @@ class _DailogCategoryScreenState extends State<DailogCategoryScreen> {
                                   ),
                                 ],
                               );
-
                             }
                           }
                           return Text("Something wents wrong");
@@ -746,166 +717,166 @@ class _DailogCategoryScreenState extends State<DailogCategoryScreen> {
     );
   }
 
-  // Future<void> _showImageDialog(
-  //     BuildContext context, String content, String title) async {
-  //   FlickManager? _flickManager;
-  //   final audioPlayer = AudioPlayer();
-  //   _flickManager = FlickManager(
-  //     videoPlayerController: VideoPlayerController.network(
-  //         'https://selflearning.dtechex.com/public/video/$content'),
-  //   );
-  //
-  //   print("getfilecontent==>${getFileType(content)}");
-  //   print("content$content");
-  //   return showDialog<void>(
-  //     context: context,
-  //     builder: (BuildContext context) {
-  //       return AlertDialog(
-  //         backgroundColor: Colors.transparent,
-  //         contentPadding: EdgeInsets.symmetric(horizontal: 0, vertical: 0),
-  //         content: Container(
-  //           padding: EdgeInsets.zero,
-  //           width: double.maxFinite,
-  //           height: 300,
-  //           child: getFileType(content) == 'Photo'
-  //               ? PhotoView(
-  //                   imageProvider: NetworkImage(
-  //                     "https://selflearning.dtechex.com/public/image/$content",
-  //                   ),
-  //                   minScale: PhotoViewComputedScale.contained,
-  //                   maxScale: PhotoViewComputedScale.covered * 2,
-  //                 )
-  //               : getFileType(content) == 'Video'
-  //                   ? FlickVideoPlayer(
-  //                       flickVideoWithControls: FlickVideoWithControls(
-  //                         videoFit: BoxFit.contain,
-  //                         controls: FlickPortraitControls(),
-  //                       ),
-  //                       flickManager: _flickManager!,
-  //                     )
-  //                   : getFileType(content) == "Audio"
-  //                       ? Container(
-  //                           color: Colors.white,
-  //                           child: Column(
-  //                             mainAxisAlignment: MainAxisAlignment.center,
-  //                             children: [
-  //                               StreamBuilder<PlaybackEvent>(
-  //                                 stream: audioPlayer.playbackEventStream,
-  //                                 builder: (context, snapshot) {
-  //                                   final processingState =
-  //                                       snapshot.data?.processingState ??
-  //                                           ProcessingState.idle;
-  //                                   final playing = processingState ==
-  //                                       ProcessingState.ready;
-  //                                   final buffering = processingState ==
-  //                                       ProcessingState.buffering;
-  //                                   final audioCompleted = processingState ==
-  //                                       ProcessingState.completed;
-  //                                   bool _isPlaying = false;
-  //
-  //                                   // Display different icons based on the processing state
-  //                                   return BlurryContainer(
-  //                                     padding: EdgeInsets.symmetric(
-  //                                         horizontal: 5, vertical: 5),
-  //                                     color: Colors.white,
-  //                                     elevation: 5,
-  //                                     borderRadius: BorderRadius.circular(90),
-  //                                     child: IconButton(
-  //                                       icon: buffering
-  //                                           ? CircularProgressIndicator()
-  //                                           : playing
-  //                                               ? Icon(Icons.pause)
-  //                                               : Icon(Icons.play_arrow),
-  //                                       onPressed: () async {
-  //                                         if (playing) {
-  //                                           audioPlayer.pause();
-  //                                         } else {
-  //                                           audioPlayer.setUrl(
-  //                                               "https://selflearning.dtechex.com/public/audio/$content");
-  //                                           audioPlayer.play();
-  //                                           if (audioCompleted) {
-  //                                             await audioPlayer.seek(
-  //                                                 const Duration(seconds: 0));
-  //                                             await audioPlayer.pause();
-  //                                           }
-  //                                         }
-  //                                       },
-  //                                     ),
-  //                                   );
-  //                                 },
-  //                               ),
-  //                               StreamBuilder<Duration>(
-  //                                 stream: audioPlayer.durationStream.map(
-  //                                     (duration) => duration ?? Duration.zero),
-  //                                 builder: (context, snapshot) {
-  //                                   final duration =
-  //                                       snapshot.data ?? Duration.zero;
-  //                                   return StreamBuilder<Duration>(
-  //                                     stream: audioPlayer.positionStream,
-  //                                     builder: (context, snapshot) {
-  //                                       final position =
-  //                                           snapshot.data ?? Duration.zero;
-  //                                       return Slider(
-  //                                         value: position.inMilliseconds
-  //                                             .toDouble()
-  //                                             .clamp(
-  //                                                 0.0,
-  //                                                 duration.inMilliseconds
-  //                                                     .toDouble()),
-  //                                         min: 0.0,
-  //                                         max: duration.inMilliseconds
-  //                                             .toDouble(),
-  //                                         onChanged: (value) {
-  //                                           final newPosition = Duration(
-  //                                               milliseconds: value.toInt());
-  //                                           audioPlayer.seek(newPosition);
-  //                                         },
-  //                                       );
-  //                                     },
-  //                                   );
-  //                                 },
-  //                               ),
-  //                               StreamBuilder<Duration>(
-  //                                 stream: audioPlayer.durationStream.map(
-  //                                     (duration) => duration ?? Duration.zero),
-  //                                 builder: (context, snapshot) {
-  //                                   final duration =
-  //                                       snapshot.data ?? Duration.zero;
-  //                                   return Text(
-  //                                     "${formatDuration(duration)}",
-  //                                   );
-  //                                 },
-  //                               ),
-  //                             ],
-  //                           ),
-  //                         ) // Display the title for audio content
-  //                       : Center(
-  //                           child: Container(
-  //                               color: Colors.white,
-  //                               width: double.maxFinite,
-  //                               height: double.maxFinite,
-  //                               child: Center(
-  //                                   child: Text(
-  //                                 title,
-  //                                 style: TextStyle(
-  //                                     fontSize: 24,
-  //                                     color: Colors.red,
-  //                                     fontWeight: FontWeight.bold),
-  //                               )))), // Display the title for unsupported content
-  //         ),
-  //         actions: <Widget>[
-  //           TextButton(
-  //             onPressed: () {
-  //               Navigator.of(context).pop();
-  //               _flickManager?.dispose();
-  //             },
-  //             child: Text('Close'),
-  //           ),
-  //         ],
-  //       );
-  //     },
-  //   );
-  // }
+// Future<void> _showImageDialog(
+//     BuildContext context, String content, String title) async {
+//   FlickManager? _flickManager;
+//   final audioPlayer = AudioPlayer();
+//   _flickManager = FlickManager(
+//     videoPlayerController: VideoPlayerController.network(
+//         'https://selflearning.dtechex.com/public/video/$content'),
+//   );
+//
+//   print("getfilecontent==>${getFileType(content)}");
+//   print("content$content");
+//   return showDialog<void>(
+//     context: context,
+//     builder: (BuildContext context) {
+//       return AlertDialog(
+//         backgroundColor: Colors.transparent,
+//         contentPadding: EdgeInsets.symmetric(horizontal: 0, vertical: 0),
+//         content: Container(
+//           padding: EdgeInsets.zero,
+//           width: double.maxFinite,
+//           height: 300,
+//           child: getFileType(content) == 'Photo'
+//               ? PhotoView(
+//                   imageProvider: NetworkImage(
+//                     "https://selflearning.dtechex.com/public/image/$content",
+//                   ),
+//                   minScale: PhotoViewComputedScale.contained,
+//                   maxScale: PhotoViewComputedScale.covered * 2,
+//                 )
+//               : getFileType(content) == 'Video'
+//                   ? FlickVideoPlayer(
+//                       flickVideoWithControls: FlickVideoWithControls(
+//                         videoFit: BoxFit.contain,
+//                         controls: FlickPortraitControls(),
+//                       ),
+//                       flickManager: _flickManager!,
+//                     )
+//                   : getFileType(content) == "Audio"
+//                       ? Container(
+//                           color: Colors.white,
+//                           child: Column(
+//                             mainAxisAlignment: MainAxisAlignment.center,
+//                             children: [
+//                               StreamBuilder<PlaybackEvent>(
+//                                 stream: audioPlayer.playbackEventStream,
+//                                 builder: (context, snapshot) {
+//                                   final processingState =
+//                                       snapshot.data?.processingState ??
+//                                           ProcessingState.idle;
+//                                   final playing = processingState ==
+//                                       ProcessingState.ready;
+//                                   final buffering = processingState ==
+//                                       ProcessingState.buffering;
+//                                   final audioCompleted = processingState ==
+//                                       ProcessingState.completed;
+//                                   bool _isPlaying = false;
+//
+//                                   // Display different icons based on the processing state
+//                                   return BlurryContainer(
+//                                     padding: EdgeInsets.symmetric(
+//                                         horizontal: 5, vertical: 5),
+//                                     color: Colors.white,
+//                                     elevation: 5,
+//                                     borderRadius: BorderRadius.circular(90),
+//                                     child: IconButton(
+//                                       icon: buffering
+//                                           ? CircularProgressIndicator()
+//                                           : playing
+//                                               ? Icon(Icons.pause)
+//                                               : Icon(Icons.play_arrow),
+//                                       onPressed: () async {
+//                                         if (playing) {
+//                                           audioPlayer.pause();
+//                                         } else {
+//                                           audioPlayer.setUrl(
+//                                               "https://selflearning.dtechex.com/public/audio/$content");
+//                                           audioPlayer.play();
+//                                           if (audioCompleted) {
+//                                             await audioPlayer.seek(
+//                                                 const Duration(seconds: 0));
+//                                             await audioPlayer.pause();
+//                                           }
+//                                         }
+//                                       },
+//                                     ),
+//                                   );
+//                                 },
+//                               ),
+//                               StreamBuilder<Duration>(
+//                                 stream: audioPlayer.durationStream.map(
+//                                     (duration) => duration ?? Duration.zero),
+//                                 builder: (context, snapshot) {
+//                                   final duration =
+//                                       snapshot.data ?? Duration.zero;
+//                                   return StreamBuilder<Duration>(
+//                                     stream: audioPlayer.positionStream,
+//                                     builder: (context, snapshot) {
+//                                       final position =
+//                                           snapshot.data ?? Duration.zero;
+//                                       return Slider(
+//                                         value: position.inMilliseconds
+//                                             .toDouble()
+//                                             .clamp(
+//                                                 0.0,
+//                                                 duration.inMilliseconds
+//                                                     .toDouble()),
+//                                         min: 0.0,
+//                                         max: duration.inMilliseconds
+//                                             .toDouble(),
+//                                         onChanged: (value) {
+//                                           final newPosition = Duration(
+//                                               milliseconds: value.toInt());
+//                                           audioPlayer.seek(newPosition);
+//                                         },
+//                                       );
+//                                     },
+//                                   );
+//                                 },
+//                               ),
+//                               StreamBuilder<Duration>(
+//                                 stream: audioPlayer.durationStream.map(
+//                                     (duration) => duration ?? Duration.zero),
+//                                 builder: (context, snapshot) {
+//                                   final duration =
+//                                       snapshot.data ?? Duration.zero;
+//                                   return Text(
+//                                     "${formatDuration(duration)}",
+//                                   );
+//                                 },
+//                               ),
+//                             ],
+//                           ),
+//                         ) // Display the title for audio content
+//                       : Center(
+//                           child: Container(
+//                               color: Colors.white,
+//                               width: double.maxFinite,
+//                               height: double.maxFinite,
+//                               child: Center(
+//                                   child: Text(
+//                                 title,
+//                                 style: TextStyle(
+//                                     fontSize: 24,
+//                                     color: Colors.red,
+//                                     fontWeight: FontWeight.bold),
+//                               )))), // Display the title for unsupported content
+//         ),
+//         actions: <Widget>[
+//           TextButton(
+//             onPressed: () {
+//               Navigator.of(context).pop();
+//               _flickManager?.dispose();
+//             },
+//             child: Text('Close'),
+//           ),
+//         ],
+//       );
+//     },
+//   );
+// }
 }
 
 class ListItem {
@@ -1039,12 +1010,15 @@ class _BottomSheetState extends State<BottomSheet> {
 }
 
 class SideSheetDrawer extends StatefulWidget {
-String resourceId;
+  String resourceId;
   String ResourceName;
   List<PromptListforResourceModel> resPromptList;
 
   SideSheetDrawer(
-      {super.key, required this.resPromptList, required this.ResourceName, required this.resourceId});
+      {super.key,
+      required this.resPromptList,
+      required this.ResourceName,
+      required this.resourceId});
 
   @override
   State<SideSheetDrawer> createState() => _SideSheetDrawerState();
@@ -1076,112 +1050,125 @@ class _SideSheetDrawerState extends State<SideSheetDrawer> {
     super.initState();
     initilizeflowList();
   }
+
   @override
-
-
   Widget build(BuildContext context) {
     final ColorScheme colorScheme = Theme.of(context).colorScheme;
     final Color oddItemColor = colorScheme.primary.withOpacity(0.05);
     final Color evenItemColor = colorScheme.primary.withOpacity(0.15);
     return BlocProvider(
-  create: (context) => AddPromptResCubit()..getPromptFromResource( resourceId: widget.resourceId),
-  child: BlocBuilder<AddPromptResCubit, AddPromptResState>(
-  builder: (context, state) {
-
-    if(state is AddPromptResLoading){
-      return Container(
-        width: double.infinity,
-        height: MediaQuery.of(context).size.height*0.8,
-        alignment: Alignment.center,
-        child: CircularProgressIndicator(),
-      );
-    }
-    if(state is GetPromptFromResourceSuccess){
-      return Container(
-        width: double.infinity,
-        height: double.infinity,
-        color: Colors.deepOrangeAccent[100],
-        child: Column(
-          children: [
-
-            SizedBox(
-              height: 10,
-            ),
-            Container(
-              color: Colors.deepOrangeAccent[100],
-              padding: EdgeInsets.symmetric(horizontal: 5, vertical: 5),
+      create: (context) => AddPromptResCubit()
+        ..getPromptFromResource(resourceId: widget.resourceId),
+      child: BlocBuilder<AddPromptResCubit, AddPromptResState>(
+        builder: (context, state) {
+          if (state is AddPromptResLoading) {
+            return Container(
+              width: double.infinity,
               height: MediaQuery.of(context).size.height * 0.8,
-              width: MediaQuery.of(context).size.width * 0.9,
-              child: state.flowModel.length==0?Center(child: Text("sorry no prompt", style: TextStyle(color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                 fontSize: 24
-              ),)):ReorderableListView(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                children: <Widget>[
-                  for (int index = 0; index < state.flowModel.length; index += 1)
-                    Container(
-                      height: 50,
-                      key: Key('$index'),
-                      color: Colors.green[100],
-                      margin: EdgeInsets.only(bottom: 10),
-                      child: ListTile(
-                        leading: CircleAvatar(
-                          maxRadius: 17,
-                          backgroundColor: Colors.deepOrangeAccent,
-                          foregroundColor: Colors.black,
-                          child: Text(
-                            extractFirstLetter(flowList[index].promptName),
-                            style: TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                        ),
-                        trailing: Icon(Icons.menu),
-                        tileColor: index.isOdd ? oddItemColor : evenItemColor,
-                        title: Row(
-                          children: [Text(state.flowModel[index].promptName)],
-                        ),
-                      ),
-                    ),
-                ],
-                onReorder: (int oldIndex, int newIndex) {
-                  setState(() {
-                    if (oldIndex < newIndex) {
-                      newIndex -= 1;
-                    }
-                    //print(state.addFlowModel)
-                    FlowDataModel item = state.flowModel.removeAt(oldIndex);
-                    state.flowModel.insert(newIndex, item);
+              alignment: Alignment.center,
+              child: CircularProgressIndicator(),
+            );
+          }
+          if (state is GetPromptFromResourceSuccess) {
+            return Container(
+              width: double.infinity,
+              height: double.infinity,
+              color: Colors.deepOrangeAccent[100],
+              child: Column(
+                children: [
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Container(
+                    color: Colors.deepOrangeAccent[100],
+                    padding: EdgeInsets.symmetric(horizontal: 5, vertical: 5),
+                    height: MediaQuery.of(context).size.height * 0.8,
+                    width: MediaQuery.of(context).size.width * 0.9,
+                    child: state.flowModel.length == 0
+                        ? Center(
+                            child: Text(
+                            "sorry no prompt",
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 24),
+                          ))
+                        : ReorderableListView(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 10, vertical: 10),
+                            children: <Widget>[
+                              for (int index = 0;
+                                  index < state.flowModel.length;
+                                  index += 1)
+                                Container(
+                                  height: 50,
+                                  key: Key('$index'),
+                                  color: Colors.green[100],
+                                  margin: EdgeInsets.only(bottom: 10),
+                                  child: ListTile(
+                                    leading: CircleAvatar(
+                                      maxRadius: 17,
+                                      backgroundColor: Colors.deepOrangeAccent,
+                                      foregroundColor: Colors.black,
+                                      child: Text(
+                                        extractFirstLetter(
+                                            flowList[index].promptName),
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                    ),
+                                    trailing: Icon(Icons.menu),
+                                    tileColor: index.isOdd
+                                        ? oddItemColor
+                                        : evenItemColor,
+                                    title: Row(
+                                      children: [
+                                        Text(state.flowModel[index].promptName)
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                            ],
+                            onReorder: (int oldIndex, int newIndex) {
+                              setState(() {
+                                if (oldIndex < newIndex) {
+                                  newIndex -= 1;
+                                }
+                                //print(state.addFlowModel)
+                                FlowDataModel item =
+                                    state.flowModel.removeAt(oldIndex);
+                                state.flowModel.insert(newIndex, item);
 /*
                   PromtModel model = state.promtModel!.removeAt(oldIndex);
                   state.promtModel!.insert(newIndex, model);*/
-                  });
-                },
+                              });
+                            },
+                          ),
+                  ),
+                  state.flowModel.length == 0
+                      ? SizedBox()
+                      : Container(
+                          width: MediaQuery.of(context).size.width * 0.6,
+                          height: 50,
+                          child: ElevatedButton(
+                              onPressed: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => SlideShowScreen(
+                                            flowList: state.flowModel,
+                                            flowName: "flowName")));
+                              },
+                              child: Text("Play prompts")),
+                        )
+                ],
               ),
-            ),
-             state.flowModel.length==0?SizedBox():Container(
-              width: MediaQuery.of(context).size.width * 0.6,
-              height: 50,
-              child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => SlideShowScreen(
-                                flowList: state.flowModel, flowName: "flowName")));
-                  },
-                  child: Text("Play prompts")),
-            )
-          ],
-        ),
-      );
-
-
-    }
-    return Text("Something went wrong");
-  },
-
-
-),
-);
+            );
+          }
+          return Text("Something went wrong");
+        },
+      ),
+    );
   }
 
   String extractFirstLetter(String text) {
@@ -1191,3 +1178,456 @@ class _SideSheetDrawerState extends State<SideSheetDrawer> {
     return text.substring(0, 1).toUpperCase();
   }
 }
+
+class BottomSheetForCreateFlow extends StatefulWidget {
+  String dailogId;
+  List<AddResourceListModel> reswithPromptList;
+  List<AddPromptListModel> promptList;
+   BottomSheetForCreateFlow({super.key, required this.dailogId, required this.reswithPromptList,
+  required this.promptList
+  });
+
+  @override
+  State<BottomSheetForCreateFlow> createState() =>
+      _BottomSheetForCreateFlowState();
+}
+
+class _BottomSheetForCreateFlowState extends State<BottomSheetForCreateFlow> {
+  TextEditingController dailog_create_controller = TextEditingController();
+  AwesomeDialog createDailog() {
+    return AwesomeDialog(
+      context: context,
+      headerAnimationLoop: true,
+      animType: AnimType.TOPSLIDE,
+      // Set the desired animation type
+      // Adjust the animation duration
+      dialogType: DialogType.SUCCES,
+      customHeader: Container(
+        width: double.infinity,
+        height: double.infinity,
+        decoration: BoxDecoration(
+            color: Colors.blue[100], borderRadius: BorderRadius.circular(90)),
+        child: Icon(
+          Icons.file_copy, // Change this to the desired icon
+          size: 48.0, // Adjust the icon size
+          color: Colors.red, // Change the icon color
+        ),
+      ),
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Text(
+            'Create Flow',
+            style: TextStyle(fontStyle: FontStyle.italic),
+          ),
+          SizedBox(
+            height: 10,
+          ),
+          Container(
+            margin: EdgeInsets.symmetric(horizontal: 10),
+            child: TextFormField(
+              controller: dailog_create_controller,
+              decoration: InputDecoration(
+                hintText: 'Dialog Name',
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10.0),
+                  borderSide: BorderSide(color: Colors.red, width: 1.0),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10.0),
+                  borderSide: BorderSide(color: Colors.red, width: 1.0),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10.0),
+                  borderSide: BorderSide(color: Colors.red, width: 1.0),
+                ),
+              ),
+            ),
+          )
+        ],
+      ),
+      title: 'This is Ignored',
+      desc: 'This is also Ignored',
+      btnOkOnPress: () {
+        if (dailog_create_controller.text.isEmpty) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              /// need to set following properties for best effect of awesome_snackbar_content
+              elevation: 0,
+
+              duration: Duration(seconds: 5),
+              behavior: SnackBarBehavior.floating,
+              backgroundColor: Colors.transparent,
+              content: AwesomeSnackbarContent(
+                title: "Error",
+                message: 'Dailog is not be empty!',
+
+                /// change contentType to ContentType.success, ContentType.warning, or ContentType.help for variants
+                contentType: ContentType.failure,
+              ),
+            ),
+          );
+        } else {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => CreateDailogFlow(
+                    reswithPromptList: widget.reswithPromptList,
+                    dailog_flow_name: dailog_create_controller.text,
+                    promptList: widget.promptList,
+                    dailogId: widget.dailogId,
+                  )));
+        }
+      },
+      btnOkColor: Colors.green,
+      closeIcon: Icon(Icons.close),
+      btnCancelOnPress: () {},
+      btnOkText: "Create dailog",
+    )..show();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocProvider(
+  create: (context) => AddPromptResCubit()..getFlowDialog(dailogId: widget.dailogId),
+  child: BlocConsumer<AddPromptResCubit, AddPromptResState>(
+  listener: (context, state) {
+
+    if(state is GetFlowDeletedSuccess){
+      context.read<AddPromptResCubit>().getFlowDialog(dailogId: widget.dailogId);
+    }
+
+  },
+  builder: (context, state) {
+    return Container(
+    height: MediaQuery.of(context).size.height*0.9,
+    child: Column(
+      children: [
+        BlocBuilder<AddPromptResCubit, AddPromptResState>(
+        builder: (context, state) {
+          if(state is AddPromptResLoading){
+            return Container(
+              height: MediaQuery.of(context).size.height*0.7,
+              width : double.infinity,
+                child: Center(
+                child: CircularProgressIndicator(),
+            ),
+            );
+          }
+          if(state is AddPromptResError){
+            return Container(
+              height: MediaQuery.of(context).size.height*0.7,
+              width : double.infinity,
+              child: Center(
+                child: Text(state.errorMessage),
+              ),
+            );
+          }
+          if(state is GetFlowSuccess){
+            if(state.flowList.length==0){
+              return Container(
+                height: MediaQuery.of(context).size.height*0.7,
+                width : double.infinity,
+                child: Center(
+                  child: Text("Sorry no flow is created"),
+                ),
+              );
+            }
+            else {
+              return Container(
+                height: MediaQuery
+                    .of(context)
+                    .size
+                    .height * 0.8,
+                width: double.infinity,
+                color: Colors.grey[100],
+                child: Column(
+                  children: <Widget>[
+                    Icon(
+                      Icons.menu, // Replace with your desired icon
+                      size: 30.0,
+                      color: Colors.blue, // Change the color as needed
+                    ),
+                    Container(
+                      padding: EdgeInsets.only(top: 5),
+                      width: double.infinity,
+                      height: MediaQuery
+                          .of(context)
+                          .size
+                          .height * 0.7,
+                      color: Colors.white,
+                      child: CustomScrollView(
+                        slivers: <Widget>[
+                          SliverGrid(
+                            delegate: SliverChildBuilderDelegate(
+                                  (context, index) {
+                                     print("print flow list length ${state.flowList.length}");
+                                    final title = state.flowList[index].title;
+                                    final flowId = state.flowList[index].id;
+                                return Card(
+                                  margin: EdgeInsets.symmetric(horizontal: 5),
+                                  color: Colors.teal[50],
+                                  child: Container(
+
+                                    alignment: Alignment.center,
+                                    child: ListTile(
+                                      onTap: (){
+                                        List<PromptListModel> promptList = [];
+                                        state.flowList[index].flowList.forEach((item) {
+                                          promptList.add(PromptListModel(item.promptName, item.promptId,Colors.green));
+                                        }
+                                        );
+                                        Navigator.push(context, MaterialPageRoute(builder: (context) => AddPromptsToFlowScreen(
+                                          update: true,
+                                          title: title,
+                                          flowId: flowId,
+                                          promptList: promptList,
+                                          rootId: widget.dailogId,
+                                        ),)).then((value) {
+                                          context.read<CreateFlowBloc>().add(LoadAllFlowEvent(catID: widget.dailogId));
+                                        });
+                                      },
+                                      title: Text(state.flowList[index].title??"flow title"),
+                                      trailing: IconButton(
+                                        onPressed: (){
+                                          context.read<AddPromptResCubit>()..getFlowDelete(dailogId: widget.dailogId, context: context,
+                                              flowId: flowId, flowList: state.flowList, deleteIndex: index);
+                                        },
+                                        icon: Icon(Icons.delete, color: Colors.red,),
+                                      ),
+                                      leading: Container(
+                                        height: 40,
+                                        width: 40,
+                                        alignment: Alignment.center,
+                                        decoration: BoxDecoration(
+                                            color: Colors.white,
+                                            border: Border.all(
+                                                width: 2, color: Colors.pinkAccent),
+                                            borderRadius: BorderRadius.circular(90)
+                                        ),
+                                        child: Text("F"),
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              },
+                              childCount: state.flowList.length,
+                            ),
+                            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 1,
+                              mainAxisSpacing: 8,
+                              crossAxisSpacing: 2,
+                              childAspectRatio: 7.0,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Spacer(),
+
+                    Spacer(),
+
+                  ],
+                ),
+              );
+            }
+
+
+
+          }
+          return Text("Some things went wrong");
+        },
+),
+        ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            padding: EdgeInsets.symmetric(horizontal: 15, vertical: 20),
+            // Other button styling options
+          ),
+          onPressed: () {
+            createDailog();
+          },
+          child: Text("Create flow"),
+        ),
+
+      ],
+    ),
+  );
+  },
+),
+);
+  }
+}
+class BottomSheetForPrimaryFlow extends StatefulWidget {
+  String dailogId;
+   BottomSheetForPrimaryFlow({super.key, required this.dailogId});
+
+  @override
+  State<BottomSheetForPrimaryFlow> createState() => _BottomSheetForPrimaryFlowState();
+}
+
+class _BottomSheetForPrimaryFlowState extends State<BottomSheetForPrimaryFlow> {
+  @override
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (context) => AddPromptResCubit()..getFlowDialog(dailogId: widget.dailogId),
+      child: BlocConsumer<AddPromptResCubit, AddPromptResState>(
+        listener: (context, state) {
+
+          if(state is GetFlowDeletedSuccess){
+            context.read<AddPromptResCubit>().getFlowDialog(dailogId: widget.dailogId);
+          }
+
+        },
+        builder: (context, state) {
+          return Container(
+            height: MediaQuery.of(context).size.height*0.9,
+            child: Column(
+              children: [
+                BlocBuilder<AddPromptResCubit, AddPromptResState>(
+                  builder: (context, state) {
+                    if(state is AddPromptResLoading){
+                      return Container(
+                        height: MediaQuery.of(context).size.height*0.7,
+                        width : double.infinity,
+                        child: Center(
+                          child: CircularProgressIndicator(),
+                        ),
+                      );
+                    }
+                    if(state is AddPromptResError){
+                      return Container(
+                        height: MediaQuery.of(context).size.height*0.7,
+                        width : double.infinity,
+                        child: Center(
+                          child: Text(state.errorMessage),
+                        ),
+                      );
+                    }
+                    if(state is GetFlowSuccess){
+                      if(state.flowList.length==0){
+                        return Container(
+                          height: MediaQuery.of(context).size.height*0.7,
+                          width : double.infinity,
+                          child: Center(
+                            child: Text("Sorry no flow is created"),
+                          ),
+                        );
+                      }
+                      else {
+                        return Container(
+                          height: MediaQuery
+                              .of(context)
+                              .size
+                              .height * 0.8,
+                          width: double.infinity,
+                          color: Colors.grey[100],
+                          child: Column(
+                            children: <Widget>[
+                              Icon(
+                                Icons.menu, // Replace with your desired icon
+                                size: 30.0,
+                                color: Colors.blue, // Change the color as needed
+                              ),
+                              Container(
+                                padding: EdgeInsets.only(top: 5),
+                                width: double.infinity,
+                                height: MediaQuery
+                                    .of(context)
+                                    .size
+                                    .height * 0.7,
+                                color: Colors.white,
+                                child: CustomScrollView(
+                                  slivers: <Widget>[
+                                    SliverGrid(
+                                      delegate: SliverChildBuilderDelegate(
+                                            (context, index) {
+                                          print("print flow list length ${state.flowList.length}");
+                                          final title = state.flowList[index].title;
+                                          final flowId = state.flowList[index].id;
+                                          return Card(
+                                            margin: EdgeInsets.symmetric(horizontal: 5),
+                                            color: Colors.teal[50],
+                                            child: Container(
+
+                                              alignment: Alignment.center,
+                                              child: ListTile(
+                                                onTap: (){
+                                                  List<PromptListModel> promptList = [];
+                                                  state.flowList[index].flowList.forEach((item) {
+                                                    promptList.add(PromptListModel(item.promptName, item.promptId,Colors.green));
+                                                  }
+                                                  );
+                                                  Navigator.push(context, MaterialPageRoute(builder: (context) => AddPromptsToFlowScreen(
+                                                    update: true,
+                                                    title: title,
+                                                    flowId: flowId,
+                                                    promptList: promptList,
+                                                    rootId: widget.dailogId,
+                                                  ),)).then((value) {
+                                                    context.read<CreateFlowBloc>().add(LoadAllFlowEvent(catID: widget.dailogId));
+                                                  });
+                                                },
+                                                title: Text(state.flowList[index].title??"flow title"),
+                                                trailing: Container(
+                                                  width: 50,
+                                                  height: 50,
+                                                  decoration: BoxDecoration(
+                                                    color:Colors.greenAccent[100],
+                                                    borderRadius: BorderRadius.circular(90)
+                                                  ),
+                                                  child: Icon(Icons.check,color: Colors.white,),
+                                                ),
+                                                leading: Container(
+                                                  height: 40,
+                                                  width: 40,
+                                                  alignment: Alignment.center,
+                                                  decoration: BoxDecoration(
+                                                      color: Colors.white,
+                                                      border: Border.all(
+                                                          width: 2, color: Colors.pinkAccent),
+                                                      borderRadius: BorderRadius.circular(90)
+                                                  ),
+                                                  child: Text("F"),
+                                                ),
+                                              ),
+                                            ),
+                                          );
+                                        },
+                                        childCount: state.flowList.length,
+                                      ),
+                                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                                        crossAxisCount: 1,
+                                        mainAxisSpacing: 8,
+                                        crossAxisSpacing: 2,
+                                        childAspectRatio: 7.0,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              Spacer(),
+
+                              Spacer(),
+
+                            ],
+                          ),
+                        );
+                      }
+
+
+
+                    }
+                    return Text("Some things went wrong");
+                  },
+                ),
+
+              ],
+            ),
+          );
+        },
+      ),
+    );
+  }
+}
+

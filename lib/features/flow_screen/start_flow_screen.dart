@@ -472,26 +472,6 @@ class _FrontPageWidgetState extends State<FrontPageWidget> {
               (position, bufferedPosition, duration) => PositionData(
               position, bufferedPosition, duration ?? Duration.zero));
 
-/*
-  ChewieController _createChewieController(String videoUrl) {
-    final videoPlayerController = VideoPlayerController.network(videoUrl);
-    ChewieController chewieController = ChewieController(
-      videoPlayerController: videoPlayerController,
-      autoInitialize: true,
-      autoPlay: true,
-      looping: false,
-      errorBuilder: (context, errorMessage) {
-        return Center(
-          child: Text(
-            errorMessage,
-            style: const TextStyle(color: Colors.white),
-          ),
-        );
-      },
-    );
-    return chewieController!;
-  }
-*/
 
   @override
   void dispose() {
@@ -611,7 +591,8 @@ class _BackPageWidgetState extends State<BackPageWidget> {
                               .progress,
                         ),
                       ),
-                  errorWidget: (context, url, error) => const Icon(Icons.error),),)
+                  errorWidget: (context, url, error) => const Icon(Icons.error),)
+                ,)
                   : getMediaType(widget.promtModel![widget.index].side2!.content!) == 'video'
                   ? Column(
                     children: [

@@ -89,7 +89,9 @@ class _DailogScreenState extends State<DailogScreen> {
         : MediaQuery.of(context).size.width < 1200
             ? MediaQuery.of(context).size.width * 0.6
             : MediaQuery.of(context).size.width / 3;
-    return BlocProvider(
+    return
+
+      BlocProvider(
   create: (context) => GetDailogBloc()..add(HitGetDailogEvent()),
   child: BlocListener<GetDailogBloc, GetDailogState>(
   listener: (context, state) {

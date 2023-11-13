@@ -84,30 +84,7 @@ class _SubCategoryScreenState extends State<SubCategoryScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        // bottom: TabBar(
-        //   tabs: [
-        //
-        //     Column(
-        //       children: [
-        //         Tab(icon: Icon(Icons.perm_media,)),
-        //         Text('Resources')
-        //       ],
-        //     ),
-        //     Column(
-        //       children: [
-        //         Tab(icon: Icon(Icons.list_alt,)),
-        //         Text('Subcategory list')
-        //       ],
-        //     ),
-        //   ],
-        //   onTap: (value) {
-        //     setState(() {
-        //       _tabIndex = value;
-        //     });
-        //   },
-        //   isScrollable: false,
-        //
-        // ),
+
           centerTitle: false,
           title: Text(widget.categoryName ?? "Subcategory",
             overflow: TextOverflow.ellipsis,),

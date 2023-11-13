@@ -2,8 +2,10 @@ import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:self_learning_app/features/add_Dailog/repo/create_dailog_repo.dart';
 
+import '../../dailog_category/bloc/add_prompt_res_cubit.dart';
 import '../model/addDailog_model.dart';
 
 class CreateDailogFlow extends StatefulWidget {
@@ -69,6 +71,8 @@ class _CreateDailogFlowState extends State<CreateDailogFlow> {
   }
   List<PromptSelectedModel> promptSelect = [];
   List<String> promptIds = [];
+  final AddPromptResCubit cubitAddPromptRes = AddPromptResCubit();
+
   @override
   void initState() {
     // TODO: implement initState
@@ -80,7 +84,9 @@ class _CreateDailogFlowState extends State<CreateDailogFlow> {
   int count = 0;
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return BlocProvider(
+  create: (context) => cubitAddPromptRes..getResPrompt(dailogId: widget.dailogId),
+  child: Scaffold(
       appBar: AppBar(title: Text("Create Dailog flow"),
       actions: [
         Container(
@@ -113,78 +119,100 @@ class _CreateDailogFlowState extends State<CreateDailogFlow> {
         )
       ],
       ),
-      body: CustomScrollView(
-        slivers: <Widget>[
-          SliverGrid(
-            gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-              maxCrossAxisExtent: 500.0,
-              mainAxisSpacing: 5.0,
-              crossAxisSpacing: 10.0,
-              childAspectRatio: 5.0,
-            ),
-            delegate: SliverChildBuilderDelegate(
-                  (BuildContext context, int index) {
-                    promptSelect.add(PromptSelectedModel(promptId: widget.promptList[index].promptId, ischeck: false));
-                return Card(
-                  color: Colors.teal[50],
-                  margin: EdgeInsets.only(left: 5,right: 5,top: 10),
-
-                  child: Container(
-                    alignment: Alignment.center,
-                    child: ListTile(
-                      title: Text(widget.promptList[index].promptTitle),
-                    leading: Container(
-                      height: 40, width: 40,
-                      alignment: Alignment.center,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(90),
-                        color: Colors.pinkAccent,
-                        border: Border.all(color: Colors.white, width: 2),
-                      ),
-                      child: Text(index.toString(),style: TextStyle(color: Colors.white),),
-                    ),
-                    trailing: promptSelect[index].ischeck?
-                    Container(
-                      padding: EdgeInsets.symmetric(horizontal: 5,vertical: 5),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(90),
-                        color: Colors.white,
-                      ),
-                      child: Icon(Icons.check, color: Colors.lightGreen,),
-
-                    ):SizedBox(),
-                      onTap: (){
-                      if(promptSelect[index].ischeck==true){
-                        promptSelect[index].ischeck=false;
-                        promptIds.remove(widget.promptList[index].promptId);
-                        count = count-1;
-                        print("promptIds remove $promptIds");
-                        setState(() {
-
-                        });
-                      }
-                      else if(promptSelect[index].ischeck==false){
-                        promptSelect[index].ischeck=true;
-                        count = count+1;
-                        promptIds.add(widget.promptList[index].promptId);
-                        print("promptIds add $promptIds");
-
-                        setState(() {
-
-                        });
-                      }
-                      // promptSelect[index].ischeck=true;
-                      // setState(() {
-                      //
-                      // });
-                      },
-                    ),
-                  ),
-                );
-              },
-              childCount: widget.promptList.length,
-            ),
+      body: BlocBuilder<AddPromptResCubit, AddPromptResState>(
+  builder: (context, state) {
+    if(state is AddPromptResLoading){
+      return Container(
+        height: MediaQuery.of(context).size.height*0.9,
+        width: double.infinity,
+        child: Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
+    if(state is GetResourcePromptDailog){
+      if(state.def_prompt_list.length==0){
+        return Container(
+          height: MediaQuery.of(context).size.height*0.9,
+          width: double.infinity,
+          child: Center(
+            child: Text("Sorry no prompts"),
           ),
+        );
+      }
+      else{
+        return CustomScrollView(
+          slivers: <Widget>[
+            SliverGrid(
+              gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+                maxCrossAxisExtent: 500.0,
+                mainAxisSpacing: 5.0,
+                crossAxisSpacing: 10.0,
+                childAspectRatio: 5.0,
+              ),
+              delegate: SliverChildBuilderDelegate(
+                    (BuildContext context, int index) {
+                  promptSelect.add(PromptSelectedModel(promptId: state.def_prompt_list[index].promptId, ischeck: false));
+                  return Card(
+                    color: Colors.teal[50],
+                    margin: EdgeInsets.only(left: 5,right: 5,top: 10),
+
+                    child: Container(
+                      alignment: Alignment.center,
+                      child: ListTile(
+                        title: Text(state.def_prompt_list[index].promptTitle),
+                        leading: Container(
+                          height: 40, width: 40,
+                          alignment: Alignment.center,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(90),
+                            color: Colors.pinkAccent,
+                            border: Border.all(color: Colors.white, width: 2),
+                          ),
+                          child: Text(index.toString(),style: TextStyle(color: Colors.white),),
+                        ),
+                        trailing: promptSelect[index].ischeck?
+                        Container(
+                          padding: EdgeInsets.symmetric(horizontal: 5,vertical: 5),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(90),
+                            color: Colors.white,
+                          ),
+                          child: Icon(Icons.check, color: Colors.lightGreen,),
+
+                        ):SizedBox(),
+                        onTap: (){
+                          if(promptSelect[index].ischeck==true){
+                            promptSelect[index].ischeck=false;
+                            promptIds.remove(state.def_prompt_list[index].promptId);
+                            count = count-1;
+                            print("promptIds remove $promptIds");
+                            setState(() {
+
+                            });
+                          }
+                          else if(promptSelect[index].ischeck==false){
+                            promptSelect[index].ischeck=true;
+                            count = count+1;
+                            promptIds.add(state.def_prompt_list[index].promptId);
+                            print("promptIds add $promptIds");
+
+                            setState(() {
+
+                            });
+                          }
+                          // promptSelect[index].ischeck=true;
+                          // setState(() {
+                          //
+                          // });
+                        },
+                      ),
+                    ),
+                  );
+                },
+                childCount: state.def_prompt_list.length,
+              ),
+            ),
 
 //           SliverList(
 //             delegate: SliverChildBuilderDelegate(
@@ -374,9 +402,16 @@ class _CreateDailogFlowState extends State<CreateDailogFlow> {
 //             ),
 //
 //           )
-        ],
-      ),
-    );
+          ],
+        );
+
+      }
+    }
+    return Text("Somethings wents wrong");
+  },
+),
+    ),
+);
   }
 }
 class ResPromptcheckModel{

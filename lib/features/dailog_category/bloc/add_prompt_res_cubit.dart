@@ -1,4 +1,5 @@
 import 'package:bloc/bloc.dart';
+import 'package:dio/dio.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -7,6 +8,7 @@ import 'package:meta/meta.dart';
 import 'package:self_learning_app/features/create_flow/data/model/flow_model.dart';
 
 import '../../add_Dailog/model/addDailog_model.dart';
+import '../../create_flow/data/repo/create_flow_screen_repo.dart';
 import '../repo/promptResRepo.dart';
 
 part 'add_prompt_res_state.dart';
@@ -150,4 +152,62 @@ deleteResource({required String resourceId}) async{
       EasyLoading.showToast("Sorry to delete failed");
     }
 }
+
+getFlowDialog({required String dailogId})async{
+  emit(AddPromptResLoading());
+  Response response = await CreateFlowRepo.getAllFlow(catID: dailogId);
+
+  print('123456');
+  print(response);
+  if(response.statusCode == 400){
+    emit(AddPromptResError(errorMessage: "get failed flow"));
+  }
+  else{
+    List<FlowModel> flowList = [];
+    /*for(var item in response.data['data']['record']){
+          flowList.add(FlowModel(title: item['title'], id: item['_id']));
+        }*/
+    for(var item in response.data['data']['record']){
+      List<FlowDataModel> flowData = [];
+
+      for (var flow in item['flow']){
+
+        flowData.add(FlowDataModel(
+            promptName: flow['promptId']['name'],
+            promptId: flow['promptId']['_id'],
+            resourceTitle: flow['promptId']['resourceId']?['title']?? '',
+            resourceType: flow['promptId']['resourceId']?['type']??'',
+            resourceContent: flow['promptId']['resourceId']?['content']??'',
+            side1Title: flow['promptId']['side1']['title'],
+            side1Type: flow['promptId']['side1']['type'],
+            side1Content: flow['promptId']['side1']['content'],
+            side2Title: flow['promptId']['side2']['title'],
+            side2Type: flow['promptId']['side2']['type'],
+            side2Content: flow['promptId']['side2']['content']));
+
+      }
+      flowList.add(FlowModel(
+        title: item['title'],
+        id: item['_id'],
+        categoryId: item['categoryId'],
+        flowList: flowData,
+      ));
+    }
+    emit(GetFlowSuccess(flowList).copyWith(flowList: flowList));
+  }
+}
+
+getFlowDelete({required String dailogId, required BuildContext context, required String flowId, required List<FlowModel> flowList, required int deleteIndex}) async{
+  EasyLoading.show(dismissOnTap: true);
+  Response response = await CreateFlowRepo.deleteFlow(flowId: flowId);
+  if(response.statusCode == 400){
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Delete Failed!')));
+  }else{
+    flowList.removeAt(deleteIndex);
+    EasyLoading.dismiss();
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Deleted Successfully!')));
+    emit(GetFlowDeletedSuccess());
+  }
+}
+
 }

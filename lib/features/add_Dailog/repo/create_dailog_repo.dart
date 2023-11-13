@@ -3,7 +3,9 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:self_learning_app/features/dailog_category/bloc/add_prompt_res_cubit.dart';
 import 'package:self_learning_app/features/dailog_category/dailog_cate_screen.dart';
 import 'package:self_learning_app/utilities/shared_pref.dart';
 
@@ -104,6 +106,7 @@ class DailogRepo{
   }
 
   static Future<Response> saveDailog({required String dailogId, required String title, required List<String> promptId, required BuildContext context}) async {
+    print("dailog repo hit");
     var token = await SharedPref().getToken();
     Response res;
     final List<Map<String, String>> dataToSend = promptId
@@ -130,7 +133,9 @@ class DailogRepo{
       print(res.statusCode);
       if (res.statusCode==201){
        EasyLoading.showSuccess("Dailog Created Success", duration: Duration(seconds: 3));
-       Navigator.pop(context);
+       Navigator.pop(context,true);
+       context.read<AddPromptResCubit>().getFlowDialog(dailogId: dailogId);
+       Navigator.pop(context,true);
 
       }
 

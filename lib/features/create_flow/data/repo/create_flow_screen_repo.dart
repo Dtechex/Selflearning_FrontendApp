@@ -28,7 +28,9 @@ class CreateFlowRepo {
     }
     return null;
   }
-  static Future<Response?> selectFlow({required String flowId,required String flowType, required String rootId }) async {
+  static Future<Response?> selectFlow({required String flowId,required String flowType, required String rootId,
+  required String flowTitle
+  }) async {
     try {
       final token = await SharedPref.getUserToken();
       print("---my token $token");
@@ -36,6 +38,8 @@ class CreateFlowRepo {
           'https://selflearning.dtechex.com/web/flow/update/$flowId',
           data: {
             'type': "primary",
+            'title':'$flowTitle',
+            'categoryId':'$rootId'
           },
           options: Options(
               headers: {"Authorization": 'Bearer $token'}
@@ -44,6 +48,7 @@ class CreateFlowRepo {
       print(res.data);
       return res;
     }catch(e){
+      print("catch error");
       print(e);
     }
   }
