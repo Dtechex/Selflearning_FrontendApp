@@ -28,6 +28,7 @@ import 'package:self_learning_app/utilities/colors.dart';
 import 'package:self_learning_app/utilities/shared_pref.dart';
 import 'features/add_Dailog/bloc/create_dailog_bloc/create_dailog_bloc.dart';
 import 'features/create_flow/bloc/create_flow_screen_bloc.dart';
+import 'features/dailog_category/dailog_cate_screen.dart';
 import 'features/dashboard/bloc/dashboard_bloc.dart';
 import 'features/login/bloc/login_bloc.dart';
 import 'features/quick_add/PromptBloc/quick_prompt_bloc.dart';

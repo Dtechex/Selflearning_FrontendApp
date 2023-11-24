@@ -91,6 +91,7 @@ class _FlowScreenState extends State<FlowScreen> {
  return flowList;
   }
   void initState() {
+    context.read<CreateFlowBloc>().add(LoadAllFlowEvent(catID: widget.rootId));
     PrimaryfetchData();
 
     super.initState();
@@ -101,7 +102,6 @@ class _FlowScreenState extends State<FlowScreen> {
 
       appBar: AppBar(
         title: Text('Select Primary flow for ${widget.categoryname}'),
-        backgroundColor: Colors.greenAccent,
       ),
       body: BlocConsumer<CreateFlowBloc, CreateFlowState>(
         listener: (context, state) {
@@ -171,9 +171,8 @@ class _FlowScreenState extends State<FlowScreen> {
                                   index: index,
                                 rootId: widget.rootId
                               ));
-                            await Future.delayed(Duration(seconds: 10));
+                            await Future.delayed(Duration(seconds: 1));
                              PrimaryfetchData();
-
                             getPrimaryflow(catId: widget.rootId);
 
 

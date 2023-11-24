@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:self_learning_app/features/add_Dailog/repo/create_dailog_repo.dart';
 
 import '../../dailog_category/bloc/add_prompt_res_cubit.dart';
@@ -213,111 +214,131 @@ class _CreateDailogFlowState extends State<CreateDailogFlow> {
                 childCount: state.def_prompt_list.length,
               ),
             ),
+            SliverGrid(
+              delegate: SliverChildBuilderDelegate(
+                    (context, index) {
+                  return Container(
+                    alignment: Alignment.center,
+                    color: Colors.teal[100 * (index % 9)],
+                    child: Text(widget.reswithPromptList[index].resPromptList[0].promptTitle),
+                  );
+                },
+                childCount: widget.reswithPromptList.length,
+              ),
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 3,
+                mainAxisSpacing: 15,
+                crossAxisSpacing: 15,
+                childAspectRatio: 2.0,
+              ),
+            ),
+          SliverList(
+            delegate: SliverChildBuilderDelegate(
+                  (BuildContext context, int index) {
+                return
+                  Card(
+                    elevation: 4, // Customize the elevation
+                    margin: EdgeInsets.all(8),
+                    child: Theme(
+                      data:  Theme.of(context).copyWith(cardColor: generateRandomColor()),
+                      child:
+                      ExpansionPanelList(
+                        expandIconColor: Colors.blue,
+                        animationDuration: Duration(milliseconds:1000),
+                        dividerColor:Colors.red,
+                        elevation:1,
+                        children: [
 
-//           SliverList(
-//             delegate: SliverChildBuilderDelegate(
-//                   (BuildContext context, int index) {
-//                 return
-//                   Card(
-//                     elevation: 4, // Customize the elevation
-//                     margin: EdgeInsets.all(8),
-//                     child: Theme(
-//                       data:  Theme.of(context).copyWith(cardColor: generateRandomColor()),
-//                       child:
-//                       ExpansionPanelList(
-//                         expandIconColor: Colors.blue,
-//                         animationDuration: Duration(milliseconds:1000),
-//                         dividerColor:Colors.red,
-//                         elevation:1,
-//                         children: [
-//
-//                           ExpansionPanel(
-//
-//                             body: Container(
-//                               padding: EdgeInsets.all(10),
-//                               child: Column(
-//                                 mainAxisAlignment: MainAxisAlignment.start,
-//                                 crossAxisAlignment:CrossAxisAlignment.start,
-//                                 children: <Widget>[
-//
-//                                   Container(
-//                                     height: 300,
-//                                     width: double.infinity,
-//                                     child: ListView.builder(
-//                                       itemCount: widget.reswithPromptList[index].resPromptList.length,
-//                                       itemBuilder: (context, index) {
-// /*
-//                                          EasyLoading.showToast(widget.reswithPromptList[index].resPromptList.length.toString());
-// */
-//                                         _list.add(ResPromptcheckModel(selectedResPrompt, false));
-//
-//                                         return
-//                                           Container(
-//                                               margin: EdgeInsets.symmetric(vertical: 2),
-//                                               color: Colors.blue[50],
-//                                               child: CheckboxListTile(
-//                                                 activeColor: Colors.red,
-//                                                 checkColor: Colors.white,
-//                                                 // value: _saved.contains(context), // changed
-//                                                 value:_list[index].isCheck,
-//                                                 onChanged: (val) {
-//                                                   print("object  ${val}");
-//                                                   setState(() {
-//                                                     _list[index].isCheck = val!;
-//                                                     if (val) {
-//                                                       count=count+1;
-//                                                       selectedResPrompt.add(SelectResPromptModel(resId: widget.reswithPromptList[index].resourceId, promptId: widget.reswithPromptList[index].resPromptList[index].promptId));
-//                                                     } else {
-//                                                       count=count-1;
-//                                                       // If the checkbox is unchecked, remove the promptId from the list.
-//                                                       selectedResPrompt.remove(SelectResPromptModel(resId: widget.reswithPromptList[index].resourceId, promptId: widget.reswithPromptList[index].resPromptList[index].promptId));
-//                                                     }
-//                                                   });
-//                                                 },
-//                                                 title: Text(widget.reswithPromptList[index].resPromptList![index].promptTitle.toString()),
-//                                               )
-//                                           );
-//                                       },
-//                                     ),
-//                                   ),
-//
-//
-//
-//
-//                                 ],
-//                               ),
-//                             ),
-//                             headerBuilder: (BuildContext context, bool isExpanded) {
-//                               return Container(
-//                                 padding: EdgeInsets.all(10),
-//                                 child: Text(
-//                                   "Select prompt from ${widget.reswithPromptList[index].resourceName}",
-//                                   style: TextStyle(
-//                                     color:Colors.black,
-//                                     fontSize: 18,
-//                                     fontWeight: FontWeight.w500
-//                                   ),
-//                                 ),
-//                               );
-//                             },
-//                             isExpanded: isExpandableList[index],
-//                             canTapOnHeader: true
-//                           ),
-//
-//                         ],
-//                         expansionCallback: (int item, bool status) {
-//                           setState(() {
-//                             isExpandableList[index] = !isExpandableList[index];
-//                           });
-//                         },
-//                       ),
-//                     ),
-//                   );
-//
-//               },
-//               childCount: widget.reswithPromptList.length,
-//             ),
-//           ),
+                          ExpansionPanel(
+
+                            body: Container(
+                              padding: EdgeInsets.all(10),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment:CrossAxisAlignment.start,
+                                children: <Widget>[
+
+                                  Container(
+                                    height: 300,
+                                    width: double.infinity,
+                                    child: ListView.builder(
+                                      itemCount: widget.reswithPromptList[index].resPromptList.length,
+                                      itemBuilder: (context, index) {
+
+
+                                         EasyLoading.showToast(widget.reswithPromptList[index].resPromptList.length.toString());
+
+
+                                        _list.add(ResPromptcheckModel(selectedResPrompt, false));
+
+                                        return
+                                          Container(
+                                              margin: EdgeInsets.symmetric(vertical: 2),
+                                              color: Colors.blue[50],
+                                              child: CheckboxListTile(
+                                                activeColor: Colors.red,
+                                                checkColor: Colors.white,
+                                                // value: _saved.contains(context), // changed
+                                                value:_list[index].isCheck,
+                                                onChanged: (val) {
+                                                  print("object  ${val}");
+                                                  setState(() {
+                                                    _list[index].isCheck = val!;
+                                                    if (val) {
+                                                      count=count+1;
+                                                      selectedResPrompt.add(SelectResPromptModel(resId: widget.reswithPromptList[index].resourceId, promptId: widget.reswithPromptList[index].resPromptList[index].promptId));
+                                                    } else {
+                                                      count=count-1;
+                                                      // If the checkbox is unchecked, remove the promptId from the list.
+                                                      selectedResPrompt.remove(SelectResPromptModel(resId: widget.reswithPromptList[index].resourceId, promptId: widget.reswithPromptList[index].resPromptList[index].promptId));
+                                                    }
+                                                  });
+                                                },
+                                                title: Text(widget.reswithPromptList[index].resPromptList![index].promptTitle.toString()),
+                                              )
+                                          );
+                                      },
+                                    ),
+                                  ),
+
+
+
+
+                                ],
+                              ),
+                            ),
+                            headerBuilder: (BuildContext context, bool isExpanded) {
+                              return Container(
+                                padding: EdgeInsets.all(10),
+                                child: Text(
+                                  "Select prompt from ${widget.reswithPromptList[index].resourceName}",
+                                  style: TextStyle(
+                                    color:Colors.black,
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w500
+                                  ),
+                                ),
+                              );
+                            },
+                            isExpanded: isExpandableList[index],
+                            canTapOnHeader: true
+                          ),
+
+                        ],
+                        expansionCallback: (int item, bool status) {
+                          setState(() {
+                            isExpandableList[index] = !isExpandableList[index];
+                          });
+                        },
+                      ),
+                    ),
+                  );
+
+              },
+              childCount: widget.reswithPromptList.length,
+            ),
+          ),
+
 //           SliverToBoxAdapter(
 //             child:
 //             ExpansionPanelList(

@@ -1,28 +1,35 @@
-import 'dart:ffi';
 
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import 'package:blurrycontainer/blurrycontainer.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:dio/dio.dart';
 import 'package:flick_video_player/flick_video_player.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:jwt_decode/jwt_decode.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:self_learning_app/features/add_Dailog/dailog_screen.dart';
 import 'package:self_learning_app/features/create_flow/slide_show_screen.dart';
 import 'package:self_learning_app/utilities/extenstion.dart';
+import 'package:self_learning_app/utilities/shared_pref.dart';
 import 'package:side_sheet/side_sheet.dart';
 import 'package:video_player/video_player.dart';
 
 import '../../utilities/colors.dart';
 import '../../widgets/add_prompt_quickAddresourceScreen.dart';
 import '../../widgets/add_resources_screen.dart';
+import '../add_Dailog/bloc/get_dailog_bloc/get_dailog_bloc.dart';
+import '../add_Dailog/bloc/new_dailog/new_dialog_dart_cubit.dart';
 import '../add_Dailog/createflowfordailog/createDailogFlow.dart';
 import '../add_Dailog/dailogPrompt/dailog_prompt.dart';
 import '../add_Dailog/model/addDailog_model.dart';
+import '../add_Dailog/newDialog.dart';
 import '../add_promts/add_promts_screen.dart';
 import '../add_promts_to_flow/add_promts_to_flow_screen.dart';
 import '../category/bloc/category_bloc.dart';
@@ -31,8 +38,11 @@ import '../create_flow/create_flow_screen.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 
 import '../create_flow/data/model/flow_model.dart';
+import '../create_flow/flow_screen.dart';
 import '../promt/promts_screen.dart';
+import '../quick_add/PromptBloc/quick_prompt_bloc.dart';
 import '../resources/maincategory_resources_screen.dart';
+import '../subcategory/primaryflow/primaryflow.dart';
 import 'bloc/add_prompt_res_cubit.dart';
 
 class DailogCategoryScreen extends StatefulWidget {
@@ -67,6 +77,54 @@ class _DailogCategoryScreenState extends State<DailogCategoryScreen> {
 
   List<ListItem> itemCheck = [];
   List<AddPromptListModel> def_prompt_list = [];
+  List<AddResourceListModel> reswithPromptList=[];
+
+
+  Future<void> _showMyDialog(BuildContext context) async {
+    return showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Center(
+            child: Text('Add prompts for'),
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ElevatedButton(
+                onPressed: () {
+                  // Handle Quick List button press
+                   showModalBottomSheet(
+                            context: context,
+                            isScrollControlled: true, // To allow scrolling if the content is too tall
+                            builder: (context) {
+                              return BottomSheetforAddQuickPrompt();
+                            });                },
+                child: Text('Quick List'),
+              ),
+              SizedBox(height: 10),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (context)=> AddPromptsScreen(resourceId: resourceId.toString() , categoryId: widget.dailoId,)
+                  ));
+                },
+                child: Text('Custom'),
+              ),
+            ],
+          ),
+          actions: [
+            IconButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+              },
+              icon: Icon(Icons.close),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
 
   AwesomeDialog successDailog(
       {required String promptName,
@@ -86,8 +144,22 @@ class _DailogCategoryScreenState extends State<DailogCategoryScreen> {
       desc: 'This is also Ignored',
     )..show();
   }
+     String? userId;
+     String? resourceId;
+     Map<dynamic, dynamic>? payload;
+
+
 
   @override
+  void initState() {
+    userId = SharedPref.getUserToken();
+    payload = Jwt.parseJwt(userId!);
+    resourceId = payload?['id'];
+    print("resourceId=====>$resourceId");
+    // TODO: implement initState
+    super.initState();
+  }
+
   Widget build(BuildContext context) {
     print("Dailog id is ${widget.dailoId.toString()}");
     return BlocProvider(
@@ -133,6 +205,10 @@ class _DailogCategoryScreenState extends State<DailogCategoryScreen> {
                         ));
                       }),
                   SpeedDialChild(
+                    onTap: (){
+                      _showMyDialog(context);
+
+                    },
                     label: "Add Prompt",
                     backgroundColor: Colors.green[100],
                     child: Icon(
@@ -152,7 +228,7 @@ class _DailogCategoryScreenState extends State<DailogCategoryScreen> {
                             context: context,
                             isScrollControlled: true, // To allow scrolling if the content is too tall
                             builder: (context) {
-                              return BottomSheetForCreateFlow(dailogId: widget.dailoId,  promptList: widget.promptList,reswithPromptList: widget.resourceList,);
+                              return BottomSheetForCreateFlow(dailogId: widget.dailoId,  promptList: widget.promptList,reswithPromptList: reswithPromptList,);
                             });
                         // createDailog();
                         /* Navigator.push(context,
@@ -168,12 +244,14 @@ class _DailogCategoryScreenState extends State<DailogCategoryScreen> {
                       backgroundColor: Colors.green[100],
                       child: Icon(Icons.play_arrow, color: primaryColor),
                       onTap: () {
-                        showModalBottomSheet(
+                        Navigator.push(context, MaterialPageRoute(builder: (context)=>FlowScreen(categoryname: "",rootId: widget.dailoId)));
+                       /* showModalBottomSheet(
                             context: context,
                             isScrollControlled: true, // To allow scrolling if the content is too tall
                             builder: (context) {
                               return BottomSheetForPrimaryFlow(dailogId: widget.dailoId, );
-                            });
+                            });*/
+
                       }),
                   SpeedDialChild(
                       label: "schedule",
@@ -193,7 +271,11 @@ class _DailogCategoryScreenState extends State<DailogCategoryScreen> {
                     },),
 */
                     IconButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          Navigator.push(context, MaterialPageRoute(builder: (context)=>PrimaryFlow(categoryName: "",CatId: widget.dailoId,
+                          flowId: "1",
+                          )));
+                        },
                         icon: Icon(
                           Icons.play_circle,
                           size: 30,
@@ -261,12 +343,17 @@ class _DailogCategoryScreenState extends State<DailogCategoryScreen> {
                                   SliverList(
                                     delegate: SliverChildBuilderDelegate(
                                       (BuildContext context, int index) {
+                                        reswithPromptList.clear();
+                                        reswithPromptList.add(AddResourceListModel(resourceId:state.res_prompt_list[index].resourceId, resourceName: state.res_prompt_list[index].resourceName,
+                                            resourceType: "resourceType", resourceContent: "resourceContent", resPromptList: state.res_prompt_list[index].resPromptList));
+
                                         final item = widget.resourceList[index];
                                         Color iconColor = Colors
                                             .transparent; // Provide a default value
                                         String? leadingText;
                                         final content = "resource";
                                         String? title = "new resource";
+
 
                                         // If the item is a string, display it as a card that navigates to a screen
                                         return GestureDetector(
@@ -1628,6 +1715,195 @@ class _BottomSheetForPrimaryFlowState extends State<BottomSheetForPrimaryFlow> {
         },
       ),
     );
+  }
+}
+
+class BottomSheetforAddQuickPrompt extends StatefulWidget {
+  const BottomSheetforAddQuickPrompt({super.key});
+
+  @override
+  State<BottomSheetforAddQuickPrompt> createState() => _BottomSheetforAddQuickPromptState();
+}
+
+class _BottomSheetforAddQuickPromptState extends State<BottomSheetforAddQuickPrompt> {
+  Dio _dio = Dio();
+  List<PromptCheckModel> promptList = [];
+  List<String> promptId = [];
+
+  bool showCheck = false;
+  bool showSelectbtn = false;
+   Future<Response?> get_Res_Prompt({required List<String> listpromtId})async{
+     String token = SharedPref.getUserToken();
+    final Map<String, dynamic> headers = {
+      'Authorization': 'Bearer $token',
+    };
+    try{
+      Response res = await _dio.put("https://selflearning.dtechex.com/web",options: Options(headers: headers),
+     data: ({promptId:listpromtId})
+      );
+      if(res.statusCode ==200){
+        EasyLoading.showSuccess("prompt add successfully", duration: Duration(seconds: 1));
+        await Future.delayed(Duration(seconds: 1));
+        Navigator.pop(context);
+        Navigator.pop(context);
+      }
+      return res;
+
+    }catch(e){
+
+    }
+  }
+  @override
+  void initState() {
+    context.read<QuickPromptBloc>().add(QuickAddPromptEvent());
+    super.initState();
+  }
+  Widget build(BuildContext context) {
+    return BlocProvider(
+  create: (context) => NewDialogDartCubit()..getQuickPromptList(),
+  child:
+  BlocBuilder<NewDialogDartCubit, NewDialogDartState>(
+    builder: (context, state) {
+      if (state is NewDialogPromptLoading) {
+        return Container(
+          height: MediaQuery.sizeOf(context).height * 0.9,
+          width: double.infinity,
+          child: Center(
+            child: CircularProgressIndicator(),
+          ),
+        );
+      }
+      if (state is NewDialogPromptSuccess) {
+        if (state.promtModelList.length == 0) {
+          return Container(
+              height: MediaQuery.sizeOf(context).height * 0.9,
+              width: double.infinity,
+              child: Text("Empty prompts"));
+        } else {
+          return Container(
+            height: MediaQuery.of(context).size.height*0.7,
+            child: CustomScrollView(
+              slivers: <Widget>[
+                SliverToBoxAdapter(
+                  child: Align(
+                      alignment: Alignment.topRight,
+                      child: Container(
+                        padding:
+                        EdgeInsets.symmetric(vertical: 10),
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            primary: promptId.length >= 1 ? Colors.green : (showCheck ? Colors.red : Colors.grey),
+                            onPrimary: Colors.white, // Set the text color to white
+                          ),
+                          onPressed: () {
+                            if (showCheck == true) {
+                                  if(promptId.length<=0){
+                                    showCheck = false;
+                                    promptId.clear();
+                                    promptList.clear();
+                                    setState(() {});
+
+                                  }
+                                  else{
+                                    get_Res_Prompt(listpromtId: promptId);
+                                    EasyLoading.showToast(promptId.toString());
+                                  }
+
+                            } else if (showCheck == false) {
+                              showCheck = true;
+                              setState(() {});
+                            }
+                          },
+                          child: promptId.length >= 1 ?Text("Add"):Text("Select"),
+                        ),
+                      )),
+                ),
+                SliverGrid(
+                  delegate: SliverChildBuilderDelegate(
+                        (context, index) {
+                      promptList.add(PromptCheckModel(
+                          promptId: state
+                              .promtModelList[index].promptid
+                              .toString(),
+                          isCheck: false));
+                      return GestureDetector(
+                        onTap: (){
+                          Navigator.push(context, MaterialPageRoute(builder: (context)=>DailogPrompt(
+                            side1type: state.promtModelList[index].side1Type.toString(),
+                            side2type: state.promtModelList[index].side2Type.toString(),
+                            promptTitle: state.promtModelList[index].promptname.toString(),
+                            side1contentTitle: state.promtModelList[index].side1content.toString(),
+                            side2contentTitle: state.promtModelList[index].side2content.toString(),
+                          )));
+                        },
+                        child: Card(
+                          color: Colors.lightGreenAccent.shade100,
+                          child: Stack(children: [
+                            showCheck
+                                ? Align(
+                              alignment: Alignment.topRight,
+                              child: Checkbox(
+                                // Checkbox at the top left
+                                value:
+                                promptList[index].isCheck,
+                                // Initial value (you can use a state variable to manage it)
+                                onChanged: (bool? newValue) {
+                                  if (promptList[index]
+                                      .isCheck ==
+                                      true) {
+                                    promptList[index]
+                                        .isCheck = false;
+                                    promptId.remove(
+                                        promptList[index]
+                                            .promptId);
+
+                                    print(promptId);
+                                    setState(() {});
+                                  } else if (promptList[index]
+                                      .isCheck ==
+                                      false) {
+                                    promptList[index]
+                                        .isCheck = true;
+                                    promptId.add(
+                                        promptList[index]
+                                            .promptId);
+                                    print(promptId);
+
+                                    setState(() {});
+                                  }
+                                },
+                              ),
+                            )
+                                : SizedBox(),
+                            Align(
+                              alignment: Alignment.center,
+                              child: Text(state
+                                  .promtModelList[index].promptname
+                                  .toString()),
+                            )
+                          ]),
+                        ),
+                      );
+                    },
+                    childCount: state.promtModelList.length,
+                  ),
+                  gridDelegate:
+                  SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 1,
+                    mainAxisSpacing: 10,
+                    crossAxisSpacing: 2,
+                    childAspectRatio: 10.0,
+                  ),
+                )
+              ],
+            ),
+          );
+        }
+      }
+      return Text("Something wents wrong");
+    },
+  ),
+);
   }
 }
 

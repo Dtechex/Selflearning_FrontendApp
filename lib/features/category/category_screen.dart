@@ -1,10 +1,13 @@
+import 'dart:async';
 import 'dart:math';
 
 import 'package:blurrycontainer/blurrycontainer.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:self_learning_app/features/category/bloc/category_bloc.dart';
 import 'package:self_learning_app/features/category/bloc/category_state.dart';
 import 'package:self_learning_app/features/quick_add/data/bloc/quick_add_bloc.dart';
@@ -32,7 +35,10 @@ class _AllCateScreenState extends State<AllCateScreen> {
   List<String> titles = ['All Categories', 'Dialogs','QuickAdd List '];
   TextEditingController controller = TextEditingController(text: "  Search");
   TextEditingController quickaddcontroller = TextEditingController();
-
+  late StreamSubscription subscription;
+  bool isDeviceConnected = false;
+  bool isAlertSet = false;
+  bool isLoading = true;
   void _showCustomDialog() {
     showDialog(
       context: context,
@@ -168,10 +174,44 @@ class _AllCateScreenState extends State<AllCateScreen> {
     return pastelColor;
   }  @override
   void initState() {
+    getConnectivity();
     context.read<CategoryBloc>().add(CategoryLoadEvent());
     super.initState();
   }
-
+  showDialogBox() =>
+      showCupertinoDialog<String>(
+        context: context,
+        builder: (BuildContext context) =>
+            CupertinoAlertDialog(
+              title: const Text('No internet '),
+              content: const Text('Please check your internet connectivity'),
+              actions: <Widget>[
+                TextButton(
+                  onPressed: () async {
+                    Navigator.pop(context, 'Cancel');
+                    setState(() => isAlertSet = false);
+                    isDeviceConnected =
+                    await InternetConnectionChecker().hasConnection;
+                    if (!isDeviceConnected && isAlertSet == false) {
+                      showDialogBox();
+                      setState(() => isAlertSet = true);
+                    }
+                  },
+                  child: const Text('Retry'),
+                ),
+              ],
+            ),
+      );
+  getConnectivity() =>
+      subscription = Connectivity().onConnectivityChanged.listen(
+            (ConnectivityResult result) async {
+          isDeviceConnected = await InternetConnectionChecker().hasConnection;
+          if (!isDeviceConnected && isAlertSet == false) {
+            showDialogBox();
+            setState(() => isAlertSet = true);
+          }
+        },
+      );
   @override
   Widget build(BuildContext context) {
 

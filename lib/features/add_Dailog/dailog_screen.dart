@@ -157,7 +157,8 @@ class _DailogScreenState extends State<DailogScreen> {
             ),
 
             Expanded(
-              child: CustomScrollView(
+              child:
+              CustomScrollView(
                 slivers: <Widget>[
                   SliverToBoxAdapter(
                     child: BlocBuilder<GetDailogBloc, GetDailogState>(

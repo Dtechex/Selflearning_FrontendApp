@@ -123,7 +123,8 @@ class _NewDialogState extends State<NewDialog> {
                         },
                         child: Text("Create dialog"),
                       )),
-                  body: BlocBuilder<NewDialogDartCubit, NewDialogDartState>(
+                  body:
+                  BlocBuilder<NewDialogDartCubit, NewDialogDartState>(
                     builder: (context, state) {
                       if (state is NewDialogPromptLoading) {
                         return Container(
