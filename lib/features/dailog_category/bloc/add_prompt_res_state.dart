@@ -41,3 +41,6 @@ class GetFlowSuccess extends AddPromptResState{
 }
 class GetFlowDeletedSuccess extends AddPromptResState{
 }
+class GetPromptUpdate extends AddPromptResState{
+
+}

@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:meta/meta.dart';
 import 'package:self_learning_app/features/create_flow/data/model/flow_model.dart';
+import 'package:self_learning_app/features/dailog_category/dailog_cate_screen.dart';
 
 import '../../add_Dailog/model/addDailog_model.dart';
 import '../../create_flow/data/repo/create_flow_screen_repo.dart';
@@ -20,6 +21,7 @@ class AddPromptResCubit extends Cubit<AddPromptResState> {
     var res = await PromptResRepo.get_Res_Prompt(dailogId: dailogId);
 
     print("getPromptRes Function is hit");
+    print(res!.data);
     if (res!.statusCode == 200) {
       print("check for prompt res ${res.data}");
       List<AddResourceListModel> getListRes_prompt = [];
@@ -41,8 +43,8 @@ class AddPromptResCubit extends Cubit<AddPromptResState> {
         getPromotList.add(AddPromptListModel(
           promptId: prompt['_id'],
           promptTitle: prompt['name'],
-          promptSide1Content: prompt['side1'],
-          promptSide2Content: prompt['side2'],
+          promptSide1Content: prompt['side1']['content'],
+          promptSide2Content: prompt['side2']['content'],
           parentPromptId: '1a',
         ));
       }
@@ -117,7 +119,7 @@ class AddPromptResCubit extends Cubit<AddPromptResState> {
 
 
 getPromptFromResource({required String resourceId})async{
-
+    emit(AddPromptResLoading());
     var res = await PromptResRepo.getPrompResource(resourceId: resourceId);
     List<FlowDataModel> getPromptData = [];
     print("resourceId --$resourceId");
@@ -140,6 +142,17 @@ getPromptFromResource({required String resourceId})async{
            promptName: list['name'], promptId: list["_id"])) ;
       }
       emit(GetPromptFromResourceSuccess(flowModel: flowModel));
+    }
+
+}
+
+promptUdateDialog({required String dialogId, required List<String> promptId, required BuildContext context}) async{
+  print("prompt ids=====>>>>>>>$promptId");
+    Response? res = await PromptResRepo.updatePrompt(listpromtId: promptId, dialogId: dialogId, context: context);
+    if(res!.statusCode==200){
+      print("########---=--=-==-=-=-=-=>$res.data");
+      Navigator.push(context, MaterialPageRoute(builder: (context)=>DailogCategoryScreen(resourceList: [], promptList: [], dailoId: dialogId)));
+      emit(GetPromptUpdate());
     }
 
 }
@@ -171,6 +184,7 @@ getFlowDialog({required String dailogId})async{
       List<FlowDataModel> flowData = [];
 
       for (var flow in item['flow']){
+        print("=======>${flow}");
 
         flowData.add(FlowDataModel(
             promptName: flow['promptId']['name'],

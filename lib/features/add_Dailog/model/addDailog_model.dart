@@ -44,3 +44,15 @@ class PromptListforResourceModel{
     required this.promptSide2Content
   });
 }
+
+class RespromptModel{
+  String resourceId;
+  String resourceTitle;
+  List<PromptInsideResource> promptList;
+  RespromptModel({required this.resourceId, required this.resourceTitle, required this.promptList});
+}
+class PromptInsideResource{
+  String promptId;
+  String promptTitle;
+  PromptInsideResource({required this.promptId, required this.promptTitle});
+}

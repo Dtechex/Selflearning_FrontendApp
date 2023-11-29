@@ -57,7 +57,7 @@ class _DailogPromptState extends State<DailogPrompt> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Flippy Example"),
+        title:  Text(widget.promptTitle),
       ),
       body: Center(
         child: Column(

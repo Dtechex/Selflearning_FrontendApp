@@ -12,9 +12,9 @@ import '../model/addDailog_model.dart';
 class CreateDailogFlow extends StatefulWidget {
   String dailogId;
   String dailog_flow_name;
-  List<AddResourceListModel> reswithPromptList;
+  List<RespromptModel> respromptlist;
   List<AddPromptListModel> promptList;
-   CreateDailogFlow({super.key, required this.reswithPromptList, required this.dailog_flow_name, required this.promptList,
+   CreateDailogFlow({super.key, required this.dailog_flow_name,required this.respromptlist, required this.promptList,
    required this.dailogId
    });
 
@@ -78,13 +78,14 @@ class _CreateDailogFlowState extends State<CreateDailogFlow> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    isExpandableList = List.generate(widget.reswithPromptList.length, (index) => false);
+    isExpandableList = List.generate(widget.respromptlist.length, (index) => false);
     ContainerHeight();
 
   }
   int count = 0;
   @override
   Widget build(BuildContext context) {
+    print("==========================>>>>>>>>>>${widget.dailogId}");
     return BlocProvider(
   create: (context) => cubitAddPromptRes..getResPrompt(dailogId: widget.dailogId),
   child: Scaffold(
@@ -214,24 +215,6 @@ class _CreateDailogFlowState extends State<CreateDailogFlow> {
                 childCount: state.def_prompt_list.length,
               ),
             ),
-            SliverGrid(
-              delegate: SliverChildBuilderDelegate(
-                    (context, index) {
-                  return Container(
-                    alignment: Alignment.center,
-                    color: Colors.teal[100 * (index % 9)],
-                    child: Text(widget.reswithPromptList[index].resPromptList[0].promptTitle),
-                  );
-                },
-                childCount: widget.reswithPromptList.length,
-              ),
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 3,
-                mainAxisSpacing: 15,
-                crossAxisSpacing: 15,
-                childAspectRatio: 2.0,
-              ),
-            ),
           SliverList(
             delegate: SliverChildBuilderDelegate(
                   (BuildContext context, int index) {
@@ -258,15 +241,13 @@ class _CreateDailogFlowState extends State<CreateDailogFlow> {
                                 crossAxisAlignment:CrossAxisAlignment.start,
                                 children: <Widget>[
 
-                                  Container(
+                                  widget.respromptlist[index].promptList.length==0?Text("No prompt"):Container(
                                     height: 300,
                                     width: double.infinity,
                                     child: ListView.builder(
-                                      itemCount: widget.reswithPromptList[index].resPromptList.length,
+                                      itemCount: widget.respromptlist[index].promptList.length,
                                       itemBuilder: (context, index) {
 
-
-                                         EasyLoading.showToast(widget.reswithPromptList[index].resPromptList.length.toString());
 
 
                                         _list.add(ResPromptcheckModel(selectedResPrompt, false));
@@ -286,15 +267,15 @@ class _CreateDailogFlowState extends State<CreateDailogFlow> {
                                                     _list[index].isCheck = val!;
                                                     if (val) {
                                                       count=count+1;
-                                                      selectedResPrompt.add(SelectResPromptModel(resId: widget.reswithPromptList[index].resourceId, promptId: widget.reswithPromptList[index].resPromptList[index].promptId));
+                                                      selectedResPrompt.add(SelectResPromptModel(resId: widget.respromptlist[index].resourceId, promptId: widget.respromptlist[index].promptList[index].promptId));
                                                     } else {
                                                       count=count-1;
                                                       // If the checkbox is unchecked, remove the promptId from the list.
-                                                      selectedResPrompt.remove(SelectResPromptModel(resId: widget.reswithPromptList[index].resourceId, promptId: widget.reswithPromptList[index].resPromptList[index].promptId));
+                                                      selectedResPrompt.remove(SelectResPromptModel(resId: widget.respromptlist[index].resourceId, promptId: widget.respromptlist[index].promptList[index].promptId));
                                                     }
                                                   });
                                                 },
-                                                title: Text(widget.reswithPromptList[index].resPromptList![index].promptTitle.toString()),
+                                                title: Text(widget.respromptlist[index].promptList![index].promptTitle.toString()),
                                               )
                                           );
                                       },
@@ -311,7 +292,7 @@ class _CreateDailogFlowState extends State<CreateDailogFlow> {
                               return Container(
                                 padding: EdgeInsets.all(10),
                                 child: Text(
-                                  "Select prompt from ${widget.reswithPromptList[index].resourceName}",
+                                  "Select prompt from ${widget.respromptlist[index].resourceTitle}",
                                   style: TextStyle(
                                     color:Colors.black,
                                     fontSize: 18,
@@ -335,7 +316,7 @@ class _CreateDailogFlowState extends State<CreateDailogFlow> {
                   );
 
               },
-              childCount: widget.reswithPromptList.length,
+              childCount: widget.respromptlist.length,
             ),
           ),
 

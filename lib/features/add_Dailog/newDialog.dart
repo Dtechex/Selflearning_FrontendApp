@@ -140,7 +140,7 @@ class _NewDialogState extends State<NewDialog> {
                           return Container(
                               height: MediaQuery.sizeOf(context).height * 0.9,
                               width: double.infinity,
-                              child: Text("Empty prompts"));
+                              child: Center(child: Text("Empty prompts")));
                         } else {
                           return CustomScrollView(
                             slivers: <Widget>[
