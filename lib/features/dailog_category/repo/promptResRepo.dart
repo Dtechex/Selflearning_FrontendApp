@@ -23,12 +23,19 @@ static Future<Response?> get_Res_Prompt({required String dailogId})async{
 
   }
 }
-  static Future<Response?> AddPromptInResource({required String resourceId, required String promptId})async{
+  static Future<Response?> AddPromptInResource({required String resourceId,
+    required String promptId, required String
+  dialogId
+  })async{
     final Map<String, dynamic> headers = {
       'Authorization': 'Bearer $token',
     };
    try{
-     Response res = await _dio.post("path",options: Options(headers: headers));
+     Response res = await _dio.put("https://selflearning.dtechex.com/web/",options: Options(headers: headers),
+     data: {"resourceId":resourceId,
+            "promptId":promptId
+     }
+     );
      return res;
 
    }catch(e){

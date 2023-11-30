@@ -58,12 +58,8 @@ class AddPromptResCubit extends Cubit<AddPromptResState> {
 
   addpromptRes({required String promptId, required String promptName, required String resourceId, required String resourceName, required BuildContext context})async{
     print("Cubit function hit");
-    var res = await PromptResRepo.AddPromptInResource(promptId: promptId, resourceId: resourceId);
+    var res = await PromptResRepo.AddPromptInResource(promptId: promptId, resourceId: resourceId, dialogId: "di");
     if(res?.statusCode ==200){
-      Navigator.pop(context);
-      emit(AddPromptResSuccess(promptName: promptName, resourceName: resourceName));
-    }
-    else{
       print("Else condition is run");
       Navigator.pop(context);
       emit(AddPromptResSuccess(promptName: promptName, resourceName: resourceName));
@@ -109,6 +105,9 @@ class AddPromptResCubit extends Cubit<AddPromptResState> {
           );
         },
       );
+    }
+    else{
+      EasyLoading.showToast("Error");
   /*    Future.delayed(Duration(seconds: 2), () {
         Navigator.of(context).pop();
       });*/
@@ -170,7 +169,6 @@ getFlowDialog({required String dailogId})async{
   emit(AddPromptResLoading());
   Response response = await CreateFlowRepo.getAllFlow(catID: dailogId);
 
-  print('123456');
   print(response);
   if(response.statusCode == 400){
     emit(AddPromptResError(errorMessage: "get failed flow"));

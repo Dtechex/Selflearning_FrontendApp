@@ -828,10 +828,7 @@ void deletPrompt({required String promptId}) async{
                                                                             index]
                                                                         .promptTitle,
                                                                     res_prompt_list: state.res_prompt_list,
-                                                                    promptId: widget
-                                                                        .promptList[
-                                                                            index]
-                                                                        .promptId,
+                                                                    promptId: state.def_prompt_list[index].promptId
                                                                   );
                                                                 },
                                                               );
@@ -926,11 +923,38 @@ class BottomSheet extends StatefulWidget {
 
 class _BottomSheetState extends State<BottomSheet> {
   @override
+  final Dio _dio = Dio();
   List<ListItem> itemCheck = [];
   String resId = "";
   String? resourceName;
   final AddPromptResCubit cubitAddPromptRes = AddPromptResCubit();
 
+  void addingPromptInResource({required String dialogId, required String promptId, required String resourceId}) async{
+    print("===----->${promptId}");
+    String token = SharedPref.getUserToken();
+    final Map<String, dynamic> headers = {
+      'Authorization': 'Bearer $token',
+    };
+    try{
+      Response res = await _dio.patch("https://selflearning.dtechex.com/web/prompt/update/$promptId", options: Options(headers: headers),
+          data: {
+            "resourceId":resourceId,
+          }
+      );
+      if(res.statusCode==200){
+        EasyLoading.showToast("prompt is successfully added");
+        Navigator.pop(context);
+        cubitAddPromptRes.getResPrompt(dailogId: dialogId);
+      }
+      else{
+        EasyLoading.showToast("Error");
+      }
+    }catch(e){
+      EasyLoading.showToast(e.toString());
+      print("------${e.toString()}");
+    }
+
+  }
   Widget build(BuildContext context) {
     return Column(children: [
         SizedBox(
@@ -1020,12 +1044,13 @@ class _BottomSheetState extends State<BottomSheet> {
                     EasyLoading.showError(
                         duration: Duration(seconds: 2), "please choose resource");
                   } else if (resId != "") {
-                    context.read<AddPromptResCubit>().addpromptRes(
+                    addingPromptInResource(dialogId: widget.dialogId, promptId: widget.promptId, resourceId: resId);
+                    /*context.read<AddPromptResCubit>().addpromptRes(
                         promptId: widget.promptId,
                         promptName: widget.promptName,
                         resourceId: resId,
                         resourceName: resourceName!,
-                        context: context);
+                        context: context);*/
                   }
                 },
                 child: Text("Submit"))),
