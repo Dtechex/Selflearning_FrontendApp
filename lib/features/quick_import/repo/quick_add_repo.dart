@@ -3,6 +3,8 @@ import 'package:http/http.dart';
 import '../../../../utilities/base_client.dart';
 import 'package:http/http.dart' as http;
 import '../../../../utilities/shared_pref.dart';
+import '../../category/bloc/category_bloc.dart';
+import '../../dashboard/bloc/dashboard_bloc.dart';
 import 'model/quick_type_model.dart';
 
 class QuickImportRepo {
@@ -56,7 +58,7 @@ class QuickImportRepo {
     payload.addAll({"styles": styles});
     if (rootId != null) {
       payload.addAll({"rootId": rootId});
-    }
+    }https://selflearning.dtechex.com/web/resource/update/$resourceId
     var token = await SharedPref().getToken();
     var res = await http.post(
       Uri.parse('https://selflearning.dtechex.com/web/category/create'),
@@ -67,7 +69,7 @@ class QuickImportRepo {
       },
     );
     final body = jsonDecode(res.body);
-    print(body);
+    print("add category function is working now${body}");
     print('response of add category');
     return body['data']['record']['id'];
   }
@@ -75,18 +77,26 @@ class QuickImportRepo {
   static Future<int?> updateResources(
       {required String rootId,
       required String resourceId,
-      required String mediaType}) async {
+      required String mediaType,
+      required String resourceTitle,
+      required String resourceContent
+       }) async {
     var token = await SharedPref().getToken();
+    print("resource title = ${resourceTitle}");
+    // title media type
+
     var url = Uri.parse(
         'https://selflearning.dtechex.com/web/resource/update/$resourceId');
     print(url);
+    print("Save resource");
     final payload = {};
     print(mediaType);
     print(rootId);
-    print('mediaType');
     payload.addAll({
       "rootId": rootId,
       "type": mediaType,
+      "title":resourceTitle,
+      "content":resourceContent
     });
     Response res = await http.patch(
       url,
@@ -97,7 +107,38 @@ class QuickImportRepo {
       },
     );
     var data = await jsonDecode(res.body);
-    print(data);
+    print("update response-->${data}");
     return res.statusCode;
   }
+
+
+  static Future<int> onSaveNewCategoryResource({required String categoryTitle})async{
+    Map<String, dynamic> payload = {};
+    List<Map<String, String>> styles = [
+      {"key": "font-size", "value": "2rem"},
+    ];
+    payload.addAll({"styles": styles});
+    payload.addAll({"keywords": ["tags"]});
+
+    payload.addAll({
+      "name": categoryTitle,
+    });
+    var token = await SharedPref().getToken();
+
+    var res = await http.post(
+      Uri.parse('https://selflearning.dtechex.com/web/category/create'),
+      body: jsonEncode(payload),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token'
+      },
+    );
+    print("find error${res.body}");
+    if(res.statusCode==200){
+      print("newcategorycreatedResponse${res.body}");
+
+    }
+    return res.statusCode;
+  }
+
 }

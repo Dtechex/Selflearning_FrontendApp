@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:record/record.dart';
 import 'package:self_learning_app/features/add_media/bloc/add_media_bloc.dart';
@@ -85,7 +86,7 @@ class _AddPromptsScreenState extends State<AddPromptsScreen> {
       child: Scaffold(
         appBar: AppBar(
           title: const Text('Add Prompt', style: TextStyle(fontSize: 17)),
-          backgroundColor: Colors.yellow,
+          // backgroundColor: Colors.yellow,
         ),
         backgroundColor: Colors.grey.shade100,
         body: SafeArea(
@@ -101,6 +102,7 @@ class _AddPromptsScreenState extends State<AddPromptsScreen> {
                       if (state is AddPromptsInitial) {
                         if (state.uploadStatus == UploadStatus.uploaded) {
                           addPromptsBloc.add(ResetFileUploadStatus());
+
                           context.showSnackBar(SnackBar(content: Text("Resource uploaded..")));
                           Future.delayed(Duration(seconds: 2), () {
                             EasyLoading.dismiss();
@@ -149,14 +151,20 @@ class _AddPromptsScreenState extends State<AddPromptsScreen> {
                                   });
                                 },
                                 onTap: () {
-                                  if(state.resource1status == Resource1Status.selected && state.side1Id == ''){
+                                  ////// .........................................>---->
+                                  if(side1_Controller.text.isNotEmpty ){
+                                    print("Condition first is run");
                                     saveResource1(state);
-                                  }else if(side1_Controller.text != '' && state.side1Id == '' || side2_Controller.text!='' && state.side2Id == ''){
-                                    saveResource1(state);
-                                  }else{
-                                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Resource 1 is not saved!')));
                                   }
-
+                                  if(side2_Controller.text.isNotEmpty){
+                                    print("condition 2 is run");
+                                    saveResource2(state);
+                                  }
+                                  if( side1_Controller.text.isNotEmpty || side1_Controller.text.isNotEmpty){
+                                    print("------->---< or condition3");
+                                    saveResource1(state);
+                                    saveResource2(state);
+                                  }
 
                                 },
                                 textAlign: TextAlign.center,
@@ -633,7 +641,7 @@ class _AddPromptsScreenState extends State<AddPromptsScreen> {
                                                   controller: side2_Controller,
                                                   focusNode: _answerFocusNode,
                                                   onTap: () {
-                                                    if(state.resource1status == Resource1Status.selected && state.side1Id == ''){
+                                                    if(state.resource1status == Resource1Status.selected && side1_Controller.text!=""){
                                                 saveResource1(state);
                                               }else if(side1_Controller.text != '' && state.side1Id == ''){
                                                 saveResource1(state);
@@ -894,19 +902,24 @@ class _AddPromptsScreenState extends State<AddPromptsScreen> {
 
 
                           GestureDetector(
-                            onTap: (){
+
+                            onTap: () async {
                               if(state.side1Id!.isEmpty && state.side2Id!.isEmpty){
                                print("field is empty");
                               }
-                              else {
+                              else if(side2_Controller.text.isNotEmpty) {
+                                saveResource2(state);
+                                if(state.side2Id!.isNotEmpty || state.side2Id != ""){
                                 onAddPromptPressed(state, context);
+                                }
                               }
+
                             },
                             child: Container(
                               margin: EdgeInsets.only(top: 20),
                               padding: EdgeInsets.all(10),
                               decoration: BoxDecoration(
-                                  color: state.side1Id!.isEmpty && state.side2Id!.isEmpty?Colors.grey:primaryColor,
+                                  color: state.side1Id!.isEmpty || state.side2Id!.isEmpty?Colors.grey:primaryColor,
                                   borderRadius: BorderRadius.circular(10)),
                               width: 100,
                               height: 40,
@@ -1029,21 +1042,6 @@ class _AddPromptsScreenState extends State<AddPromptsScreen> {
       EasyLoading.show();
       addPromptsBloc.add(
         AddResource(
-          // mediaUrl:
-          //     // state.side2ResourceUrl,
-          //     state.side2selectedMediaType ==
-          //             'Text'
-          //         ? "text-side2"
-          //         : state.side2selectedMediaType ==
-          //                 'Image'
-          //             ? "image-side2"
-          //             : state.side2selectedMediaType ==
-          //             'Video'
-          //         ? "video-side2"
-          //         : state.side2selectedMediaType ==
-          //             'Audio'
-          //         ? "audio-side2"
-          //         : "other",
           mediaUrl:
           // state.side1ResourceUrl,
           state.side2selectedMediaType ==
@@ -1094,7 +1092,14 @@ class _AddPromptsScreenState extends State<AddPromptsScreen> {
     await Permission.audio.request();
     await Permission.accessMediaLocation.request();
     await Permission.manageExternalStorage.request();
-    String downloadPath = await ExternalPath.getExternalStoragePublicDirectory(ExternalPath.DIRECTORY_DOWNLOADS);
+    String downloadPath;
+
+    if (Platform.isIOS) {
+      var directory = await getApplicationDocumentsDirectory();
+      downloadPath = directory.path + '/';
+    } else {
+      downloadPath = await ExternalPath.getExternalStoragePublicDirectory(ExternalPath.DIRECTORY_DOWNLOADS);
+    }
 
     print(downloadPath);
 
@@ -1189,122 +1194,10 @@ String getFileType(String format) {
 
   return 'Unknown'; // Return 'Unknown' if no matching format is found.
 
-  /*GestureDetector(
-    onTap: () {
-      if(state.resource2status == Resource2Status.initial || state.resource2status == Resource2Status.failed){
-        if (state.side2selectedMediaType == 'Image') {
-          ImagePickerHelper.pickImage(imageSource: ImageSource.camera)
-              .then((value) {
-            print(value!.path);
-            print("value");
-            addPromptsBloc.add(
-                PickResource(
-                    mediaUrl: value.path,
-                    whichSide: 1));
-          });
-        } else if (state.side2selectedMediaType == 'Video') {
-          ImagePickerHelper.pickVideo(imageSource: ImageSource.camera)
-              .then((value) {
-            addPromptsBloc.add(
-                PickResource(
-                    mediaUrl: value!.path,
-                    whichSide: 1));
-          });
-        } else if (state.side2selectedMediaType == 'Audio') {
-          ImagePickerHelper.pickFile()
-              .then((value) {
-            addPromptsBloc.add(
-                PickResource(
-                    mediaUrl: value,
-                    whichSide: 1));
-          });
-        }
-      }
-    },
-    child: Container(
-      color: Colors.grey,
-      height: context.screenHeight / 5,
-      child: getFileType(state.side2ResourceUrl!) == 'Photo'
-          ? Image.file(File(state.side2ResourceUrl!),
-        fit: BoxFit.fill,
-      )
-          : getFileType(state.side2ResourceUrl!) == 'Video'
-          ? FutureBuilder<Uint8List?>(
-        future: loadVideoThumbnail(File(state.side2ResourceUrl!).path),
-        builder: (context, snapshot) {
-          if(snapshot.hasData){
-            if(snapshot.data != null){
-              return Image.memory(snapshot.data!, fit: BoxFit.fitHeight,);
-            }
-          }else if(snapshot.hasError){
-            return Icon(Icons.error_outline);
-          }
-          return Center(child: CircularProgressIndicator(),);
-        },
-      )
-          : Center(
-        child: Text(state.side2selectedMediaType == 'Image'
-            ? 'Upload Image'
-            : state.side2selectedMediaType == 'Video'
-            ? "Upload Video"
-            : state.side2selectedMediaType == 'Audio'
-            ? 'Upload Audio'
-            : ''),
-      ),
-    ),
-  )*/
 
 
 
 
-  /*GestureDetector(
-    onTap: () {
-      //print(state.side1selectedMediaType);
-      if(state.resource1status == Resource1Status.initial || state.resource1status == Resource1Status.failed){
-        if (state.side1selectedMediaType == 'Image') {
-          ImagePickerHelper.pickImage(imageSource: ImageSource.camera)
-              .then((value) {
-            addPromptsBloc.add(
-                PickResource(
-                    mediaUrl: value!.path,
-                    whichSide: 0));
-          });
-        } else if (state.side1selectedMediaType == 'Video') {
-          ImagePickerHelper.pickVideo(imageSource: ImageSource.camera)
-              .then((value) {
-
-            addPromptsBloc.add(
-                PickResource(
-                    mediaUrl: value!.path,
-                    whichSide: 0));
-          });
-        } else if (state.side1selectedMediaType == 'Audio') {
-          ImagePickerHelper.pickFile()
-              .then((value) {
-            addPromptsBloc.add(
-                PickResource(
-                    mediaUrl: value,
-                    whichSide: 0));
-          });
-        }
-      }
-    },
-    child: Container(
-      color: Colors.grey,
-      height: context.screenHeight / 5,
-      child: getFileType(state.side1ResourceUrl!) == 'Photo'
-          ? Image.file(File(state.side1ResourceUrl!), fit: BoxFit.fill,)
-          : Center(
-        child: Text(state.side1selectedMediaType == 'Image'
-            ? 'Upload Image'
-            : state.side1selectedMediaType == 'Video'
-            ? "Upload Video"
-            : state.side1selectedMediaType == 'Audio'
-            ? 'Upload Audio'
-            : ''),
-      ),
-    ),
-  ),*/
 }
 
 

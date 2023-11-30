@@ -14,4 +14,10 @@ class QuickAddLoadedState extends QuickAddState{
 
 class QuickAddedState extends QuickAddState{}
 
-class QuickAddErrorState extends QuickAddState{}
+class QuickAddErrorState extends QuickAddState{
+  final String message;
+  QuickAddErrorState({required this.message});
+
+
+}
+

@@ -163,6 +163,7 @@ class AddMediaRepo {
       print('inside multitpart');
       var file = File(imagePath);
       var mimeType = lookupMimeType(file.path);
+      print("what is mimetype $mimeType");
       request.files.add(http.MultipartFile.fromBytes(
         'content',
         await file.readAsBytes(),

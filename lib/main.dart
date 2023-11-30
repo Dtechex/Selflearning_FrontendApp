@@ -2,11 +2,14 @@ import 'dart:developer';
 
 import 'package:device_preview/device_preview.dart';
 import 'package:dio/dio.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:loader_overlay/loader_overlay.dart';
+import 'package:self_learning_app/features/add_Dailog/bloc/get_dailog_bloc/get_dailog_bloc.dart';
 import 'package:self_learning_app/features/add_promts/bloc/add_prompts_bloc.dart';
 import 'package:self_learning_app/features/category/bloc/category_bloc.dart';
+import 'package:self_learning_app/features/dailog_category/bloc/add_prompt_res_cubit.dart';
 import 'package:self_learning_app/features/dashboard/dashboard_screen.dart';
 import 'package:self_learning_app/features/login/data/repo/login_repo.dart';
 import 'package:self_learning_app/features/login/login_screen.dart';
@@ -20,13 +23,19 @@ import 'package:self_learning_app/features/registration/data/repo/signup_repo.da
 import 'package:self_learning_app/features/resources/bloc/resources_bloc.dart';
 import 'package:self_learning_app/features/search_category/bloc/search_cat_bloc.dart';
 import 'package:self_learning_app/features/subcategory/bloc/sub_cate_bloc.dart';
+import 'package:self_learning_app/features/subcategory/primaryflow/bloc/primary_bloc.dart';
 import 'package:self_learning_app/utilities/colors.dart';
 import 'package:self_learning_app/utilities/shared_pref.dart';
+import 'features/add_Dailog/bloc/create_dailog_bloc/create_dailog_bloc.dart';
 import 'features/create_flow/bloc/create_flow_screen_bloc.dart';
+import 'features/dailog_category/dailog_cate_screen.dart';
 import 'features/dashboard/bloc/dashboard_bloc.dart';
 import 'features/login/bloc/login_bloc.dart';
+import 'features/quick_add/PromptBloc/quick_prompt_bloc.dart';
+import 'features/search_subcategory/bloc/search_cat_bloc.dart';
 import 'features/subcate1.1/bloc/sub_cate1_bloc.dart';
 import 'features/subcate1.2/bloc/sub_cate2_bloc.dart';
+import 'firebase_option.dart';
 
 BaseOptions baseOptions = BaseOptions(
   baseUrl: 'https://selflearning.dtechex.com/',
@@ -38,7 +47,9 @@ BaseOptions baseOptions = BaseOptions(
 );
 Dio dio = Dio(baseOptions);
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
   dio.interceptors.add(LogInterceptor(
       responseBody: true,
       responseHeader: false,
@@ -49,13 +60,18 @@ void main() {
       logPrint: (text) {
         log(text.toString());
       }));
+
   configLoading();
+
+
   runApp(
-    const MyApp(), // Wrap your app
-  );
+
+    const MyApp(),);
 }
 
+
 void configLoading() {
+  SharedPref.init();
   EasyLoading.instance
     ..displayDuration = const Duration(milliseconds: 2000)
     ..indicatorType = EasyLoadingIndicatorType.fadingCircle
@@ -70,6 +86,8 @@ void configLoading() {
     ..userInteractions = false
     ..dismissOnTap = false;
     //..customAnimation = CustomAnimation();
+/*      (error, stack) =>
+      FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);*/
 }
 
 class MyApp extends StatelessWidget {
@@ -85,7 +103,11 @@ class MyApp extends StatelessWidget {
           BlocProvider<SignUpBloc>(create: (context) => SignUpBloc(singUpRepo: SignUpRepo())),
           BlocProvider<SearchCategoryBloc>(create: (context) => SearchCategoryBloc()),
           BlocProvider<SubCategoryBloc>(create: (context) => SubCategoryBloc()),
-          //BlocProvider<CameraBloc>(create: (context) => CameraBloc()),
+          BlocProvider<SearchSubCategoryBloc>(create:(context)=> SearchSubCategoryBloc(),),
+          BlocProvider<PrimaryBloc>(create: (context) => PrimaryBloc()),
+          BlocProvider<QuickPromptBloc>(create: (context) => QuickPromptBloc()),
+          BlocProvider<QuickAddBloc>(create: (context) => QuickAddBloc()),
+          BlocProvider<CreateDailogBloc>(create: (context) => CreateDailogBloc()),
           BlocProvider<SubCategory1Bloc>(create: (context) => SubCategory1Bloc()),
           BlocProvider<SubCategory2Bloc>(create: (context) => SubCategory2Bloc()),
           BlocProvider<QuickImportBloc>(create: (context) => QuickImportBloc()),
@@ -93,6 +115,8 @@ class MyApp extends StatelessWidget {
           BlocProvider<PromtBloc>(create: (context) => PromtBloc()),
           BlocProvider<CreateFlowBloc>(create: (context) => CreateFlowBloc()),
           // BlocProvider<AddPromptsBloc>(create: (context) => AddPromptsBloc()),
+          BlocProvider<AddPromptResCubit>(create: (context) => AddPromptResCubit()),
+
         ],
         child: GlobalLoaderOverlay(
           child: MaterialApp(
@@ -132,3 +156,4 @@ class MyApp extends StatelessWidget {
         ));
   }
 }
+//kkk

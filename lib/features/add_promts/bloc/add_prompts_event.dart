@@ -25,6 +25,15 @@ class AddResource extends AddPrompts{
 
   AddResource({this.mediaUrl,this.resourceId,this.name,this.whichSide,this.content});
 }
+class QuickAddResource extends AddPrompts{
+  final int ? whichSide;
+  final String ? name;
+  final int ? mediaUrl;
+  final String ? content;
+
+  QuickAddResource({this.mediaUrl,this.name,this.whichSide,this.content});
+}
+
 
 class AddPromptEvent extends AddPrompts{
   final String ? name;
@@ -35,5 +44,10 @@ class AddPromptEvent extends AddPrompts{
 
 class ResetFileUploadStatus extends AddPrompts{
   ResetFileUploadStatus();
+}
+class AddPromptEventforQuickPrompt extends AddPrompts{
+  final String ? Promptname;
+
+  AddPromptEventforQuickPrompt({this.Promptname});
 }
 

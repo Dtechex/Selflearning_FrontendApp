@@ -50,3 +50,25 @@ class LoadAllFlowEvent extends CreateFlowEvent {
   List<Object?> get props => [catID];
 
 }
+class promptSelectedEvent extends CreateFlowEvent{
+  final String flowId;
+  promptSelectedEvent({required this.flowId});
+  List<Object?> get props => [flowId];
+
+}
+
+class FlowSelected extends CreateFlowEvent{
+  List<FlowModel> flowList;
+  final String flowId;
+  final String type;
+  final int index;
+  final String rootId;
+
+  FlowSelected({required this.flowId, required this.type, required this.flowList,required this.index, required this.rootId});
+
+  @override
+  // TODO: implement props
+  List<Object?> get props => throw UnimplementedError();
+
+
+}

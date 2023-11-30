@@ -126,3 +126,13 @@ class Records {
     return data;
   }
 }
+///////// only need resourceID and resourceName seprate to upper model use in Dailog expensionList resource
+
+class QuickResourceModel{
+  String? resourceName;
+  String? resourceId;
+
+  QuickResourceModel({required this.resourceName, required this.resourceId});
+
+
+}

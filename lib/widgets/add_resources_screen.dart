@@ -1,15 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:self_learning_app/features/add_media/add_audio_screen.dart';
 import 'package:self_learning_app/features/add_media/add_text_screen.dart';
 import 'package:self_learning_app/features/add_media/add_video_screen.dart';
 import 'package:self_learning_app/features/resources/bloc/resources_bloc.dart';
 import 'package:self_learning_app/features/resources/subcategory_resources_screen.dart';
+import 'package:self_learning_app/utilities/colors.dart';
 import 'package:self_learning_app/utilities/extenstion.dart';
 
 import '../features/add_media/add_image_screen.dart';
+import '../features/dailog_category/bloc/add_prompt_res_cubit.dart';
 import '../features/resources/maincategory_resources_screen.dart';
 import '../features/resources/resources_screen.dart';
+import 'add_prompt_quickAddresourceScreen.dart';
 
 //without app bar for add category or subcatrogry resource or promt
 
@@ -38,6 +42,8 @@ List<IconData> mediaIcons = [
 ];
 
 class _AddResourceScreenState extends State<AddResourceScreen> {
+  final AddPromptResCubit cubitAddPromptRes = AddPromptResCubit();
+
   @override
   void initState() {
     context.read<ResourcesBloc>().add(LoadResourcesEvent(rootId: widget.rootId, mediaType: ''));
@@ -49,6 +55,32 @@ class _AddResourceScreenState extends State<AddResourceScreen> {
     print(widget.rootId);
     print('rootId');
     return Scaffold(
+      floatingActionButton: SizedBox(
+          height: context.screenHeight*0.1,
+        child: FittedBox(
+          child: ElevatedButton(
+            onPressed: (){
+              Navigator.push(context, MaterialPageRoute(
+                builder: (context) =>
+                    MaincategoryResourcesList(rootId: widget.rootId!,
+                        mediaType: '',
+                        title: widget.categoryName!),));
+            },
+            child: Text("View All", style: TextStyle(fontSize: 9),),
+          ),
+        ),
+      ),
+      appBar: AppBar(
+        title: Text("Add resource ${widget.categoryName}"),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.pop(context);
+            Navigator.pop(context);
+
+          },
+        ),
+      ),
         body: SizedBox(
       child: ListView.builder(
         shrinkWrap: true,
@@ -217,7 +249,8 @@ class _AddResourceScreenState extends State<AddResourceScreen> {
 class AddResourceScreen2 extends StatelessWidget {
   final int whichResources;
   final String? resourceId;
-  AddResourceScreen2({Key? key, required this.whichResources, this.resourceId})
+  bool ?number;
+  AddResourceScreen2({Key? key, required this.whichResources, this.resourceId,required this.number})
       : super(key: key);
 
   List<String> mediaTitle = [
@@ -236,104 +269,163 @@ class AddResourceScreen2 extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(title: const Text('Add resources')),
-        body: SizedBox(
-          //  height: context.screenHeight/2.8,
-          child: ListView.builder(
-            shrinkWrap: true,
-            itemCount: mediaIcons.length,
-            itemBuilder: (context, index) {
-              return Padding(
-                padding: const EdgeInsets.only(bottom: 0, top: 10),
-                child: Container(
-                  padding: const EdgeInsets.only(top: 5, bottom: 5),
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                      color: Colors.blue[50]),
-                  child: ListTile(
-                      title: Text(mediaTitle[index]),
-                      leading: Icon(mediaIcons[index]),
-                      trailing: SizedBox(
-                        width: context.screenWidth / 3,
-                        child: Row(
-                          children: [
-                            SizedBox(
-                              width: context.screenWidth * 0.035,
+        appBar: AppBar(title: const Text('Quick Add'),
+
+        ),
+
+        floatingActionButton: SpeedDial(
+          backgroundColor: primaryColor,
+          animatedIcon: AnimatedIcons.list_view,
+          overlayColor: Colors.transparent,
+          elevation: 10,
+          overlayOpacity: 0.1,
+          animatedIconTheme: IconThemeData.fallback(),
+          foregroundColor: Colors.yellow,
+          useRotationAnimation:true ,
+          children: [
+            SpeedDialChild(
+              label: "Add prompt",
+              backgroundColor: Colors.green[400],
+              child: Icon(Icons.file_copy, color: Colors.white,),
+              onTap: (){
+                Navigator.push(context, MaterialPageRoute(builder: (context)=>AddPromptsAddResourceScreen(categoryId: "1",resourceId: "1",)));
+
+              }
+            ),
+          ],
+
+        ),
+        body: Column(
+          children: [
+          number==true?  SizedBox(
+              //  height: context.screenHeight/2.8,
+              child: ListView.builder(
+                shrinkWrap: true,
+                itemCount: mediaIcons.length,
+                itemBuilder: (context, index) {
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: 0, top: 10),
+                    child: Container(
+                      padding: const EdgeInsets.only(top: 5, bottom: 5),
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          color: Colors.blue[50]),
+                      child: ListTile(
+                          title: Text(mediaTitle[index]),
+                          leading: Icon(mediaIcons[index]),
+                          trailing: SizedBox(
+                            width: context.screenWidth / 3,
+                            child: Row(
+                              children: [
+                                SizedBox(
+                                  width: context.screenWidth * 0.035,
+                                ),
+                                IconButton(
+                                  icon: Icon(Icons.add),
+                                  onPressed: () {
+                                    switch (index) {
+                                      case 0:
+                                        {
+                                          Navigator.push(context, MaterialPageRoute(
+                                            builder: (context) {
+                                              return AddImageScreen(
+                                                whichResources: whichResources,
+                                                rootId: resourceId!,
+                                              );
+                                            },
+                                          ));
+                                        }
+                                        break;
+                                      case 1:
+                                        {
+                                          Navigator.push(context, MaterialPageRoute(
+                                            builder: (context) {
+                                              return AddVideoScreen(
+                                                whichResources: whichResources,
+                                                resourceId: resourceId,
+                                                rootId: resourceId!,
+                                              );
+                                            },
+                                          ));
+                                        }
+                                        break;
+                                      case 2:
+                                        {
+                                          Navigator.push(context, MaterialPageRoute(
+                                            builder: (context) {
+                                              return AddAudioScreen(
+                                                whichResources: whichResources,
+                                                resourceId: resourceId,
+                                                rootId: resourceId!,
+                                              );
+                                            },
+                                          ));
+                                        }
+                                        break;
+                                      case 3:
+                                        {
+                                          Navigator.push(context, MaterialPageRoute(
+                                            builder: (context) {
+                                              return AddTextScreen(
+                                                whichResources: whichResources,
+                                                resourceId: resourceId,
+                                                rootId: resourceId!,
+                                              );
+                                            },
+                                          ));
+                                        }
+                                    }
+                                  },
+                                ),
+                                if (whichResources != 2)
+                                  SizedBox(
+                                    width: context.screenWidth * 0.035,
+                                  ),
+                                //  IconButton(
+                                //   icon:  const Icon(Icons.remove_red_eye),onPressed: () {
+                                //   Navigator.push(context, MaterialPageRoute(builder: (context) {
+                                //     return  AllResourcesList(rootId: resourceId!,mediaType: '',);
+                                //   },));
+                                // },)
+                              ],
                             ),
-                            IconButton(
-                              icon: Icon(Icons.add),
-                              onPressed: () {
-                                switch (index) {
-                                  case 0:
-                                    {
-                                      Navigator.push(context, MaterialPageRoute(
-                                        builder: (context) {
-                                          return AddImageScreen(
-                                            whichResources: whichResources,
-                                            rootId: resourceId!,
-                                          );
-                                        },
-                                      ));
-                                    }
-                                    break;
-                                  case 1:
-                                    {
-                                      Navigator.push(context, MaterialPageRoute(
-                                        builder: (context) {
-                                          return AddVideoScreen(
-                                            whichResources: whichResources,
-                                            resourceId: resourceId,
-                                            rootId: resourceId!,
-                                          );
-                                        },
-                                      ));
-                                    }
-                                    break;
-                                  case 2:
-                                    {
-                                      Navigator.push(context, MaterialPageRoute(
-                                        builder: (context) {
-                                          return AddAudioScreen(
-                                            whichResources: whichResources,
-                                            resourceId: resourceId,
-                                            rootId: resourceId!,
-                                          );
-                                        },
-                                      ));
-                                    }
-                                    break;
-                                  case 3:
-                                    {
-                                      Navigator.push(context, MaterialPageRoute(
-                                        builder: (context) {
-                                          return AddTextScreen(
-                                            whichResources: whichResources,
-                                            resourceId: resourceId,
-                                            rootId: resourceId!,
-                                          );
-                                        },
-                                      ));
-                                    }
-                                }
-                              },
-                            ),
-                            if (whichResources != 2)
-                              SizedBox(
-                                width: context.screenWidth * 0.035,
-                              ),
-                            //  IconButton(
-                            //   icon:  const Icon(Icons.remove_red_eye),onPressed: () {
-                            //   Navigator.push(context, MaterialPageRoute(builder: (context) {
-                            //     return  AllResourcesList(rootId: resourceId!,mediaType: '',);
-                            //   },));
-                            // },)
-                          ],
-                        ),
-                      )),
-                ),
-              );
-            },
-          ),
+                          )),
+                    ),
+                  );
+                },
+              ),
+            ):            Container(
+              padding: const EdgeInsets.only(top: 5, bottom: 5),
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                  color: Colors.blue[50]),
+              width:double.infinity,
+              child: ListTile(
+                title: Text("Add Prompt"),
+                leading: Icon(Icons.file_copy),
+                trailing: (SizedBox(
+                  width: context.screenWidth / 3,
+
+                  child: Row(
+                    children: [
+                      SizedBox(
+                        width: context.screenWidth * 0.035,
+                      ),
+                      IconButton(onPressed: (){
+                        Navigator.push(context, MaterialPageRoute(builder: (context)=>AddPromptsAddResourceScreen(categoryId: "1",resourceId: "1",)));
+
+                      }, icon: Icon(Icons.add)),
+                    ],
+                  ),
+                )),
+              )
+
+          )
+            ,
+
+            SizedBox(height: 10,),
+
+          ],
         ));
   }
 }

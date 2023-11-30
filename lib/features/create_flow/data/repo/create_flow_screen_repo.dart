@@ -28,6 +28,30 @@ class CreateFlowRepo {
     }
     return null;
   }
+  static Future<Response?> selectFlow({required String flowId,required String flowType, required String rootId,
+  required String flowTitle
+  }) async {
+    try {
+      final token = await SharedPref.getUserToken();
+      print("---my token $token");
+      Response res = await Dio().put(
+          'https://selflearning.dtechex.com/web/flow/update/$flowId',
+          data: {
+            'type': "primary",
+            'title':'$flowTitle',
+            'categoryId':'$rootId'
+          },
+          options: Options(
+              headers: {"Authorization": 'Bearer $token'}
+          ));
+      print("status code of flow select${res.statusCode}");
+      print(res.data);
+      return res;
+    }catch(e){
+      print("catch error");
+      print(e);
+    }
+  }
 
   static Future<Response> getAllFlow({required String catID}) async {
     Response response;
@@ -72,6 +96,27 @@ class CreateFlowRepo {
     }
 
     return response;
+  }
+  static Future<Response> selectedPrompts ({required String flowId}) async{
+    Response response;
+    try{
+      final token = await SharedPref().getToken();
+      response = await Dio().post("https://selflearning.dtechex.com/web/flow/$flowId",
+      options: Options(
+        headers: {"Authorization": 'Bearer $token'}
+      )
+      );
+
+    }on DioError catch (e) {
+      response = Response(requestOptions: RequestOptions());
+      response.data = {
+        'msg' : 'Failed to communicate with server!',
+        'errorMsg' : e.toString(),
+      };
+      response.statusCode = 400;
+    }
+    return response;
+
   }
 
 }

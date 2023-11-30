@@ -13,10 +13,13 @@ class SearchCategoryRepo {
     print('inside srarch ctegory');
     Response res = await Api().get(
       endPoint: 'category/search?keyword=$query',
+
     );
     print(res.body);
-    print('res.body');
+    print("Query:${query}");
+    print('-0-0-0-${res.body}');
     var data = await jsonDecode(res.body);
+    print("data:-----${data}");
     List<dynamic> recordata = data['data']['record'];
     List<SearchCategoryModel> recordList = [];
     if (recordata.isEmpty) {

@@ -53,7 +53,7 @@ class _ShowPromtsScreenState extends State<ShowPromtsScreen> {
     var w = MediaQuery.of(context).size.width;
     return Scaffold(
       appBar: AppBar(title: const Text('Prompts'),
-        backgroundColor: Colors.green,
+        backgroundColor: Colors.blue,
 
       ),
       body: Scaffold(
@@ -61,8 +61,8 @@ class _ShowPromtsScreenState extends State<ShowPromtsScreen> {
           height: context.screenHeight * 0.1,
           child: FittedBox(
             child: ElevatedButton(
-              onPressed: () {
 
+              onPressed: () {
                 Navigator.push(context, MaterialPageRoute( builder: (context) {
                   return SlideShowScreen(
                   flowList: widget.flowList, flowName: widget.flowName,

@@ -18,6 +18,8 @@ class AddPromptsToFlowRepo {
 
   static Future<AddPromptToFlowModel?> getData({required String mainCatId}) async {
     final token = await SharedPref().getToken();
+
+    print("0000---$mainCatId");
     final Options options = Options(
         headers: {"Authorization": 'Bearer $token'}
     );
@@ -25,6 +27,9 @@ class AddPromptsToFlowRepo {
       'https://selflearning.dtechex.com/web/prompt?categoryId=$mainCatId',
       options: options,
     );
+    print("------@@$res");
+    print("----------###break");
+
 
     print('Main Cat ID: $mainCatId');
     print(res.data);    //var data = await jsonDecode(res.body);

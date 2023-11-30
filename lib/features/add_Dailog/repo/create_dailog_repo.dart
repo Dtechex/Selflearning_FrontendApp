@@ -1,0 +1,152 @@
+import 'dart:convert';
+
+import 'package:dio/dio.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:self_learning_app/features/dailog_category/bloc/add_prompt_res_cubit.dart';
+import 'package:self_learning_app/features/dailog_category/dailog_cate_screen.dart';
+import 'package:self_learning_app/utilities/shared_pref.dart';
+
+class DailogRepo{
+  static Dio _dio = Dio();
+
+  static Future<Response?> addDailog({required String dailog_name, required List resourceId, required List prompt, required String color,
+    required List tags
+
+  }) async{
+    print("add dailog fun run");
+    print("select prompt Id $prompt, selected resourceid=$resourceId");
+    String token = SharedPref.getUserToken();
+    print("shredpref=====$token");
+    final Map<String, dynamic> headers = {
+      'Authorization': 'Bearer $token',
+    };
+    print("colors$color");
+    List<Map<String, String>> styles = [
+      {"key": "font-size", "value": "2rem"},
+      {"key": "background-color", "value": color!.toString()}
+    ];
+    print("${dailog_name + color + tags.toString()}");
+    Map<String, dynamic> payload = {};
+    payload.addAll({
+      "name": dailog_name.toString(),
+    });
+    payload.addAll({"resourceIds": resourceId});
+    payload.addAll({'promptIds':prompt});
+    payload.addAll({"keywords": tags});
+    payload.addAll({"styles": styles});
+    print("keywrods-==$payload");
+    print("requestBody$payload");
+    try{
+      print("try bloc is run");
+      Response res = await _dio.post("https://selflearning.dtechex.com/web/category/create-dialog",
+          data: jsonEncode(payload),
+          options: Options(headers: headers)
+          );
+      print("respone of dailog ${res.data}");
+      if(res.statusCode == 200){
+        print(res);
+        print("inside of 2000 respone of dailog ${res.data}");
+
+      }
+      else{
+        print(res);
+        print("inside of else condition respone of dailog ${res.data}");
+
+      }
+      return res;
+    }
+    catch(e){
+      print("error $e");
+      return null;
+    }
+
+  }
+
+  static Future<Response?> getDailog() async{
+    String token = SharedPref.getUserToken();
+    final Map<String, dynamic> headers = {
+      'Authorization': 'Bearer $token',
+    };
+    try{
+      Response res = await _dio.get("https://selflearning.dtechex.com/web/category/get-dialogs",  options: Options(headers: headers));
+      return res;
+    }
+    catch(e){
+      print("error ${e.toString()}");
+    }
+
+  }
+
+  static Future<Response> deleteDailog({required String dailogId}) async {
+    var token = await SharedPref().getToken();
+    Response res;
+    try {
+      res = await _dio.delete(
+          'https://selflearning.dtechex.com/web/category/${dailogId}',
+          options: Options(
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer $token'
+            },
+          )
+      );
+      print("dailog delete response$res");
+
+      //print(res.body);
+      //print('data');
+    } on DioError catch (_) {
+      res = Response(requestOptions: RequestOptions());
+      res.statusCode = 400;
+    }
+
+    return res;
+  }
+
+  static Future<Response> saveDailog({required String dailogId, required String title, required List<String> promptId, required BuildContext context}) async {
+    print("dailog repo hit");
+    var token = await SharedPref().getToken();
+    Response res;
+    final List<Map<String, String>> dataToSend = promptId
+        .map((promptId) => {'promptId': promptId})
+        .toList();
+    try {
+      res = await _dio.post(
+          'https://selflearning.dtechex.com/web/flow',
+          data: {
+            'categoryId': dailogId,
+            'title': title,
+            'flow': dataToSend,
+            'type':'dialog'
+          },
+
+          options: Options(
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer $token'
+            },
+          )
+      );
+      print("flow created success response$res");
+      print(res.statusCode);
+      if (res.statusCode==201){
+       EasyLoading.showSuccess("Dailog Created Success", duration: Duration(seconds: 3));
+       Navigator.pop(context,true);
+       context.read<AddPromptResCubit>().getFlowDialog(dailogId: dailogId);
+       Navigator.pop(context,true);
+
+      }
+
+      //print(res.body);
+      //print('data');
+    } on DioError catch (_) {
+      res = Response(requestOptions: RequestOptions());
+      res.statusCode = 400;
+    }
+
+    return res;
+  }
+
+}

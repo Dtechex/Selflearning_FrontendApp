@@ -14,7 +14,6 @@ part 'quick_add_state.dart';
 class QuickImportBloc extends Bloc<QuickImportEvent, QuickImportState> {
   QuickImportBloc() : super(QuickImportInitial()) {
     on<ButtonPressedEvent>(_onButtonPressed);
-
     on<ChangeDropValue>(_onChangeDropValue);
     on<LoadQuickTypeEvent>(_onLoadQuickTypes);
   }
@@ -32,13 +31,20 @@ class QuickImportBloc extends Bloc<QuickImportEvent, QuickImportState> {
   }
 
   void _onButtonPressed(
+
       ButtonPressedEvent event, Emitter<QuickImportState> emit) async {
     emit(QuickImportLoadingState());
-      await QuickImportRepo.addCategory(title: event.title!,rootId: event.rootId).then((value)async {
-        await QuickImportRepo.updateResources(rootId: value,resourceId: event.quickAddId!,mediaType: event.mediaType!);
-          emit(QuickImportSuccessfullyState());
-      });
+    await QuickImportRepo.updateResources(rootId: event.rootId!,resourceId: event.quickAddId!,mediaType: event.mediaType!, resourceTitle: event.title!,resourceContent: event.resourceContent! );
+        emit(QuickImportSuccessfullyState());
+
+    // await QuickImportRepo.addCategory(title: event.title!,rootId: event.rootId).then((value)async {
+      //     emit(QuickImportSuccessfullyState());
+      // }
+      //
+      // );
     }
+
+
   }
 
 

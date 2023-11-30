@@ -52,6 +52,7 @@ class AddMediaBloc extends Bloc<AddMediaEvent, AddMediaInitial> {
    if(event.whichResources==2){
      await  AddMediaRepo.addPrompt(imagePath: state.selectedFilepath,name: event.title??'Untitled',resourcesId: event.rootId!,).then((value) {
          emit(state.copyWith(apiState: ApiState.submitted,wichResources: 2));
+
      });
    } else if(event.whichResources==0){
      await  AddMediaRepo.addQuickAddwithResources(imagePath: state.selectedFilepath,title: event.title??'Untitled',contenttype: event.MediaType).then((value) {

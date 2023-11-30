@@ -80,11 +80,11 @@ class _AddPromptsToFlowScreenState extends State<AddPromptsToFlowScreen> {
       create: (context) => bloc,
       child: Scaffold(
         appBar: AppBar(
-          backgroundColor: Colors.green,
           title: Text(
             widget.title,
             overflow: TextOverflow.ellipsis,
           ),
+          backgroundColor: Colors.red,
           actions: [
             Container(
               margin: EdgeInsets.symmetric(vertical: 8.0, horizontal: 8.0),
@@ -92,6 +92,7 @@ class _AddPromptsToFlowScreenState extends State<AddPromptsToFlowScreen> {
                 stream: _counterStreamController.stream,
                 initialData: promptList.length,
                 builder: (context, snapshot) {
+                  print("total length of book $promptList.length");
                   if (snapshot.hasError) {
                     return Text('Error: ${snapshot.error}');
                   } else if (!snapshot.hasData) {
@@ -184,6 +185,7 @@ class _AddPromptsToFlowScreenState extends State<AddPromptsToFlowScreen> {
                 child: CircularProgressIndicator(),
               );
             } else if (state.mainCategory == APIStatus.loadSuccess) {
+
               if (state.mainCategoryData == null) {
                 return Center(
                   child: Text('Nothing to show'),
@@ -536,23 +538,6 @@ class _AddPromptsToFlowScreenState extends State<AddPromptsToFlowScreen> {
                       ),
                     )
 
-/*
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 50.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    ElevatedButton(
-                        onPressed: (){
-
-                        },
-                        child: Text('Save Flow'))
-                  ],
-                ),
-              ),
-            )
-*/
                   ],
                 );
               }
@@ -825,6 +810,7 @@ class _PromptTileState extends State<PromptTile> {
     setState(() {
       _isSelected = widget.onCreate(
           PromptListModel(widget.data.title!, widget.data.promptId!, color));
+
     }); //widget.data.isSelected??
   }
 
@@ -834,11 +820,14 @@ class _PromptTileState extends State<PromptTile> {
       padding: const EdgeInsets.all(4.0),
       child: ListTile(
         onTap: () {
+          print("====>known title-->${widget.data.title}");
           widget.onTap(PromptListModel(
               widget.data.title!, widget.data.promptId!, color));
           setState(() {
             _isSelected = !_isSelected;
+
           });
+
         },
         leading: SizedBox(
           height: MediaQuery.of(context).size.height * 0.06,

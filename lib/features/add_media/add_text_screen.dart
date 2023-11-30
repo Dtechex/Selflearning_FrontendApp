@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:loader_overlay/loader_overlay.dart';
+import 'package:self_learning_app/features/dailog_category/bloc/add_prompt_res_cubit.dart';
 
 import 'package:self_learning_app/utilities/extenstion.dart';
 
@@ -57,6 +58,7 @@ class _AddTextScreenState extends State<AddTextScreen> {
               print(state.wichResources);
               print('state.wichResources');
               context.read<ResourcesBloc>().add(LoadResourcesEvent(rootId: widget.rootId, mediaType: ''));
+              context.read<AddPromptResCubit>()..getResPrompt(dailogId: widget.rootId);
               Navigator.pop(context);
               /*switch(state.wichResources){
                 case 0: {

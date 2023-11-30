@@ -1,7 +1,13 @@
+import 'dart:async';
+import 'dart:math';
+
+import 'package:blurrycontainer/blurrycontainer.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:self_learning_app/features/category/bloc/category_bloc.dart';
 import 'package:self_learning_app/features/category/bloc/category_state.dart';
 import 'package:self_learning_app/features/quick_add/data/bloc/quick_add_bloc.dart';
@@ -10,6 +16,7 @@ import 'package:self_learning_app/features/subcategory/sub_cate_screen.dart';
 import 'package:self_learning_app/utilities/colors.dart';
 import 'package:self_learning_app/utilities/extenstion.dart';
 import 'package:self_learning_app/widgets/add_resources_screen.dart';
+import '../../utilities/shared_pref.dart';
 import '../quick_add/quick_add_screen.dart';
 import '../search_category/bloc/search_cate_event.dart';
 import '../search_category/cate_search_delegate.dart';
@@ -28,6 +35,73 @@ class _AllCateScreenState extends State<AllCateScreen> {
   List<String> titles = ['All Categories', 'Dialogs','QuickAdd List '];
   TextEditingController controller = TextEditingController(text: "  Search");
   TextEditingController quickaddcontroller = TextEditingController();
+  late StreamSubscription subscription;
+  bool isDeviceConnected = false;
+  bool isAlertSet = false;
+  bool isLoading = true;
+  void _showCustomDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        double dialogWidth = 0.5; // Set the desired width as a fraction of the screen width
+        double dailogHight = 0.3;
+        if (MediaQuery.of(context).size.width >= 600) {
+          // If the screen width is at least 600, consider it as a tablet
+          dialogWidth = 0.7; // Set the width to 50% for tablets
+           dailogHight = 0.3;
+        }
+        if(MediaQuery.of(context).size.width<=600){
+          dailogHight= 0.2;
+          dialogWidth = 0.5;
+
+        }
+        return Dialog(
+          child: Container(
+            width: MediaQuery.of(context).size.width * dialogWidth, // Set the dialog width based on the screen size
+            height: MediaQuery.of(context).size.height * dailogHight,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: <Widget>[
+                    IconButton(
+                      icon: Icon(Icons.close),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                  ],
+                ),
+                ElevatedButton(
+                    onPressed: () {
+                      String token =  SharedPref.getUserToken();
+                      print("my token${token}");
+                        Navigator.push(context, MaterialPageRoute(builder: (context) {
+                        return AddResourceScreen2(resourceId: '',whichResources: 0,number: true,);
+                      },));                  // Add your resource handling logic here
+                    },
+                    child: Text("Add Resource"),
+                  ),
+                SizedBox(height: 20,),
+                ElevatedButton(
+                    onPressed: () {
+                      // Handle "Add Prompt" button click
+                      Navigator.push(context, MaterialPageRoute(builder: (context) {
+                        return AddResourceScreen2(resourceId: '',whichResources: 0,number: false,);
+                      },));
+
+                    },
+                    child: Text("Add Prompt"),
+                  ),
+                SizedBox(height: 20,)
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
 
   Future<void> _displayTextInputDialog(BuildContext context) async {
     return showDialog(
@@ -81,15 +155,66 @@ class _AllCateScreenState extends State<AllCateScreen> {
           );
         });
   }
+  Color lightenRandomColor(Color color, double factor) {
+    assert(factor >= 0 && factor <= 1.0);
+    final int red = (color.red + (255 - color.red) * factor).round();
+    final int green = (color.green + (255 - color.green) * factor).round();
+    final int blue = (color.blue + (255 - color.blue) * factor).round();
+    return Color.fromARGB(255, red, green, blue);
+  }
 
-  @override
+  Color generateRandomColor() {
+    final Random random = Random();
+    final int red = random.nextInt(256); // 0-255 for the red channel
+    final int green = random.nextInt(256); // 0-255 for the green channel
+    final int blue = random.nextInt(256); // 0-255 for the blue channel
+    final originalColor = Color.fromARGB(255, red, green, blue);
+    final pastelColor = lightenRandomColor(originalColor, 0.8); // 30% lighter
+
+    return pastelColor;
+  }  @override
   void initState() {
+    getConnectivity();
     context.read<CategoryBloc>().add(CategoryLoadEvent());
     super.initState();
   }
-
+  showDialogBox() =>
+      showCupertinoDialog<String>(
+        context: context,
+        builder: (BuildContext context) =>
+            CupertinoAlertDialog(
+              title: const Text('No internet '),
+              content: const Text('Please check your internet connectivity'),
+              actions: <Widget>[
+                TextButton(
+                  onPressed: () async {
+                    Navigator.pop(context, 'Cancel');
+                    setState(() => isAlertSet = false);
+                    isDeviceConnected =
+                    await InternetConnectionChecker().hasConnection;
+                    if (!isDeviceConnected && isAlertSet == false) {
+                      showDialogBox();
+                      setState(() => isAlertSet = true);
+                    }
+                  },
+                  child: const Text('Retry'),
+                ),
+              ],
+            ),
+      );
+  getConnectivity() =>
+      subscription = Connectivity().onConnectivityChanged.listen(
+            (ConnectivityResult result) async {
+          isDeviceConnected = await InternetConnectionChecker().hasConnection;
+          if (!isDeviceConnected && isAlertSet == false) {
+            showDialogBox();
+            setState(() => isAlertSet = true);
+          }
+        },
+      );
   @override
   Widget build(BuildContext context) {
+
     print("Category Screen");
     return Column(
       children: [
@@ -108,32 +233,45 @@ class _AllCateScreenState extends State<AllCateScreen> {
                       delegate: CustomSearchDelegate(),
                     );
                   },
-                  child: Container(
-                    margin: const EdgeInsets.only(left: 15),
-                    height:   context.screenHeight * 0.058,
-                    decoration: BoxDecoration(
-                        color: Colors.grey.withOpacity(0.5),
-                        borderRadius: BorderRadius.circular(10)
-                    ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: BlurryContainer(
+                      elevation: 1,
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(20),
+                      height:   context.screenHeight * 0.058,
 
-                    child: Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text('Search..',style: TextStyle(
-                          color: Colors.black.withOpacity(0.5)
-                      ),),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text('Search..',style: TextStyle(
+                              color: Colors.black
+                          ),),
+                          Icon(Icons.search)
+                        ],
+                      ),
                     ),
                   ),
                 )
             ),
           ),
-          IconButton(
-              onPressed: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) {
-                  return AddResourceScreen2(resourceId: '',whichResources: 0,);
-                },));
-                //_displayTextInputDialog(context);
-              },
-              icon: const Icon(Icons.add)),
+          Card(
+            elevation: 2,
+            shape: RoundedRectangleBorder(
+
+              borderRadius: BorderRadius.circular(8.0), //<-- SEE HERE
+            ),
+            child: IconButton(
+                onPressed: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) {
+                    return AddResourceScreen2(resourceId: '',whichResources: 0,number: true,);
+                  },));
+                  // _showCustomDialog();
+
+                  //_displayTextInputDialog(context);
+                },
+                icon: const Icon(Icons.add)),
+          ),
         ],
       ),
       const SizedBox(
@@ -199,18 +337,26 @@ class _AllCateScreenState extends State<AllCateScreen> {
                         currentColor = primaryColor;
                       } else {
                         currentColor = Color(int.parse(
-                            state.cateList[index].styles![1].value!));
+                            state.cateList[index].styles![1].value!))??primaryColor;
                       }
                     }
 
                     return GestureDetector(
-                      child: Container(
-                        //padding: const EdgeInsets.all(8),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          color: Colors.transparent,
-                          border: Border.all(color: currentColor, width: 3),
+                      child: Card(
+                        shape: RoundedRectangleBorder(
+
+                          borderRadius: BorderRadius.circular(10.0), //<-- SEE HERE
                         ),
+                        color: generateRandomColor(),
+                        //padding: const EdgeInsets.all(8),
+                        // decoration: BoxDecoration(
+                        //
+                        //   borderRadius: BorderRadius.circular(10),
+                        //   color: generateRandomColor(),
+                        //   border: Border.all(color: currentColor, width: 3),
+                        //
+                        // ),
+                        elevation: 2,
                         child: Stack(
                           children: [
                             Center(
@@ -218,11 +364,13 @@ class _AllCateScreenState extends State<AllCateScreen> {
                                   textAlign: TextAlign.center,
                                   overflow: TextOverflow.ellipsis,
                                   maxLines: 2,
-                                  style: const TextStyle(color: primaryColor)),
+                                  style:  TextStyle(color: primaryColor, fontWeight: FontWeight.w500,letterSpacing: 1)),
                             ),
                             Align(
                               alignment: Alignment.topRight,
-                              child: PopupMenuButton(
+                              child:
+                              PopupMenuButton(
+
                                 icon: Icon(Icons.more_vert,color: Colors.red,),
                                 itemBuilder: (context) {
                                   return [

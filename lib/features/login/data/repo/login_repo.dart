@@ -9,6 +9,8 @@ class LoginRepo {
         Uri.parse('https://selflearning.dtechex.com/web/user/login'),
         body: {"email": email, "password": password});
     if (response.statusCode == 201) {
+      print("login response ${response.body}");
+      print("---------break");
       print(response.body);
       var res = jsonDecode(response.body);
       SharedPref().clear();

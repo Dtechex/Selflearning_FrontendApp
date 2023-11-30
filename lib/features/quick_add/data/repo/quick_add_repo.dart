@@ -51,6 +51,9 @@ class QuickAddRepo {
       endPoint: 'resource/quickAdd',
     );
     var data = await jsonDecode(res.body);
+    print("quick resource data $data");
     return QuickTypeModel.fromJson(data);
   }
+
+
 }
