@@ -34,6 +34,7 @@ class _AddImageScreenState extends State<AddImageScreen> {
 
 
   AddMediaBloc addMediaBloc = AddMediaBloc();
+  final AddPromptResCubit cubitAddPromptRes = AddPromptResCubit();
 
 
   @override
@@ -109,6 +110,7 @@ class _AddImageScreenState extends State<AddImageScreen> {
                 context.showSnackBar(const SnackBar(
                     duration: Duration(seconds: 1),
                     content: Text('Adding resources...')));
+
               } else if (state.apiState == ApiState.submitError) {
                 context.loaderOverlay.hide();
                 context.showSnackBar(const SnackBar(
@@ -308,6 +310,7 @@ class _AddImageScreenState extends State<AddImageScreen> {
                             title: textEditingController.text.isEmpty
                                 ? 'Untitled'
                                 : textEditingController.text));
+
                         }
                         // Navigator.pushAndRemoveUntil(
                         //     context,

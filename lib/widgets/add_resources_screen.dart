@@ -10,6 +10,7 @@ import 'package:self_learning_app/utilities/colors.dart';
 import 'package:self_learning_app/utilities/extenstion.dart';
 
 import '../features/add_media/add_image_screen.dart';
+import '../features/dailog_category/bloc/add_prompt_res_cubit.dart';
 import '../features/resources/maincategory_resources_screen.dart';
 import '../features/resources/resources_screen.dart';
 import 'add_prompt_quickAddresourceScreen.dart';
@@ -41,6 +42,8 @@ List<IconData> mediaIcons = [
 ];
 
 class _AddResourceScreenState extends State<AddResourceScreen> {
+  final AddPromptResCubit cubitAddPromptRes = AddPromptResCubit();
+
   @override
   void initState() {
     context.read<ResourcesBloc>().add(LoadResourcesEvent(rootId: widget.rootId, mediaType: ''));
@@ -69,6 +72,14 @@ class _AddResourceScreenState extends State<AddResourceScreen> {
       ),
       appBar: AppBar(
         title: Text("Add resource ${widget.categoryName}"),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.pop(context);
+            Navigator.pop(context);
+
+          },
+        ),
       ),
         body: SizedBox(
       child: ListView.builder(
@@ -261,6 +272,7 @@ class AddResourceScreen2 extends StatelessWidget {
         appBar: AppBar(title: const Text('Quick Add'),
 
         ),
+
         floatingActionButton: SpeedDial(
           backgroundColor: primaryColor,
           animatedIcon: AnimatedIcons.list_view,

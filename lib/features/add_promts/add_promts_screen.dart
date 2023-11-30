@@ -102,6 +102,7 @@ class _AddPromptsScreenState extends State<AddPromptsScreen> {
                       if (state is AddPromptsInitial) {
                         if (state.uploadStatus == UploadStatus.uploaded) {
                           addPromptsBloc.add(ResetFileUploadStatus());
+
                           context.showSnackBar(SnackBar(content: Text("Resource uploaded..")));
                           Future.delayed(Duration(seconds: 2), () {
                             EasyLoading.dismiss();
