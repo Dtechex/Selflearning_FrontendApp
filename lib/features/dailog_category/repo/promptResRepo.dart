@@ -19,6 +19,7 @@ static Future<Response?> get_Res_Prompt({required String dailogId})async{
     Response res = await _dio.get("https://selflearning.dtechex.com/web/category/get-dialog-detail?dialogId=$dailogId",options: Options(headers: headers));
     return res;
 
+
   }catch(e){
 
   }

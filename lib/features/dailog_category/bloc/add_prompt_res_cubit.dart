@@ -150,7 +150,10 @@ promptUdateDialog({required String dialogId, required List<String> promptId, req
     Response? res = await PromptResRepo.updatePrompt(listpromtId: promptId, dialogId: dialogId, context: context);
     if(res!.statusCode==200){
       print("########---=--=-==-=-=-=-=>$res.data");
-      Navigator.push(context, MaterialPageRoute(builder: (context)=>DailogCategoryScreen(resourceList: [], promptList: [], dailoId: dialogId)));
+      Navigator.pop(context);
+      Navigator.pop(context);
+
+      // Navigator.push(context, MaterialPageRoute(builder: (context)=>DailogCategoryScreen(resourceList: [], promptList: [], dailoId: dialogId)));
       emit(GetPromptUpdate());
     }
 

@@ -939,12 +939,14 @@ class _BottomSheetState extends State<BottomSheet> {
       Response res = await _dio.patch("https://selflearning.dtechex.com/web/prompt/update/$promptId", options: Options(headers: headers),
           data: {
             "resourceId":resourceId,
+            "categoryId":widget.dialogId
           }
       );
       if(res.statusCode==200){
         EasyLoading.showToast("prompt is successfully added");
-        Navigator.pop(context);
         cubitAddPromptRes.getResPrompt(dailogId: dialogId);
+        Navigator.pop(context);
+        Navigator.pop(context);
       }
       else{
         EasyLoading.showToast("Error");
@@ -1013,8 +1015,9 @@ class _BottomSheetState extends State<BottomSheet> {
                 onTap: () {
                   resId = widget.res_prompt_list[index].resourceId;
                   resourceName = widget.res_prompt_list[index].resourceName;
-                  EasyLoading.showToast(resId.toString(),
-                      duration: Duration(seconds: 2));
+                  print("-promptId${widget.promptId}");
+                  print("-resid${resId}");
+                  print("-dialogId${widget.dialogId}");
                   setState(() {
                     for (int i = 0; i < itemCheck.length; i++) {
                       if (i == index) {
