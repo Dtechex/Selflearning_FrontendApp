@@ -1,7 +1,7 @@
 
 import 'package:equatable/equatable.dart';
 
-abstract class MyFormEvent extends Equatable {
+abstract class MyFormEvent  {
   const MyFormEvent();
 
   @override

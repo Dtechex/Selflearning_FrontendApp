@@ -18,10 +18,13 @@ class DailogRepo{
   }) async{
     print("add dailog fun run");
     print("select prompt Id $prompt, selected resourceid=$resourceId");
+/*
     String token = SharedPref.getUserToken();
-    print("shredpref=====$token");
-    final Map<String, dynamic> headers = {
-      'Authorization': 'Bearer $token',
+*/
+    var token = await SharedPref().getToken();
+
+    Map<String, dynamic> headers = {
+      'Authorization': 'bearer' + ' ' + token.toString(),
     };
     print("colors$color");
     List<Map<String, String>> styles = [
@@ -66,9 +69,10 @@ class DailogRepo{
   }
 
   static Future<Response?> getDailog() async{
-    String token = SharedPref.getUserToken();
-    final Map<String, dynamic> headers = {
-      'Authorization': 'Bearer $token',
+    var token = await SharedPref().getToken();
+
+    Map<String, dynamic> headers = {
+      'Authorization': 'bearer' + ' ' + token.toString(),
     };
     try{
       Response res = await _dio.get("https://selflearning.dtechex.com/web/category/get-dialogs",  options: Options(headers: headers));
@@ -82,15 +86,15 @@ class DailogRepo{
 
   static Future<Response> deleteDailog({required String dailogId}) async {
     var token = await SharedPref().getToken();
-    Response res;
+
+    Map<String, dynamic> headers = {
+      'Authorization': 'bearer' + ' ' + token.toString(),
+    };    Response res;
     try {
       res = await _dio.delete(
           'https://selflearning.dtechex.com/web/category/${dailogId}',
           options: Options(
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': 'Bearer $token'
-            },
+            headers:headers,
           )
       );
       print("dailog delete response$res");
@@ -108,7 +112,10 @@ class DailogRepo{
   static Future<Response> saveDailog({required String dailogId, required String title, required List<String> promptId, required BuildContext context}) async {
     print("dailog repo hit");
     var token = await SharedPref().getToken();
-    Response res;
+
+    Map<String, dynamic> headers = {
+      'Authorization': 'bearer' + ' ' + token.toString(),
+    };    Response res;
     final List<Map<String, String>> dataToSend = promptId
         .map((promptId) => {'promptId': promptId})
         .toList();
@@ -123,10 +130,7 @@ class DailogRepo{
           },
 
           options: Options(
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': 'Bearer $token'
-            },
+            headers: headers,
           )
       );
       print("flow created success response$res");

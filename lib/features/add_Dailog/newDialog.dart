@@ -3,12 +3,14 @@ import 'dart:math';
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import 'package:blurrycontainer/blurrycontainer.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 
 import '../../utilities/colors.dart';
+import '../../utilities/shared_pref.dart';
 import '../dailog_category/dailog_cate_screen.dart';
 import 'bloc/get_dailog_bloc/get_dailog_bloc.dart';
 import 'bloc/new_dailog/create_dialog_new/newDailogCreate.dart';
@@ -77,7 +79,13 @@ class _NewDialogState extends State<NewDialog> {
       ..show();
   }
 
+NewDialogDartCubit newDialogDartCubit = NewDialogDartCubit();
+  Dio _dio = Dio();
+
   @override
+  void initState() {
+    super.initState();
+  }
   Widget build(BuildContext context) {
     return DefaultTabController(
       length: 2,
@@ -104,7 +112,7 @@ class _NewDialogState extends State<NewDialog> {
               child: TabBarView(
             children: [
               BlocProvider(
-                create: (context) => NewDialogDartCubit()..getQuickPromptList(),
+                create: (context) => newDialogDartCubit..getQuickPromptList(),
                 child: Scaffold(
                   floatingActionButton: Container(
                       width: 150,
@@ -180,7 +188,7 @@ class _NewDialogState extends State<NewDialog> {
                                         isCheck: false));
                                     return GestureDetector(
                                       onTap: (){
-                                        Navigator.push(context, MaterialPageRoute(builder: (context)=>DailogPrompt(
+                                        Navigator.push(context, MaterialPageRoute(builder: (context)=>SlideShowScreen2(
                                           side1type: state.promtModelList[index].side1Type.toString(),
                                           side2type: state.promtModelList[index].side2Type.toString(),
                                           promptTitle: state.promtModelList[index].promptname.toString(),
@@ -335,7 +343,11 @@ class _NewDialogState extends State<NewDialog> {
                                       if (state is GetDailogLoadingState) {
                                         print("Checking condion 2");
 
-                                        return Center(
+                                        return Container(
+                                          alignment: Alignment.center,
+
+                                          width: double.infinity,
+                                          height: MediaQuery.of(context).size.height*0.8,
                                           child: Container(
                                             width: 50,
                                             height: 50,

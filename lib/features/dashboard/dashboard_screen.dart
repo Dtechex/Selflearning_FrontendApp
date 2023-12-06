@@ -38,6 +38,7 @@ class DashBoardScreen extends StatelessWidget {
         builder: (context, state) {
           return Scaffold(
             appBar: AppBar(
+
               leading: Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Card(
@@ -51,6 +52,7 @@ class DashBoardScreen extends StatelessWidget {
                 ),
               ),
               actions: [
+
                 IconButton(
                     onPressed: () async {
                       context.showNewDialog(AlertDialog(
@@ -73,6 +75,7 @@ class DashBoardScreen extends StatelessWidget {
                               child: Text('Cancel')),
                           ElevatedButton(
                               onPressed: () async {
+                                await SharedPref().sClear();
                                 await SharedPref().clear().then((value) {
                                   Navigator.pushAndRemoveUntil(context,
                                       MaterialPageRoute(

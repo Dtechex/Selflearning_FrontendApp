@@ -21,12 +21,11 @@ class AddPromptResCubit extends Cubit<AddPromptResState> {
     var res = await PromptResRepo.get_Res_Prompt(dailogId: dailogId);
 
     print("getPromptRes Function is hit");
-    print(res!.data);
     if (res!.statusCode == 200) {
-      print("check for prompt res ${res.data}");
+      print("check for prompt res ${res!.data}");
       List<AddResourceListModel> getListRes_prompt = [];
       List<AddPromptListModel> getPromotList = [];
-      List<dynamic> resourcesList = res.data['dialogList']['resourcesList'];
+      List<dynamic> resourcesList = res!.data['dialogList']['resourcesList'];
 
       for (var resource in resourcesList) {
         getListRes_prompt.add(AddResourceListModel(

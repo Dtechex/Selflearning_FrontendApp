@@ -205,14 +205,15 @@ Future<void> fetchdataList() async{
   }
 
   Future<List<FlowDataModel>> primaryflow({required String mainCatId}) async {
-    final token = await SharedPref.getUserToken();
-    final Options options = Options(
-      headers: {"Authorization": 'Bearer $token'},
-    );
+    var token = await SharedPref().getToken();
+
+    Map<String, dynamic> headers = {
+      'Authorization': 'bearer' + ' ' + token.toString(),
+    };
     try {
       Response res = await Dio().get(
         'https://selflearning.dtechex.com/web/flow?categoryId=$mainCatId&type=primary',
-        options: options,
+        options: Options(headers: headers),
         data: {'type':'primary'}
       );
       if (res.statusCode == 200 && res.data['data']['record'][0]['type'] == 'primary') {
@@ -269,7 +270,7 @@ Future<void> fetchdataList() async{
     var w = MediaQuery.of(context).size.width;
     return showdefaultFlow?
       Scaffold(
-        appBar: AppBar(title:  Text('Primary flow of ${widget.categoryName}'),
+        appBar: AppBar(title:  Text('Primary flow'),
 
         ),
         floatingActionButton: SizedBox(

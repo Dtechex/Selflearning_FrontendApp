@@ -75,7 +75,7 @@ class _DailogCategoryScreenState extends State<DailogCategoryScreen> {
   final AddPromptResCubit cubitAddPromptRes = AddPromptResCubit();
 
   List<ListItem> itemCheck = [];
-  List<AddPromptListModel> def_prompt_list = [];
+  List<AddPromptListModel> createflowprompt = [];
   List<AddResourceListModel> reswithPromptList = [];
   final Dio _dio = Dio();
   Future<void> _showMyDialog(BuildContext context) async {
@@ -182,13 +182,21 @@ void deletPrompt({required String promptId}) async{
 
   @override
   void initState() {
-    userId = SharedPref.getUserToken();
-    payload = Jwt.parseJwt(userId!);
-    resourceId = payload?['id'];
-    print("resourceId=====>$resourceId");
-    // TODO: implement initState
     super.initState();
+    // Call the separate method to perform asynchronous operation
+    _fetchUserId();
   }
+
+  // Separate method for asynchronous operation
+  Future<void> _fetchUserId() async {
+    userId = await SharedPref().getToken();
+    payload = Jwt.parseJwt(userId!);
+    setState(() {
+      resourceId = payload?['id'];
+    });
+    print("resourceId=====>$resourceId");
+  }
+
 
   Widget build(BuildContext context) {
     print("Dailog id is ${widget.dailoId.toString()}");
@@ -253,6 +261,7 @@ void deletPrompt({required String promptId}) async{
                         color: primaryColor,
                       ),
                       onTap: () {
+
                         showModalBottomSheet(
                             context: context,
                             isScrollControlled: true,
@@ -403,6 +412,8 @@ void deletPrompt({required String promptId}) async{
                                                 resPromptList: state
                                                     .res_prompt_list[index]
                                                     .resPromptList));
+
+
 
                                         final item = widget.resourceList[index];
                                         Color iconColor = Colors
@@ -667,12 +678,14 @@ void deletPrompt({required String promptId}) async{
                                     child: Text("Sorry No Prompt"),
                                   );
                                 } else {
+
                                   return CustomScrollView(
                                     slivers: <Widget>[
                                       SliverList(
                                         delegate: SliverChildBuilderDelegate(
                                           (BuildContext context, int index) {
-                                            def_prompt_list
+                                            createflowprompt.clear();
+                                            createflowprompt
                                                 .add(AddPromptListModel(
                                               promptId: state
                                                   .def_prompt_list[index]
@@ -680,9 +693,7 @@ void deletPrompt({required String promptId}) async{
                                               parentPromptId: state
                                                   .def_prompt_list[index]
                                                   .parentPromptId,
-                                              promptTitle: state
-                                                  .def_prompt_list[index]
-                                                  .promptTitle,
+                                              promptTitle:state.def_prompt_list[index].promptTitle,
                                               promptSide1Content: state
                                                   .def_prompt_list[index]
                                                   .promptSide1Content,
@@ -839,7 +850,7 @@ void deletPrompt({required String promptId}) async{
                                                                   MaterialPageRoute(
                                                                 builder:
                                                                     (context) {
-                                                                  return DailogPrompt(
+                                                                  return SlideShowScreen2(
                                                                     side1type:
                                                                         "",
                                                                     promptTitle: state
@@ -1892,7 +1903,7 @@ class _BottomSheetforAddQuickPromptState
                               Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) => DailogPrompt(
+                                      builder: (context) => SlideShowScreen2(
                                             side1type: state
                                                 .promtModelList[index].side1Type
                                                 .toString(),
