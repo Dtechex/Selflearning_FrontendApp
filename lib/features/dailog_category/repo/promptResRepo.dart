@@ -2,31 +2,37 @@ import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:jwt_decode/jwt_decode.dart';
 import 'package:self_learning_app/utilities/shared_pref.dart';
 
 import '../bloc/add_prompt_res_cubit.dart';
 
 class PromptResRepo {
   static final Dio _dio = Dio();
-  static String token = SharedPref.getUserToken();
 
 static Future<Response?> get_Res_Prompt({required String dailogId})async{
-  print("------------------>dialogid$dailogId");
-  final Map<String, dynamic> headers = {
-    'Authorization': 'Bearer $token',
+  var token = await SharedPref().getToken();
+
+  Map<String, dynamic> headers = {
+    'Authorization': 'bearer' + ' ' + token.toString(),
   };
   try{
     Response res = await _dio.get("https://selflearning.dtechex.com/web/category/get-dialog-detail?dialogId=$dailogId",options: Options(headers: headers));
+    print("9999-${res.data.toString()}");
+
     return res;
 
-  }catch(e){
 
+  }catch(e){
+ print("00000-${e.toString()}");
   }
 }
   static Future<Response?> AddPromptInResource({required String resourceId,
     required String promptId, required String
   dialogId
   })async{
+    var token = SharedPref().getToken();
+
     final Map<String, dynamic> headers = {
       'Authorization': 'Bearer $token',
     };
@@ -46,9 +52,10 @@ static Future<Response?> get_Res_Prompt({required String dailogId})async{
   }
 
   static Future<Response?> getPrompResource({required String resourceId}) async {
+    var token = await SharedPref().getToken();
 
-    final Map<String, dynamic> headers = {
-      'Authorization': 'Bearer $token',
+    Map<String, dynamic> headers = {
+      'Authorization': 'bearer' + ' ' + token.toString(),
     };
     try{
       Response res = await _dio.get("https://selflearning.dtechex.com/web/prompt?resourceId=$resourceId",options: Options(headers: headers));

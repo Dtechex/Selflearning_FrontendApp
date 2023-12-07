@@ -85,335 +85,262 @@ class _CreateDailogFlowState extends State<CreateDailogFlow> {
   int count = 0;
   @override
   Widget build(BuildContext context) {
-    print("==========================>>>>>>>>>>${widget.dailogId}");
     return BlocProvider(
-  create: (context) => cubitAddPromptRes..getResPrompt(dailogId: widget.dailogId),
-  child: Scaffold(
-      appBar: AppBar(title: Text("Create Dailog flow"),
-      actions: [
-        Container(
-          padding: EdgeInsets.symmetric( horizontal: 10),
-          alignment: Alignment.center,
+        create: (context) => cubitAddPromptRes..getResPrompt(dailogId: widget.dailogId),
+        child: DefaultTabController(
+          length: 2,
+          child: Scaffold(
+          appBar: AppBar(title: Text("Create Dailog flow"),
+    bottom: TabBar(
+    tabs: [
+    Tab(text: 'Choose prompt'),
+    Tab(text: 'Choose resource prompt'),
+    ],),
+          actions: [
+            Container(
+              padding: EdgeInsets.symmetric( horizontal: 10),
+              alignment: Alignment.center,
 
-          child: GestureDetector(
-            onTap: () async {
-              print("dailog hit ${promptIds}");
-              print("dailogId ${widget.dailogId}");
-              print("dailogflowtitle ${widget.dailog_flow_name}");
+              child: GestureDetector(
+                onTap: () async {
+                  print("dailog hit ${promptIds}");
+                  print("dailogId ${widget.dailogId}");
+                  print("dailogflowtitle ${widget.dailog_flow_name}");
 
-             DailogRepo.saveDailog(dailogId: widget.dailogId, title: widget.dailog_flow_name, promptId: promptIds, context: context);
-            },
-            child: Container(
-              padding: EdgeInsets.symmetric(vertical: 5, horizontal: 5),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(90),
-                color: promptIds.length==0?Colors.grey:Colors.white,
+                 DailogRepo.saveDailog(dailogId: widget.dailogId, title: widget.dailog_flow_name, promptId: promptIds, context: context);
+                },
+                child: Container(
+                  padding: EdgeInsets.symmetric(vertical: 5, horizontal: 5),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(90),
+                    color: promptIds.length==0?Colors.grey:Colors.white,
 
+                  ),
+                    child: Row(
+                      children: [
+                        Text("Save elected",style: TextStyle(color: Colors.black),),
+
+                        Text("(${count.toString()})",style: TextStyle(color: Colors.black),),
+                      ],
+                    )),
               ),
-                child: Row(
-                  children: [
-                    Text("Save elected",style: TextStyle(color: Colors.black),),
+            )
+          ],
+          ),
+          body:
+                   TabBarView(
+                     children:[
+                       BlocBuilder<AddPromptResCubit, AddPromptResState>(
+                         builder: (context, state) {
+                           if(state is AddPromptResLoading){
+                             return Center(
+                               child: CircularProgressIndicator(),
+                             );
+                           }
+                           if(state is GetResourcePromptDailog){
+                             return CustomScrollView(
+                               slivers: <Widget>[
+                                 SliverGrid(
+                                   gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+                                     maxCrossAxisExtent: 500.0,
+                                     mainAxisSpacing: 5.0,
+                                     crossAxisSpacing: 10.0,
+                                     childAspectRatio: 5.0,
+                                   ),
+                                   delegate: SliverChildBuilderDelegate(
+                                         (BuildContext context, int index) {
+                                       promptSelect.add(PromptSelectedModel(promptId: state.def_prompt_list[index].promptId, ischeck: false));
+                                       return Card(
+                                         color: Colors.teal[50],
+                                         margin: EdgeInsets.only(left: 5,right: 5,top: 10),
 
-                    Text("(${count.toString()})",style: TextStyle(color: Colors.black),),
-                  ],
-                )),
+                                         child: Container(
+                                           alignment: Alignment.center,
+                                           child: ListTile(
+                                             title: Text(state.def_prompt_list[index].promptTitle),
+                                             leading: Container(
+                                               height: 40, width: 40,
+                                               alignment: Alignment.center,
+                                               decoration: BoxDecoration(
+                                                 borderRadius: BorderRadius.circular(90),
+                                                 color: Colors.pinkAccent,
+                                                 border: Border.all(color: Colors.white, width: 2),
+                                               ),
+                                               child: Text(index.toString(),style: TextStyle(color: Colors.white),),
+                                             ),
+                                             trailing: promptSelect[index].ischeck?
+                                             Container(
+                                               padding: EdgeInsets.symmetric(horizontal: 5,vertical: 5),
+                                               decoration: BoxDecoration(
+                                                 borderRadius: BorderRadius.circular(90),
+                                                 color: Colors.white,
+                                               ),
+                                               child: Icon(Icons.check, color: Colors.lightGreen,),
+
+                                             ):SizedBox(),
+                                             onTap: (){
+                                               if(promptSelect[index].ischeck==true){
+                                                 promptSelect[index].ischeck=false;
+                                                 promptIds.remove(state.def_prompt_list[index].promptId);
+                                                 count = count-1;
+                                                 print("promptIds remove $promptIds");
+                                                 setState(() {
+
+                                                 });
+                                               }
+                                               else if(promptSelect[index].ischeck==false){
+                                                 promptSelect[index].ischeck=true;
+                                                 count = count+1;
+                                                 promptIds.add(state.def_prompt_list[index].promptId);
+                                                 print("promptIds add $promptIds");
+
+                                                 setState(() {
+
+                                                 });
+                                               }
+                                               // promptSelect[index].ischeck=true;
+                                               // setState(() {
+                                               //
+                                               // });
+                                             },
+                                           ),
+                                         ),
+                                       );
+                                     },
+                                     childCount: state.def_prompt_list.length,
+                                   ),
+                                 )
+                               ],
+                             );
+                           }
+                           return Text("Something wents wrong");
+                         },
+                       ),
+                       widget.respromptlist.length==0?Container(
+                         width: double.infinity,
+                         height: MediaQuery.of(context).size.height*0.9,
+                         child:Center(
+                           child: Text("No resource is available"),
+                         ),
+                       ):CustomScrollView(
+                         slivers: [
+                           SliverList(
+                             delegate: SliverChildBuilderDelegate(
+                                   (BuildContext context, int index) {
+                                 return
+                                   Card(
+                                     elevation: 4, // Customize the elevation
+                                     margin: EdgeInsets.all(8),
+                                     child: Theme(
+                                       data:  Theme.of(context).copyWith(cardColor: generateRandomColor()),
+                                       child:
+                                       ExpansionPanelList(
+                                         expandIconColor: Colors.blue,
+                                         animationDuration: Duration(milliseconds:1000),
+                                         dividerColor:Colors.red,
+                                         elevation:1,
+                                         children: [
+
+                                           ExpansionPanel(
+
+                                               body: Container(
+                                                 padding: EdgeInsets.all(10),
+                                                 child: Column(
+                                                   mainAxisAlignment: MainAxisAlignment.start,
+                                                   crossAxisAlignment:CrossAxisAlignment.start,
+                                                   children: <Widget>[
+
+                                                     widget.respromptlist[index].promptList.length==0?Text("No prompt"):Container(
+                                                       height: 300,
+                                                       width: double.infinity,
+                                                       child: ListView.builder(
+                                                         itemCount: widget.respromptlist[index].promptList.length,
+                                                         itemBuilder: (context, index) {
+
+
+
+                                                           _list.add(ResPromptcheckModel(selectedResPrompt, false));
+
+                                                           return
+                                                             Container(
+                                                                 margin: EdgeInsets.symmetric(vertical: 2),
+                                                                 color: Colors.blue[50],
+                                                                 child: CheckboxListTile(
+                                                                   activeColor: Colors.red,
+                                                                   checkColor: Colors.white,
+                                                                   // value: _saved.contains(context), // changed
+                                                                   value:_list[index].isCheck,
+                                                                   onChanged: (val) {
+                                                                     print("object  ${val}");
+                                                                     setState(() {
+                                                                       _list[index].isCheck = val!;
+                                                                       if (val) {
+                                                                         count=count+1;
+                                                                         selectedResPrompt.add(SelectResPromptModel(resId: widget.respromptlist[index].resourceId, promptId: widget.respromptlist[index].promptList[index].promptId));
+                                                                       } else {
+                                                                         count=count-1;
+                                                                         // If the checkbox is unchecked, remove the promptId from the list.
+                                                                         selectedResPrompt.remove(SelectResPromptModel(resId: widget.respromptlist[index].resourceId, promptId: widget.respromptlist[index].promptList[index].promptId));
+                                                                       }
+                                                                     });
+                                                                   },
+                                                                   title: Text(widget.respromptlist[index].promptList![index].promptTitle.toString()),
+                                                                 )
+                                                             );
+                                                         },
+                                                       ),
+                                                     ),
+
+
+
+
+                                                   ],
+                                                 ),
+                                               ),
+                                               headerBuilder: (BuildContext context, bool isExpanded) {
+                                                 return Container(
+                                                   padding: EdgeInsets.all(10),
+                                                   child: Text(
+                                                     "Select prompt from ${widget.respromptlist[index].resourceTitle}",
+                                                     style: TextStyle(
+                                                         color:Colors.black,
+                                                         fontSize: 18,
+                                                         fontWeight: FontWeight.w500
+                                                     ),
+                                                   ),
+                                                 );
+                                               },
+                                               isExpanded: isExpandableList[index],
+                                               canTapOnHeader: true
+                                           ),
+
+                                         ],
+                                         expansionCallback: (int item, bool status) {
+                                           setState(() {
+                                             isExpandableList[index] = !isExpandableList[index];
+                                           });
+                                         },
+                                       ),
+                                     ),
+                                   );
+
+                               },
+                               childCount: widget.respromptlist.length,
+                             ),
+                           ),
+                         ],
+                       )
+
+                     ]
+                   ),
+
+
+
+
+
           ),
         )
-      ],
-      ),
-      body: BlocBuilder<AddPromptResCubit, AddPromptResState>(
-  builder: (context, state) {
-    if(state is AddPromptResLoading){
-      return Container(
-        height: MediaQuery.of(context).size.height*0.9,
-        width: double.infinity,
-        child: Center(
-          child: CircularProgressIndicator(),
-        ),
       );
-    }
-    if(state is GetResourcePromptDailog){
-      if(state.def_prompt_list.length==0){
-        return Container(
-          height: MediaQuery.of(context).size.height*0.9,
-          width: double.infinity,
-          child: Center(
-            child: Text("Sorry no prompts"),
-          ),
-        );
-      }
-      else{
-        return CustomScrollView(
-          slivers: <Widget>[
-            SliverGrid(
-              gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                maxCrossAxisExtent: 500.0,
-                mainAxisSpacing: 5.0,
-                crossAxisSpacing: 10.0,
-                childAspectRatio: 5.0,
-              ),
-              delegate: SliverChildBuilderDelegate(
-                    (BuildContext context, int index) {
-                  promptSelect.add(PromptSelectedModel(promptId: state.def_prompt_list[index].promptId, ischeck: false));
-                  return Card(
-                    color: Colors.teal[50],
-                    margin: EdgeInsets.only(left: 5,right: 5,top: 10),
-
-                    child: Container(
-                      alignment: Alignment.center,
-                      child: ListTile(
-                        title: Text(state.def_prompt_list[index].promptTitle),
-                        leading: Container(
-                          height: 40, width: 40,
-                          alignment: Alignment.center,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(90),
-                            color: Colors.pinkAccent,
-                            border: Border.all(color: Colors.white, width: 2),
-                          ),
-                          child: Text(index.toString(),style: TextStyle(color: Colors.white),),
-                        ),
-                        trailing: promptSelect[index].ischeck?
-                        Container(
-                          padding: EdgeInsets.symmetric(horizontal: 5,vertical: 5),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(90),
-                            color: Colors.white,
-                          ),
-                          child: Icon(Icons.check, color: Colors.lightGreen,),
-
-                        ):SizedBox(),
-                        onTap: (){
-                          if(promptSelect[index].ischeck==true){
-                            promptSelect[index].ischeck=false;
-                            promptIds.remove(state.def_prompt_list[index].promptId);
-                            count = count-1;
-                            print("promptIds remove $promptIds");
-                            setState(() {
-
-                            });
-                          }
-                          else if(promptSelect[index].ischeck==false){
-                            promptSelect[index].ischeck=true;
-                            count = count+1;
-                            promptIds.add(state.def_prompt_list[index].promptId);
-                            print("promptIds add $promptIds");
-
-                            setState(() {
-
-                            });
-                          }
-                          // promptSelect[index].ischeck=true;
-                          // setState(() {
-                          //
-                          // });
-                        },
-                      ),
-                    ),
-                  );
-                },
-                childCount: state.def_prompt_list.length,
-              ),
-            ),
-          SliverList(
-            delegate: SliverChildBuilderDelegate(
-                  (BuildContext context, int index) {
-                return
-                  Card(
-                    elevation: 4, // Customize the elevation
-                    margin: EdgeInsets.all(8),
-                    child: Theme(
-                      data:  Theme.of(context).copyWith(cardColor: generateRandomColor()),
-                      child:
-                      ExpansionPanelList(
-                        expandIconColor: Colors.blue,
-                        animationDuration: Duration(milliseconds:1000),
-                        dividerColor:Colors.red,
-                        elevation:1,
-                        children: [
-
-                          ExpansionPanel(
-
-                            body: Container(
-                              padding: EdgeInsets.all(10),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment:CrossAxisAlignment.start,
-                                children: <Widget>[
-
-                                  widget.respromptlist[index].promptList.length==0?Text("No prompt"):Container(
-                                    height: 300,
-                                    width: double.infinity,
-                                    child: ListView.builder(
-                                      itemCount: widget.respromptlist[index].promptList.length,
-                                      itemBuilder: (context, index) {
-
-
-
-                                        _list.add(ResPromptcheckModel(selectedResPrompt, false));
-
-                                        return
-                                          Container(
-                                              margin: EdgeInsets.symmetric(vertical: 2),
-                                              color: Colors.blue[50],
-                                              child: CheckboxListTile(
-                                                activeColor: Colors.red,
-                                                checkColor: Colors.white,
-                                                // value: _saved.contains(context), // changed
-                                                value:_list[index].isCheck,
-                                                onChanged: (val) {
-                                                  print("object  ${val}");
-                                                  setState(() {
-                                                    _list[index].isCheck = val!;
-                                                    if (val) {
-                                                      count=count+1;
-                                                      selectedResPrompt.add(SelectResPromptModel(resId: widget.respromptlist[index].resourceId, promptId: widget.respromptlist[index].promptList[index].promptId));
-                                                    } else {
-                                                      count=count-1;
-                                                      // If the checkbox is unchecked, remove the promptId from the list.
-                                                      selectedResPrompt.remove(SelectResPromptModel(resId: widget.respromptlist[index].resourceId, promptId: widget.respromptlist[index].promptList[index].promptId));
-                                                    }
-                                                  });
-                                                },
-                                                title: Text(widget.respromptlist[index].promptList![index].promptTitle.toString()),
-                                              )
-                                          );
-                                      },
-                                    ),
-                                  ),
-
-
-
-
-                                ],
-                              ),
-                            ),
-                            headerBuilder: (BuildContext context, bool isExpanded) {
-                              return Container(
-                                padding: EdgeInsets.all(10),
-                                child: Text(
-                                  "Select prompt from ${widget.respromptlist[index].resourceTitle}",
-                                  style: TextStyle(
-                                    color:Colors.black,
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.w500
-                                  ),
-                                ),
-                              );
-                            },
-                            isExpanded: isExpandableList[index],
-                            canTapOnHeader: true
-                          ),
-
-                        ],
-                        expansionCallback: (int item, bool status) {
-                          setState(() {
-                            isExpandableList[index] = !isExpandableList[index];
-                          });
-                        },
-                      ),
-                    ),
-                  );
-
-              },
-              childCount: widget.respromptlist.length,
-            ),
-          ),
-
-//           SliverToBoxAdapter(
-//             child:
-//             ExpansionPanelList(
-//               expandIconColor: Colors.blue,
-//               animationDuration: Duration(milliseconds:1000),
-//               dividerColor:Colors.red,
-//               elevation:1,
-//               children: [
-//
-//                 ExpansionPanel(
-//
-//                     body: Container(
-//                       padding: EdgeInsets.all(10),
-//                       child: Column(
-//                         mainAxisAlignment: MainAxisAlignment.start,
-//                         crossAxisAlignment:CrossAxisAlignment.start,
-//                         children: <Widget>[
-//
-//                              Container(
-//                                height: container_height,
-//                               width: double.infinity,
-//                               child: ListView.builder(
-//                                 itemCount: widget.defaultDailogPromptlist.length,
-//                                 itemBuilder: (context, index) {
-//                                   _defPromptList.add(checkModelforDefPrompt(selectedResourceIds.toString(), false));
-//                                   return
-//                                     Container(
-//                                         margin: EdgeInsets.symmetric(vertical: 2),
-//                                         color: Colors.blue[50],
-//                                         child: CheckboxListTile(
-//                                           activeColor: Colors.red,
-//                                           checkColor: Colors.white,
-//                                           // value: _saved.contains(context), // changed
-//                                           value:_defPromptList[index].isCheck,
-//                                           onChanged: (val) {
-//                                             print("object  ${val}");
-//                                             setState(() {
-//                                               _defPromptList[index].isCheck = val!;
-//
-//                                               /*updateSelectedPromptIds(
-//                                                 quickPromptList[index].PromptId.toString(),
-//                                                 val!,
-//                                               );*/
-//                                             });
-//                                           },
-//                                           title: Text(widget.defaultDailogPromptlist[index].promptTitle),
-//                                         )
-//                                     );
-//                                 },
-//                               ),
-//                           ),
-//
-//
-//
-//
-//                         ],
-//                       ),
-//                     ),
-//                     headerBuilder: (BuildContext context, bool isExpanded) {
-//                       return Container(
-//                         padding: EdgeInsets.all(10),
-//                         child: Text(
-//                           "Select prompt from default prompt",
-//                           style: TextStyle(
-//                               color:Colors.black,
-//                               fontSize: 18,
-//                               fontWeight: FontWeight.w500
-//                           ),
-//                         ),
-//                       );
-//                     },
-//                     isExpanded: isExpandedefprompt,
-//                     canTapOnHeader: true
-//                 ),
-//
-//               ],
-//               expansionCallback: (int item, bool status) {
-//                 setState(() {
-//                   isExpandedefprompt= !isExpandedefprompt;
-//                 });
-//               },
-//             ),
-//
-//           )
-          ],
-        );
-
-      }
-    }
-    return Text("Somethings wents wrong");
-  },
-),
-    ),
-);
   }
 }
 class ResPromptcheckModel{

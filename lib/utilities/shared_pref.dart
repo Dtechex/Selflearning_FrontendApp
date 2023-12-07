@@ -73,5 +73,12 @@ class SharedPref {
     return token;
   }
 
+  Future<void> sClear() async{
+    _preferences.remove(tokenkey);
+    _preferences.remove("userId");
+    _preferences.clear();
+
+  }
+
 }
 

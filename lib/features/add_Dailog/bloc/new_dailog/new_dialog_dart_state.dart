@@ -6,7 +6,7 @@ abstract class NewDialogDartState {}
 class NewDialogDartInitial extends NewDialogDartState {}
 class NewDialogPromptLoading extends NewDialogDartState{}
 class NewDialogPromptSuccess extends NewDialogDartState{
-  List<QuickPromptModel> promtModelList;
+  List<QuickPromptModelList> promtModelList;
   NewDialogPromptSuccess({required this.promtModelList});
 }
 class NewDialogPromptError extends NewDialogDartState{

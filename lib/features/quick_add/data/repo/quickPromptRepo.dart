@@ -5,11 +5,10 @@ class QuickAddPromptRepo {
     final Dio _dio = Dio();
 
     try {
+      var token = await SharedPref().getToken();
 
-      final token = SharedPref.getUserToken();
-
-      final Map<String, dynamic> headers = {
-        'Authorization': 'Bearer $token',
+      Map<String, dynamic> headers = {
+        'Authorization': 'bearer' + ' ' + token.toString(),
       };
 
       Response res = await _dio.get("https://selflearning.dtechex.com/web/prompt/", options: Options(headers: headers));

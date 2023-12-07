@@ -5,6 +5,7 @@ import 'package:self_learning_app/features/dashboard/dashboard_screen.dart';
 import 'package:self_learning_app/features/registration/registration_screen.dart';
 import 'package:self_learning_app/utilities/colors.dart';
 import 'package:self_learning_app/utilities/extenstion.dart';
+import 'package:self_learning_app/utilities/shared_pref.dart';
 import 'bloc/login_bloc.dart';
 import 'bloc/login_event.dart';
 import 'bloc/login_state.dart';
@@ -270,6 +271,7 @@ class SubmitButton extends StatelessWidget {
               } else if (state.email.invalid) {
                 context.showSnackBar(const SnackBar(content: Text('Invalid Email')));
               }
+              SharedPref().clear();
               context.read<MyFormBloc>().add(FormSubmitted());
             },
             child: const Text(

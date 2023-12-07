@@ -1,6 +1,8 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
+import 'package:jwt_decode/jwt_decode.dart';
 import 'package:self_learning_app/features/add_media/add_audio_screen.dart';
 import 'package:self_learning_app/features/add_media/add_text_screen.dart';
 import 'package:self_learning_app/features/add_media/add_video_screen.dart';
@@ -8,6 +10,7 @@ import 'package:self_learning_app/features/resources/bloc/resources_bloc.dart';
 import 'package:self_learning_app/features/resources/subcategory_resources_screen.dart';
 import 'package:self_learning_app/utilities/colors.dart';
 import 'package:self_learning_app/utilities/extenstion.dart';
+import 'package:self_learning_app/utilities/shared_pref.dart';
 
 import '../features/add_media/add_image_screen.dart';
 import '../features/dailog_category/bloc/add_prompt_res_cubit.dart';
@@ -44,10 +47,16 @@ List<IconData> mediaIcons = [
 class _AddResourceScreenState extends State<AddResourceScreen> {
   final AddPromptResCubit cubitAddPromptRes = AddPromptResCubit();
 
+
+
   @override
   void initState() {
+
+
     context.read<ResourcesBloc>().add(LoadResourcesEvent(rootId: widget.rootId, mediaType: ''));
+
     super.initState();
+
   }
 
   @override
@@ -246,13 +255,18 @@ class _AddResourceScreenState extends State<AddResourceScreen> {
 
 /// this for r
 
-class AddResourceScreen2 extends StatelessWidget {
+class AddResourceScreen2 extends StatefulWidget {
   final int whichResources;
   final String? resourceId;
   bool ?number;
   AddResourceScreen2({Key? key, required this.whichResources, this.resourceId,required this.number})
       : super(key: key);
 
+  @override
+  State<AddResourceScreen2> createState() => _AddResourceScreen2State();
+}
+
+class _AddResourceScreen2State extends State<AddResourceScreen2> {
   List<String> mediaTitle = [
     'Take Picture',
     'Record Video',
@@ -266,7 +280,31 @@ class AddResourceScreen2 extends StatelessWidget {
     Icons.audio_file_outlined,
     Icons.text_increase
   ];
+
+  Future<dynamic> getToken() async {
+    var token = await SharedPref().getToken();
+    return token;
+  }
+
+  String? parentPromptId;
+
   @override
+  void initState() {
+    super.initState();
+    // Use the 'await' keyword to wait for the completion of the 'getToken' function
+    // and then process the result
+    _fetchToken();
+  }
+
+// Define a separate method for fetching and processing the token
+  Future<void> _fetchToken() async {
+    dynamic fetchToken = await getToken();
+    Map<String, dynamic> payload = Jwt.parseJwt(fetchToken);
+    parentPromptId = payload["id"];
+    print("----------->$parentPromptId");
+  }
+
+
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(title: const Text('Quick Add'),
@@ -288,7 +326,7 @@ class AddResourceScreen2 extends StatelessWidget {
               backgroundColor: Colors.green[400],
               child: Icon(Icons.file_copy, color: Colors.white,),
               onTap: (){
-                Navigator.push(context, MaterialPageRoute(builder: (context)=>AddPromptsAddResourceScreen(categoryId: "1",resourceId: "1",)));
+                Navigator.push(context, MaterialPageRoute(builder: (context)=>AddPromptsAddResourceScreen(categoryId: "1",resourceId: parentPromptId.toString(),)));
 
               }
             ),
@@ -297,7 +335,7 @@ class AddResourceScreen2 extends StatelessWidget {
         ),
         body: Column(
           children: [
-          number==true?  SizedBox(
+          widget.number==true?  SizedBox(
               //  height: context.screenHeight/2.8,
               child: ListView.builder(
                 shrinkWrap: true,
@@ -329,8 +367,8 @@ class AddResourceScreen2 extends StatelessWidget {
                                           Navigator.push(context, MaterialPageRoute(
                                             builder: (context) {
                                               return AddImageScreen(
-                                                whichResources: whichResources,
-                                                rootId: resourceId!,
+                                                whichResources: widget.whichResources,
+                                                rootId: widget.resourceId!,
                                               );
                                             },
                                           ));
@@ -341,9 +379,9 @@ class AddResourceScreen2 extends StatelessWidget {
                                           Navigator.push(context, MaterialPageRoute(
                                             builder: (context) {
                                               return AddVideoScreen(
-                                                whichResources: whichResources,
-                                                resourceId: resourceId,
-                                                rootId: resourceId!,
+                                                whichResources: widget.whichResources,
+                                                resourceId: widget.resourceId,
+                                                rootId: widget.resourceId!,
                                               );
                                             },
                                           ));
@@ -354,9 +392,9 @@ class AddResourceScreen2 extends StatelessWidget {
                                           Navigator.push(context, MaterialPageRoute(
                                             builder: (context) {
                                               return AddAudioScreen(
-                                                whichResources: whichResources,
-                                                resourceId: resourceId,
-                                                rootId: resourceId!,
+                                                whichResources: widget.whichResources,
+                                                resourceId: widget.resourceId,
+                                                rootId: widget.resourceId!,
                                               );
                                             },
                                           ));
@@ -367,9 +405,9 @@ class AddResourceScreen2 extends StatelessWidget {
                                           Navigator.push(context, MaterialPageRoute(
                                             builder: (context) {
                                               return AddTextScreen(
-                                                whichResources: whichResources,
-                                                resourceId: resourceId,
-                                                rootId: resourceId!,
+                                                whichResources: widget.whichResources,
+                                                resourceId: widget.resourceId,
+                                                rootId: widget.resourceId!,
                                               );
                                             },
                                           ));
@@ -377,7 +415,7 @@ class AddResourceScreen2 extends StatelessWidget {
                                     }
                                   },
                                 ),
-                                if (whichResources != 2)
+                                if (widget.whichResources != 2)
                                   SizedBox(
                                     width: context.screenWidth * 0.035,
                                   ),

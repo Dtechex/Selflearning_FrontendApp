@@ -13,9 +13,14 @@ class NewDialogDartCubit extends Cubit<NewDialogDartState> {
   void getQuickPromptList() async {
     emit(NewDialogPromptLoading());
     try {
-      final token = SharedPref.getUserToken();
-      final Map<String, dynamic> headers = {
-        'Authorization': 'Bearer $token',
+/*
+      String token = SharedPref().getToken() as String;
+*/
+
+      var token = await SharedPref().getToken();
+
+      Map<String, dynamic> headers = {
+        'Authorization': 'bearer' + ' ' + token.toString(),
       };
 
       Response res = await _dio.get(
@@ -24,7 +29,7 @@ class NewDialogDartCubit extends Cubit<NewDialogDartState> {
       );
       print("Quick prompt api ${res.data}");
       print("--------------------break");
-      List<QuickPromptModel> quickPromptList =[];
+      List<QuickPromptModelList> quickPromptList =[];
       final jsonResponse = res?.data;
       print("promtpId checking$jsonResponse");
       final data = jsonResponse['data'];
@@ -39,8 +44,7 @@ class NewDialogDartCubit extends Cubit<NewDialogDartState> {
         String side2Type = record['side2']['type'];
         String firstWord = side1Type.split('-')[0];
         String SecondWord = side2Type.split('-')[0];
-
-        quickPromptList.add(QuickPromptModel(
+        quickPromptList.add(QuickPromptModelList(
           promptid: id,
           promptname: name,
           side1content: side1Content,
