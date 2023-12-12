@@ -17,7 +17,9 @@ import 'package:self_learning_app/utilities/colors.dart';
 import 'package:self_learning_app/utilities/extenstion.dart';
 import 'package:self_learning_app/widgets/add_resources_screen.dart';
 import '../../utilities/shared_pref.dart';
+import '../add_Dailog/create_dailog_screen.dart';
 import '../add_Dailog/newDialog.dart';
+import '../add_category/add_cate_screen.dart';
 import '../quick_add/quick_add_screen.dart';
 import '../search_category/bloc/search_cate_event.dart';
 import '../search_category/cate_search_delegate.dart';
@@ -33,7 +35,7 @@ class AllCateScreen extends StatefulWidget {
 
 class _AllCateScreenState extends State<AllCateScreen> {
   int selectedIndex = 0;
-  List<String> titles = ['All Categories', 'Dialogs','QuickAdd List '];
+  List<String> titles = ['All Categories', 'Dialogs','QuickAdd List ', 'Create Folder'];
   TextEditingController controller = TextEditingController(text: "  Search");
   TextEditingController quickaddcontroller = TextEditingController();
   late StreamSubscription subscription;
@@ -103,6 +105,19 @@ class _AllCateScreenState extends State<AllCateScreen> {
       },
     );
   }
+  static const List<Widget> _widgetOptions = <Widget>[
+    AllCateScreen(),
+    AddCateScreen(),
+    NewDialog(),
+    // DailogScreen(),
+    Text(
+      'Create Flow',
+    ),
+    Text(
+      'Schedule',
+    ),
+  ];
+
 
   Future<void> _displayTextInputDialog(BuildContext context) async {
     return showDialog(
@@ -257,10 +272,22 @@ class _AllCateScreenState extends State<AllCateScreen> {
                 onTap: (){
                   setState(() {
                     selectedIndex=index;
+                    if(index == 1){
+                      Navigator.push(context, MaterialPageRoute(builder: (context) {
+                        return const NewDialog();
+                      },));
+                    }
                     if(index==2) {
                       Navigator.push(context, MaterialPageRoute(builder: (context) {
                         return const QuickTypeScreen();
                       },));
+                    }
+                    if(index == 3){
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => AddDailogScreen()));
+
                     }
                   });
                 },

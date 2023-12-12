@@ -104,6 +104,7 @@ class _DailogCategoryScreenState extends State<DailogCategoryScreen> {
                 child: Text('Quick List'),
               ),
               SizedBox(height: 10),
+/*
               ElevatedButton(
                 onPressed: () {
                   Navigator.push(
@@ -116,6 +117,7 @@ class _DailogCategoryScreenState extends State<DailogCategoryScreen> {
                 },
                 child: Text('Custom'),
               ),
+*/
             ],
           ),
           actions: [
