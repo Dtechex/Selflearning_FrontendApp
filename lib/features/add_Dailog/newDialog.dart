@@ -154,7 +154,8 @@ NewDialogDartCubit newDialogDartCubit = NewDialogDartCubit();
                                 width: double.infinity,
                                 child: Center(child: Text("Empty prompts")));
                           } else {
-                            return CustomScrollView(
+                            return
+                              CustomScrollView(
                               slivers: <Widget>[
                                 SliverToBoxAdapter(
                                   child: Align(

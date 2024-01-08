@@ -31,6 +31,7 @@ import 'features/create_flow/bloc/create_flow_screen_bloc.dart';
 import 'features/dailog_category/dailog_cate_screen.dart';
 import 'features/dashboard/bloc/dashboard_bloc.dart';
 import 'features/login/bloc/login_bloc.dart';
+import 'features/maincatbottomSheet/bottomSheetCubit/main_bottom_sheet_cubit.dart';
 import 'features/quick_add/PromptBloc/quick_prompt_bloc.dart';
 import 'features/search_subcategory/bloc/search_cat_bloc.dart';
 import 'features/subcate1.1/bloc/sub_cate1_bloc.dart';
@@ -116,6 +117,8 @@ class MyApp extends StatelessWidget {
           BlocProvider<CreateFlowBloc>(create: (context) => CreateFlowBloc()),
           // BlocProvider<AddPromptsBloc>(create: (context) => AddPromptsBloc()),
           BlocProvider<AddPromptResCubit>(create: (context) => AddPromptResCubit()),
+          BlocProvider<MainBottomSheetCubit>(create: (context) => MainBottomSheetCubit()),
+
 
         ],
         child: GlobalLoaderOverlay(

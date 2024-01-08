@@ -25,6 +25,8 @@ import '../add_Dailog/create_dailog_screen.dart';
 import '../add_Dailog/newDialog.dart';
 import '../add_category/add_cate_screen.dart';
 import '../dailog_category/dailog_cate_screen.dart';
+import '../maincatbottomSheet/mainCategoryBottomSheet.dart';
+import '../maincatbottomSheet/treeViewBottomSheet.dart';
 import '../quick_add/quick_add_screen.dart';
 import '../search_category/bloc/search_cate_event.dart';
 import '../search_category/cate_search_delegate.dart';
@@ -753,6 +755,25 @@ class _AllCateScreenState extends State<AllCateScreen> {
                         ),
                       ),
                       onTap: () {
+                        showModalBottomSheet(
+                          context: context,
+                          isScrollControlled: true, // Set to true for a full-height bottom sheet
+
+                          builder: (BuildContext context) {
+                            return Container(
+                              height: MediaQuery.of(context).size.height*0.7,
+                              child: MainCatBottomSheet(CatName: state.cateList[index].name.toString(),
+                              rootId: state.cateList[index].sId,
+                                color: Colors.red,
+                                tags: state.cateList[index].keywords,
+                              ),
+                            );
+
+                              // MainCatBottomSheet();
+                          },
+                        );
+
+/*
                         Navigator.push(context, MaterialPageRoute(
                           builder: (context) {
                             return SubCategoryScreen(
@@ -766,6 +787,7 @@ class _AllCateScreenState extends State<AllCateScreen> {
                             );
                           },
                         ));
+*/
                       },
                       onLongPress: () {
 
