@@ -9,3 +9,4 @@ class MainBottomSheetLoaded extends MainBottomSheetState {
   final List<SubCategoryModel1> cateList;
   MainBottomSheetLoaded({required this.cateList});
 }
+class DataisEmpty extends MainBottomSheetState{}

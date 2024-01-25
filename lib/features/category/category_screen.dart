@@ -41,6 +41,9 @@ class AllCateScreen extends StatefulWidget {
 }
 
 class _AllCateScreenState extends State<AllCateScreen> {
+
+
+
   int selectedIndex = 0;
   List<String> titles = ['All Categories', 'Dialogs','QuickAdd List ', 'Create Folder'];
   TextEditingController controller = TextEditingController(text: "  Search");
@@ -755,6 +758,7 @@ class _AllCateScreenState extends State<AllCateScreen> {
                         ),
                       ),
                       onTap: () {
+
                         showModalBottomSheet(
                           context: context,
                           isScrollControlled: true, // Set to true for a full-height bottom sheet
@@ -762,7 +766,7 @@ class _AllCateScreenState extends State<AllCateScreen> {
                           builder: (BuildContext context) {
                             return Container(
                               height: MediaQuery.of(context).size.height*0.7,
-                              child: MainCatBottomSheet(CatName: state.cateList[index].name.toString(),
+                              child: MainCatBottomSheet(categoryName: state.cateList[index].name.toString(),
                               rootId: state.cateList[index].sId,
                                 color: Colors.red,
                                 tags: state.cateList[index].keywords,

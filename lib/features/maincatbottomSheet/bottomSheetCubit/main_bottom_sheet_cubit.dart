@@ -1,3 +1,4 @@
+
 import 'package:bloc/bloc.dart';
 import 'package:dio/dio.dart';
 import 'package:meta/meta.dart';
@@ -15,9 +16,15 @@ class MainBottomSheetCubit extends Cubit<MainBottomSheetState> {
     emit(MainBottomSheetLoading());
     var res = await MainBottomSheetRepo.getAllSubCategory( rootId: rootId);
     List<SubCategoryModel1> catlist=[];
-    var dataRes = res!.data['data'];
+     List<dynamic> dataRes = res!.data['data']['record'];
+    print("chalo dekhte h${dataRes}");
     if(res.statusCode==200){
-      for(var data in dataRes['record']){
+      print("code inside the status code 200");
+      if(dataRes.isEmpty){
+        emit(DataisEmpty());
+        print("hello word 222");
+      }
+      for(var data in dataRes){
         catlist.add(SubCategoryModel1(sId: data['_id'], userId: data["userId"], name:data["name"], keywords: [], catlist: []));
       }
 
