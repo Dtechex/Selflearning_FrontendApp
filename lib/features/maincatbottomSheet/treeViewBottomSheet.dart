@@ -499,7 +499,6 @@ Navigator.push(context, MaterialPageRoute(
 
 
   Widget build(BuildContext context) {
-    print("-------------..,.,.,.>>${widget.entry.node.name}");
     // Define colors for card gradients
     Color cardColor = Colors.red.shade50; // Light red color for the root card
     if (widget.entry.level == 0) {
@@ -542,20 +541,21 @@ Navigator.push(context, MaterialPageRoute(
               padding: const EdgeInsets.all(8),
               child: Row(
                 children: [
+                  // Display the count for entry level 1
+                  if (widget.entry.level == 1)
+                    Text(
+                      childCount,
+                      style: TextStyle(
+                        color: Colors.green, // Choose your desired color
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+
                   // Display the index and folder icon for root level
                   if (widget.entry.level == 0)
                     GestureDetector(
                       onTap: () {
-                        // Navigator.push(context, MaterialPageRoute(
-                        //   builder: (context) {
-                        //     return SubCategoryScreen(
-                        //       tags: tags,
-                        //       color: color,
-                        //       rootId: rootId,
-                        //       categoryName: categoryName,
-                        //     );
-                        //   },
-                        // ));
+                        // Handle onTap for root level
                       },
                       child: Container(
                         margin: EdgeInsets.only(right: 12),
@@ -590,35 +590,36 @@ Navigator.push(context, MaterialPageRoute(
                     onPressed: widget.entry.hasChildren ? widget.onTap : null,
                   ),
                   SizedBox(width: 8),
-                  Text(
-                    '${widget.entry.node.name}',
-                    style: TextStyle(
-                      color: Colors.red,
-                      fontWeight: FontWeight.w500,
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          '${widget.entry.node.name}',
+                          style: TextStyle(
+                            color: Colors.red,
+                            fontWeight: FontWeight.w500,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 2,
+                        ),
+                      ],
                     ),
                   ),
-                  SizedBox(width: 12,),
-                  Text(
-                    "(${childCount})",
-                    style: TextStyle(
-                      color: Colors.green,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ), // Display the count
+                  // Display the count
                   Spacer(),
                   InkWell(
                     onTap: () {
+                      // Handle onTap for the "near me" icon
                       navigate(context: context);
                     },
                     child: Container(
                       padding: EdgeInsets.symmetric(vertical: 7, horizontal: 7),
                       decoration: BoxDecoration(
-                          color: Colors.blueAccent.shade200,
-                          borderRadius: BorderRadius.circular(100)
+                        color: Colors.blueAccent.shade200,
+                        borderRadius: BorderRadius.circular(100),
                       ),
-                      child:
-                      Icon(Icons.near_me_sharp, color: Colors.red,
-                      ),
+                      child: Icon(Icons.near_me_sharp, color: Colors.red),
                     ),
                   ),
                   SizedBox(width: 5,),
@@ -631,12 +632,12 @@ Navigator.push(context, MaterialPageRoute(
                       child: Container(
                         padding: EdgeInsets.symmetric(vertical: 7, horizontal: 7),
                         decoration: BoxDecoration(
-                            color: Colors.deepPurple[400],
-                            borderRadius: BorderRadius.circular(10)
+                          color: Colors.deepPurple[400],
+                          borderRadius: BorderRadius.circular(10),
                         ),
-                        child: Icon(Icons.create_new_folder, color: Colors.white,),
+                        child: Icon(Icons.create_new_folder, color: Colors.white),
                       ),
-                    )
+                    ),
                 ],
               ),
             ),
