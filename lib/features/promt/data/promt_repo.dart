@@ -7,10 +7,10 @@ import 'package:self_learning_app/features/promt/promts_screen.dart';
 import 'package:self_learning_app/features/quick_add/data/bloc/quick_add_bloc.dart';
 import 'package:self_learning_app/features/quick_add/data/repo/model/quick_type_model.dart';
 import 'package:self_learning_app/utilities/constants.dart';
-import '../../../../utilities/base_client.dart';
+import '../../../utilities/base_client.dart';
 
 
-import '../../../../utilities/shared_pref.dart';
+import '../../../utilities/shared_pref.dart';
 import 'model/flow_model.dart';
 import 'model/promt_model.dart';
 

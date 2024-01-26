@@ -112,7 +112,8 @@ class _CreateSubCateScreenState extends State<CreateSubCateScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return
+      Scaffold(
         appBar: AppBar(title: const Text('Create subcategory')),
         body: SingleChildScrollView(
           child: Padding(

@@ -16,7 +16,7 @@ import 'package:self_learning_app/utilities/extenstion.dart';
 import 'package:self_learning_app/utilities/image_picker_helper.dart';
 import 'package:video_thumbnail/video_thumbnail.dart';
 
-import '../../utilities/colors.dart';
+import '../utilities/colors.dart';
 
 class AddPromptsAddResourceScreen extends StatefulWidget {
   final String resourceId;

@@ -1,8 +1,8 @@
 import 'dart:convert';
 import 'package:http/http.dart';
-import '../../../../utilities/base_client.dart';
+import '../../../utilities/base_client.dart';
 import 'package:http/http.dart' as http;
-import '../../../../utilities/shared_pref.dart';
+import '../../../utilities/shared_pref.dart';
 import '../../category/bloc/category_bloc.dart';
 import '../../dashboard/bloc/dashboard_bloc.dart';
 import 'model/quick_type_model.dart';

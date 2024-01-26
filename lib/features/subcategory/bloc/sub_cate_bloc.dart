@@ -32,6 +32,7 @@ class SubCategoryBloc extends Bloc<SubCategoryEvent, SubCategoryState> {
     emit(SubCategoryLoading());
 
       await CategoryRepo.getAllSubCategory(event.rootId).then((value) {
+
         emit(SubCategoryLoaded(cateList: value,ddValue: value.isNotEmpty?value.first.sId:''));
       });
     }

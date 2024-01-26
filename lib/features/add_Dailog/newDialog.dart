@@ -154,7 +154,8 @@ NewDialogDartCubit newDialogDartCubit = NewDialogDartCubit();
                                 width: double.infinity,
                                 child: Center(child: Text("Empty prompts")));
                           } else {
-                            return CustomScrollView(
+                            return
+                              CustomScrollView(
                               slivers: <Widget>[
                                 SliverToBoxAdapter(
                                   child: Align(
@@ -381,13 +382,15 @@ NewDialogDartCubit newDialogDartCubit = NewDialogDartCubit();
                                           } else {
                                             print("Checking condion 4");
 
-                                            return Container(
+                                            return
+                                              Container(
                                               width: double.infinity,
                                               height: MediaQuery.of(context)
                                                       .size
                                                       .height *
                                                   0.8,
-                                              child: GridView.builder(
+                                              child:
+                                              GridView.builder(
                                                 padding: EdgeInsets.symmetric(
                                                     vertical: 4.0,
                                                     horizontal: 2.0),
