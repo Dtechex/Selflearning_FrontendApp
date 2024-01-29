@@ -11,8 +11,9 @@ class SubCategory2Loading extends SubCategory2State {}
 
 class SubCategory2Loaded extends SubCategory2State {
   final List<SubCategory2Model> cateList;
+  final bool value;
 
-  SubCategory2Loaded({required this.cateList});
+  SubCategory2Loaded({required this.cateList, required this.value});
 }
 
 class SubCategory2Failed extends SubCategory2State {

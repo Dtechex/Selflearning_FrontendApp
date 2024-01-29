@@ -44,6 +44,7 @@ class _SubCategory1ScreenState extends State<SubCategory1Screen> {
     'Record Audio',
     'Enter Text'
   ];
+  bool value = false;
 
   List<IconData> mediaIcons = [
     Icons.camera,
@@ -102,6 +103,16 @@ class _SubCategory1ScreenState extends State<SubCategory1Screen> {
             ),
           ),
           appBar: AppBar(
+            leading: IconButton(onPressed: (){
+              if(value==true){
+                Navigator.pop(context, true);
+
+              }
+              if(value == false){
+                Navigator.pop(context, false);
+
+              }
+            }, icon: Icon(Icons.arrow_back),),
 /*
               bottom:  TabBar(
                 tabs: [
@@ -328,7 +339,21 @@ class _SubCategory1ScreenState extends State<SubCategory1Screen> {
               const SizedBox(
                 height: 20,
               ),*/
-              BlocBuilder<SubCategory1Bloc,SubCategory1State>(
+              BlocConsumer<SubCategory1Bloc, SubCategory1State>(
+  listener: (context, state) {
+    if(state is SubCategory1Loaded){
+      if(state.value == true){
+        value = true;
+      }
+      else{
+        value = false;
+      }
+
+    }
+    // TODO: implement listener
+  },
+  builder: (context, state) {
+    return BlocBuilder<SubCategory1Bloc,SubCategory1State>(
                 builder: (context, state) {
                   if(state is SubCategory1Loading){
                     return const CircularProgressIndicator();
@@ -491,7 +516,9 @@ class _SubCategory1ScreenState extends State<SubCategory1Screen> {
                       );
                   }
                   return const SizedBox();
-                },),
+                },);
+  },
+),
             ],),
           ),
 

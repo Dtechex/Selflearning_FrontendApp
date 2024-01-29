@@ -58,7 +58,7 @@ class _SubCategory2ScreenState extends State<SubCategory2Screen> {
 
   int _tabIndex = 0;
   CreateFlowBloc _flowBloc = CreateFlowBloc();
-
+bool value = false;
   @override
   void initState() {
     context
@@ -342,7 +342,21 @@ class _SubCategory2ScreenState extends State<SubCategory2Screen> {
           const SizedBox(
             height: 20,
           ),
-          BlocBuilder<SubCategory2Bloc, SubCategory2State>(
+          BlocConsumer<SubCategory2Bloc, SubCategory2State>(
+  listener: (context, state) {
+    if(state is SubCategory2Loaded){
+      if(state.value==true){
+        value =true;
+      }
+      else{
+        value = false;
+      }
+    }
+
+    // TODO: implement listener
+  },
+  builder: (context, state) {
+    return BlocBuilder<SubCategory2Bloc, SubCategory2State>(
             builder: (context, state) {
               if (state is SubCategory2Loading) {
                 return const CircularProgressIndicator();
@@ -527,7 +541,9 @@ class _SubCategory2ScreenState extends State<SubCategory2Screen> {
               }
               return const SizedBox();
             },
-          ),
+          );
+  },
+),
         ],
       ),
 

@@ -167,7 +167,14 @@ Navigator.push(context, MaterialPageRoute(
             subCateTitle: widget.entry.node.name,
           );
         },
-      ));      // Navigate to the first screen
+      )).then((value){
+        if(value){
+          setState(() {
+            context.read<MainBottomSheetCubit>().onGetSubCategoryList(
+                rootId: widget.mainRootId);
+          });
+        };
+      });      // Navigate to the first screen
     } else if (widget.entry.level == 1) {
       Navigator.push(context, MaterialPageRoute(
         builder: (context) {
