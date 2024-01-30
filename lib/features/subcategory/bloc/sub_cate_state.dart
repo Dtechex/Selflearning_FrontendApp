@@ -10,8 +10,9 @@ class SubCategoryLoading extends SubCategoryState {}
 
 class SubCategoryLoaded extends SubCategoryState {
   final String? ddValue;
+  final bool ? value;
   final List<SubCategoryModel> cateList;
-  SubCategoryLoaded({required this.cateList,this.ddValue});
+  SubCategoryLoaded({required this.cateList,this.ddValue, this.value});
 }
 
 class SubCategoryFailed extends SubCategoryState {

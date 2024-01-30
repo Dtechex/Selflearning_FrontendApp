@@ -84,8 +84,7 @@ class _AddResourceScreenState extends State<AddResourceScreen> {
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
           onPressed: () {
-            Navigator.pop(context);
-            Navigator.pop(context);
+            Navigator.pop(context, true);
 
           },
         ),
@@ -125,7 +124,9 @@ class _AddResourceScreenState extends State<AddResourceScreen> {
                                         whichResources: widget.whichResources,
                                       );
                                     },
-                                  ));
+                                  )).then((value) {
+                                    context.read<ResourcesBloc>().add(LoadResourcesEvent(rootId: widget.rootId, mediaType: ''));
+                                  });
                                 }
                                 break;
                               case 1:

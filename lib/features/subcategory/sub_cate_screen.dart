@@ -73,7 +73,7 @@ class _SubCategoryScreenState extends State<SubCategoryScreen> {
   Future<void> savecatid() async {
     SharedPref().savesubcateId(widget.rootId!);
   }
-
+bool value = false;
   static const TextStyle optionStyle = TextStyle(
       fontSize: 20, fontWeight: FontWeight.bold);
   List<String> searchList = []; // Define searchList at the top of your widget
@@ -84,6 +84,17 @@ class _SubCategoryScreenState extends State<SubCategoryScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+          leading: IconButton(
+            onPressed: (){
+              if(value==true){
+                Navigator.pop(context,true);
+              }
+              if(value ==false){
+                Navigator.pop(context, false);
+              }
+            },
+            icon: Icon(Icons.arrow_back),
+          ),
 
           centerTitle: false,
           title: Text(widget.categoryName ?? "Subcategory",
@@ -291,7 +302,19 @@ class _SubCategoryScreenState extends State<SubCategoryScreen> {
           SizedBox(
             width: context.screenWidth,
             height: context.screenHeight * 0.08,
-            child: BlocBuilder<SubCategoryBloc, SubCategoryState>(
+            child: BlocConsumer<SubCategoryBloc, SubCategoryState>(
+  listener: (context, state) {
+    if(state is SubCategoryLoaded){
+      if(state.value == true){
+        value = true;
+      }
+      else{
+        value = false;
+      }
+    }
+  },
+  builder: (context, state) {
+    return BlocBuilder<SubCategoryBloc, SubCategoryState>(
               builder: (context, state) {
                 if (state is SubCategoryLoading) {
                   return const Center(child: CircularProgressIndicator());
@@ -348,7 +371,9 @@ class _SubCategoryScreenState extends State<SubCategoryScreen> {
                 return SizedBox();
               },
 
-            ),
+            );
+  },
+),
           ),
           const SizedBox(
             height: 20,

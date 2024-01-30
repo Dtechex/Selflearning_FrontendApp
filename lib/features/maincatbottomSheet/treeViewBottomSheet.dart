@@ -167,7 +167,13 @@ Navigator.push(context, MaterialPageRoute(
             subCateTitle: widget.entry.node.name,
           );
         },
-      ));      // Navigate to the first screen
+      )).then((value){
+        if(value){
+          setState(() {
+            context.read<MainBottomSheetCubit>().onGetSubCategoryList(
+                rootId: widget.mainRootId.toString()); });
+        }
+      });      // Navigate to the first screen
     } else if (widget.entry.level == 1) {
       Navigator.push(context, MaterialPageRoute(
         builder: (context) {
@@ -178,7 +184,13 @@ Navigator.push(context, MaterialPageRoute(
             subCateTitle: widget.entry.node.name,
           );
         },
-      ));    } else if (widget.entry.level == 2) {
+      )).then((value){
+        if(value){
+          setState(() {
+            context.read<MainBottomSheetCubit>().onGetSubCategoryList(
+                rootId: widget.mainRootId.toString()); });
+        }
+      });    } else if (widget.entry.level == 2) {
       Navigator.push(context, MaterialPageRoute(
         builder: (context) {
           return FinalResourceScreen(
@@ -188,7 +200,13 @@ Navigator.push(context, MaterialPageRoute(
             categoryName: widget.entry.node.name,
           );
         },
-      ));    }
+      )).then((value){
+        if(value){
+          setState(() {
+            context.read<MainBottomSheetCubit>().onGetSubCategoryList(
+                rootId: widget.mainRootId.toString()); });
+        }
+      });    }
   }
 
    Color? pickedColor = Colors.green;

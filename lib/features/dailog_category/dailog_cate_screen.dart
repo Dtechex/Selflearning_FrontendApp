@@ -242,7 +242,11 @@ void deletPrompt({required String promptId}) async{
                                 whichResources: 1,
                                 categoryName: "name");
                           },
-                        ));
+                        )).then((value) {
+                          setState(() {
+                            cubitAddPromptRes.getResPrompt(dailogId: widget.dailoId);
+                          });
+                        });
                       }),
                   SpeedDialChild(
                     onTap: () {

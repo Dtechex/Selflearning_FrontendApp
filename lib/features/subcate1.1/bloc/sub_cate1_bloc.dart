@@ -26,7 +26,7 @@ class SubCategory1Bloc extends Bloc<SubCategory1Event, SubCategory1State> {
       }else{
         event.context.showSnackBar(SnackBar(content: Text('Category deleted Successfully')));
         event.catList.removeAt(event.deleteIndex);
-        emit(SubCategory1Loaded(cateList: event.catList));
+        emit(SubCategory1Loaded(cateList: event.catList, value: true));
       }
     });
 
@@ -37,7 +37,7 @@ class SubCategory1Bloc extends Bloc<SubCategory1Event, SubCategory1State> {
     emit(SubCategory1Loading());
     try {
       await SubCategory1Repo.getAllCategory(event.rootId).then((value) =>
-          emit(SubCategory1Loaded(cateList: value)));
+          emit(SubCategory1Loaded(cateList: value, value: false)));
     } catch (e) {
       print(e);
       emit(SubCategory1Failed(errorText: 'Oops Something went wrong'));
@@ -47,13 +47,13 @@ class SubCategory1Bloc extends Bloc<SubCategory1Event, SubCategory1State> {
 
   void _onSubCategory1LoadEmptyEvent(SubCategory1LoadEmptyEvent event,
       Emitter<SubCategory1State> emit) async {
-    emit(SubCategory1Loaded(cateList: const []));
+    emit(SubCategory1Loaded(cateList: const [], value: false));
   }
 
 
 
   void _onDDValueSubCategoryChanged(DDValueSubCategoryChanged event,
       Emitter<SubCategory1State> emit) {
-    emit(SubCategory1Loaded(cateList: event.cateList!, ddValue: event.ddValue));
+    emit(SubCategory1Loaded(cateList: event.cateList!, ddValue: event.ddValue, value: false));
   }
 }

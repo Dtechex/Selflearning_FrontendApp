@@ -21,7 +21,7 @@ class SubCategoryBloc extends Bloc<SubCategoryEvent, SubCategoryState> {
       }else{
         event.context.showSnackBar(SnackBar(content: Text('Category deleted Successfully')));
         event.catList.removeAt(event.deleteIndex);
-        emit(SubCategoryLoaded(cateList: event.catList));
+        emit(SubCategoryLoaded(cateList: event.catList, value: true));
       }
     });
 
@@ -33,14 +33,14 @@ class SubCategoryBloc extends Bloc<SubCategoryEvent, SubCategoryState> {
 
       await CategoryRepo.getAllSubCategory(event.rootId).then((value) {
 
-        emit(SubCategoryLoaded(cateList: value,ddValue: value.isNotEmpty?value.first.sId:''));
+        emit(SubCategoryLoaded(cateList: value,ddValue: value.isNotEmpty?value.first.sId:'', value: false));
       });
     }
 
 
   void _onSubCateChangeDropValueEvent(
       SubCateChangeDropValueEvent event, Emitter<SubCategoryState> emit) async {
-    emit(SubCategoryLoaded(cateList: event.list!,ddValue: event.subCateId));
+    emit(SubCategoryLoaded(cateList: event.list!,ddValue: event.subCateId, value: false));
   }
 
 }

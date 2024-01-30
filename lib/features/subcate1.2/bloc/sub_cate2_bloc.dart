@@ -24,7 +24,7 @@ class SubCategory2Bloc extends Bloc<SubCategory2Event, SubCategory2State> {
       }else{
         event.context.showSnackBar(SnackBar(content: Text('Category deleted Successfully')));
         event.catList.removeAt(event.deleteIndex);
-        emit(SubCategory2Loaded(cateList: event.catList));
+        emit(SubCategory2Loaded(cateList: event.catList,value: true));
       }
     });
 
@@ -37,7 +37,7 @@ class SubCategory2Bloc extends Bloc<SubCategory2Event, SubCategory2State> {
       print(event.rootId);
       print('event.rootId');
       await SubCategory2Repo.getAllCategory(event.rootId).then((value) {
-        emit(SubCategory2Loaded(cateList: value));
+        emit(SubCategory2Loaded(cateList: value, value: false));
       });
     } catch (e) {
       print(e);

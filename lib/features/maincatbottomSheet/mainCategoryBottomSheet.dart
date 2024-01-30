@@ -355,6 +355,20 @@ class _MainCatBottomSheetState extends State<MainCatBottomSheet> {
           crossAxisAlignment: CrossAxisAlignment.start,
 
           children: [
+            Container(
+              margin: EdgeInsets.symmetric(horizontal: 8,vertical: 5),
+              alignment: Alignment.topRight,
+              width: double.infinity,
+              child: Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(90),
+                  border:  Border.all(color: Colors.black45, width: 1.5)
+                ),
+                child: IconButton(onPressed: (){
+                  Navigator.pop(context);
+                }, icon: Icon(Icons.clear)),
+              ),
+            ),
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Container(
@@ -384,7 +398,14 @@ class _MainCatBottomSheetState extends State<MainCatBottomSheet> {
                                 categoryName:widget.categoryName ,
                                 rootId: widget.rootId,
                                 tags: widget.tags,
-                              )));
+                              ))).then((value) {
+                                if(value){
+                                  setState(() {
+                                    context.read<MainBottomSheetCubit>().onGetSubCategoryList(
+                                        rootId: widget.rootId.toString());
+                                  });
+                                }
+                              });
 /*
                         navigate(context: context);
 */
@@ -434,7 +455,7 @@ class _MainCatBottomSheetState extends State<MainCatBottomSheet> {
               builder: (context, state) {
                 if(state is MainBottomSheetLoading){
                   return Container(
-                    height: MediaQuery.of(context).size.height*0.6,
+                    height: MediaQuery.of(context).size.height*0.5,
                     width: double.infinity,
                     alignment: Alignment.center,
                     child:
