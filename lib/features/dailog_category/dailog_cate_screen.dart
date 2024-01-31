@@ -238,9 +238,9 @@ void deletPrompt({required String promptId}) async{
                         Navigator.push(context, MaterialPageRoute(
                           builder: (context) {
                             return AddResourceScreen(
-                                rootId: widget.dailoId,
+                                rootId: widget.dailoId??"",
                                 whichResources: 1,
-                                categoryName: "name");
+                                categoryName: "");
                           },
                         )).then((value) {
                           setState(() {
@@ -421,12 +421,6 @@ void deletPrompt({required String promptId}) async{
 
 
 
-                                        final item = widget.resourceList[index];
-                                        Color iconColor = Colors
-                                            .transparent; // Provide a default value
-                                        String? leadingText;
-                                        final content = "resource";
-                                        String? title = "new resource";
 
                                         // If the item is a string, display it as a card that navigates to a screen
                                         return GestureDetector(

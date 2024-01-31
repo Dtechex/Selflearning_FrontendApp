@@ -904,15 +904,8 @@ class _AddPromptsScreenState extends State<AddPromptsScreen> {
                           GestureDetector(
 
                             onTap: () async {
-                              if(state.side1Id!.isEmpty && state.side2Id!.isEmpty){
-                               print("field is empty");
-                              }
-                              else if(side2_Controller.text.isNotEmpty) {
-                                saveResource2(state);
-                                if(state.side2Id!.isNotEmpty || state.side2Id != ""){
-                                onAddPromptPressed(state, context);
-                                }
-                              }
+                              onAddPromptPressed(state, context);
+
 
                             },
                             child: Container(
