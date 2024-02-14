@@ -77,7 +77,7 @@ class _SlideShowScreen2State extends State<SlideShowScreen2> {
   Widget build(BuildContext context) {
     var h = MediaQuery.of(context).size.height;
     var w = MediaQuery.of(context).size.width;
-    //print("https://selflearning.dtechex.com/public/${widget.mediaType}/${widget.content}");
+    //print("https://virtuosocity.com/public/${widget.mediaType}/${widget.content}");
     return Scaffold(
       appBar: AppBar(title: const Text("primary flow")),
       body: Scaffold(
@@ -233,7 +233,7 @@ class _FrontPageWidgetState extends State<FrontPageWidget> {
     print('try');
     if(getMediaType(widget.side1Content) == 'video'){
       print('try1');
-      //_chewieController = _createChewieController('https://selflearning.dtechex.com/public/video/${widget.promtModel![widget.index].side2!.content!}');
+      //_chewieController = _createChewieController('https://virtuosocity.com/public/video/${widget.promtModel![widget.index].side2!.content!}');
       initVideo();
     }else if(getMediaType(widget.side1Content) == 'audio'){
       print('try2');
@@ -258,7 +258,7 @@ class _FrontPageWidgetState extends State<FrontPageWidget> {
     // Try to load audio from a source and catch any errors.
     try {
       // AAC example: https://dl.espressif.com/dl/audio/ff-16b-2c-44100hz.aac
-      await _audioPlayer?.setAudioSource(AudioSource.uri(Uri.parse("https://selflearning.dtechex.com/public/audio/${widget.side1Content}")));
+      await _audioPlayer?.setAudioSource(AudioSource.uri(Uri.parse("https://virtuosocity.com/public/audio/${widget.side1Content}")));
     } catch (e) {
       print("Error loading audio source: $e");
     }
@@ -295,7 +295,7 @@ class _FrontPageWidgetState extends State<FrontPageWidget> {
                     widget.side1Content.contains("png") ||
                     widget.side1Content.contains("jpeg")
                     ? Center(child: CachedNetworkImage(
-                  imageUrl: "https://selflearning.dtechex.com/public/image/${widget.side1Content}",
+                  imageUrl: "https://virtuosocity.com/public/image/${widget.side1Content}",
                   fit: BoxFit.fitHeight,
                   height: widget.h * 0.2,
                   width: widget.w / 1.5,
@@ -477,9 +477,9 @@ class _FrontPageWidgetState extends State<FrontPageWidget> {
   }
 
   Future<void> initVideo() async{
-    print('https://selflearning.dtechex.com/public/video/${widget.side1Content}');
+    print('https://virtuosocity.com/public/video/${widget.side1Content}');
     flickManager = FlickManager(
-      videoPlayerController: VideoPlayerController.network('https://selflearning.dtechex.com/public/video/${widget.side1Content}'),
+      videoPlayerController: VideoPlayerController.network('https://virtuosocity.com/public/video/${widget.side1Content}'),
     );
     setState(() { _isLoading = false;});
   }
@@ -517,9 +517,9 @@ class _BackPageWidgetState extends State<BackPageWidget> {
   void initState() {
     // TODO: implement initState
     if(getMediaType(widget.side2Content) == 'video'){
-      //_chewieController = _createChewieController('https://selflearning.dtechex.com/public/video/${widget.promtModel![widget.index].side2!.content!}');
+      //_chewieController = _createChewieController('https://virtuosocity.com/public/video/${widget.promtModel![widget.index].side2!.content!}');
       flickManager = FlickManager(
-        videoPlayerController: VideoPlayerController.network('https://selflearning.dtechex.com/public/video/${widget.side2Content}'),
+        videoPlayerController: VideoPlayerController.network('https://virtuosocity.com/public/video/${widget.side2Content}'),
       );
       setState(() {
         _isLoading = false;
@@ -545,7 +545,7 @@ class _BackPageWidgetState extends State<BackPageWidget> {
     // Try to load audio from a source and catch any errors.
     try {
       // AAC example: https://dl.espressif.com/dl/audio/ff-16b-2c-44100hz.aac
-      await _audioPlayer?.setAudioSource(AudioSource.uri(Uri.parse("https://selflearning.dtechex.com/public/audio/${widget.side2Content}")));
+      await _audioPlayer?.setAudioSource(AudioSource.uri(Uri.parse("https://virtuosocity.com/public/audio/${widget.side2Content}")));
     } catch (e) {
       print("Error loading audio source: $e");
     }
@@ -579,7 +579,7 @@ class _BackPageWidgetState extends State<BackPageWidget> {
                   widget.side2Content.contains("jpeg")
                   ? Center(child: CachedNetworkImage(
                 imageUrl:
-                "https://selflearning.dtechex.com/public/image/${widget.side2Content}",
+                "https://virtuosocity.com/public/image/${widget.side2Content}",
                 fit: BoxFit.fitHeight,
                 height: widget.h * 0.2,
                 width: widget.w / 1.5,
@@ -712,7 +712,7 @@ class _BackPage2WidgetState extends State<BackPage2Widget> {
 
     flickManager = FlickManager(
       videoPlayerController:
-      VideoPlayerController.network("https://selflearning.dtechex.com/public/video/${widget.content}"),
+      VideoPlayerController.network("https://virtuosocity.com/public/video/${widget.content}"),
     );
     /*_chewieController = ChewieController(
       videoPlayerController: videoPlayerController,
@@ -734,7 +734,7 @@ class _BackPage2WidgetState extends State<BackPage2Widget> {
     // TODO: implement initState
     if(getMediaType(widget.content) == 'video'){
       _initializeVideoPlayer();
-      // _chewieController = _createChewieController('https://selflearning.dtechex.com/public/video/${widget.content}');
+      // _chewieController = _createChewieController('https://virtuosocity.com/public/video/${widget.content}');
     }else if(getMediaType(widget.content) == 'audio'){
       _audioPlayer = AudioPlayer();
       initAudio();
@@ -754,7 +754,7 @@ class _BackPage2WidgetState extends State<BackPage2Widget> {
     // Try to load audio from a source and catch any errors.
     try {
       // AAC example: https://dl.espressif.com/dl/audio/ff-16b-2c-44100hz.aac
-      await _audioPlayer?.setAudioSource(AudioSource.uri(Uri.parse("https://selflearning.dtechex.com/public/audio/${widget.content}")));
+      await _audioPlayer?.setAudioSource(AudioSource.uri(Uri.parse("https://virtuosocity.com/public/audio/${widget.content}")));
     } catch (e) {
       print("Error loading audio source: $e");
     }
@@ -786,7 +786,7 @@ class _BackPage2WidgetState extends State<BackPage2Widget> {
                         widget.content.contains('.gif')
                         ? Expanded(child: CachedNetworkImage(
                       imageUrl:
-                      'https://selflearning.dtechex.com/public/image/${widget.content}',
+                      'https://virtuosocity.com/public/image/${widget.content}',
                       fit: BoxFit.fitHeight,
                       //height: h * 0.,
                       //width: 50,
@@ -909,7 +909,7 @@ class _BackPage2WidgetState extends State<BackPage2Widget> {
       _chewieController!.dispose();
     }
 
-    final videoPlayerController = VideoPlayerController.contentUri(Uri.parse('https://selflearning.dtechex.com/public/video/$content'));
+    final videoPlayerController = VideoPlayerController.contentUri(Uri.parse('https://virtuosocity.com/public/video/$content'));
     await videoPlayerController.initialize();
 
     _chewieController = ChewieController(

@@ -12,7 +12,7 @@ class AddPromptsToPrimaryFlowRepo {
     );
 
     Response res = await Dio().get(
-        'https://selflearning.dtechex.com/web/flow?categoryId=$mainCatId&type=primary',
+        'https://virtuosocity.com/web/flow?categoryId=$mainCatId&type=primary',
         options: options,
         data: {'type':'primary'}
     );
@@ -29,7 +29,7 @@ class AddPromptsToPrimaryFlowRepo {
     );
 
     Response res = await Dio().get(
-      'https://selflearning.dtechex.com/web/prompt?categoryId=$mainCatId',
+      'https://virtuosocity.com/web/prompt?categoryId=$mainCatId',
       options: options,
     );
     print("@----$res");

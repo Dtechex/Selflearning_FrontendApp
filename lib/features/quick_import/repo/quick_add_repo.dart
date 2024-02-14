@@ -31,7 +31,7 @@ class QuickImportRepo {
   }) async {
     print('delete category');
     var token = await SharedPref().getToken();
-    var url = Uri.parse('https://selflearning.dtechex.com/web/resource/$id');
+    var url = Uri.parse('https://virtuosocity.com/web/resource/$id');
     print(url);
     Response res = await http.delete(
       url,
@@ -58,10 +58,10 @@ class QuickImportRepo {
     payload.addAll({"styles": styles});
     if (rootId != null) {
       payload.addAll({"rootId": rootId});
-    }https://selflearning.dtechex.com/web/resource/update/$resourceId
+    }https://virtuosocity.com/web/resource/update/$resourceId
     var token = await SharedPref().getToken();
     var res = await http.post(
-      Uri.parse('https://selflearning.dtechex.com/web/category/create'),
+      Uri.parse('https://virtuosocity.com/web/category/create'),
       body: jsonEncode(payload),
       headers: {
         'Content-Type': 'application/json',
@@ -86,7 +86,7 @@ class QuickImportRepo {
     // title media type
 
     var url = Uri.parse(
-        'https://selflearning.dtechex.com/web/resource/update/$resourceId');
+        'https://virtuosocity.com/web/resource/update/$resourceId');
     print(url);
     print("Save resource");
     final payload = {};
@@ -126,7 +126,7 @@ class QuickImportRepo {
     var token = await SharedPref().getToken();
 
     var res = await http.post(
-      Uri.parse('https://selflearning.dtechex.com/web/category/create'),
+      Uri.parse('https://virtuosocity.com/web/category/create'),
       body: jsonEncode(payload),
       headers: {
         'Content-Type': 'application/json',

@@ -9,8 +9,12 @@ import 'package:self_learning_app/features/dailog_category/bloc/add_prompt_res_c
 import 'package:self_learning_app/features/dailog_category/dailog_cate_screen.dart';
 import 'package:self_learning_app/utilities/shared_pref.dart';
 
+import '../../UrlEanc/UrlEncap.dart';
+
 class DailogRepo{
   static Dio _dio = Dio();
+  static UrlEncapsulation urlEcapsulation = UrlEncapsulation();
+  static String? baseUrl = "virtuosocity.com";
 
   static Future<Response?> addDailog({required String dailog_name, required List resourceId, required List prompt, required String color,
     required List tags
@@ -44,7 +48,7 @@ class DailogRepo{
     print("requestBody$payload");
     try{
       print("try bloc is run");
-      Response res = await _dio.post("https://selflearning.dtechex.com/web/category/create-dialog",
+      Response res = await _dio.post("https://$baseUrl/web/category/create-dialog",
           data: jsonEncode(payload),
           options: Options(headers: headers)
           );
@@ -75,7 +79,7 @@ class DailogRepo{
       'Authorization': 'bearer' + ' ' + token.toString(),
     };
     try{
-      Response res = await _dio.get("https://selflearning.dtechex.com/web/category/get-dialogs",  options: Options(headers: headers));
+      Response res = await _dio.get("https://$baseUrl/web/category/get-dialogs",  options: Options(headers: headers));
       return res;
     }
     catch(e){
@@ -92,7 +96,7 @@ class DailogRepo{
     };    Response res;
     try {
       res = await _dio.delete(
-          'https://selflearning.dtechex.com/web/category/${dailogId}',
+          'https://$baseUrl/web/category/${dailogId}',
           options: Options(
             headers:headers,
           )
@@ -121,7 +125,7 @@ class DailogRepo{
         .toList();
     try {
       res = await _dio.post(
-          'https://selflearning.dtechex.com/web/flow',
+          'https://$baseUrl/web/flow',
           data: {
             'categoryId': dailogId,
             'title': title,

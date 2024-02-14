@@ -78,7 +78,7 @@ class _MaincategoryResourcesListState extends State<MaincategoryResourcesList> {
     try {
       final token = await SharedPref().getToken();
       final res = await http.post(
-          Uri.parse('https://selflearning.dtechex.com/web/prompt/'),
+          Uri.parse('https://virtuosocity.com/web/prompt/'),
           body: {"name": name, "resourceId": promtId},
           headers: {'Authorization': "Bearer $token"});
 
@@ -206,7 +206,7 @@ class _MaincategoryResourcesListState extends State<MaincategoryResourcesList> {
                                     ),
                                     child: getFileType(content)=='Photo'
                                         ? CachedNetworkImage(
-                                      imageUrl: 'https://selflearning.dtechex.com/public/image/$content',
+                                      imageUrl: 'https://virtuosocity.com/public/image/$content',
                                       fit: BoxFit.fitHeight,
                                       height: 35,
                                       width: 35,
@@ -349,7 +349,7 @@ class _MaincategoryResourcesListState extends State<MaincategoryResourcesList> {
                                           content.contains('.gif')
                                           ? CachedNetworkImage(
                                         imageUrl:
-                                        'https://selflearning.dtechex.com/public/image/$content',
+                                        'https://virtuosocity.com/public/image/$content',
                                         fit: BoxFit.fill,
                                         height: 40,
                                         width: 50,
@@ -565,7 +565,7 @@ class _MaincategoryResourcesListState extends State<MaincategoryResourcesList> {
     FlickManager? _flickManager;
     final audioPlayer = AudioPlayer();
     _flickManager = FlickManager(
-      videoPlayerController: VideoPlayerController.network('https://selflearning.dtechex.com/public/video/$content'),
+      videoPlayerController: VideoPlayerController.network('https://virtuosocity.com/public/video/$content'),
     );
 
     print("getfilecontent==>${getFileType(content)}");
@@ -583,7 +583,7 @@ class _MaincategoryResourcesListState extends State<MaincategoryResourcesList> {
             child: getFileType(content) == 'Photo'
                 ? PhotoView(
                   imageProvider: NetworkImage(
-              "https://selflearning.dtechex.com/public/image/$content",
+              "https://virtuosocity.com/public/image/$content",
             ),
               minScale: PhotoViewComputedScale.contained,
               maxScale: PhotoViewComputedScale.covered * 2,
@@ -635,7 +635,7 @@ class _MaincategoryResourcesListState extends State<MaincategoryResourcesList> {
 
                               audioPlayer.pause();
                             } else {
-                              audioPlayer.setUrl("https://selflearning.dtechex.com/public/audio/$content");
+                              audioPlayer.setUrl("https://virtuosocity.com/public/audio/$content");
                               audioPlayer.play();
                               if(audioCompleted){
                                 await audioPlayer.seek(const Duration(seconds: 0));

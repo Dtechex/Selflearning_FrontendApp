@@ -36,7 +36,7 @@ class _PromptAddingInDialogState extends State<PromptAddingInDialog> {
       'Authorization': 'bearer' + ' ' + token.toString(),
     };
     try{
-      Response res = await _dio.get("https://selflearning.dtechex.com/web/category/get-dialogs",  options: Options(headers: headers));
+      Response res = await _dio.get("https://virtuosocity.com/web/category/get-dialogs",  options: Options(headers: headers));
       if(res.data['message']=="No Dialogs found!!"){
 
       }
@@ -78,7 +78,7 @@ class _PromptAddingInDialogState extends State<PromptAddingInDialog> {
     };
     try{
 
-      Response res = await _dio.patch("https://selflearning.dtechex.com/web/prompt/update/$dialogId",options: Options(headers: headers),
+      Response res = await _dio.patch("https://virtuosocity.com/web/prompt/update/$dialogId",options: Options(headers: headers),
           data: ({"promptIds":listpromtId,
             "categoryId":dialogId
           })

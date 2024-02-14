@@ -39,7 +39,7 @@ import 'features/subcate1.2/bloc/sub_cate2_bloc.dart';
 import 'firebase_option.dart';
 
 BaseOptions baseOptions = BaseOptions(
-  baseUrl: 'https://selflearning.dtechex.com/',
+  baseUrl: 'https://virtuosocity.com/',
   receiveTimeout: const Duration(seconds: 90),
   sendTimeout: const Duration(seconds: 90),
   connectTimeout: const Duration(seconds: 90),

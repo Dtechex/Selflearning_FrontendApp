@@ -17,7 +17,7 @@ class MainBottomSheetRepo{
       'Authorization': 'bearer' + ' ' + token.toString(),
     };
     try{
-      Response res = await _dio.get("https://selflearning.dtechex.com/web/category/?rootId=$rootId",options: Options(headers: headers));
+      Response res = await _dio.get("https://virtuosocity.com/web/category/?rootId=$rootId",options: Options(headers: headers));
       print("9999-${res.data.toString()}");
 
       return res;
