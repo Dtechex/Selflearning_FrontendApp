@@ -98,6 +98,7 @@ class _MaincategoryResourcesListState extends State<MaincategoryResourcesList> {
 
   @override
   Widget build(BuildContext context) {
+    print("checking category id ${widget.rootId}");
 
     return BlocProvider(
       create: (context) => resourcesBloc,
@@ -125,6 +126,7 @@ class _MaincategoryResourcesListState extends State<MaincategoryResourcesList> {
           ),
         ),
         appBar: AppBar(
+          backgroundColor: Colors.blue,
             title: Text('${widget.title} Resources'),
           leading: IconButton(
             icon: Icon(Icons.arrow_back),

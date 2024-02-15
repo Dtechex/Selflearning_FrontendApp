@@ -13,6 +13,7 @@ import 'package:textfield_tags/textfield_tags.dart';
 
 
 import '../../utilities/shared_pref.dart';
+import '../../widgets/popup_menu_widget.dart';
 import '../subcate1.1/bloc/sub_cate1_bloc.dart';
 import '../subcate1.1/bloc/sub_cate1_event.dart';
 import '../subcategory/bloc/sub_cate_bloc.dart';
@@ -144,6 +145,7 @@ class _MainCatBottomSheetState extends State<MainCatBottomSheet> {
               mainAxisAlignment: MainAxisAlignment.center,
 
               children: [
+
 
                 const Align(
                   alignment: Alignment.centerLeft,
@@ -417,6 +419,9 @@ class _MainCatBottomSheetState extends State<MainCatBottomSheet> {
                               child: Icon(Icons.create_new_folder, color: Colors.white,),
                             ),
                           ),
+                          SizedBox(width: 5,),
+                          PopupMenuWidget(categoryName: widget.categoryName, categoryId: widget.rootId), // Add the PopupMenuWidget here
+
                         ],
                       ),
                     )

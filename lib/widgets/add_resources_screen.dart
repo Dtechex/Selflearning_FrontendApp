@@ -61,8 +61,7 @@ class _AddResourceScreenState extends State<AddResourceScreen> {
 
   @override
   Widget build(BuildContext context) {
-    print(widget.rootId);
-    print('rootId');
+    print("checking category id ${widget.rootId}");
     return Scaffold(
       floatingActionButton: SizedBox(
           height: context.screenHeight*0.1,
@@ -80,6 +79,7 @@ class _AddResourceScreenState extends State<AddResourceScreen> {
         ),
       ),
       appBar: AppBar(
+        backgroundColor: Colors.green,
         title: Text("Add resource ${widget.categoryName}"),
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
