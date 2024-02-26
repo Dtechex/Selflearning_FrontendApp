@@ -15,7 +15,7 @@ class CreateFlowRepo {
       final token = await SharedPref().getToken();
 
       var request = await Dio().post(
-          'https://selflearning.dtechex.com/web/prompt/',
+          'https://virtuosocity.com/web/prompt/',
           data: {
             'title': title,
           },
@@ -35,7 +35,7 @@ class CreateFlowRepo {
       final token = await SharedPref.getUserToken();
       print("---my token $token");
       Response res = await Dio().put(
-          'https://selflearning.dtechex.com/web/flow/update/$flowId',
+          'https://virtuosocity.com/web/flow/update/$flowId',
           data: {
             'type': "primary",
             'title':'$flowTitle',
@@ -59,7 +59,7 @@ class CreateFlowRepo {
     try{
       final token = await SharedPref().getToken();
       response = await Dio().get(
-          'https://selflearning.dtechex.com/web/flow?categoryId=$catID',
+          'https://virtuosocity.com/web/flow?categoryId=$catID',
           options: Options(
               headers: {"Authorization": 'Bearer $token'}
           ));
@@ -82,7 +82,7 @@ class CreateFlowRepo {
     try{
       final token = await SharedPref().getToken();
       response = await Dio().delete(
-          'https://selflearning.dtechex.com/web/flow/$flowId',
+          'https://virtuosocity.com/web/flow/$flowId',
           options: Options(
               headers: {"Authorization": 'Bearer $token'}
           ));
@@ -101,7 +101,7 @@ class CreateFlowRepo {
     Response response;
     try{
       final token = await SharedPref().getToken();
-      response = await Dio().post("https://selflearning.dtechex.com/web/flow/$flowId",
+      response = await Dio().post("https://virtuosocity.com/web/flow/$flowId",
       options: Options(
         headers: {"Authorization": 'Bearer $token'}
       )

@@ -1102,7 +1102,7 @@ class _AddPromptsScreenState extends State<AddPromptsScreen> {
         _isRecording1 = true;
       });
       await recorder1.start(
-        path: '$downloadPath/myFile.m4a',
+        path: '$downloadPath/myFile1.m4a',
         encoder: AudioEncoder.aacLc, // by default
         bitRate: 128000, // by default
         samplingRate: 44100, // by default
@@ -1113,7 +1113,7 @@ class _AddPromptsScreenState extends State<AddPromptsScreen> {
         _isRecording2 = true;
       });
       await recorder2.start(
-        path: '$downloadPath/myFile.m4a',
+        path: '$downloadPath/myFile2.m4a',
         encoder: AudioEncoder.aacLc, // by default
         bitRate: 128000, // by default
         samplingRate: 44100, // by default

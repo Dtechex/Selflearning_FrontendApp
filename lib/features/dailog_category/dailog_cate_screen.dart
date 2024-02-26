@@ -167,7 +167,7 @@ void deletPrompt({required String promptId}) async{
     'Authorization': 'Bearer $token',
   };
   try{
-    Response res = await _dio.delete("https://selflearning.dtechex.com/web/prompt/$promptId", options: Options(headers: headers));
+    Response res = await _dio.delete("https://virtuosocity/web/prompt/$promptId", options: Options(headers: headers));
     if(res.statusCode==200){
       EasyLoading.showToast("prompt is successully deleted");
       cubitAddPromptRes.getResPrompt(dailogId: widget.dailoId);
@@ -468,7 +468,7 @@ void deletPrompt({required String promptId}) async{
                                                               'Photo'
                                                           ? CachedNetworkImage(
                                                               imageUrl:
-                                                                  'https://selflearning.dtechex.com/public/image/$content',
+                                                                  'https://virtuosocity/public/image/$content',
                                                               fit: BoxFit
                                                                   .fitHeight,
                                                               height: 35,
@@ -947,7 +947,7 @@ class _BottomSheetState extends State<BottomSheet> {
       'Authorization': 'Bearer $token',
     };
     try{
-      Response res = await _dio.patch("https://selflearning.dtechex.com/web/prompt/update/$promptId", options: Options(headers: headers),
+      Response res = await _dio.patch("https://virtuosocity/web/prompt/update/$promptId", options: Options(headers: headers),
           data: {
             "resourceId":resourceId,
             "categoryId":widget.dialogId

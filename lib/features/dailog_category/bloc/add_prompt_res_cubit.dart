@@ -128,11 +128,11 @@ getPromptFromResource({required String resourceId})async{
       List<FlowDataModel> flowModel=[];
       for(var list in resPrompt){
        flowModel.add(FlowDataModel(
-           resourceTitle: list['resourceId']['title'],
+           resourceTitle: list['resourceId']['title']??"",
            resourceType: list['resourceId']['type'],
-           resourceContent: "resourceContent",
-           side1Title: list['side1']['title'],
-           side1Type: list['side1']['type'],
+           resourceContent: list['resourceId']['content']??"",
+           side1Title: list['side1']['title']??"",
+           side1Type: list['side1']['type']??"",
            side1Content: list['side1']['content'],
            side2Title: list['side2']['title'],
            side2Type: list['side2']['type'],

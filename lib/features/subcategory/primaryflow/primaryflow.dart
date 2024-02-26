@@ -108,7 +108,7 @@ Future<void> fetchdataList() async{
 
     try {
       Response res = await Dio().get(
-        'https://selflearning.dtechex.com/web/prompt?categoryId=$mainCatId',
+        'https://virtuosocity.com/web/prompt?categoryId=$mainCatId',
         options: options,
       );
 
@@ -160,7 +160,7 @@ Future<void> fetchdataList() async{
 
     try {
       Response res = await Dio().get(
-        'https://selflearning.dtechex.com/web/prompt?categoryId=$mainCatId',
+        'https://virtuosocity.com/web/prompt?categoryId=$mainCatId',
         options: options,
       );
 
@@ -212,7 +212,7 @@ Future<void> fetchdataList() async{
     };
     try {
       Response res = await Dio().get(
-        'https://selflearning.dtechex.com/web/flow?categoryId=$mainCatId&type=primary',
+        'https://virtuosocity,com/web/flow?categoryId=$mainCatId&type=primary',
         options: Options(headers: headers),
         data: {'type':'primary'}
       );

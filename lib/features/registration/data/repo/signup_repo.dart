@@ -8,7 +8,7 @@ class SignUpRepo {
       required String email,
       required String password}) async {
     final response = await http.post(
-        Uri.parse('https://selflearning.dtechex.com/web/user/register'),
+        Uri.parse('https://virtuosocity/web/user/register'),
         body: {"name": name, "email": email, "password": password});
     print(response.body);
     return response.statusCode;

@@ -44,7 +44,7 @@ class DailogRepo{
     print("requestBody$payload");
     try{
       print("try bloc is run");
-      Response res = await _dio.post("https://selflearning.dtechex.com/web/category/create-dialog",
+      Response res = await _dio.post("https://virtuosocity.com/web/category/create-dialog",
           data: jsonEncode(payload),
           options: Options(headers: headers)
           );
@@ -75,7 +75,7 @@ class DailogRepo{
       'Authorization': 'bearer' + ' ' + token.toString(),
     };
     try{
-      Response res = await _dio.get("https://selflearning.dtechex.com/web/category/get-dialogs",  options: Options(headers: headers));
+      Response res = await _dio.get("https://virtuosocity.com/web/category/get-dialogs",  options: Options(headers: headers));
       return res;
     }
     catch(e){
@@ -92,7 +92,7 @@ class DailogRepo{
     };    Response res;
     try {
       res = await _dio.delete(
-          'https://selflearning.dtechex.com/web/category/${dailogId}',
+          'https://virtuosocity.com/web/category/${dailogId}',
           options: Options(
             headers:headers,
           )
@@ -121,7 +121,7 @@ class DailogRepo{
         .toList();
     try {
       res = await _dio.post(
-          'https://selflearning.dtechex.com/web/flow',
+          'https://virtuosocity.com/web/flow',
           data: {
             'categoryId': dailogId,
             'title': title,

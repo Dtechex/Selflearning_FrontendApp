@@ -12,7 +12,7 @@ class SearchSubCategoryRepo {
      final Dio _dio = Dio(); // Create a Dio instance
      final token = SharedPref.getUserToken();
 
-    Response res = await _dio.get("https://selflearning.dtechex.com/web/category/search?keyword=$query",
+    Response res = await _dio.get("https://virtuosocity/web/category/search?keyword=$query",
     queryParameters: {'categoryId': rootId},
 
         options: Options(

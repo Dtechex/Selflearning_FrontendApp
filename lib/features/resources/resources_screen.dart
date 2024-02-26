@@ -57,7 +57,7 @@ class _AllResourcesListState extends State<AllResourcesList> {
     try {
       final token = await SharedPref().getToken();
       final res = await http.post(
-          Uri.parse('https://selflearning.dtechex.com/web/prompt/'),
+          Uri.parse('https://virtuosocity.com/web/prompt/'),
           body: {"name": name, "resourceId": promtId},
           headers: {'Authorization': "Bearer $token"});
 
@@ -152,7 +152,7 @@ class _AllResourcesListState extends State<AllResourcesList> {
                               ),
                                 child: getFileType(content)=='Photo'
                                     ? CachedNetworkImage(
-                                  imageUrl: 'https://selflearning.dtechex.com/public/image/$content',
+                                  imageUrl: 'https://virtuosocity.com/public/image/$content',
                                   fit: BoxFit.fitHeight,
                                   height: 35,
                                   width: 35,
@@ -264,7 +264,7 @@ class _AllResourcesListState extends State<AllResourcesList> {
                                   content.contains('.gif')
                                   ? CachedNetworkImage(
                                 imageUrl:
-                                'https://selflearning.dtechex.com/public/image/$content',
+                                'https://virtuosocity.com/public/image/$content',
                                 fit: BoxFit.fill,
                                 height: 40,
                                 width: 50,
