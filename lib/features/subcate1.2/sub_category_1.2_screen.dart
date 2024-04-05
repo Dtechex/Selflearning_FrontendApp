@@ -262,7 +262,8 @@ bool value = false;
                           builder: (context) => MaincategoryResourcesList(
                               rootId: widget.rootId,
                               mediaType: '',
-                              title: widget.subCateTitle),
+                              title: widget.subCateTitle,
+                              level: "3"),
                         ));
                     break;
                   case 'edit':
@@ -425,7 +426,9 @@ bool value = false;
                                               builder: (context) =>
                                                   MaincategoryResourcesList(rootId: state.cateList[index].sId!,
                                                       mediaType: '',
-                                                      title: state.cateList[index].name!),));
+                                                      title: state.cateList[index].name!,
+                                                      level: "3"
+                                                  ),));
                                           },
                                             backgroundColor: Colors.teal.shade300,
                                             foregroundColor: Colors.white,

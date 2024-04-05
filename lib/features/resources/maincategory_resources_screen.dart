@@ -36,9 +36,10 @@ class MaincategoryResourcesList extends StatefulWidget {
   final String rootId;
   final String mediaType;
   final String title;
+  final String level;
 
   const MaincategoryResourcesList(
-      {Key? key, required this.rootId, required this.mediaType, required this.title})
+      {Key? key, required this.rootId, required this.mediaType, required this.title, required this.level})
       : super(key: key);
 
   @override
@@ -98,6 +99,7 @@ class _MaincategoryResourcesListState extends State<MaincategoryResourcesList> {
 
   @override
   Widget build(BuildContext context) {
+    print("checking category id ${widget.rootId}");
 
     return BlocProvider(
       create: (context) => resourcesBloc,
@@ -125,7 +127,8 @@ class _MaincategoryResourcesListState extends State<MaincategoryResourcesList> {
           ),
         ),
         appBar: AppBar(
-            title: Text('${widget.title} Resources'),
+          backgroundColor: Colors.blue,
+            title: Text('${widget.title} Resources  (${widget.level})'),
           leading: IconButton(
             icon: Icon(Icons.arrow_back),
             onPressed: () {
@@ -159,6 +162,7 @@ class _MaincategoryResourcesListState extends State<MaincategoryResourcesList> {
                   }
                   if (state is ResourcesLoaded) {
 
+
                     if (state.allResourcesModel.data!.record!.records!.isEmpty) {
                       return Container(
                         height: MediaQuery.of(context).size.height * 0.9,
@@ -169,318 +173,161 @@ class _MaincategoryResourcesListState extends State<MaincategoryResourcesList> {
                     } else {
 
                       return ListView.builder(
-                          shrinkWrap: true,
-                          physics: NeverScrollableScrollPhysics(),
-                          itemCount: state.allResourcesModel.data!.record!.records!.length,
-                          itemBuilder: (context, index) {
-                            final content = state.allResourcesModel.data!.record!
-                                .records![index].content
-                                .toString();
-                            final title = state.allResourcesModel.data!.record!
-                                .records![index].title;
+                        shrinkWrap: true,
+                        physics: NeverScrollableScrollPhysics(),
+                        itemCount: state.allResourcesModel.data!.record!.records!.length,
+                        itemBuilder: (context, index) {
+                          final content = state.allResourcesModel.data!.record!.records![index].content.toString();
+                          final title = state.allResourcesModel.data!.record!.records![index].title;
+                          final sortedRecords = List.from(state.allResourcesModel.data!.record!.records!);
+                          sortedRecords.sort((a, b) => DateTime.parse(a.createdAt).compareTo(DateTime.parse(a.createdAt)));
+                          final rNumber = sortedRecords.indexOf(state.allResourcesModel.data!.record!.records![index]) + 1; // Get index of current record in sorted list and add 1 to make it R1, R2, ...
 
-
-
-
-                            return Card(
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12.0),
-                              ),
-                              child: ListTile(
-                                tileColor: Colors.white,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(12.0),
-                                ),
-                                leading: GestureDetector(
-                                  onTap: (){
-                                    print("popupmenuIcon dailogbox");
-                                    _showImageDialog(context,content, title.toString() );
-
-                                  },
-                                  child: Container(
-                                    margin: const EdgeInsets.all(8.0),
-                                    padding: const EdgeInsets.all(4.0),
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(12.0),
-                                      color: const Color(0xFFF5F5F5),
-                                    ),
-                                    child: getFileType(content)=='Photo'
-                                        ? CachedNetworkImage(
-                                      imageUrl: 'https://selflearning.dtechex.com/public/image/$content',
-                                      fit: BoxFit.fitHeight,
-                                      height: 35,
-                                      width: 35,
-                                      progressIndicatorBuilder: (context, url,
-                                          downloadProgress) =>
-                                          Center(
-                                            child: CircularProgressIndicator(
-                                                value: downloadProgress.progress),
-                                          ),
-                                      errorWidget: (context, url, error) =>
-                                          Icon(Icons.error),
-                                    )
-                                        :getMediaType(content) == 'video'
-                                        ? const Icon(Icons.video_camera_back_outlined, size: 35,)
-                                        : getMediaType(content) == 'audio'
-                                        ? const Icon(Icons.audiotrack, size: 35)
-                                        : const Icon(Icons.text_format_sharp, size: 35),
-                                  ),
-                                ),
-                                title: Text(
-                                  title != null
-                                      ?'${title.substring(0,1).toUpperCase()}${title.substring(1)}'
-                                      : 'Untitled',
-                                  style: TextStyle(fontSize: 20.0, letterSpacing: 1, fontWeight: FontWeight.w600),),
-                                trailing:
-                                PopupMenuButton(
-                                  icon: Icon(Icons.more_vert,color: Colors.red,),
-                                  itemBuilder: (context) {
-                                    return [
-                                      const PopupMenuItem(
-                                          value: 'play',
-                                          child: InkWell(
-                                              child: Row(
-                                                mainAxisAlignment: MainAxisAlignment.start,
-                                                children: [
-                                                  Icon(Icons.update, color: primaryColor,),
-                                                  SizedBox(width: 8.0,),
-                                                  Text("Play prompts"),
-                                                ],
-                                              ))
-                                      ),
-
-                                      const PopupMenuItem(
-                                          value: 'add',
-                                          child: InkWell(
-                                              child: Row(
-                                                mainAxisAlignment: MainAxisAlignment.start,
-                                                children: [
-                                                  Icon(Icons.update, color: primaryColor,),
-                                                  SizedBox(width: 8.0,),
-                                                  Text("Add prompts"),
-                                                ],
-                                              ))
-                                      ),
-                                      const PopupMenuItem(
-                                          value: 'remove',
-                                          child: InkWell(
-                                              child: Row(
-                                                mainAxisAlignment: MainAxisAlignment.start,
-                                                children: [
-                                                  Icon(Icons.delete, color: primaryColor,),
-                                                  SizedBox(width: 8.0,),
-                                                  Text("Remove prompts"),
-                                                ],
-                                              ))
-                                      ),
-                                    ];
-                                  },
-                                  onSelected: (String value) {
-                                    switch(value){
-                                      case 'play':
-                                        Navigator.push(context,
-                                            MaterialPageRoute(
-                                              builder: (context) {
-                                                return PromtsScreen(
-                                                  content: state
-                                                      .allResourcesModel
-                                                      .data!
-                                                      .record!
-                                                      .records![index]
-                                                      .content ??
-                                                      state
-                                                          .allResourcesModel
-                                                          .data!
-                                                          .record!
-                                                          .records![index]
-                                                          .title,
-                                                  mediaType: state
-                                                      .allResourcesModel
-                                                      .data!
-                                                      .record!
-                                                      .records![index]
-                                                      .type!,
-                                                  promtId: state
-                                                      .allResourcesModel
-                                                      .data!
-                                                      .record!
-                                                      .records![index]
-                                                      .sId!,
-                                                  fromType: Prompt.fromResource,);
-                                              },
-                                            ));
-
-                                        break;
-                                      case 'add':
-                                        context.push(AddPromptsScreen(
-                                          resourceId: state.allResourcesModel.data!.record!.records![index].sId.toString(),
-                                          categoryId: widget.rootId,
-                                        ));
-
-                                        break;
-                                      case 'remove':
-
-                                        resourcesBloc.add(
-                                            DeleteResourcesEvent(
-                                                rootId: state
-                                                    .allResourcesModel
-                                                    .data!
-                                                    .record!
-                                                    .records![index]
-                                                    .sId
-                                                    .toString()));
-                                        break;
-
-                                    }
-                                  },
-                                ),
-                              ),
-                            );
-                            /*return SizedBox(
-                                  width: context.screenWidth,
-                                  height: 60,
-                                  child: Row(
-                                    children: [
-
-                                      Spacer(),
-                                      content.contains('.jpeg') ||
-                                          content.contains('.jpg') ||
-                                          content.contains('.png') ||
-                                          content.contains('.gif')
-                                          ? CachedNetworkImage(
-                                        imageUrl:
-                                        'https://selflearning.dtechex.com/public/image/$content',
-                                        fit: BoxFit.fill,
-                                        height: 40,
-                                        width: 50,
-                                        progressIndicatorBuilder: (context, url,
-                                            downloadProgress) =>
-                                            Center(
-                                              child: CircularProgressIndicator(
-                                                  value: downloadProgress.progress),
+                          return Card(
+                            elevation: 1,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12.0),
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 8.0),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Expanded(
+                                    child: Container(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Row(
+                                        mainAxisAlignment: MainAxisAlignment.start,
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          SizedBox(width: 8.0),
+                                          GestureDetector(
+                                            onTap: () {
+                                              print("popupmenuIcon dailogbox");
+                                              _showImageDialog(context, content, title.toString());
+                                            },
+                                            child: Container(
+                                              padding: const EdgeInsets.all(4.0),
+                                              decoration: BoxDecoration(
+                                                borderRadius: BorderRadius.circular(12.0),
+                                                color: const Color(0xFFF5F5F5),
+                                              ),
+                                              child: getFileType(content) == 'Photo'
+                                                  ? CachedNetworkImage(
+                                                imageUrl: 'https://selflearning.dtechex.com/public/image/$content',
+                                                fit: BoxFit.fitHeight,
+                                                height: 35,
+                                                width: 35,
+                                                progressIndicatorBuilder: (context, url, downloadProgress) => Center(
+                                                  child: CircularProgressIndicator(value: downloadProgress.progress),
+                                                ),
+                                                errorWidget: (context, url, error) => Icon(Icons.error),
+                                              )
+                                                  : getMediaType(content) == 'video'
+                                                  ? const Icon(Icons.video_camera_back_outlined, size: 35,)
+                                                  : getMediaType(content) == 'audio'
+                                                  ? const Icon(Icons.audiotrack, size: 35)
+                                                  : const Icon(Icons.text_format_sharp, size: 35),
                                             ),
-                                        errorWidget: (context, url, error) =>
-                                            Icon(Icons.error),
-                                      )
-                                          : SizedBox(width: 50,
-                                          child: getMediaType(content) == 'video'
-                                              ? const Icon(
-                                            Icons.video_camera_back_outlined,
-                                            size: 50,
-                                          )
-                                              : getMediaType(content) != 'audio'
-                                              ? const Icon(
-                                              Icons.text_format_sharp,
-                                              size: 50)
-                                              : Icon(Icons.audiotrack, size: 50)),
-                                      Spacer(),
-                                      ElevatedButton(
-                                        child: const Text('Add'),
-                                        onPressed: () {
-                                          context.push(AddPromptsScreen(
-                                            resourceId: state.allResourcesModel.data!
-                                                .record!.records![index].sId
-                                                .toString(),
-                                          ));
-                                        },
+                                          ),
+                                          Padding(
+                                            padding: const EdgeInsets.only(left: 8.0, top: 8.0),
+                                            child: Text("R$rNumber", // Use rNumber here
+                                                style: TextStyle(fontSize: 18.0, letterSpacing: 1, fontWeight: FontWeight.w500)
+                                            ),
+                                          ),
+                                          Padding(
+                                            padding: const EdgeInsets.only(left: 8.0, top: 8.0),
+                                            child: Text(
+                                              (title != null ? '${title.substring(0, 1).toUpperCase()}${title.substring(1)}' : 'Untitled'),
+                                              style: TextStyle(fontSize: 18.0, letterSpacing: 1, fontWeight: FontWeight.w500),
+                                            ),
+                                          ),
+                                        ],
                                       ),
-                                      SizedBox(width: 5.0,),
-                                      ElevatedButton(
-                                        child: const Text('Start Flow'),
-                                        onPressed: () {
-                                          print(state.allResourcesModel.data!
-                                              .record!.records![index].content);
+                                    ),
+                                  ),
+                                  PopupMenuButton(
+                                    icon: Icon(Icons.more_vert,color: Colors.red,),
+                                    itemBuilder: (context) {
+                                      return [
+                                        const PopupMenuItem(
+                                            value: 'play',
+                                            child: InkWell(
+                                                child: Row(
+                                                  mainAxisAlignment: MainAxisAlignment.start,
+                                                  children: [
+                                                    Icon(Icons.update, color: primaryColor,),
+                                                    SizedBox(width: 8.0,),
+                                                    Text("Play prompts"),
+                                                  ],
+                                                ))
+                                        ),
 
+                                        const PopupMenuItem(
+                                            value: 'add',
+                                            child: InkWell(
+                                                child: Row(
+                                                  mainAxisAlignment: MainAxisAlignment.start,
+                                                  children: [
+                                                    Icon(Icons.update, color: primaryColor,),
+                                                    SizedBox(width: 8.0,),
+                                                    Text("Add prompts"),
+                                                  ],
+                                                ))
+                                        ),
+                                        const PopupMenuItem(
+                                            value: 'remove',
+                                            child: InkWell(
+                                                child: Row(
+                                                  mainAxisAlignment: MainAxisAlignment.start,
+                                                  children: [
+                                                    Icon(Icons.delete, color: primaryColor,),
+                                                    SizedBox(width: 8.0,),
+                                                    Text("Remove prompts"),
+                                                  ],
+                                                ))
+                                        ),
+                                      ];
+                                    },
+                                    onSelected: (String value) {
+                                      switch(value){
+                                        case 'play':
                                           Navigator.push(context,
                                               MaterialPageRoute(
                                                 builder: (context) {
                                                   return PromtsScreen(
-                                                      content: state
-                                                          .allResourcesModel
-                                                          .data!
-                                                          .record!
-                                                          .records![index]
-                                                          .content ??
-                                                          state
-                                                              .allResourcesModel
-                                                              .data!
-                                                              .record!
-                                                              .records![index]
-                                                              .title,
-                                                      mediaType: state
-                                                          .allResourcesModel
-                                                          .data!
-                                                          .record!
-                                                          .records![index]
-                                                          .type!,
-                                                      promtId: state
-                                                          .allResourcesModel
-                                                          .data!
-                                                          .record!
-                                                          .records![index]
-                                                          .sId!);
+                                                    content: state.allResourcesModel.data!.record!.records![index].content ?? state.allResourcesModel.data!.record!.records![index].title,
+                                                    mediaType: state.allResourcesModel.data!.record!.records![index].type!,
+                                                    promtId: state.allResourcesModel.data!.record!.records![index].sId!,
+                                                    fromType: Prompt.fromResource,
+                                                  );
                                                 },
                                               ));
-                                        },
-                                      ),
-                                      *//*SizedBox(width: 5.0,),
-                                      ElevatedButton(
-                                        child: const Text('Start'),
-                                        onPressed: () {
-                                          print(state.allResourcesModel.data!
-                                              .record!.records![index].content);
-
-                                          Navigator.push(context,
-                                              MaterialPageRoute(
-                                                builder: (context) {
-                                                  return StartFlowScreen(
-                                                      content: state
-                                                          .allResourcesModel
-                                                          .data!
-                                                          .record!
-                                                          .records![index]
-                                                          .content ??
-                                                          state
-                                                              .allResourcesModel
-                                                              .data!
-                                                              .record!
-                                                              .records![index]
-                                                              .title,
-                                                      mediaType: state
-                                                          .allResourcesModel
-                                                          .data!
-                                                          .record!
-                                                          .records![index]
-                                                          .type!,
-                                                      promtId: state
-                                                          .allResourcesModel
-                                                          .data!
-                                                          .record!
-                                                          .records![index]
-                                                          .sId!);
-                                                },
-                                              ));
-                                        },
-                                      ),*//*
-                                      Spacer(),
-                                      IconButton(
-                                          onPressed: () {
-                                            resourcesBloc.add(
-                                                DeleteResourcesEvent(
-                                                    rootId: state
-                                                        .allResourcesModel
-                                                        .data!
-                                                        .record!
-                                                        .records![index]
-                                                        .sId
-                                                        .toString()));
-                                          },
-                                          icon: const Icon(Icons.delete)),
-                                      Spacer(),
-                                    ],
-                                  ),
-                                );*/
-                          });
+                                          break;
+                                        case 'add':
+                                          context.push(AddPromptsScreen(
+                                            resourceId: state.allResourcesModel.data!.record!.records![index].sId.toString(),
+                                            categoryId: widget.rootId,
+                                          ));
+                                          break;
+                                        case 'remove':
+                                          resourcesBloc.add(
+                                              DeleteResourcesEvent(
+                                                  rootId: state.allResourcesModel.data!.record!.records![index].sId.toString()
+                                              )
+                                          );
+                                          break;
+                                      }
+                                    },
+                                  )
+                                ],
+                              ),
+                            ),
+                          );
+                        },
+                      );
                     }
                   }
                   return const Text('something went wrong');

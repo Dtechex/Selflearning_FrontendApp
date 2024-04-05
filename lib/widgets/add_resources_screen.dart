@@ -73,7 +73,9 @@ class _AddResourceScreenState extends State<AddResourceScreen> {
                 builder: (context) =>
                     MaincategoryResourcesList(rootId: widget.rootId!,
                         mediaType: '',
-                        title: widget.categoryName!),));
+                        title: widget.categoryName!,
+                        level: ""
+                    ),));
             },
             child: Text("View All", style: TextStyle(fontSize: 9),),
           ),
@@ -312,31 +314,9 @@ class _AddResourceScreen2State extends State<AddResourceScreen2> {
 
         ),
 
-        floatingActionButton: SpeedDial(
-          backgroundColor: primaryColor,
-          animatedIcon: AnimatedIcons.list_view,
-          overlayColor: Colors.transparent,
-          elevation: 10,
-          overlayOpacity: 0.1,
-          animatedIconTheme: IconThemeData.fallback(),
-          foregroundColor: Colors.yellow,
-          useRotationAnimation:true ,
-          children: [
-            SpeedDialChild(
-              label: "Add prompt",
-              backgroundColor: Colors.green[400],
-              child: Icon(Icons.file_copy, color: Colors.white,),
-              onTap: (){
-                Navigator.push(context, MaterialPageRoute(builder: (context)=>AddPromptsAddResourceScreen(categoryId: "1",resourceId: parentPromptId.toString(),)));
-
-              }
-            ),
-          ],
-
-        ),
         body: Column(
           children: [
-          widget.number==true?  SizedBox(
+           SizedBox(
               //  height: context.screenHeight/2.8,
               child: ListView.builder(
                 shrinkWrap: true,
@@ -396,6 +376,7 @@ class _AddResourceScreen2State extends State<AddResourceScreen2> {
                                                 whichResources: widget.whichResources,
                                                 resourceId: widget.resourceId,
                                                 rootId: widget.resourceId!,
+
                                               );
                                             },
                                           ));
@@ -433,7 +414,8 @@ class _AddResourceScreen2State extends State<AddResourceScreen2> {
                   );
                 },
               ),
-            ):            Container(
+            ),
+            Container(
               padding: const EdgeInsets.only(top: 5, bottom: 5),
               decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(10),

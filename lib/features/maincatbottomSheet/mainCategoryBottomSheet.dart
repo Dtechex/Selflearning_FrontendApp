@@ -13,6 +13,7 @@ import 'package:textfield_tags/textfield_tags.dart';
 
 
 import '../../utilities/shared_pref.dart';
+import '../../widgets/popup_menu_widget.dart';
 import '../subcate1.1/bloc/sub_cate1_bloc.dart';
 import '../subcate1.1/bloc/sub_cate1_event.dart';
 import '../subcategory/bloc/sub_cate_bloc.dart';
@@ -144,6 +145,7 @@ class _MainCatBottomSheetState extends State<MainCatBottomSheet> {
               mainAxisAlignment: MainAxisAlignment.center,
 
               children: [
+
 
                 const Align(
                   alignment: Alignment.centerLeft,
@@ -355,20 +357,6 @@ class _MainCatBottomSheetState extends State<MainCatBottomSheet> {
           crossAxisAlignment: CrossAxisAlignment.start,
 
           children: [
-            Container(
-              margin: EdgeInsets.symmetric(horizontal: 8,vertical: 5),
-              alignment: Alignment.topRight,
-              width: double.infinity,
-              child: Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(90),
-                  border:  Border.all(color: Colors.black45, width: 1.5)
-                ),
-                child: IconButton(onPressed: (){
-                  Navigator.pop(context);
-                }, icon: Icon(Icons.clear)),
-              ),
-            ),
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Container(
@@ -398,14 +386,7 @@ class _MainCatBottomSheetState extends State<MainCatBottomSheet> {
                                 categoryName:widget.categoryName ,
                                 rootId: widget.rootId,
                                 tags: widget.tags,
-                              ))).then((value) {
-                                if(value){
-                                  setState(() {
-                                    context.read<MainBottomSheetCubit>().onGetSubCategoryList(
-                                        rootId: widget.rootId.toString());
-                                  });
-                                }
-                              });
+                              )));
 /*
                         navigate(context: context);
 */
@@ -438,6 +419,11 @@ class _MainCatBottomSheetState extends State<MainCatBottomSheet> {
                               child: Icon(Icons.create_new_folder, color: Colors.white,),
                             ),
                           ),
+                          SizedBox(width: 5,),
+                          PopupMenuWidget(categoryName: widget.categoryName, categoryId: widget.rootId,
+                            level: "Level 1",
+                          ), // Add the PopupMenuWidget here
+
                         ],
                       ),
                     )
@@ -454,17 +440,12 @@ class _MainCatBottomSheetState extends State<MainCatBottomSheet> {
             BlocBuilder<MainBottomSheetCubit, MainBottomSheetState>(
               builder: (context, state) {
                 if(state is MainBottomSheetLoading){
-                  return Container(
-                    height: MediaQuery.of(context).size.height*0.5,
-                    width: double.infinity,
-                    alignment: Alignment.center,
-                    child:
-                      Container(
-                        height: 60,
-                        width: 60,
-                        child: CircularProgressIndicator(),
-                      ),
-
+                  return Center(
+                    child: Container(
+                      height: 60,
+                      width: 60,
+                      child: CircularProgressIndicator(),
+                    ),
                   );
                 }
 

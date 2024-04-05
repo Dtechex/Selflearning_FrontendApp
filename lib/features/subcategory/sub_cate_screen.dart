@@ -220,7 +220,10 @@ bool value = false;
                       builder: (context) =>
                           MaincategoryResourcesList(rootId: widget.rootId!,
                               mediaType: '',
-                              title: widget.categoryName!),));
+                              title: widget.categoryName!,
+                              level: "1"
+
+                          ),));
                     break;
                   case 'edit':
                     Navigator.push(context, MaterialPageRoute(
@@ -470,7 +473,9 @@ bool value = false;
                                                   .sId!,
                                               mediaType: '',
                                               title: state.cateList[index]
-                                                  .name!),));
+                                                  .name!,
+                                              level: "1"
+                                          ),));
                                   },
                                   backgroundColor: Color(0xFF21B7CA),
                                   autoClose: false,
