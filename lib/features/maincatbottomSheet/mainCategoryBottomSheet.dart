@@ -420,7 +420,9 @@ class _MainCatBottomSheetState extends State<MainCatBottomSheet> {
                             ),
                           ),
                           SizedBox(width: 5,),
-                          PopupMenuWidget(categoryName: widget.categoryName, categoryId: widget.rootId), // Add the PopupMenuWidget here
+                          PopupMenuWidget(categoryName: widget.categoryName, categoryId: widget.rootId,
+                            level: "Level 1",
+                          ), // Add the PopupMenuWidget here
 
                         ],
                       ),

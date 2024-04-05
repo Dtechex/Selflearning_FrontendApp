@@ -7,6 +7,7 @@ import 'package:self_learning_app/features/create_flow/slide_show_screen.dart';
 import 'package:self_learning_app/features/promt/data/model/promt_model.dart';
 import 'package:self_learning_app/utilities/extenstion.dart';
 
+import '../add_Dailog/dailogPrompt/dailog_prompt.dart';
 import '../flow_screen/start_flow_screen.dart';
 import 'data/model/flow_model.dart';
 
@@ -69,6 +70,7 @@ class _ShowPromtsScreenState extends State<ShowPromtsScreen> {
                 );},));
               },
               child: const Row(
+
                 children: [
                   Text(
                     'Start Flow',
@@ -97,7 +99,22 @@ class _ShowPromtsScreenState extends State<ShowPromtsScreen> {
                             extractFirstLetter(widget.flowList[index].promptName),
                             style: TextStyle(fontWeight: FontWeight.bold),)
                           ,),
-                        trailing: Icon(Icons.menu),
+                        trailing: Row(
+                          mainAxisSize: MainAxisSize.min,
+
+                          children: [
+                            IconButton(onPressed: (){
+                              Navigator.push(context, MaterialPageRoute(builder: (context)=>SlideShowScreen2(
+                                side1type: widget.flowList[index].side1Content,
+                                side2type: widget.flowList[index].side2Content,
+                                side2contentTitle: widget.flowList[index].side2Title,
+                                side1contentTitle: widget.flowList[index].side1Title,
+                                promptTitle: widget.flowList[index].promptName,
+                              )));
+                            }, icon: Icon(Icons.play_arrow, color: Colors.green,)),
+                            Icon(Icons.menu),
+                          ],
+                        ),
                         key: Key('$index'),
                         tileColor: index.isOdd ? oddItemColor : evenItemColor,
                         title: Row(

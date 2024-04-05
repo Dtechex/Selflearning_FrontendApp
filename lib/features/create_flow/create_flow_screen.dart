@@ -104,6 +104,7 @@ class _CreateFlowScreenState extends State<CreateFlowScreen> {
                           }
                           );
                           Navigator.push(context, MaterialPageRoute(builder: (context) => AddPromptsToFlowScreen(
+                            keywords: [],
                             update: true,
                             title: title,
                             flowId: flowId,
@@ -214,6 +215,7 @@ class _CreateFlowScreenState extends State<CreateFlowScreen> {
                     context,
                     MaterialPageRoute(
                       builder: (context) => AddPromptsToFlowScreen(
+                        keywords: [],
                         title: titleController.text,
                         rootId: widget.rootId, promptList: [],),)).then((value) {
                           if(value != null && value == true){

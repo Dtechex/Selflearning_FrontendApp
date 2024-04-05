@@ -64,7 +64,7 @@ class _FinalResourceScreenState extends State<FinalResourceScreen> {
       ),
       appBar: AppBar(
           elevation: 0,
-          automaticallyImplyLeading: false,
+          automaticallyImplyLeading: true,
           actions: [
 /*
             IconButton(

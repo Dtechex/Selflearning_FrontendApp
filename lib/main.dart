@@ -24,8 +24,12 @@ import 'package:self_learning_app/features/resources/bloc/resources_bloc.dart';
 import 'package:self_learning_app/features/search_category/bloc/search_cat_bloc.dart';
 import 'package:self_learning_app/features/subcategory/bloc/sub_cate_bloc.dart';
 import 'package:self_learning_app/features/subcategory/primaryflow/bloc/primary_bloc.dart';
+import 'package:self_learning_app/schedule/cubit/scheduleflow_cubit.dart';
+import 'package:self_learning_app/splashScreen/splash_screen.dart';
+import 'package:self_learning_app/testing.dart';
 import 'package:self_learning_app/utilities/colors.dart';
 import 'package:self_learning_app/utilities/shared_pref.dart';
+import 'package:self_learning_app/widgets/localNotification.dart';
 import 'features/add_Dailog/bloc/create_dailog_bloc/create_dailog_bloc.dart';
 import 'features/create_flow/bloc/create_flow_screen_bloc.dart';
 import 'features/dailog_category/dailog_cate_screen.dart';
@@ -63,6 +67,10 @@ Future<void> main() async {
       }));
 
   configLoading();
+
+/*
+  await NotificationService().initNotification(); //
+*/
 
 
   runApp(
@@ -118,6 +126,9 @@ class MyApp extends StatelessWidget {
           // BlocProvider<AddPromptsBloc>(create: (context) => AddPromptsBloc()),
           BlocProvider<AddPromptResCubit>(create: (context) => AddPromptResCubit()),
           BlocProvider<MainBottomSheetCubit>(create: (context) => MainBottomSheetCubit()),
+          BlocProvider<ScheduleflowCubit>(create: (context) => ScheduleflowCubit()),
+
+
 
 
         ],
@@ -144,7 +155,12 @@ class MyApp extends StatelessWidget {
                     centerTitle: true, backgroundColor: primaryColor),
                 primarySwatch: Colors.blue,
               ),
-              home: FutureBuilder(
+              home:
+              SplashScreen()
+
+
+
+            /*FutureBuilder(
                 future: SharedPref().getToken(),
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {
@@ -154,7 +170,7 @@ class MyApp extends StatelessWidget {
                     return const LoginScreen();
                   }
                 },
-              ),
+              ),*/
           ),
         ));
   }

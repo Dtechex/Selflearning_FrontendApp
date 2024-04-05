@@ -42,6 +42,7 @@ class AddPromptsToFlowScreen extends StatefulWidget {
   final List<PromptListModel> promptList;
   final bool update;
   final String flowId;
+  final List<String> keywords;
 
   const AddPromptsToFlowScreen(
       {super.key,
@@ -49,7 +50,9 @@ class AddPromptsToFlowScreen extends StatefulWidget {
       required this.rootId,
       required this.promptList,
       this.update = false,
-      this.flowId = ''});
+      this.flowId = '',
+      required this.keywords
+      });
 
   @override
   State<AddPromptsToFlowScreen> createState() => _AddPromptsToFlowScreenState();
@@ -140,6 +143,7 @@ class _AddPromptsToFlowScreenState extends State<AddPromptsToFlowScreen> {
                           context,
                           MaterialPageRoute(
                             builder: (context) => ManageFlow(
+                              tags: widget.keywords,
                               title: widget.title,
                               rootId: widget.rootId,
                               promptList: promptList,

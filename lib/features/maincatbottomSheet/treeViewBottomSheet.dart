@@ -12,6 +12,7 @@ import 'package:self_learning_app/utilities/extenstion.dart';
 import 'package:textfield_tags/textfield_tags.dart';
 
 import '../../utilities/shared_pref.dart';
+import '../../widgets/popup_menu_widget.dart';
 import '../add_category/data/model/add_cate_model.dart';
 import '../subcate1.1/bloc/sub_cate1_bloc.dart';
 import '../subcate1.1/bloc/sub_cate1_event.dart';
@@ -558,6 +559,7 @@ Navigator.push(context, MaterialPageRoute(
                       ),
                     ),
 
+
                   // Display the index and folder icon for root level
                   if (widget.entry.level == 0)
                     GestureDetector(
@@ -596,6 +598,7 @@ Navigator.push(context, MaterialPageRoute(
                     isOpen: widget.entry.hasChildren ? widget.entry.isExpanded : null,
                     onPressed: widget.entry.hasChildren ? widget.onTap : null,
                   ),
+
                   SizedBox(width: 8),
                   Expanded(
                     child: Column(
@@ -629,6 +632,7 @@ Navigator.push(context, MaterialPageRoute(
                       child: Icon(Icons.near_me_sharp, color: Colors.red),
                     ),
                   ),
+
                   SizedBox(width: 5,),
                   // Show create_new_folder button only when entry level is not 2
                   if (widget.entry.level != 2)
@@ -645,6 +649,9 @@ Navigator.push(context, MaterialPageRoute(
                         child: Icon(Icons.create_new_folder, color: Colors.white),
                       ),
                     ),
+                  PopupMenuWidget(categoryName: widget.entry.node.name, categoryId: widget.entry.node.sId, level: "Level${widget.entry.level+2}",
+                  ), // Add the PopupMenuWidget here
+
                 ],
               ),
             ),

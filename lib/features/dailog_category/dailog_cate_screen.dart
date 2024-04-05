@@ -1506,6 +1506,7 @@ class _BottomSheetForCreateFlowState extends State<BottomSheetForCreateFlow> {
                                                       MaterialPageRoute(
                                                         builder: (context) =>
                                                             AddPromptsToFlowScreen(
+                                                              keywords: [],
                                                           update: true,
                                                           title: title,
                                                           flowId: flowId,
@@ -1716,6 +1717,7 @@ class _BottomSheetForPrimaryFlowState extends State<BottomSheetForPrimaryFlow> {
                                                       MaterialPageRoute(
                                                         builder: (context) =>
                                                             AddPromptsToFlowScreen(
+                                                              keywords: [],
                                                           update: true,
                                                           title: title,
                                                           flowId: flowId,

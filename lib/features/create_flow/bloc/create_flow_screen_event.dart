@@ -44,7 +44,8 @@ class CreateAndSaveFlow extends CreateFlowEvent {
 class LoadAllFlowEvent extends CreateFlowEvent {
 
   final String catID;
-  LoadAllFlowEvent({required this.catID});
+   String? keyword;
+  LoadAllFlowEvent({required this.catID,  this.keyword});
   @override
   // TODO: implement props
   List<Object?> get props => [catID];
@@ -63,6 +64,7 @@ class FlowSelected extends CreateFlowEvent{
   final String type;
   final int index;
   final String rootId;
+
 
   FlowSelected({required this.flowId, required this.type, required this.flowList,required this.index, required this.rootId});
 

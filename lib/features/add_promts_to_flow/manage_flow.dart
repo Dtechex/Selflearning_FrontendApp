@@ -19,10 +19,14 @@ class ManageFlow extends StatefulWidget {
   final List<PromptListModel> promptList;
   final bool update;
   final String flowId;
+  final List<String> tags;
 
   const ManageFlow({super.key, required this.title,
     required this.update,
-    required this.rootId, required this.promptList, required this.flowId});
+    required this.rootId, required this.promptList,
+    required this.flowId,
+    required this.tags
+  });
 
   @override
   State<ManageFlow> createState() => _ManageFlowState();
@@ -41,6 +45,7 @@ class _ManageFlowState extends State<ManageFlow> {
             child: MaterialButton(
               onPressed: () {
                 saveFlow(
+                  tags: widget.tags,
                     catId: widget.rootId,
                   title: widget.title,
                   data: widget.promptList,
@@ -85,7 +90,9 @@ class _ManageFlowState extends State<ManageFlow> {
     );
   }
 
-  Future<void> saveFlow({required String catId, required String title, required List<PromptListModel> data, required bool update, required String flowId}) async {
+  Future<void> saveFlow({required String catId, required String title, required List<PromptListModel> data, required bool update, required String flowId,
+  required List<String> tags
+  }) async {
     EasyLoading.show(dismissOnTap: true);
     final token = await SharedPref().getToken();
     final Options options = Options(
@@ -104,6 +111,7 @@ class _ManageFlowState extends State<ManageFlow> {
           'categoryId': catId,
           'title': title,
           'flow': dataToSend,
+           'keywords':tags
         },
         options: options,
 

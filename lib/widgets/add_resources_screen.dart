@@ -63,6 +63,7 @@ class _AddResourceScreenState extends State<AddResourceScreen> {
   Widget build(BuildContext context) {
     print("checking category id ${widget.rootId}");
     return Scaffold(
+/*
       floatingActionButton: SizedBox(
           height: context.screenHeight*0.1,
         child: FittedBox(
@@ -71,6 +72,7 @@ class _AddResourceScreenState extends State<AddResourceScreen> {
               Navigator.push(context, MaterialPageRoute(
                 builder: (context) =>
                     MaincategoryResourcesList(rootId: widget.rootId!,
+                        level: "",
                         mediaType: '',
                         title: widget.categoryName!),));
             },
@@ -78,19 +80,9 @@ class _AddResourceScreenState extends State<AddResourceScreen> {
           ),
         ),
       ),
-      appBar: AppBar(
-        backgroundColor: Colors.green,
-        title: Text("Add resource ${widget.categoryName}"),
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back),
-          onPressed: () {
-            Navigator.pop(context);
-            Navigator.pop(context);
-
-          },
-        ),
-      ),
-        body: SizedBox(
+*/
+        body:
+        SizedBox(
       child: ListView.builder(
         shrinkWrap: true,
         itemCount: mediaIcons.length,
@@ -271,14 +263,14 @@ class _AddResourceScreen2State extends State<AddResourceScreen2> {
     'Take Picture',
     'Record Video',
     'Record Audio',
-    'Enter Text'
+    'Enter Text',
   ];
 
   List<IconData> mediaIcons = [
     Icons.camera,
     Icons.video_call_outlined,
     Icons.audio_file_outlined,
-    Icons.text_increase
+    Icons.text_increase,
   ];
 
   Future<dynamic> getToken() async {
@@ -311,31 +303,9 @@ class _AddResourceScreen2State extends State<AddResourceScreen2> {
 
         ),
 
-        floatingActionButton: SpeedDial(
-          backgroundColor: primaryColor,
-          animatedIcon: AnimatedIcons.list_view,
-          overlayColor: Colors.transparent,
-          elevation: 10,
-          overlayOpacity: 0.1,
-          animatedIconTheme: IconThemeData.fallback(),
-          foregroundColor: Colors.yellow,
-          useRotationAnimation:true ,
-          children: [
-            SpeedDialChild(
-              label: "Add prompt",
-              backgroundColor: Colors.green[400],
-              child: Icon(Icons.file_copy, color: Colors.white,),
-              onTap: (){
-                Navigator.push(context, MaterialPageRoute(builder: (context)=>AddPromptsAddResourceScreen(categoryId: "1",resourceId: parentPromptId.toString(),)));
-
-              }
-            ),
-          ],
-
-        ),
         body: Column(
           children: [
-          widget.number==true?  SizedBox(
+           SizedBox(
               //  height: context.screenHeight/2.8,
               child: ListView.builder(
                 shrinkWrap: true,
@@ -432,7 +402,9 @@ class _AddResourceScreen2State extends State<AddResourceScreen2> {
                   );
                 },
               ),
-            ):            Container(
+            ),
+          SizedBox(height: 10,),
+          Container(
               padding: const EdgeInsets.only(top: 5, bottom: 5),
               decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(10),
@@ -450,7 +422,7 @@ class _AddResourceScreen2State extends State<AddResourceScreen2> {
                         width: context.screenWidth * 0.035,
                       ),
                       IconButton(onPressed: (){
-                        Navigator.push(context, MaterialPageRoute(builder: (context)=>AddPromptsAddResourceScreen(categoryId: "1",resourceId: "1",)));
+                        Navigator.push(context, MaterialPageRoute(builder: (context)=>AddPromptsAddResourceScreen(categoryId: "1",resourceId: parentPromptId.toString(),)));
 
                       }, icon: Icon(Icons.add)),
                     ],

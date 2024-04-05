@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:self_learning_app/features/login/login_screen.dart';
+import 'package:self_learning_app/schedule/schedule.dart';
 import 'package:self_learning_app/utilities/colors.dart';
 import 'package:self_learning_app/utilities/extenstion.dart';
 import 'package:self_learning_app/utilities/shared_pref.dart';
@@ -21,14 +22,7 @@ class DashBoardScreen extends StatelessWidget {
     AddCateScreen(),
     NewDialog(),
     // DailogScreen(),
-    Text(
-      'Create Flow',
-      style: optionStyle,
-    ),
-    Text(
-      'Schedule',
-      style: optionStyle,
-    ),
+    Schedule(),
   ];
 
   @override

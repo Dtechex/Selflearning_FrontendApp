@@ -53,16 +53,20 @@ class CreateFlowRepo {
     }
   }
 
-  static Future<Response> getAllFlow({required String catID}) async {
+  static Future<Response> getAllFlow({required String catID, String? keyword}) async {
     Response response;
 
     try{
       final token = await SharedPref().getToken();
+      print("we need to fecth cat id "+ catID);
+      print("we need to fecth token "+ token!);
+
       response = await Dio().get(
-          'https://selflearning.dtechex.com/web/flow?categoryId=$catID',
+          'https://selflearning.dtechex.com/web/flow?categoryId=$catID&keyword=$keyword',
           options: Options(
               headers: {"Authorization": 'Bearer $token'}
           ));
+      print("response flow ${response}");
     }on DioError catch (e) {
       response = Response(requestOptions: RequestOptions());
       response.data = {
@@ -73,6 +77,7 @@ class CreateFlowRepo {
     }
 
     print('Flowww $response');
+    print("break");
     return response;
   }
 

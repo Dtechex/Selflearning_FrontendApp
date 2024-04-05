@@ -13,12 +13,15 @@ class FlowModel{
   String title;
   String id;
   String categoryId;
+  String? dateTime;
   List<FlowDataModel> flowList;
   FlowModel({
     required this.title,
     required this.categoryId,
     required this.flowList,
-    required this.id});
+    required this.id,
+    this.dateTime
+  });
 
 }
 

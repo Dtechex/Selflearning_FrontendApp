@@ -43,7 +43,7 @@ class CreateFlowBloc extends Bloc<CreateFlowEvent,CreateFlowState> {
     });
     on<LoadAllFlowEvent>((event, emit) async {
       emit(FlowLoading());
-      Response response = await CreateFlowRepo.getAllFlow(catID: event.catID);
+      Response response = await CreateFlowRepo.getAllFlow(catID: event.catID,keyword: event.keyword);
 
       print('123456');
       print(response);
@@ -61,17 +61,18 @@ class CreateFlowBloc extends Bloc<CreateFlowEvent,CreateFlowState> {
           for (var flow in item['flow']){
 
             flowData.add(FlowDataModel(
-                promptName: flow['promptId']['name'],
-                promptId: flow['promptId']['_id'],
-                resourceTitle: flow['promptId']['resourceId']?['title']?? '',
-                resourceType: flow['promptId']['resourceId']?['type']??'',
-                resourceContent: flow['promptId']['resourceId']?['content']??'',
-                side1Title: flow['promptId']['side1']['title'],
-                side1Type: flow['promptId']['side1']['type'],
-                side1Content: flow['promptId']['side1']['content'],
-                side2Title: flow['promptId']['side2']['title'],
-                side2Type: flow['promptId']['side2']['type'],
-                side2Content: flow['promptId']['side2']['content']));
+                promptName: flow['promptId']?['name'] ?? '', // Null check added here
+                promptId: flow['promptId']?['_id'] ?? '',
+                resourceTitle: flow['promptId']?['resourceId']?['title'] ?? '',
+                resourceType: flow['promptId']?['resourceId']?['type'] ?? '',
+                resourceContent: flow['promptId']?['resourceId']?['content'] ?? '',
+                side1Title: flow['promptId']?['side1']?['title'] ?? '', // Proper null check added here
+                side1Type: flow['promptId']?['side1']?['type'] ?? '', // Proper null check added here
+                side1Content: flow['promptId']?['side1']?['content'] ?? '', // Proper null check added here
+                side2Title: flow['promptId']?['side2']?['title'] ?? '', // Proper null check added here
+                side2Type: flow['promptId']?['side2']?['type'] ?? '', // Proper null check added here
+                side2Content: flow['promptId']?['side2']?['content'] ?? '' // Proper null check added here
+            ));
 
           }
           flowList.add(FlowModel(
