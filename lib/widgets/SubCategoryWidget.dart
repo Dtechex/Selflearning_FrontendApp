@@ -53,9 +53,9 @@ class _SubCategoryWidgetState extends State<SubCategoryWidget> {
       'Authorization': 'bearer' + ' ' + token.toString(),
     };
 
-      var res = await _dio.patch(
+      var res = await _dio.put(
             'https://selflearning.dtechex.com/web/category/${widget.rootId}',
-        data: {"summary": summary},
+        data: {"summary": [summary]},
         options: Options(headers: headers),
       );
       print("main category update ${res.data}");
