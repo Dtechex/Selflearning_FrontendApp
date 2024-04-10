@@ -5,7 +5,7 @@ import '../../utilities/shared_pref.dart';
 
 class ScheduleRepo{
 
- static Future<Response?> getFlow() async {
+ static Future<Response?> getFlow({String? queary}) async {
 
     Response response;
 
@@ -14,7 +14,7 @@ class ScheduleRepo{
       dynamic check = Jwt.parseJwt(token.toString());
       print("to decode token $check");
       response = await Dio().get(
-          'https://selflearning.dtechex.com/web/flow',
+          'https://selflearning.dtechex.com/web/flow?keyword=$queary',
           options: Options(
               headers: {"Authorization": 'Bearer $token'}
           ));
@@ -29,7 +29,7 @@ class ScheduleRepo{
 
     print('Flowww $response');
     return response;  }
- static Future<Response?> addDateTime({required String? flowId,    required DateTime? scheduledDateTime,}) async {
+ static Future<Response?> addDateTime({required String? flowId, required DateTime? scheduledDateTime,}) async {
 
    Response response;
    String formattedDateTime = scheduledDateTime!.toIso8601String();

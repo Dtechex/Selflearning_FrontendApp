@@ -1,7 +1,11 @@
 import 'dart:developer';
+import 'package:alarm/alarm.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:timezone/data/latest.dart' as tz;
 
 import 'package:device_preview/device_preview.dart';
 import 'package:dio/dio.dart';
+import 'package:firebase_core/firebase_core.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
@@ -29,6 +33,7 @@ import 'package:self_learning_app/splashScreen/splash_screen.dart';
 import 'package:self_learning_app/testing.dart';
 import 'package:self_learning_app/utilities/colors.dart';
 import 'package:self_learning_app/utilities/shared_pref.dart';
+import 'package:self_learning_app/widgets/FirebaseApi.dart';
 import 'package:self_learning_app/widgets/localNotification.dart';
 import 'features/add_Dailog/bloc/create_dailog_bloc/create_dailog_bloc.dart';
 import 'features/create_flow/bloc/create_flow_screen_bloc.dart';
@@ -40,8 +45,15 @@ import 'features/quick_add/PromptBloc/quick_prompt_bloc.dart';
 import 'features/search_subcategory/bloc/search_cat_bloc.dart';
 import 'features/subcate1.1/bloc/sub_cate1_bloc.dart';
 import 'features/subcate1.2/bloc/sub_cate2_bloc.dart';
-import 'firebase_option.dart';
 
+@pragma('vm:entry-point')
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  // If you're going to use other Firebase services in the background, such as Firestore,
+  // make sure you call `initializeApp` before using other Firebase services.
+  await Firebase.initializeApp();
+
+  print("Handling a background message: ${message.messageId}");
+}
 BaseOptions baseOptions = BaseOptions(
   baseUrl: 'https://selflearning.dtechex.com/',
   receiveTimeout: const Duration(seconds: 90),
@@ -54,6 +66,27 @@ Dio dio = Dio(baseOptions);
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+  requestNotificationPermission();
+  await FirebaseMessaging.instance.setAutoInitEnabled(true);
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+
+  FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+    print('Got a message whilst in the foreground!');
+    print('Message data: ${message.data}');
+
+    if (message.notification != null) {
+      print('Message also contained a notification: ${message.notification}');
+    }
+  });
+  final fcmToken = await FirebaseMessaging.instance.getToken();
+  print("fcm toke is -- $fcmToken break");
+// await FirebaseApi().initialize();
+//   await FirebaseApi().initNotifications();
+ // await NotificationService().initNotification();
+ //  tz.initializeTimeZones();
+ //  await Alarm.init();
+
 
   dio.interceptors.add(LogInterceptor(
       responseBody: true,
@@ -79,6 +112,21 @@ Future<void> main() async {
 }
 
 
+Future<void> requestNotificationPermission() async{
+  FirebaseMessaging messaging = FirebaseMessaging.instance;
+
+  NotificationSettings settings = await messaging.requestPermission(
+    alert: true,
+    announcement: false,
+    badge: true,
+    carPlay: false,
+    criticalAlert: false,
+    provisional: false,
+    sound: true,
+  );
+
+  print('User granted permission: ${settings.authorizationStatus}');
+}
 void configLoading() {
   SharedPref.init();
   EasyLoading.instance

@@ -1,4 +1,6 @@
 import 'dart:async';
+import 'package:alarm/alarm.dart';
+import 'package:alarm/model/alarm_settings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
@@ -12,12 +14,21 @@ class ScheduleFlowBook extends StatefulWidget {
   _ScheduleFlowBookState createState() => _ScheduleFlowBookState();
 }
 
-
 class _ScheduleFlowBookState extends State<ScheduleFlowBook> {
-
-  List<String> countdownList = [];
-  bool isTimerPaused = false;
   late Timer _timer;
+
+  @override
+  void initState() {
+    context.read<ScheduleflowCubit>()..getScheduledFlow();
+    startTimer(); // Start the timer
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _timer.cancel();
+    super.dispose();
+  }
 
   void startTimer() {
     // Start a timer that updates the UI every second
@@ -27,23 +38,6 @@ class _ScheduleFlowBookState extends State<ScheduleFlowBook> {
     });
   }
 
-// Function to stop the countdown timer
-  void stopTimer() {
-    // Cancel the timer
-    _timer.cancel();
-  }
-  @override
-  void initState() {
-    context.read<ScheduleflowCubit>()..getScheduledFlow();
-    startTimer(); // Start the timer
-    super.initState();
-    // startCounter();
-  }
-  void dispose() {
-    _timer.cancel();
-    super.dispose();
-  }
-
   String formatDateTime(String dateTimeString) {
     DateTime dateTime = DateTime.parse(dateTimeString).toUtc(); // Parse and convert to local timezone
     String formattedDateTime = DateFormat('yyyy-MM-dd hh:mm a').format(dateTime); // Format date and time in AM/PM format
@@ -51,7 +45,7 @@ class _ScheduleFlowBookState extends State<ScheduleFlowBook> {
   }
 
   String calculateCountdown(String dateString) {
-    DateTime selectedTime = _parseTime(dateString); // Parse as UTC time
+    DateTime selectedTime = DateTime.parse(dateString); // Parse as local time
     var currentTime = DateTime.now();
 
     // Calculate the difference as a Duration
@@ -73,21 +67,42 @@ class _ScheduleFlowBookState extends State<ScheduleFlowBook> {
         ? 'Time passed'
         : '$days d\n${hours.toString().padLeft(2, '0')} hr ${minutes.toString().padLeft(2, '0')} min\n${seconds.toString().padLeft(2, '0')} sec';
   }
-// Function to parse time from string
-  DateTime _parseTime(String timeString) {
-    DateTime parsedDateTime = DateTime.parse(timeString).toUtc(); // Parse as UTC time
-    return parsedDateTime.toLocal();
-  }
 
+  void alram({ DateTime? dateTime}) async {
+    var newdate = dateTime?.toUtc();
+    var localDateTime = newdate?.toLocal();
+
+    final alarmSettings = AlarmSettings(
+      id: 42,
+      dateTime: localDateTime!, // Replace dateTime with your desired alarm time
+      assetAudioPath: 'assets/alarm.mp3', // Path to your audio file
+      loopAudio: true, // Whether to loop the audio
+      vibrate: true, // Whether to vibrate the device
+      volume: 0.8, // Alarm volume (0.0 to 1.0)
+      fadeDuration: 3.0, // Duration for audio fade in/out
+      notificationTitle: 'This is the title', // Notification title
+      notificationBody: 'This is the body', // Notification body
+      enableNotificationOnKill: true,
+      androidFullScreenIntent: true// Whether to enable notification on app kill
+    );
+
+    await Alarm.set(alarmSettings: alarmSettings);
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       floatingActionButton: ElevatedButton(
         onPressed: () {
-          print("Notificaton button");
+          alram();
+          // print("Notification button pressed");
+          NotificationService().initNotification();
           NotificationService().showNotification(
-              id: 0, title: "schedule flow", body: "adddd", payLoad: "dddd");
+            id: 0,
+            title: "schedule flow",
+            body: "adddd",
+            payLoad: "dddd",
+          );
         },
         child: Text("Testing Notification"),
       ),
@@ -96,107 +111,88 @@ class _ScheduleFlowBookState extends State<ScheduleFlowBook> {
         title: Text("Schedule flows"),
       ),
       body: BlocBuilder<ScheduleflowCubit, ScheduleflowState>(
-  builder: (context, state) {
-    if(state is ScheduleFlowLoading){
-    return Center(
-      child: Container(
-        height: 50,
-        width: 50,
-        child: CircularProgressIndicator(),
-      ),
-    );
-    }
-    if(state is ScheduleDateLoaded){
-    if(state.dateflowList!.isEmpty){
-         return Center(child: Text("No ! flow is added"),);
-    }
-    else{
-      return CustomScrollView(
-        slivers: <Widget>[
-          SliverList(
-            delegate: SliverChildBuilderDelegate(
-                  (BuildContext context, int index) {
-                    int currentIndex = 1+index;
-                return GestureDetector(
-                  onTap: () {
-                    // Navigate to the string screen
-                  },
-                  child: Container(
-                    margin: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-                    decoration: BoxDecoration(
-                      color: Colors.white30,
-                      borderRadius: BorderRadius.circular(5),
-                      border: Border.all(color: Colors.grey.shade200,
-                          width: 1.5),
-                    ),
-                    child: ListTile(
-                      title: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Container(
-                            alignment: Alignment.center,
-                              height: 30,
-                              width: 30,
-                              decoration: BoxDecoration(
-                                  color: Colors.red.shade100,
+        builder: (context, state) {
+          if (state is ScheduleFlowLoading) {
+            return Center(
+              child: Container(
+                height: 50,
+                width: 50,
+                child: CircularProgressIndicator(),
+              ),
+            );
+          }
+          if (state is ScheduleDateLoaded) {
+            if (state.dateflowList!.isEmpty) {
+              return Center(child: Text("No flow is added"));
+            } else {
+              debugPrint('Notification Scheduled for ${state.dateflowList![0].dateTime}');
+              DateTime dateTime = DateTime.parse(state.dateflowList![0].dateTime!);
 
-                                  borderRadius: BorderRadius.circular(45)
+              print("date and time$dateTime");
+              // alram(dateTime: dateTime);
+              return CustomScrollView(
+                slivers: <Widget>[
+                  SliverList(
+                    delegate: SliverChildBuilderDelegate(
+                          (BuildContext context, int index) {
+                        int currentIndex = 1 + index;
+                        return GestureDetector(
+                          onTap: () {
+                            // Navigate to the string screen
+                          },
+                          child: Container(
+                            margin: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                            decoration: BoxDecoration(
+                              color: Colors.white30,
+                              borderRadius: BorderRadius.circular(5),
+                              border: Border.all(color: Colors.grey.shade200, width: 1.5),
+                            ),
+                            child: ListTile(
+                              title: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Container(
+                                    alignment: Alignment.center,
+                                    height: 30,
+                                    width: 30,
+                                    decoration: BoxDecoration(
+                                      color: Colors.red.shade100,
+                                      borderRadius: BorderRadius.circular(45),
+                                    ),
+                                    child: Text(currentIndex.toString()),
+                                  ),
+                                  SizedBox(width: 5),
+                                  Text(
+                                    state.dateflowList![index].title,
+                                    style: TextStyle(fontWeight: FontWeight.w500, color: Colors.black87),
+                                  ),
+                                ],
                               ),
-                              child: Text(currentIndex.toString())),
-                          SizedBox(width: 5,),
-                          Text(
-                            state.dateflowList![index].title,
-                            style: TextStyle(fontWeight: FontWeight.w500,color: Colors.black87),
+                              trailing: Text(
+                                calculateCountdown(state.dateflowList![index].dateTime.toString()),
+                                style: TextStyle(fontWeight: FontWeight.w300),
+                              ),
+                              subtitle: Container(
+                                padding: EdgeInsets.only(left: 35),
+                                child: Text(formatDateTime(state.dateflowList![index].dateTime.toString())),
+                              ),
+                            ),
                           ),
-                        ],
-                      ),
-                      trailing: calculateCountdown(state.dateflowList![index].dateTime.toString()) == 'Time passed'
-                          ? IconButton(
-                        icon: Icon(Icons.play_arrow, color: Colors.green),
-                        onPressed: () {
-                          Navigator.push(context, MaterialPageRoute(builder: (context) => ShowPromtsScreen(flowList: state.dateflowList![index].flowList, flowName: state.dateflowList![index].title,),));
-
-                        },
-                      )
-                          : Text(
-                        calculateCountdown(state.dateflowList![index].dateTime.toString()),
-                        style: TextStyle(fontWeight: FontWeight.w300),
-                      ),
-                      /*trailing: countdownList[index] == "Time passed"
-                          ? IconButton(
-                        icon: Icon(Icons.play_arrow, color: Colors.green),
-                        onPressed: () {
-                          setState(() {
-                            isTimerPaused = false;
-                          });
-                        },
-                      )
-                          : Text(
-                        countdownList.isNotEmpty ? countdownList[index] : '',
-                        style: TextStyle(fontWeight: FontWeight.w300),
-                      ),*/
-                      subtitle: Container(
-                        padding: EdgeInsets.only(left: 35),
-                          child: Text(formatDateTime(state.dateflowList![index].dateTime.toString()))),
+                        );
+                      },
+                      childCount: state.dateflowList!.length,
                     ),
                   ),
-                );
-              },
-              childCount: state.dateflowList!.length,
-            ),
-          ),
-        ],
-      );
-
-    }
-
-    }
-    if(state is ScheduleFlowError){
-    return Center(child: Text("Server error"),);
-    }
-    return Center(child: Text("Somethings wents wrong"),);
-  },
-),
+                ],
+              );
+            }
+          }
+          if (state is ScheduleFlowError) {
+            return Center(child: Text("Server error"));
+          }
+          return Center(child: Text("Something went wrong"));
+        },
+      ),
     );
   }
 }

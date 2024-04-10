@@ -11,9 +11,10 @@ part 'scheduleflow_state.dart';
 class ScheduleflowCubit extends Cubit<ScheduleflowState> {
   ScheduleflowCubit() : super(ScheduleflowInitial());
 
-  getFlow()async{
+  getFlow({String? queary})async{
     emit(ScheduleFlowLoading());
-    Response? response = await ScheduleRepo.getFlow();
+    Response? response = await ScheduleRepo.getFlow(queary: queary);
+
 
     if(response?.statusCode == 400){
       emit(ScheduleFlowError());
