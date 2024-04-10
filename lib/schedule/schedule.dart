@@ -1,4 +1,3 @@
-import 'package:alarm/model/alarm_settings.dart';
 import 'package:blurrycontainer/blurrycontainer.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';

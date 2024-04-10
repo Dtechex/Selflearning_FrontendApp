@@ -1,5 +1,4 @@
 import 'dart:developer';
-import 'package:alarm/alarm.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:timezone/data/latest.dart' as tz;
 

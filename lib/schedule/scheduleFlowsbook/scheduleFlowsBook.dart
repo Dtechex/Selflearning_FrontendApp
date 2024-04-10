@@ -1,6 +1,5 @@
 import 'dart:async';
-import 'package:alarm/alarm.dart';
-import 'package:alarm/model/alarm_settings.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
@@ -72,21 +71,7 @@ class _ScheduleFlowBookState extends State<ScheduleFlowBook> {
     var newdate = dateTime?.toUtc();
     var localDateTime = newdate?.toLocal();
 
-    final alarmSettings = AlarmSettings(
-      id: 42,
-      dateTime: localDateTime!, // Replace dateTime with your desired alarm time
-      assetAudioPath: 'assets/alarm.mp3', // Path to your audio file
-      loopAudio: true, // Whether to loop the audio
-      vibrate: true, // Whether to vibrate the device
-      volume: 0.8, // Alarm volume (0.0 to 1.0)
-      fadeDuration: 3.0, // Duration for audio fade in/out
-      notificationTitle: 'This is the title', // Notification title
-      notificationBody: 'This is the body', // Notification body
-      enableNotificationOnKill: true,
-      androidFullScreenIntent: true// Whether to enable notification on app kill
-    );
 
-    await Alarm.set(alarmSettings: alarmSettings);
   }
 
   @override
