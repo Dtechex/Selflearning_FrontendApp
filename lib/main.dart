@@ -1,6 +1,5 @@
 import 'dart:developer';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:timezone/data/latest.dart' as tz;
 
 import 'package:device_preview/device_preview.dart';
 import 'package:dio/dio.dart';
