@@ -11,7 +11,7 @@ class QuickAddPromptRepo {
         'Authorization': 'bearer' + ' ' + token.toString(),
       };
 
-      Response res = await _dio.get("https://selflearning.dtechex.com/web/prompt/", options: Options(headers: headers));
+      Response res = await _dio.get("https://virtuosocity.com/web/prompt/", options: Options(headers: headers));
       print("promptgetResponse == ${res}");
       return res;
     } catch (e) {
@@ -30,7 +30,7 @@ class QuickAddPromptRepo {
        'Authorization': 'Bearer $token',
      };
          print("promptId is $promptId");
-     Response res = await _dio.delete("https://selflearning.dtechex.com/web/prompt/$promptId", options: Options(headers: headers));
+     Response res = await _dio.delete("https://virtuosocity.com/web/prompt/$promptId", options: Options(headers: headers));
      print("promptgetResponse == ${res}");
      return res;
    } catch (e) {

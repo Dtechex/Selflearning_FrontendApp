@@ -17,7 +17,7 @@ static Future<Response?> get_Res_Prompt({required String dailogId})async{
     'Authorization': 'bearer' + ' ' + token.toString(),
   };
   try{
-    Response res = await _dio.get("https://selflearning.dtechex.com/web/category/get-dialog-detail?dialogId=$dailogId",options: Options(headers: headers));
+    Response res = await _dio.get("https://virtuosocity.com/web/category/get-dialog-detail?dialogId=$dailogId",options: Options(headers: headers));
     print("9999-${res.data.toString()}");
 
     return res;
@@ -37,7 +37,7 @@ static Future<Response?> get_Res_Prompt({required String dailogId})async{
       'Authorization': 'Bearer $token',
     };
    try{
-     Response res = await _dio.put("https://selflearning.dtechex.com/web/",options: Options(headers: headers),
+     Response res = await _dio.put("https://virtuosocity.com/web/",options: Options(headers: headers),
      data: {"resourceId":resourceId,
             "promptId":promptId
      }
@@ -58,7 +58,7 @@ static Future<Response?> get_Res_Prompt({required String dailogId})async{
       'Authorization': 'bearer' + ' ' + token.toString(),
     };
     try{
-      Response res = await _dio.get("https://selflearning.dtechex.com/web/prompt?resourceId=$resourceId",options: Options(headers: headers));
+      Response res = await _dio.get("https://virtuosocity.com/web/prompt?resourceId=$resourceId",options: Options(headers: headers));
       return res;
 
     }catch(e){
@@ -72,7 +72,7 @@ static Future<Response?> get_Res_Prompt({required String dailogId})async{
     Response res;
     try {
       res = await _dio.delete(
-          'https://selflearning.dtechex.com/web/resource/${resourceId}',
+          'https://virtuosocity.com/web/resource/${resourceId}',
           options: Options(
             headers: {
               'Content-Type': 'application/json',
@@ -100,7 +100,7 @@ static Future<Response?> get_Res_Prompt({required String dailogId})async{
     };
     try{
 
-      Response res = await _dio.patch("https://selflearning.dtechex.com/web/prompt/update/$dialogId",options: Options(headers: headers),
+      Response res = await _dio.patch("https://virtuosocity.com/web/prompt/update/$dialogId",options: Options(headers: headers),
           data: ({"promptIds":listpromtId,
             "categoryId":dialogId
           })
@@ -130,7 +130,7 @@ static Future<Response?> get_Res_Prompt({required String dailogId})async{
     };
     try{
 
-      Response res = await _dio.get("https://selflearning.dtechex.com/web/category/get-resource-prompt-list/$dialogId",options: Options(headers: headers),
+      Response res = await _dio.get("https://virtuosocity.com/web/category/get-resource-prompt-list/$dialogId",options: Options(headers: headers),
       );
 
       return res;

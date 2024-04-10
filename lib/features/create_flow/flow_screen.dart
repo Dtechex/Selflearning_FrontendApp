@@ -62,7 +62,7 @@ class _FlowScreenState extends State<FlowScreen> {
     try{
       final token = await SharedPref().getToken();
       response = await Dio().get(
-          'https://selflearning.dtechex.com/web/flow?categoryId=$catId&type=primary',
+          'https://virtuosocity.com/web/flow?categoryId=$catId&type=primary',
           options: Options(
               headers: {"Authorization": 'Bearer $token'}
           ),

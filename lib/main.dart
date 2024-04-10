@@ -54,7 +54,7 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   print("Handling a background message: ${message.messageId}");
 }
 BaseOptions baseOptions = BaseOptions(
-  baseUrl: 'https://selflearning.dtechex.com/',
+  baseUrl: 'https://virtuosocity.com/',
   receiveTimeout: const Duration(seconds: 90),
   sendTimeout: const Duration(seconds: 90),
   connectTimeout: const Duration(seconds: 90),

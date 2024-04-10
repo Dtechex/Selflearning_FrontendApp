@@ -13,7 +13,7 @@ class CategoryRepo {
     dio.Response res;
     try {
       res = await dio.Dio().delete(
-        'https://selflearning.dtechex.com/web/category/${rootId}',
+        'https://virtuosocity.com/web/category/${rootId}',
         options: dio.Options(
           headers: {
             'Content-Type': 'application/json',

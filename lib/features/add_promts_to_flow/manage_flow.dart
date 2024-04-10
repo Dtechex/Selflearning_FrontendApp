@@ -106,7 +106,7 @@ class _ManageFlowState extends State<ManageFlow> {
     Response response;
     if(!update){
       response = await Dio().post(
-        'https://selflearning.dtechex.com/web/flow',
+        'https://virtuosocity.com/web/flow',
         data: {
           'categoryId': catId,
           'title': title,
@@ -119,7 +119,7 @@ class _ManageFlowState extends State<ManageFlow> {
     }else{
       print("update flow conditon is run");
       response = await Dio().put(
-        'https://selflearning.dtechex.com/web/flow/update/$flowId',
+        'https://virtuosocity.com/web/flow/update/$flowId',
         data: {
           'categoryId': catId,
           'title': title,

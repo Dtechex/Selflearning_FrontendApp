@@ -16,7 +16,7 @@ class AddMediaRepo {
       final token = await SharedPref().getToken();
       var request = http.MultipartRequest(
         "POST",
-        Uri.parse('https://selflearning.dtechex.com/web/resource/quickAdd/'),
+        Uri.parse('https://virtuosocity.com/web/resource/quickAdd/'),
       );
 
       request.headers['Authorization'] = 'Bearer $token';
@@ -79,7 +79,7 @@ class AddMediaRepo {
       final token = await SharedPref().getToken();
       var request = http.MultipartRequest(
         "POST",
-        Uri.parse('https://selflearning.dtechex.com/web/prompt/'),
+        Uri.parse('https://virtuosocity.com/web/prompt/'),
       );
 
       request.headers['Authorization'] = 'Bearer $token';
@@ -129,7 +129,7 @@ class AddMediaRepo {
     final token = await SharedPref().getToken();
     var request = http.MultipartRequest(
       "POST",
-      Uri.parse('https://selflearning.dtechex.com/web/resource/'),
+      Uri.parse('https://virtuosocity.com/web/resource/'),
     );
 
     request.headers['Authorization'] = 'Bearer $token';

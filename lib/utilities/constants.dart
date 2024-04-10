@@ -1,1 +1,1 @@
-const DEVELOPMENT_BASE_URL = 'https://selflearning.dtechex.com/web/';
+const DEVELOPMENT_BASE_URL = 'https://virtuosocity.com/web/';
