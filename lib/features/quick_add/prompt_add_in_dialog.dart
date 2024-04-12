@@ -78,7 +78,8 @@ class _PromptAddingInDialogState extends State<PromptAddingInDialog> {
     };
     try{
 
-      Response res = await _dio.patch("https://selflearning.dtechex.com/web/prompt/update/$dialogId",options: Options(headers: headers),
+      Response res = await _dio.patch("https://selflearning.dtechex.com/web/prompt/update/$dialogId",
+          options: Options(headers: headers),
           data: ({"promptIds":listpromtId,
             "categoryId":dialogId
           })

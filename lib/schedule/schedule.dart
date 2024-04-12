@@ -38,15 +38,7 @@ class _ScheduleState extends State<Schedule> {
   Widget build(BuildContext context) {
     return 
       Scaffold(
-        floatingActionButton: ElevatedButton(
-            onPressed: () {
-              Navigator.push(context, MaterialPageRoute(builder: (context)=>ScheduleFlowBook()));
-            },
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text("Schedule Flows"),
-            )
-        ),
+      
 
         body: Column(
           children: [

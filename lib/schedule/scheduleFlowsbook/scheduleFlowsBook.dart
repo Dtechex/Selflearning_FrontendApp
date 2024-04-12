@@ -6,6 +6,7 @@ import 'package:intl/intl.dart';
 import 'package:self_learning_app/widgets/localNotification.dart';
 
 import '../../features/create_flow/show_prompts_screen.dart';
+import '../../features/create_flow/slide_show_screen.dart';
 import '../cubit/scheduleflow_cubit.dart';
 
 class ScheduleFlowBook extends StatefulWidget {
@@ -93,6 +94,9 @@ class _ScheduleFlowBookState extends State<ScheduleFlowBook> {
       ),
       backgroundColor: Colors.grey.shade50,
       appBar: AppBar(
+        leading: IconButton(onPressed: (){
+          Navigator.pop(context, true);
+        }, icon: Icon(Icons.arrow_back)),
         title: Text("Schedule flows"),
       ),
       body: BlocBuilder<ScheduleflowCubit, ScheduleflowState>(
@@ -153,7 +157,13 @@ class _ScheduleFlowBookState extends State<ScheduleFlowBook> {
                                   ),
                                 ],
                               ),
-                              trailing: Text(
+                              trailing: calculateCountdown(state.dateflowList![index].dateTime.toString())=="Time passed"?
+                              IconButton(onPressed: (){
+                                Navigator.push(context, MaterialPageRoute( builder: (context) {
+                                  return SlideShowScreen(
+                                    flowList: state.dateflowList![index].flowList, flowName: state.dateflowList![index].title,
+                                  );},));
+                              }, icon: Icon(Icons.play_arrow)): Text(
                                 calculateCountdown(state.dateflowList![index].dateTime.toString()),
                                 style: TextStyle(fontWeight: FontWeight.w300),
                               ),

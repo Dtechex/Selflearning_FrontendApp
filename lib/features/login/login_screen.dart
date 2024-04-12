@@ -52,144 +52,149 @@ class _LoginScreenState extends State<LoginScreen> {
               height: double.infinity,
 
 
-              child: Stack(
-                children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          Expanded(
-                            child: Container(
-                              height: context.screenHeight * 0.22,
-                             child: Stack(
-                               children: [
-                               SvgPicture.asset(
-                               'assets/icons/blob.svg',
-                               height: 150,
-                               width: 150,
-                               fit: BoxFit.cover,color: Colors.red,
-
-                             ),
-
+              child: SingleChildScrollView(
+                child: Stack(
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Container(
+                                height: context.screenHeight * 0.30,
+                               child: Stack(
+                                 children: [
                                  Positioned(
-                                   top: 60,
-                                   left: 40,
-                                   child: Text(
-                                     'Login',
-                                     style: TextStyle(fontSize: 16, color: Colors.white),
-                                   ),
+                                   top:50,
+                                   child: SvgPicture.asset(
+                                   'assets/icons/blob.svg',
+                                   height: 150,
+                                   width: 150,
+                                   fit: BoxFit.cover,color: Colors.red,
+
+                               ),
                                  ),
-                               ],
-                             ),
+
+                                   Positioned(
+                                     top: 110,
+                                     left: 40,
+                                     child: Text(
+                                       'Login',
+                                       style: TextStyle(fontSize: 16, color: Colors.white),
+                                     ),
+                                   ),
+                                 ],
+                               ),
 
 
 
 
-                            ),
-                          ),
-                          Image.asset("assets/boy.png", height: 150, width: 150,)
-                        ],
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 10),
-                        child: BlurryContainer(
-                          
-                          padding: EdgeInsets.zero,
-                          borderRadius: BorderRadius.only(topLeft: Radius.circular(20),topRight: Radius.circular(20),bottomLeft:Radius.circular(0),
-                          bottomRight: Radius.circular(0)
-                          ),
-                          elevation: 10,
-                          blur: 0.2,
-                          color: Colors.white70,
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-
-                            Container(
-                              padding: EdgeInsets.symmetric(horizontal: 5),
-                              child: Column(
-                                children: [
-                                  SizedBox(
-                                    height: context.screenHeight * 0.06,
-                                  ),
-                                  const SizedBox(
-                                    height: 30,
-                                  ),
-                                  const EmailInput(),
-                                  SizedBox(
-                                    height: context.screenHeight * 0.025,
-                                  ),
-                                  const PasswordInput(),
-                                  SizedBox(
-                                    height: context.screenHeight * 0.05,
-                                  ),
-                                  const SubmitButton(),
-                                  SizedBox(
-                                    height: context.screenHeight * 0.03,
-                                  ),
-                                  Row(
-                                    crossAxisAlignment: CrossAxisAlignment.center,
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      const Text("Don't have an Account?",style: TextStyle(
-                                          fontSize: 16
-                                      ),),
-                                      TextButton(
-                                          onPressed: () => Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                builder: (context) =>
-                                                    SignUpScreen(),
-                                              )),
-                                          child: const Text('Sign up',style: TextStyle(
-                                              fontSize: 16,fontWeight: FontWeight.bold
-                                          ),)),
-                                    ],
-                                  ),
-                                ],
                               ),
                             ),
-                              ShaderMask(
-                                shaderCallback: (Rect bounds) {
-                                  return LinearGradient(
-                                    begin: Alignment.topCenter,
-                                    end: Alignment.bottomCenter,
-                                    colors: [Colors.red, Colors.purpleAccent],
-                                  ).createShader(bounds);
-                                },
-                                blendMode: BlendMode.srcATop,
-                                child: SvgPicture.asset(
-                                  'assets/icons/wave.svg',
-                                  height: 100,
-                                  width: double.infinity,
-                                  fit: BoxFit.cover,
+                            Image.asset("assets/boy.png", height: 150, width: 150,)
+                          ],
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 10),
+                          child: BlurryContainer(
+                            
+                            padding: EdgeInsets.zero,
+                            borderRadius: BorderRadius.only(topLeft: Radius.circular(20),topRight: Radius.circular(20),bottomLeft:Radius.circular(0),
+                            bottomRight: Radius.circular(0)
+                            ),
+                            elevation: 10,
+                            blur: 0.2,
+                            color: Colors.white70,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+
+                              Container(
+                                padding: EdgeInsets.symmetric(horizontal: 5),
+                                child: Column(
+                                  children: [
+                                    SizedBox(
+                                      height: context.screenHeight * 0.06,
+                                    ),
+                                    const SizedBox(
+                                      height: 30,
+                                    ),
+                                    const EmailInput(),
+                                    SizedBox(
+                                      height: context.screenHeight * 0.025,
+                                    ),
+                                    const PasswordInput(),
+                                    SizedBox(
+                                      height: context.screenHeight * 0.05,
+                                    ),
+                                    const SubmitButton(),
+                                    SizedBox(
+                                      height: context.screenHeight * 0.03,
+                                    ),
+                                    Row(
+                                      crossAxisAlignment: CrossAxisAlignment.center,
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        const Text("Don't have an Account?",style: TextStyle(
+                                            fontSize: 16
+                                        ),),
+                                        TextButton(
+                                            onPressed: () => Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      SignUpScreen(),
+                                                )),
+                                            child: const Text('Sign up',style: TextStyle(
+                                                fontSize: 16,fontWeight: FontWeight.bold
+                                            ),)),
+                                      ],
+                                    ),
+                                  ],
                                 ),
                               ),
+                                ShaderMask(
+                                  shaderCallback: (Rect bounds) {
+                                    return LinearGradient(
+                                      begin: Alignment.topCenter,
+                                      end: Alignment.bottomCenter,
+                                      colors: [Colors.red, Colors.purpleAccent],
+                                    ).createShader(bounds);
+                                  },
+                                  blendMode: BlendMode.srcATop,
+                                  child: SvgPicture.asset(
+                                    'assets/icons/wave.svg',
+                                    height: 100,
+                                    width: double.infinity,
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
 
 
-                            ],
+                              ],
+                            ),
                           ),
                         ),
-                      ),
-                    ],
-                  ),
-                  Positioned(
-                      left: context.screenWidth / 2.75,
-                      top: context.screenHeight * 0.15,
-                      child: Container(
-                          height: context.screenHeight * 0.14,
-                          width: context.screenWidth / 3.5,
-                          decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(20)),
-                          child:  Center(
-                            child:Image.asset("assets/icon.png"),
-                          ))),
+                      ],
+                    ),
+                    Positioned(
+                        left: context.screenWidth / 2.75,
+                        top: context.screenHeight * 0.24,
+                        child: Container(
+                            height: context.screenHeight * 0.14,
+                            width: context.screenWidth / 3.5,
+                            decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(20)),
+                            child:  Center(
+                              child:Image.asset("assets/icon.png"),
+                            ))),
 
-                ],
+                  ],
+                ),
               ),
             )));
   }
