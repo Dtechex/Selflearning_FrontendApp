@@ -1,12 +1,17 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:self_learning_app/features/subcate1.1/create_subcate1_screen.dart';
+import 'package:self_learning_app/utilities/extenstion.dart';
 
+import '../features/category/bloc/category_bloc.dart';
 import '../features/create_flow/bloc/create_flow_screen_bloc.dart';
 import '../features/create_flow/create_flow_screen.dart';
 import '../features/create_flow/flow_screen.dart';
+import '../features/dashboard/dashboard_screen.dart';
 import '../features/resources/maincategory_resources_screen.dart';
 import '../features/subcate1.1/sub_category_1.1_screen.dart';
 import '../features/subcate1.2/final_resources_screen.dart';
@@ -16,7 +21,9 @@ import '../features/subcategory/bloc/sub_cate_event.dart';
 import '../features/subcategory/bloc/sub_cate_state.dart';
 import '../features/subcategory/sub_cate_screen.dart';
 import '../features/update_category/update_cate_screen.dart';
+import '../main.dart';
 import '../utilities/colors.dart';
+import '../utilities/shared_pref.dart';
 import 'add_resources_screen.dart';
 
 class SubCategoryWidget extends StatefulWidget {
@@ -39,6 +46,36 @@ class _SubCategoryWidgetState extends State<SubCategoryWidget> {
         SubCategoryLoadEvent(rootId: widget.rootId));
     context.read<CreateFlowBloc>().add(LoadAllFlowEvent(catID: widget.rootId!));    super.initState();
   }
+  addCategory({required String summary}) async {
+    final Dio _dio = Dio();
+    var token = await SharedPref().getToken();
+    Map<String, dynamic> headers = {
+      'Authorization': 'bearer' + ' ' + token.toString(),
+    };
+
+      var res = await _dio.put(
+            'https://selflearning.dtechex.com/web/category/${widget.rootId}',
+        data: {"summary": [summary]},
+        options: Options(headers: headers),
+      );
+      print("main category update ${res.data}");
+      if (res.statusCode == 200) {
+        context.showSnackBar(
+            SnackBar(content: Text('Category update Successfully')));
+        context.read<CategoryBloc>().add(CategoryLoadEvent());
+        Navigator.pushReplacement(context, MaterialPageRoute(
+          builder: (context) {
+            return DashBoardScreen();
+          },
+        ));
+      } else {
+        context.showSnackBar(
+            const SnackBar(content: Text('opps something went worng')));
+      }
+      print('data');
+    }
+
+
   Widget build(BuildContext context) {
     return Scaffold(
       floatingActionButton: ElevatedButton(
@@ -85,7 +122,14 @@ class _SubCategoryWidgetState extends State<SubCategoryWidget> {
                   borderRadius: BorderRadius.circular(45)
                 ),
                 child: IconButton(
-                  onPressed: (){},
+                  onPressed: (){
+                    if(summaryController.text.isNotEmpty) {
+                      addCategory(summary: summaryController.text);
+                    }
+                    else{
+                      EasyLoading.showError("Summary is empty");
+                    }
+                  },
                   icon: Icon(Icons.send, color: Colors.green,),
                 ),
               )

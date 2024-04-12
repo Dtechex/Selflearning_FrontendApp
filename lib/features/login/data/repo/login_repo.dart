@@ -1,16 +1,20 @@
 import 'dart:convert';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:http/http.dart' as http;
 import '../../../../utilities/shared_pref.dart';
-import '../../../UrlEanc/UrlEncap.dart';
 
 class LoginRepo {
-  static UrlEncapsulation urlEcapsulation = UrlEncapsulation();
-  static String? baseUrl = urlEcapsulation.getUrl().toString();
   static Future<int?> loginUser(
       {required String email, required String password}) async {
+    final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
+    String? fcmtoken = await _firebaseMessaging.getToken();
+
+    print("fcm token is ${fcmtoken}");
     final response = await http.post(
-        Uri.parse('https://virtuosocity.com/web/user/login'),
-        body: {"email": email, "password": password});
+        Uri.parse('https://selflearning.dtechex.com/web/user/login'),
+        body: {"email": email, "password": password,
+        "deviceToken":fcmtoken
+        });
     if (response.statusCode == 201) {
       print("login response ${response.body}");
       print("---------break");

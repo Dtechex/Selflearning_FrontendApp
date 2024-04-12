@@ -1,6 +1,5 @@
 import 'dart:developer';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:timezone/data/latest.dart' as tz;
 
 import 'package:device_preview/device_preview.dart';
 import 'package:dio/dio.dart';
@@ -9,6 +8,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:loader_overlay/loader_overlay.dart';
+import 'package:overlay_support/overlay_support.dart';
 import 'package:self_learning_app/features/add_Dailog/bloc/get_dailog_bloc/get_dailog_bloc.dart';
 import 'package:self_learning_app/features/add_promts/bloc/add_prompts_bloc.dart';
 import 'package:self_learning_app/features/category/bloc/category_bloc.dart';
@@ -34,6 +34,9 @@ import 'package:self_learning_app/utilities/colors.dart';
 import 'package:self_learning_app/utilities/shared_pref.dart';
 import 'package:self_learning_app/widgets/FirebaseApi.dart';
 import 'package:self_learning_app/widgets/localNotification.dart';
+import 'package:self_learning_app/widgets/pushnotification.dart';
+import 'package:self_learning_app/widgets/scheduleflowScreenwidget.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'features/add_Dailog/bloc/create_dailog_bloc/create_dailog_bloc.dart';
 import 'features/create_flow/bloc/create_flow_screen_bloc.dart';
 import 'features/dailog_category/dailog_cate_screen.dart';
@@ -44,17 +47,38 @@ import 'features/quick_add/PromptBloc/quick_prompt_bloc.dart';
 import 'features/search_subcategory/bloc/search_cat_bloc.dart';
 import 'features/subcate1.1/bloc/sub_cate1_bloc.dart';
 import 'features/subcate1.2/bloc/sub_cate2_bloc.dart';
+import 'firebase_options.dart';
 
-@pragma('vm:entry-point')
+@pragma("vm:entry-point")
+
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  // If you're going to use other Firebase services in the background, such as Firestore,
-  // make sure you call `initializeApp` before using other Firebase services.
   await Firebase.initializeApp();
+  print("Handling background message: ${message.messageId}");
 
-  print("Handling a background message: ${message.messageId}");
+  // Handle the initial message if present
+  RemoteMessage? initialMessage = await FirebaseMessaging.instance.getInitialMessage();
+  if (initialMessage != null) {
+    PushNotification notification = PushNotification(
+      title: initialMessage.notification?.title ?? '',
+      body: initialMessage.notification?.body ?? '',
+      dataTitle: initialMessage.data['title'] ?? '',
+      dataBody: initialMessage.data['body'] ?? '',
+    );
+         
+    showSimpleNotification(
+      Text(notification.title),
+      subtitle: Text(notification.body??""),
+      background: Colors.red.shade700,
+      duration: Duration(seconds: 2)
+
+    );
+    // Do something with the notification
+    print("Initial message: $notification");
+  }
 }
+
 BaseOptions baseOptions = BaseOptions(
-  baseUrl: 'https://virtuosocity.com/',
+  baseUrl: 'https://selflearning.dtechex.com/',
   receiveTimeout: const Duration(seconds: 90),
   sendTimeout: const Duration(seconds: 90),
   connectTimeout: const Duration(seconds: 90),
@@ -67,24 +91,32 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   requestNotificationPermission();
-  await FirebaseMessaging.instance.setAutoInitEnabled(true);
+  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
+  String? token = await _firebaseMessaging.getToken();
+
+  print("fcm token is ${token}");
+
+  FirebaseMessaging.onMessage.listen((RemoteMessage message){
+     print("Recieved message : ${message.notification?.body}");
+     ScheduleflowScreenWidget();
+     showSimpleNotification(Text(message.notification?.title??""),
+     subtitle: (Text(message.notification?.body??"")),
+       background: Colors.red.shade700,
+       duration: Duration(seconds: 2)
+     );
+  });
+  FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message){
+    print("Recieved message : ${message.notification?.body}");
+    showSimpleNotification(Text(message.notification?.title??""),
+        subtitle: (Text(message.notification?.body??"")),
+        background: Colors.red.shade700,
+        duration: Duration(seconds: 4)
+    );
+  });
+
+
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
-  FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-    print('Got a message whilst in the foreground!');
-    print('Message data: ${message.data}');
-
-    if (message.notification != null) {
-      print('Message also contained a notification: ${message.notification}');
-    }
-  });
-  final fcmToken = await FirebaseMessaging.instance.getToken();
-  print("fcm toke is -- $fcmToken break");
-// await FirebaseApi().initialize();
-//   await FirebaseApi().initNotifications();
- // await NotificationService().initNotification();
- //  tz.initializeTimeZones();
- //  await Alarm.init();
 
 
   dio.interceptors.add(LogInterceptor(
@@ -108,6 +140,8 @@ Future<void> main() async {
   runApp(
 
     const MyApp(),);
+
+  
 }
 
 
@@ -180,46 +214,48 @@ class MyApp extends StatelessWidget {
 
         ],
         child: GlobalLoaderOverlay(
-          child: MaterialApp(
-              useInheritedMediaQuery: true,
-              locale: DevicePreview.locale(context),
-            builder: EasyLoading.init(),
-              debugShowCheckedModeBanner: false,
-              title: 'Self Learning',
-              theme: ThemeData(
-                floatingActionButtonTheme: const FloatingActionButtonThemeData(
-                    backgroundColor: primaryColor),
-                iconTheme: const IconThemeData(color: primaryColor, weight: 2),
-                listTileTheme: const ListTileThemeData(iconColor: primaryColor),
-                elevatedButtonTheme: const ElevatedButtonThemeData(
-                    style: ButtonStyle(
-                        backgroundColor:
-                            MaterialStatePropertyAll(primaryColor))),
-                snackBarTheme: const SnackBarThemeData(
-                  backgroundColor: primaryColor,
+          child: OverlaySupport(
+            child: MaterialApp(
+                useInheritedMediaQuery: true,
+                locale: DevicePreview.locale(context),
+              builder: EasyLoading.init(),
+                debugShowCheckedModeBanner: false,
+                title: 'Self Learning',
+                theme: ThemeData(
+                  floatingActionButtonTheme: const FloatingActionButtonThemeData(
+                      backgroundColor: primaryColor),
+                  iconTheme: const IconThemeData(color: primaryColor, weight: 2),
+                  listTileTheme: const ListTileThemeData(iconColor: primaryColor),
+                  elevatedButtonTheme: const ElevatedButtonThemeData(
+                      style: ButtonStyle(
+                          backgroundColor:
+                              MaterialStatePropertyAll(primaryColor))),
+                  snackBarTheme: const SnackBarThemeData(
+                    backgroundColor: primaryColor,
+                  ),
+                  appBarTheme: const AppBarTheme(
+                      centerTitle: true, backgroundColor: primaryColor),
+                  primarySwatch: Colors.blue,
                 ),
-                appBarTheme: const AppBarTheme(
-                    centerTitle: true, backgroundColor: primaryColor),
-                primarySwatch: Colors.blue,
-              ),
-              home:
-              SplashScreen()
+                home:
+                SplashScreen()
 
 
 
-            /*FutureBuilder(
-                future: SharedPref().getToken(),
-                builder: (context, snapshot) {
-                  if (snapshot.hasData) {
-                    print(snapshot.data);
-                    return const DashBoardScreen();
-                  } else {
-                    return const LoginScreen();
-                  }
-                },
-              ),*/
+              /*FutureBuilder(
+                  future: SharedPref().getToken(),
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) {
+                      print(snapshot.data);
+                      return const DashBoardScreen();
+                    } else {
+                      return const LoginScreen();
+                    }
+                  },
+                ),*/
+            ),
           ),
         ));
   }
 }
-//kkkkkk
+//kkk abcd
