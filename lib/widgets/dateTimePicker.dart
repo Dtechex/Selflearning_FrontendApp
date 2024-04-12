@@ -109,7 +109,7 @@ class _DateTimePickerDialogState extends State<DateTimePickerDialog> {
               // Handle case where date or time is not selected
             }
           },
-          child: Text('OK'),
+          child: Text("Schedule flow"),
         ),
       ],
     );
