@@ -167,7 +167,7 @@ void deletPrompt({required String promptId}) async{
     'Authorization': 'Bearer $token',
   };
   try{
-    Response res = await _dio.delete("https://virtuosocity.com/web/prompt/$promptId", options: Options(headers: headers));
+    Response res = await _dio.delete("https://selflearning.dtechex.com/web/prompt/$promptId", options: Options(headers: headers));
     if(res.statusCode==200){
       EasyLoading.showToast("prompt is successully deleted");
       cubitAddPromptRes.getResPrompt(dailogId: widget.dailoId);
@@ -242,14 +242,7 @@ void deletPrompt({required String promptId}) async{
                                 whichResources: 1,
                                 categoryName: "name");
                           },
-                        )).then((value)  {
-                          if(value){
-                            setState(() {
-                              cubitAddPromptRes.getResPrompt(dailogId: widget.dailoId);
-
-                            });
-                          }
-                        });
+                        ));
                       }),
                   SpeedDialChild(
                     onTap: () {
@@ -422,6 +415,15 @@ void deletPrompt({required String promptId}) async{
                                                     .res_prompt_list[index]
                                                     .resPromptList));
 
+
+
+                                        final item = widget.resourceList[index];
+                                        Color iconColor = Colors
+                                            .transparent; // Provide a default value
+                                        String? leadingText;
+                                        final content = "resource";
+                                        String? title = "new resource";
+
                                         // If the item is a string, display it as a card that navigates to a screen
                                         return GestureDetector(
                                           onTap: () {
@@ -468,7 +470,7 @@ void deletPrompt({required String promptId}) async{
                                                               'Photo'
                                                           ? CachedNetworkImage(
                                                               imageUrl:
-                                                                  'https://virtuosocity.com/public/image/$content',
+                                                                  'https://selflearning.dtechex.com/public/image/$content',
                                                               fit: BoxFit
                                                                   .fitHeight,
                                                               height: 35,
@@ -607,14 +609,18 @@ void deletPrompt({required String promptId}) async{
 
                                                           break;
                                                         case 'ViewPrompt':
-
+                                                          print(
+                                                              "ResPromptListLength=${widget.resourceList[index].resPromptList.length}");
                                                           SideSheet.left(
                                                               body: SideSheetDrawer(
                                                                   resourceId: state
                                                                       .res_prompt_list[
                                                                           index]
                                                                       .resourceId,
-
+                                                                  resPromptList: widget
+                                                                      .resourceList[
+                                                                          index]
+                                                                      .resPromptList,
                                                                   ResourceName: widget
                                                                       .resourceList[
                                                                           index]
@@ -943,7 +949,7 @@ class _BottomSheetState extends State<BottomSheet> {
       'Authorization': 'Bearer $token',
     };
     try{
-      Response res = await _dio.patch("https://virtuosocity.com/web/prompt/update/$promptId", options: Options(headers: headers),
+      Response res = await _dio.patch("https://selflearning.dtechex.com/web/prompt/update/$promptId", options: Options(headers: headers),
           data: {
             "resourceId":resourceId,
             "categoryId":widget.dialogId
@@ -1075,9 +1081,11 @@ class SideSheetDrawer extends StatefulWidget {
   final AddPromptResCubit cubitAddPromptRes = AddPromptResCubit();
   String resourceId;
   String ResourceName;
+  List<PromptListforResourceModel> resPromptList;
 
   SideSheetDrawer(
       {super.key,
+      required this.resPromptList,
       required this.ResourceName,
       required this.resourceId});
 
@@ -1086,12 +1094,30 @@ class SideSheetDrawer extends StatefulWidget {
 }
 
 class _SideSheetDrawerState extends State<SideSheetDrawer> {
+  List<FlowDataModel> flowList = [];
 
+  void initilizeflowList() {
+    for (int index = 0; index < widget.resPromptList.length; index++) {
+      flowList.add(FlowDataModel(
+          resourceTitle: widget.ResourceName,
+          resourceType: "text",
+          resourceContent: "",
+          side1Title: widget.resPromptList[index].promptSide1Content,
+          side1Type: "",
+          side1Content: widget.resPromptList[index].promptSide1Content,
+          side2Title: widget.resPromptList[index].promptSide2Content,
+          side2Type: "",
+          side2Content: widget.resPromptList[index].promptSide2Content,
+          promptName: widget.resPromptList[index].promptTitle,
+          promptId: widget.resPromptList[index].promptId));
+    }
+  }
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    initilizeflowList();
   }
 
   @override
@@ -1155,7 +1181,7 @@ class _SideSheetDrawerState extends State<SideSheetDrawer> {
                                       foregroundColor: Colors.black,
                                       child: Text(
                                         extractFirstLetter(
-                                            state.flowModel[index].promptName??"p"),
+                                            flowList[index].promptName),
                                         style: TextStyle(
                                             fontWeight: FontWeight.bold),
                                       ),

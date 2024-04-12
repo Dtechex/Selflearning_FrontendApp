@@ -87,7 +87,7 @@ class _NewAddDailogScreen extends State<NewAddDailogScreen> {
 
     try {
       var res = await http.post(
-        Uri.parse('https://virtuosocity.com/web/category/create-dialog'),
+        Uri.parse('https://selflearning.dtechex.com/web/category/create-dialog'),
         body: jsonEncode(payload),
         headers: {
           'Content-Type': 'application/json',

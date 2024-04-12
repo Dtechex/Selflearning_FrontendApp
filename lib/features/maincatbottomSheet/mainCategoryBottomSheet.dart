@@ -92,7 +92,7 @@ class _MainCatBottomSheetState extends State<MainCatBottomSheet> {
     var token = await SharedPref().getToken();
     try {
       var res = await http.post(
-        Uri.parse('https://virtuosocity.com/web/category/create'),
+        Uri.parse('https://selflearning.dtechex.com/web/category/create'),
         body: jsonEncode(payload),
         headers: {
           'Content-Type': 'application/json',

@@ -26,7 +26,7 @@ class AddPromptNew {
     try {
       // Make the POST request using Dio
       Response response = await dio.post(
-        'https://virtuosocity.com/web/flow',
+        'https://selflearning.dtechex.com/web/flow',
         data: dd, // Use the JSON string as the request body
       );
 

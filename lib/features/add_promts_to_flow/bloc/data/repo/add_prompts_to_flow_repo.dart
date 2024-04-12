@@ -24,7 +24,7 @@ class AddPromptsToFlowRepo {
         headers: {"Authorization": 'Bearer $token'}
     );
     Response res = await Dio().get(
-      'https://virtuosocity.com/web/prompt?categoryId=$mainCatId',
+      'https://selflearning.dtechex.com/web/prompt?categoryId=$mainCatId',
       options: options,
     );
     print("------@@$res");
@@ -50,7 +50,7 @@ class AddPromptsToFlowRepo {
     }
 
     Response res1 = await Dio().get(
-      'https://virtuosocity.com/web/category/?rootId=$mainCatId',
+      'https://selflearning.dtechex.com/web/category/?rootId=$mainCatId',
       options: options,
     );
     print('OK tested');

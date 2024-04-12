@@ -89,7 +89,7 @@ class _AddDailogScreenState extends State<AddDailogScreen> {
 
     try {
       var res = await http.post(
-        Uri.parse('https://virtuosocity.com/web/category/create-dialog'),
+        Uri.parse('https://selflearning.dtechex.com/web/category/create-dialog'),
         body: jsonEncode(payload),
         headers: {
           'Content-Type': 'application/json',
@@ -130,7 +130,7 @@ class _AddDailogScreenState extends State<AddDailogScreen> {
       };
 
       Response res = await _dio.get(
-        "https://virtuosocity.com/web/prompt/",
+        "https://selflearning.dtechex.com/web/prompt/",
         options: Options(headers: headers),
       );
 
@@ -179,7 +179,7 @@ class _AddDailogScreenState extends State<AddDailogScreen> {
       };
 
       Response res = await _dio.get(
-        "https://virtuosocity.com/web/resource/quickAdd",
+        "https://selflearning.dtechex.com/web/resource/quickAdd",
         options: Options(headers: headers),
       );
 

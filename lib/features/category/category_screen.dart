@@ -620,10 +620,10 @@ class _AllCateScreenState extends State<AllCateScreen> {
                                                   /*Navigator.push(context, MaterialPageRoute(
                                                           builder: (context) {
                                                             return UpdateCateScreen(
-                                                              rootId: state.dailogList![index].dailogId,
-                                                              selectedColor: Colors.grey,
-                                                              categoryTitle: state.dailogList![index].dailogName,
-                                                              tags: [],
+                                                              rootId: state.cateList[index].sId,
+                                                              selectedColor: currentColor,
+                                                              categoryTitle: state.cateList[index].name,
+                                                              tags: state.cateList[index].keywords,
                                                             );
                                                           },
                                                         ));*/

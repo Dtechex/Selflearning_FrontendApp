@@ -88,7 +88,7 @@ class _UpdateSubCate1ScreenState extends State<UpdateSubCate1Screen> {
     try {
       var res = await http.patch(
         Uri.parse(
-            'https://virtuosocity.com/web/category/${widget.rootId}'),
+            'https://selflearning.dtechex.com/web/category/${widget.rootId}'),
         body: jsonEncode(payload),
         headers: {
           'Content-Type': 'application/json',
@@ -128,7 +128,7 @@ class _UpdateSubCate1ScreenState extends State<UpdateSubCate1Screen> {
     try {
       var res = await http.delete(
         Uri.parse(
-            'https://virtuosocity.com/web/category/${widget.rootId}'),
+            'https://selflearning.dtechex.com/web/category/${widget.rootId}'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $token'

@@ -26,7 +26,7 @@ class QuickAddRepo {
       {required String id, required BuildContext context}) async {
     print('deletee category');
     var token = await SharedPref().getToken();
-    var url = Uri.parse('https://virtuosocity.com/web/resource/$id');
+    var url = Uri.parse('https://selflearning.dtechex.com/web/resource/$id');
     print(url);
     Response res = await http.delete(
       url,

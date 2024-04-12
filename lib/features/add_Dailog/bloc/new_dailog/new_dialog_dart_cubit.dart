@@ -24,7 +24,7 @@ class NewDialogDartCubit extends Cubit<NewDialogDartState> {
       };
 
       Response res = await _dio.get(
-        "https://virtuosocity.com/web/prompt/",
+        "https://selflearning.dtechex.com/web/prompt/",
         options: Options(headers: headers),
       );
       print("Quick prompt api ${res.data}");

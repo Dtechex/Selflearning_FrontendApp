@@ -130,17 +130,15 @@ getPromptFromResource({required String resourceId})async{
        flowModel.add(FlowDataModel(
            resourceTitle: list['resourceId']['title'],
            resourceType: list['resourceId']['type'],
-           resourceContent: list['resourceId']['content']??"",
+           resourceContent: "resourceContent",
            side1Title: list['side1']['title'],
            side1Type: list['side1']['type'],
            side1Content: list['side1']['content'],
            side2Title: list['side2']['title'],
            side2Type: list['side2']['type'],
            side2Content: list['side2']['content'],
-           promptName: list['name']
-           , promptId: list["_id"])) ;
+           promptName: list['name'], promptId: list["_id"])) ;
       }
-      print("flowmodel prompt name ${flowModel[0].promptName}");
       emit(GetPromptFromResourceSuccess(flowModel: flowModel));
     }
 

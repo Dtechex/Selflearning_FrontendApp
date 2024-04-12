@@ -36,7 +36,7 @@ class AddPromtsRepo {
       print(gg);
       print("this is prompt repo");
       var request = await http.post(
-          Uri.parse('https://virtuosocity.com/web/prompt/'),
+          Uri.parse('https://selflearning.dtechex.com/web/prompt/'),
           body: data,
           headers: {"Authorization": 'Bearer $token'});
       return request;
@@ -72,7 +72,7 @@ class AddPromtsRepo {
       print(gg);
       print("this is prompt repo");
       var request = await http.post(
-          Uri.parse('https://virtuosocity.com/web/prompt/'),
+          Uri.parse('https://selflearning.dtechex.com/web/prompt/'),
           body: data,
           headers: {"Authorization": 'Bearer $token'});
       return request;
@@ -90,7 +90,7 @@ class AddPromtsRepo {
     final token = await SharedPref().getToken();
     var request = http.MultipartRequest(
       "POST",
-      Uri.parse('https://virtuosocity.com/web/resource/'),
+      Uri.parse('https://selflearning.dtechex.com/web/resource/'),
     );
     // print("mediaType ===>>> $mediaType");
     // print("content ===>>> $content");
@@ -204,7 +204,7 @@ class AddPromtsRepo {
 
     var request = http.MultipartRequest(
       "POST",
-      Uri.parse('https://virtuosocity.com/web/resource/'),
+      Uri.parse('https://selflearning.dtechex.com/web/resource/'),
     );
     // print("mediaType ===>>> $mediaType");
     // print("content ===>>> $content");

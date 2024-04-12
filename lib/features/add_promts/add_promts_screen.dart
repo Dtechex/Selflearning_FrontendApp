@@ -508,7 +508,22 @@ class _AddPromptsScreenState extends State<AddPromptsScreen> {
                                               ],
                                             ),
 
+                                            /*Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  ElevatedButton(
+                                      style: ButtonStyle(
+                                          backgroundColor:
+                                              MaterialStatePropertyAll(
+                                                  Colors.red)),
+                                      onPressed: () {
+                                        // print(state.side1ResourceUrl);
+                                        // Task 1
 
+                                      },
+                                      child: const Text('     Save    '))
+                                ],
+                              )*/
                                           ],
                                         ),
                                       ),
@@ -889,8 +904,15 @@ class _AddPromptsScreenState extends State<AddPromptsScreen> {
                           GestureDetector(
 
                             onTap: () async {
-                              onAddPromptPressed(state, context);
-
+                              if(state.side1Id!.isEmpty && state.side2Id!.isEmpty){
+                               print("field is empty");
+                              }
+                              else if(side2_Controller.text.isNotEmpty) {
+                                saveResource2(state);
+                                if(state.side2Id!.isNotEmpty || state.side2Id != ""){
+                                onAddPromptPressed(state, context);
+                                }
+                              }
 
                             },
                             child: Container(
@@ -920,7 +942,6 @@ class _AddPromptsScreenState extends State<AddPromptsScreen> {
   }
 
   Future<void> onAddPromptPressed(AddPromptsInitial state, BuildContext context) async{
-    print("onpressed is hit");
     if (!_titleformKey.currentState!.validate()) {
       context.showSnackBar(SnackBar(content: Text("Title Required..")));
       return;
@@ -1078,7 +1099,6 @@ class _AddPromptsScreenState extends State<AddPromptsScreen> {
       downloadPath = directory.path + '/';
     } else {
       downloadPath = await ExternalPath.getExternalStoragePublicDirectory(ExternalPath.DIRECTORY_DOWNLOADS);
-
     }
 
     print(downloadPath);
@@ -1089,7 +1109,7 @@ class _AddPromptsScreenState extends State<AddPromptsScreen> {
         _isRecording1 = true;
       });
       await recorder1.start(
-        path: '$downloadPath/myFile1.m4a',
+        path: '$downloadPath/myFile.m4a',
         encoder: AudioEncoder.aacLc, // by default
         bitRate: 128000, // by default
         samplingRate: 44100, // by default
@@ -1100,14 +1120,13 @@ class _AddPromptsScreenState extends State<AddPromptsScreen> {
         _isRecording2 = true;
       });
       await recorder2.start(
-        path: '$downloadPath/myFile2.m4a',
+        path: '$downloadPath/myFile.m4a',
         encoder: AudioEncoder.aacLc, // by default
         bitRate: 128000, // by default
         samplingRate: 44100, // by default
       );
     }
   }
-
 
 
   Future<void> stopRecording(int recorderValue) async {
