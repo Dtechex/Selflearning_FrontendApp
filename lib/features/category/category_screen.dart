@@ -10,9 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
-import 'package:flutter_pdfview/flutter_pdfview.dart';
 import 'package:jwt_decode/jwt_decode.dart';
-import 'package:receive_sharing_intent/receive_sharing_intent.dart';
 import 'package:self_learning_app/features/category/bloc/category_bloc.dart';
 import 'package:self_learning_app/features/category/bloc/category_state.dart';
 import 'package:self_learning_app/features/quick_add/data/bloc/quick_add_bloc.dart';
@@ -203,56 +201,18 @@ class _AllCateScreenState extends State<AllCateScreen> {
 
     return pastelColor;
   }  @override
-  late StreamSubscription _intentSub;
-  final _sharedFiles = <SharedMediaFile>[];
+  // late StreamSubscription _intentSub;
   void initState() {
     context.read<CategoryBloc>().add(CategoryLoadEvent());
-    _intentSub = ReceiveSharingIntent.getMediaStream().listen((value) {
-      setState(() {
-        _sharedFiles.clear();
-        _sharedFiles.addAll(value);
 
-        // Assuming only one PDF file is shared at a time for simplicity
-        if (_sharedFiles.isNotEmpty && _sharedFiles[0].path.endsWith('.pdf')) {
-          _openPdfViewPage(_sharedFiles[0].path);
-        }
-
-        print(_sharedFiles.map((f) => f.toMap()));
-      });
-    }, onError: (err) {
-      print("getIntentDataStream error: $err");
-    });
-    ReceiveSharingIntent.getInitialMedia().then((value) {
-      setState(() {
-        _sharedFiles.clear();
-        _sharedFiles.addAll(value);
-
-        // Assuming only one PDF file is shared at a time for simplicity
-        if (_sharedFiles.isNotEmpty && _sharedFiles[0].path.endsWith('.pdf')) {
-          _openPdfViewPage(_sharedFiles[0].path);
-        }
-        print("we can check the value type ${_sharedFiles.map((f) => f.toMap())}");
-
-
-        // Tell the library that we are done processing the intent.
-        ReceiveSharingIntent.reset();
-      });
-    });
     super.initState();
 
   }
   void dispose() {
-    _intentSub.cancel();
+    // _intentSub.cancel();
     super.dispose();
   }
 
-  void _openPdfViewPage(String pdfPath) {
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) => PdfViewPage(pdfPath: pdfPath),
-      ),
-    );
-  }
   AwesomeDialog showDeleteDailog(
       {required String dailogName,
         required String dailogId,
@@ -859,22 +819,5 @@ class _AllCateScreenState extends State<AllCateScreen> {
         },
       )
     ],);
-  }
-}
-class PdfViewPage extends StatelessWidget {
-  final String pdfPath;
-
-  PdfViewPage({required this.pdfPath});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('PDF Viewer'),
-      ),
-      body: PDFView(
-        filePath: pdfPath,
-      ),
-    );
   }
 }

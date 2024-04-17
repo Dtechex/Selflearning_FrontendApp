@@ -102,7 +102,6 @@ class _SubCategoryScreenState extends State<SubCategoryScreen> {
       length: 3,
       child: Scaffold(
         appBar: AppBar(
-
             centerTitle: false,
             title: Text(widget.categoryName ?? "Subcategory",
               overflow: TextOverflow.ellipsis,),

@@ -52,7 +52,7 @@ import 'firebase_options.dart';
 @pragma("vm:entry-point")
 
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  await Firebase.initializeApp();
+
   print("Handling background message: ${message.messageId}");
 
   // Handle the initial message if present
@@ -89,14 +89,16 @@ Dio dio = Dio(baseOptions);
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
-  requestNotificationPermission();
+  await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform
+  );  requestNotificationPermission();
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
   String? token = await _firebaseMessaging.getToken();
 
   print("fcm token is ${token}");
 
   FirebaseMessaging.onMessage.listen((RemoteMessage message){
+
      print("Recieved message : ${message.notification?.body}");
      ScheduleflowScreenWidget();
      showSimpleNotification(Text(message.notification?.title??""),
@@ -150,11 +152,11 @@ Future<void> requestNotificationPermission() async{
 
   NotificationSettings settings = await messaging.requestPermission(
     alert: true,
-    announcement: false,
+    announcement: true,
     badge: true,
-    carPlay: false,
-    criticalAlert: false,
-    provisional: false,
+    carPlay: true,
+    criticalAlert: true,
+    provisional: true,
     sound: true,
   );
 
@@ -238,11 +240,11 @@ class MyApp extends StatelessWidget {
                   primarySwatch: Colors.blue,
                 ),
                 home:
-                SplashScreen()
+                // SplashScreen()
 
 
 
-              /*FutureBuilder(
+              FutureBuilder(
                   future: SharedPref().getToken(),
                   builder: (context, snapshot) {
                     if (snapshot.hasData) {
@@ -252,7 +254,7 @@ class MyApp extends StatelessWidget {
                       return const LoginScreen();
                     }
                   },
-                ),*/
+                ),
             ),
           ),
         ));
