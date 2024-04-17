@@ -75,7 +75,7 @@ class _SlideShowScreenState extends State<SlideShowScreen> {
     var w = MediaQuery.of(context).size.width;
     //print("https://selflearning.dtechex.com/public/${widget.mediaType}/${widget.content}");
     return Scaffold(
-      appBar: AppBar(title: const Text("primary flow")),
+      appBar: AppBar(title:  Text("${widget.flowName.toString()} flow")),
       body: Scaffold(
         body: Column(
           mainAxisAlignment: MainAxisAlignment.spaceAround,

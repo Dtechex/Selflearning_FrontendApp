@@ -279,6 +279,10 @@ class _FlowScreenState extends State<FlowScreen> {
 
       body: BlocConsumer<CreateFlowBloc, CreateFlowState>(
         listener: (context, state) {
+          if(state is flowDeletedSuccess){
+              context.read<CreateFlowBloc>().add(LoadAllFlowEvent(catID: widget.rootId));
+
+          }
          // if(state is flowSelected){
          //   print("flow select from flow screen");
          // }
@@ -364,7 +368,32 @@ class _FlowScreenState extends State<FlowScreen> {
                               ?'${title.substring(0,1).toUpperCase()}${title.substring(1)}'
                               : 'Untitled',
                           style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.w500, ),),
-                        leading: const Icon(Icons.folder, color: Colors.orange, size: 30.0,),
+                        leading:  Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Checkbox(
+                              value: isSelected, // Set checkbox state based on whether this item is selected
+                              onChanged: ( value) async {
+                                context.read<CreateFlowBloc>().add(FlowSelected(
+                                    flowId: state.flowList[index].id,
+                                    type: "primary",
+                                    flowList: state.flowList,
+                                    index: index,
+                                    rootId: widget.rootId
+                                ));
+                                await Future.delayed(Duration(seconds: 1));
+                                PrimaryfetchData();
+                                getPrimaryflow(catId: widget.rootId);
+                                value = isSelected;
+                                setState(() {
+
+                                });
+
+
+                              },
+                            ),
+                          ],
+                        ),
                       trailing:Row(
                         mainAxisSize: MainAxisSize.min,
 
@@ -389,27 +418,22 @@ class _FlowScreenState extends State<FlowScreen> {
                               });
                             },
                           ),
-                          Checkbox(
-                              value: isSelected, // Set checkbox state based on whether this item is selected
-                            onChanged: ( value) async {
-                              context.read<CreateFlowBloc>().add(FlowSelected(
-                                  flowId: state.flowList[index].id,
-                                  type: "primary",
-                                  flowList: state.flowList,
-                                  index: index,
-                                  rootId: widget.rootId
-                              ));
-                              await Future.delayed(Duration(seconds: 1));
-                              PrimaryfetchData();
-                              getPrimaryflow(catId: widget.rootId);
-                              value = isSelected;
-                              setState(() {
-
-                              });
+                          IconButton(
+                            icon: Icon(Icons.delete), // Your update icon
+                            onPressed: () {
+                              context.read<CreateFlowBloc>().add(
+                                  DeleteFlow(
+                                      flowId: state.flowList[index].id,
+                                      flowList: state.flowList,
+                                      deleteIndex: index,
+                                      context: context
+                                  )
+                              );
+                              }
+                              )
 
 
-                            },
-                          ),
+
                         ],
                       ),
                         /*isSelected==true?

@@ -39,3 +39,6 @@ class flowSelectionFailed extends CreateFlowState{
   final String errormsg;
   flowSelectionFailed({required this.errormsg});
 }
+class flowDeletedSuccess extends CreateFlowState{
+
+}

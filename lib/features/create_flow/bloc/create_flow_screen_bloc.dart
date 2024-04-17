@@ -23,7 +23,8 @@ class CreateFlowBloc extends Bloc<CreateFlowEvent,CreateFlowState> {
         event.flowList.removeAt(event.deleteIndex);
         EasyLoading.dismiss();
         ScaffoldMessenger.of(event.context).showSnackBar(SnackBar(content: Text('Deleted Successfully!')));
-        emit(LoadSuccess(event.flowList));
+        emit(flowDeletedSuccess());
+        // emit(LoadSuccess(event.flowList));
       }
     });
     on<FlowSelected>((event, emit) async{

@@ -136,137 +136,137 @@ class _SubCategoryScreenState extends State<SubCategoryScreen> {
 
 
 
-              PopupMenuButton(
-                icon: Icon(Icons.more_vert, color: Colors.white,),
-                itemBuilder: (context) {
-                  return [
-                    const PopupMenuItem(
-                        value: 'createResource',
-                        child: InkWell(
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                Icon(
-                                  Icons.create_new_folder, color: primaryColor,),
-                                SizedBox(width: 8.0,),
-                                Text("Add Resource"),
-                              ],
-                            ))
-                    ),
-                    const PopupMenuItem(
-                        value: 'viewResource',
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            Icon(Icons.view_array, color: primaryColor,),
-                            SizedBox(width: 8.0,),
-                            Text("View Resource"),
-                          ],
-                        )
-                    ),
-
-
-                    const PopupMenuItem(
-                        value: 'createFlow',
-                        child: InkWell(
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                Icon(
-                                  Icons.add_circle_rounded, color: primaryColor,),
-                                SizedBox(width: 8.0,),
-                                Text("Create New Flow"),
-                              ],
-                            ))
-                    ),
-
-                    const PopupMenuItem(
-                        value: 'startFlow',
-                        child: InkWell(
-
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                Icon(Icons.play_circle, color: primaryColor,),
-                                SizedBox(width: 8.0,),
-                                Text("Select Primary Flow"),
-                              ],
-                            ))
-                    ),
-
-                    const PopupMenuItem(
-                        value: 'schedule',
-                        child: InkWell(
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                Icon(Icons.schedule, color: primaryColor,),
-                                SizedBox(width: 8.0,),
-                                Text("schedule"),
-                              ],
-                            ))
-                    ),
-                  ];
-                },
-                onSelected: (String value) {
-                  switch (value) {
-                    case 'createResource':
-                      Navigator.push(context, MaterialPageRoute(
-                        builder: (context) {
-                          return
-                            AddResourceScreen(rootId: widget.rootId ?? '',
-                                whichResources: 1,
-                                categoryName: widget.categoryName ??
-                                    "Subcategory");
-                        },
-                      ));
-                      break;
-
-                    case 'viewResource':
-                      Navigator.push(context, MaterialPageRoute(
-                        builder: (context) =>
-                            MaincategoryResourcesList(rootId: widget.rootId!,
-                                level: "Level 1",
-                                mediaType: '',
-                                title: widget.categoryName!)
-                        ,));
-                      break;
-                    case 'edit':
-                      Navigator.push(context, MaterialPageRoute(
-                        builder: (context) {
-                          return UpdateCateScreen(
-                            rootId: widget.rootId,
-                            selectedColor: widget.color,
-                            categoryTitle: widget.categoryName,
-                            tags: widget.tags,
-                          );
-                        },
-                      ));
-                      break;
-                    case 'schedule':
-                      break;
-                    case 'startFlow':
-                      Navigator.push(context, MaterialPageRoute(
-                        builder: (context) {
-                          return
-                            FlowScreen(
-                            rootId: widget.rootId!,
-                            categoryname: widget.categoryName??"",
-                          );
-                        },
-                      ));
-                      break;
-                    case 'createFlow':
-                      Navigator.push(context, MaterialPageRoute(
-                          builder: (context) {
-                            return CreateFlowScreen(
-                                rootId: widget.rootId!, categoryName: widget.categoryName.toString(),
-                            );
-                          }));
-                      break;
-                  }
-                },
-              ),
+              // PopupMenuButton(
+              //   icon: Icon(Icons.more_vert, color: Colors.white,),
+              //   itemBuilder: (context) {
+              //     return [
+              //       // const PopupMenuItem(
+              //       //     value: 'createResource',
+              //       //     child: InkWell(
+              //       //         child: Row(
+              //       //           mainAxisAlignment: MainAxisAlignment.start,
+              //       //           children: [
+              //       //             Icon(
+              //       //               Icons.create_new_folder, color: primaryColor,),
+              //       //             SizedBox(width: 8.0,),
+              //       //             Text("Add Resource"),
+              //       //           ],
+              //       //         ))
+              //       // ),
+              //       // const PopupMenuItem(
+              //       //     value: 'viewResource',
+              //       //     child: Row(
+              //       //       mainAxisAlignment: MainAxisAlignment.start,
+              //       //       children: [
+              //       //         Icon(Icons.view_array, color: primaryColor,),
+              //       //         SizedBox(width: 8.0,),
+              //       //         Text("View Resource"),
+              //       //       ],
+              //       //     )
+              //       // ),
+              //
+              //
+              //       // const PopupMenuItem(
+              //       //     value: 'createFlow',
+              //       //     child: InkWell(
+              //       //         child: Row(
+              //       //           mainAxisAlignment: MainAxisAlignment.start,
+              //       //           children: [
+              //       //             Icon(
+              //       //               Icons.add_circle_rounded, color: primaryColor,),
+              //       //             SizedBox(width: 8.0,),
+              //       //             Text("Create New Flow"),
+              //       //           ],
+              //       //         ))
+              //       // ),
+              //
+              //       // const PopupMenuItem(
+              //       //     value: 'startFlow',
+              //       //     child: InkWell(
+              //       //
+              //       //         child: Row(
+              //       //           mainAxisAlignment: MainAxisAlignment.start,
+              //       //           children: [
+              //       //             Icon(Icons.play_circle, color: primaryColor,),
+              //       //             SizedBox(width: 8.0,),
+              //       //             Text("Select Primary Flow"),
+              //       //           ],
+              //       //         ))
+              //       // ),
+              //
+              //       // const PopupMenuItem(
+              //       //     value: 'schedule',
+              //       //     child: InkWell(
+              //       //         child: Row(
+              //       //           mainAxisAlignment: MainAxisAlignment.start,
+              //       //           children: [
+              //       //             Icon(Icons.schedule, color: primaryColor,),
+              //       //             SizedBox(width: 8.0,),
+              //       //             Text("schedule"),
+              //       //           ],
+              //       //         ))
+              //       // ),
+              //     ];
+              //   },
+              //   // onSelected: (String value) {
+              //   //   switch (value) {
+              //   //     case 'createResource':
+              //   //       Navigator.push(context, MaterialPageRoute(
+              //   //         builder: (context) {
+              //   //           return
+              //   //             AddResourceScreen(rootId: widget.rootId ?? '',
+              //   //                 whichResources: 1,
+              //   //                 categoryName: widget.categoryName ??
+              //   //                     "Subcategory");
+              //   //         },
+              //   //       ));
+              //   //       break;
+              //   //
+              //   //     case 'viewResource':
+              //   //       Navigator.push(context, MaterialPageRoute(
+              //   //         builder: (context) =>
+              //   //             MaincategoryResourcesList(rootId: widget.rootId!,
+              //   //                 level: "Level 1",
+              //   //                 mediaType: '',
+              //   //                 title: widget.categoryName!)
+              //   //         ,));
+              //   //       break;
+              //   //     case 'edit':
+              //   //       Navigator.push(context, MaterialPageRoute(
+              //   //         builder: (context) {
+              //   //           return UpdateCateScreen(
+              //   //             rootId: widget.rootId,
+              //   //             selectedColor: widget.color,
+              //   //             categoryTitle: widget.categoryName,
+              //   //             tags: widget.tags,
+              //   //           );
+              //   //         },
+              //   //       ));
+              //   //       break;
+              //   //     case 'schedule':
+              //   //       break;
+              //   //     case 'startFlow':
+              //   //       Navigator.push(context, MaterialPageRoute(
+              //   //         builder: (context) {
+              //   //           return
+              //   //             FlowScreen(
+              //   //             rootId: widget.rootId!,
+              //   //             categoryname: widget.categoryName??"",
+              //   //           );
+              //   //         },
+              //   //       ));
+              //   //       break;
+              //   //     case 'createFlow':
+              //   //       Navigator.push(context, MaterialPageRoute(
+              //   //           builder: (context) {
+              //   //             return CreateFlowScreen(
+              //   //                 rootId: widget.rootId!, categoryName: widget.categoryName.toString(),
+              //   //             );
+              //   //           }));
+              //   //       break;
+              //   //   }
+              //   // },
+              // ),
             ]
         ),
 /*
@@ -416,6 +416,21 @@ class _SubCategoryScreenState extends State<SubCategoryScreen> {
                           border: Border.all(color: Colors.grey.shade300,width: 1.5),
                         borderRadius: BorderRadius.circular(10)
                       ),
+                      child:             Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 10),
+                          child: TextField(
+                            controller: _flowSearchController,
+                            onChanged: (value) {
+                              print("Text changed: $value");
+
+                            },
+                            decoration: InputDecoration(
+                              border: InputBorder.none,
+                              hintText: 'Search resource...',
+                            ),
+                          )
+                      ),
+
                     ),
                     Expanded(
                       child: MaincategoryResourcesList(rootId: widget.rootId!,
@@ -439,7 +454,8 @@ class _SubCategoryScreenState extends State<SubCategoryScreen> {
                   border: Border.all(color: Colors.grey.shade300,width: 1.5),
                   borderRadius: BorderRadius.circular(10)
               ),
-            child:  Padding(
+            child:
+            Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 10),
                   child: TextField(
                     controller: _flowSearchController,

@@ -188,23 +188,29 @@ class _SubCategoryWidgetState extends State<SubCategoryWidget> with TickerProvid
                       SliverList(
                         delegate: SliverChildBuilderDelegate(
                               (BuildContext context, int index) {
-                            return
-                              Container(
-                                padding: EdgeInsets.symmetric(horizontal: 5,vertical: 5),
-                                margin: EdgeInsets.symmetric(vertical: 5, horizontal: 8),
-                                decoration: BoxDecoration(
-                                  color: Colors.white70,
-                                  borderRadius: BorderRadius.circular(5),
-                                  border: Border.all(width: 0.2, color: Colors.black87),
+                            return Container(
+                              padding: EdgeInsets.symmetric(horizontal: 5, vertical: 5),
+                              margin: EdgeInsets.symmetric(vertical: 5, horizontal: 8),
+                              decoration: BoxDecoration(
+                                color: Colors.white70,
+                                borderRadius: BorderRadius.circular(5),
+                                border: Border.all(width: 0.2, color: Colors.black87),
+                              ),
+                              child: Text(
+                                state.cateList[0].summary![index], // Use i instead of index
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w100,
+                                  color: Colors.black87,
+                                  fontSize: 13,
+                                  letterSpacing: 1,
+                                  decorationThickness: 0.5,
+                                  wordSpacing: 1,
+                                  height: 1.2,
                                 ),
-                                child: Text(state.cateList[index].summary![index],
-                                style: TextStyle(fontWeight: FontWeight.w100, color: Colors.black87, fontSize: 13, letterSpacing: 1,decorationThickness: 0.5,wordSpacing: 1,
-                                  height: 1.2
-                                ),
-                                )
-                              );
+                              ),
+                            );
                           },
-                          childCount: 1,
+                          childCount: state.cateList[0].summary!.length,
                         ),
                       ),
                       SliverList(
