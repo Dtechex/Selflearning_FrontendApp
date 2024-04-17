@@ -89,12 +89,13 @@ Dio dio = Dio(baseOptions);
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
+  await Firebase.initializeApp(
+  );
   requestNotificationPermission();
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
   String? token = await _firebaseMessaging.getToken();
 
-  print("fcm token is ${token}");
+  print("fcm token is ${token}  break here");
 
   FirebaseMessaging.onMessage.listen((RemoteMessage message){
      print("Recieved message : ${message.notification?.body}");
@@ -152,9 +153,9 @@ Future<void> requestNotificationPermission() async{
     alert: true,
     announcement: false,
     badge: true,
-    carPlay: false,
-    criticalAlert: false,
-    provisional: false,
+    carPlay: true,
+    criticalAlert: true,
+    provisional: true,
     sound: true,
   );
 

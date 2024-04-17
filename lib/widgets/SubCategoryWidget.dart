@@ -53,15 +53,16 @@ class _SubCategoryWidgetState extends State<SubCategoryWidget> {
       'Authorization': 'bearer' + ' ' + token.toString(),
     };
 
-      var res = await _dio.put(
+      var res = await _dio.patch(
             'https://selflearning.dtechex.com/web/category/${widget.rootId}',
-        data: {"summary": [summary]},
+        data: {"summary": summary},
         options: Options(headers: headers),
       );
       print("main category update ${res.data}");
       if (res.statusCode == 200) {
+        summaryController.clear();
         context.showSnackBar(
-            SnackBar(content: Text('Category update Successfully')));
+            SnackBar(content: Text('Summary added successfully')));
         context.read<CategoryBloc>().add(CategoryLoadEvent());
         Navigator.pushReplacement(context, MaterialPageRoute(
           builder: (context) {

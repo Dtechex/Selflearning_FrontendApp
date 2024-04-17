@@ -45,11 +45,12 @@ class _ScheduleFlowBookState extends State<ScheduleFlowBook> {
   }
 
   String calculateCountdown(String dateString) {
-    DateTime selectedTime = DateTime.parse(dateString); // Parse as local time
+    DateTime selectedTime = DateTime.parse(dateString).toUtc(); // Parse as local time
     var currentTime = DateTime.now();
+    var Ist = selectedTime.subtract(Duration(hours: 4));
 
     // Calculate the difference as a Duration
-    Duration difference = selectedTime.difference(currentTime);
+    Duration difference = Ist.difference(currentTime);
 
     // Check if the duration is negative
     bool isTimerZero = difference.isNegative;
@@ -68,19 +69,14 @@ class _ScheduleFlowBookState extends State<ScheduleFlowBook> {
         : '$days d\n${hours.toString().padLeft(2, '0')} hr ${minutes.toString().padLeft(2, '0')} min\n${seconds.toString().padLeft(2, '0')} sec';
   }
 
-  void alram({ DateTime? dateTime}) async {
-    var newdate = dateTime?.toUtc();
-    var localDateTime = newdate?.toLocal();
 
-
-  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       floatingActionButton: ElevatedButton(
         onPressed: () {
-          alram();
+          // alram();
           // print("Notification button pressed");
           NotificationService().initNotification();
           NotificationService().showNotification(
@@ -115,9 +111,11 @@ class _ScheduleFlowBookState extends State<ScheduleFlowBook> {
               return Center(child: Text("No flow is added"));
             } else {
               debugPrint('Notification Scheduled for ${state.dateflowList![0].dateTime}');
-              DateTime dateTime = DateTime.parse(state.dateflowList![0].dateTime!);
+              DateTime dateTime = DateTime.parse(state.dateflowList![0].dateTime!).toUtc();
+              print("local time is checking now ${dateTime}");
+              var time = DateTime.parse(dateTime.toString()).toUtc();
+              print("American time Zone ${time.subtract(Duration(hours: 4))}");
 
-              print("date and time$dateTime");
               // alram(dateTime: dateTime);
               return CustomScrollView(
                 slivers: <Widget>[
