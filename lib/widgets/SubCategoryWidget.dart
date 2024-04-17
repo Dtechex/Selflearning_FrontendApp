@@ -38,15 +38,26 @@ class SubCategoryWidget extends StatefulWidget {
   State<SubCategoryWidget> createState() => _SubCategoryWidgetState();
 }
 
-class _SubCategoryWidgetState extends State<SubCategoryWidget> {
+class _SubCategoryWidgetState extends State<SubCategoryWidget> with TickerProviderStateMixin {
   TextEditingController summaryController = TextEditingController();
+  AnimationController? _animationController; // Make the AnimationController nullable
+
   @override
   void initState() {
     context.read<SubCategoryBloc>().add(
         SubCategoryLoadEvent(rootId: widget.rootId));
-    context.read<CreateFlowBloc>().add(LoadAllFlowEvent(catID: widget.rootId!));    super.initState();
+    context.read<CreateFlowBloc>().add(LoadAllFlowEvent(catID: widget.rootId!));
+    super.initState();
+    _animationController = AnimationController(
+      vsync: this, // Ensure that your StatefulWidget class mixes in TickerProviderStateMixin
+      duration: Duration(milliseconds: 500), // Animation duration
+      upperBound: 20,
+      reverseDuration: Duration(seconds: 2)
+    );
+
   }
   addCategory({required String summary}) async {
+    print("_---rood id is ${widget.rootId}");
     final Dio _dio = Dio();
     var token = await SharedPref().getToken();
     Map<String, dynamic> headers = {
@@ -64,27 +75,37 @@ class _SubCategoryWidgetState extends State<SubCategoryWidget> {
         context.showSnackBar(
             SnackBar(content: Text('Summary added successfully')));
         context.read<CategoryBloc>().add(CategoryLoadEvent());
-        Navigator.pushReplacement(context, MaterialPageRoute(
-          builder: (context) {
-            return DashBoardScreen();
-          },
-        ));
+        setState(() {
+
+        });
       } else {
         context.showSnackBar(
             const SnackBar(content: Text('opps something went worng')));
       }
       print('data');
     }
+  void dispose() {
+    _animationController!.dispose();
+    super.dispose();
+  }
 
 
   Widget build(BuildContext context) {
+    print("category id is ${widget.rootId}");
     return Scaffold(
       floatingActionButton: ElevatedButton(
         child: Text("Create SubCategory"),
         onPressed: (){
           Navigator.push(context, MaterialPageRoute(builder: (context)=>CreateSubCate1Screen(rootId: widget.rootId,
           subCatName: widget.categoryName,
-          )));
+          ))).then((value) {
+            if(value){
+              setState(() {
+                context.read<SubCategoryBloc>().add(
+                    SubCategoryLoadEvent(rootId: widget.rootId));
+              });
+            }
+          });
         },
       ),
       body:Column(
@@ -96,7 +117,7 @@ class _SubCategoryWidgetState extends State<SubCategoryWidget> {
                 child: Container(
                   margin: EdgeInsets.symmetric(horizontal: 8 ,vertical: 5),
                   width: double.infinity,
-                  height: 150,
+                  height: MediaQuery.of(context).size.height*0.1,
                   decoration: BoxDecoration(
                       color: Colors.grey.shade100,
                       borderRadius: BorderRadius.circular(3),
@@ -108,7 +129,7 @@ class _SubCategoryWidgetState extends State<SubCategoryWidget> {
                       style: TextStyle(letterSpacing: 2,color: Colors.black87),
                       decoration: InputDecoration(
 
-                        hintText: 'Enter text',
+                        hintText: 'Add Summary .....',
                         border: InputBorder.none,
                         contentPadding: EdgeInsets.all(8),
                       ),
@@ -116,10 +137,11 @@ class _SubCategoryWidgetState extends State<SubCategoryWidget> {
                 ),
               ),
               Container(
+                alignment: Alignment.center,
                 margin: EdgeInsets.only(right: 8,bottom: 5),
-                padding: EdgeInsets.all(8),
+                padding: EdgeInsets.all(4),
                 decoration: BoxDecoration(
-                  color: Colors.grey.shade100,
+                  color: Colors.red.shade200,
                   borderRadius: BorderRadius.circular(45)
                 ),
                 child: IconButton(
@@ -128,10 +150,19 @@ class _SubCategoryWidgetState extends State<SubCategoryWidget> {
                       addCategory(summary: summaryController.text);
                     }
                     else{
-                      EasyLoading.showError("Summary is empty");
-                    }
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text('Summary is empty'),
+                          duration: Duration(seconds: 2),
+                          behavior: SnackBarBehavior.floating, // Optional: behavior
+                          clipBehavior: Clip.antiAlias, // Optional: clip behavior
+                            animation: _animationController!.view
+
+
+                        ),
+                      );                    }
                   },
-                  icon: Icon(Icons.send, color: Colors.green,),
+                  icon: Icon(Icons.send, color: Colors.green,size: 20,),
                 ),
               )
 
@@ -154,7 +185,28 @@ class _SubCategoryWidgetState extends State<SubCategoryWidget> {
                   return  CustomScrollView(
 
                     slivers: [
-
+                      SliverList(
+                        delegate: SliverChildBuilderDelegate(
+                              (BuildContext context, int index) {
+                            return
+                              Container(
+                                padding: EdgeInsets.symmetric(horizontal: 5,vertical: 5),
+                                margin: EdgeInsets.symmetric(vertical: 5, horizontal: 8),
+                                decoration: BoxDecoration(
+                                  color: Colors.white70,
+                                  borderRadius: BorderRadius.circular(5),
+                                  border: Border.all(width: 0.2, color: Colors.black87),
+                                ),
+                                child: Text(state.cateList[index].summary![index],
+                                style: TextStyle(fontWeight: FontWeight.w100, color: Colors.black87, fontSize: 13, letterSpacing: 1,decorationThickness: 0.5,wordSpacing: 1,
+                                  height: 1.2
+                                ),
+                                )
+                              );
+                          },
+                          childCount: 1,
+                        ),
+                      ),
                       SliverList(
                         delegate: SliverChildBuilderDelegate(
                               (BuildContext context, int index) {
@@ -209,7 +261,7 @@ class _SubCategoryWidgetState extends State<SubCategoryWidget> {
 
                               },
                               child: Card(
-                                elevation: 5,
+                                elevation: 1,
                                 margin: EdgeInsets.symmetric(
                                     horizontal: 10, vertical: 4),
                                 shadowColor: Colors.grey.shade50,

@@ -80,39 +80,7 @@ bool value = false;
     return DefaultTabController(
       length: 3,
       child: Scaffold(
-        floatingActionButton: SizedBox(
-          height: context.screenHeight * 0.1,
-          child: FittedBox(
-            child: ElevatedButton(
-              onPressed: () {
-                /* if(_tabIndex == 0) {
-                    Navigator.push(context, MaterialPageRoute(
-                      builder: (context) =>
-                          Subcategory2ResourcesList(rootId: widget.rootId,
-                              mediaType: '',
-                              title: widget.subCateTitle),));
-                  }*/
-                Navigator.push(context, MaterialPageRoute(
-                  builder: (context) {
-                    return CreateSubCate2Screen(
-                      rootId: widget.rootId,
-                    );
-                  },
-                ));
-              },
-              child: Row(
-                children: [
-                  Text(
-                    /*_tabIndex==0?'View All':*/
-                    'Create\n Category',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 9),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
+
         appBar: AppBar(
 
             title: Text(widget.subCateTitle),

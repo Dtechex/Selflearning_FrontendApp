@@ -45,7 +45,7 @@ class _ScheduleFlowBookState extends State<ScheduleFlowBook> {
   }
 
   String calculateCountdown(String dateString) {
-    DateTime selectedTime = DateTime.parse(dateString).toUtc(); // Parse as local time
+    DateTime selectedTime = DateTime.parse(dateString).toUtc();
     var currentTime = DateTime.now();
     var Ist = selectedTime.subtract(Duration(hours: 4));
 

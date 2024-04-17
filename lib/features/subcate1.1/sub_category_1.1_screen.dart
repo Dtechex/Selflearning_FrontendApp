@@ -34,6 +34,7 @@ class SubCategory1Screen extends StatefulWidget {
   final String rootId;
   final Color? color;
 
+
   const SubCategory1Screen({Key? key, required this.subCateTitle, required this.rootId, this.color, required this.keyWords}) : super(key: key);
 
   @override
@@ -77,36 +78,6 @@ class _SubCategory1ScreenState extends State<SubCategory1Screen> {
       length: 3,
       child: Scaffold(
 
-          floatingActionButton: SizedBox(height: context.screenHeight*0.1,
-            child: FittedBox(
-              child: ElevatedButton(
-                onPressed: () {
-
-                /*  if(_tabIndex == 0) {
-                    Navigator.push(context, MaterialPageRoute(
-                      builder: (context) =>
-                          SubcategoryResourcesList(rootId: widget.rootId,
-                              mediaType: '',
-                              title: widget.subCateTitle),));
-                  }*/
-                    Navigator.push(
-                        context, MaterialPageRoute(builder: (context) {
-                      return CreateSubCate1Screen(rootId: widget.rootId,);
-                    },));
-
-
-                },
-                child: Row(
-                  children: [
-                    Text(
-                      /*_tabIndex==0?'View All':*/'Create\n Category',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(fontSize: 9),),
-                  ],
-                ),
-              ),
-            ),
-          ),
           appBar: AppBar(
             leading: IconButton(onPressed: (){
               if(value==true){

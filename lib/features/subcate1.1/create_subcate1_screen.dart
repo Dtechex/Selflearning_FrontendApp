@@ -51,7 +51,7 @@ class _CreateSubCate1ScreenState extends State<CreateSubCate1Screen> {
           ElevatedButton(
             child: const Text('Got it'),
             onPressed: () {
-              Navigator.of(context).pop();
+              Navigator.pop(context,true);
             },
           ),
         ],
@@ -91,7 +91,7 @@ class _CreateSubCate1ScreenState extends State<CreateSubCate1Screen> {
         context
             .read<SubCategory1Bloc>()
             .add(SubCategory1LoadEvent(rootId: widget.rootId));
-        Navigator.pop(context);
+        Navigator.pop(context, true);
       } else {
         context.showSnackBar(
             const SnackBar(content: Text('opps something went worng')));

@@ -148,7 +148,7 @@ class _CustomDialogState extends State<CustomDialog> {
                     ),
                     child: IconButton(
                       onPressed: () {
-                        Navigator.pop(context);
+                        Navigator.pop(context,true);
                       },
                       iconSize: 20,
                       icon: Icon(Icons.close, color: Colors.black87,),

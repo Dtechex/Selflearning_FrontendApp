@@ -4,24 +4,28 @@ class SubCategoryModel {
   String? name;
   List<String>? keywords;
   List<Styles>? styles;
+  List<String>? summary; // Added summary field
   String? createdAt;
   String? updatedAt;
   int? iV;
 
-  SubCategoryModel(
-      {this.sId,
-        this.userId,
-        this.name,
-        this.keywords,
-        this.styles,
-        this.createdAt,
-        this.updatedAt,
-        this.iV});
+  SubCategoryModel({
+    this.sId,
+    this.userId,
+    this.name,
+    this.keywords,
+    this.styles,
+    this.createdAt,
+    this.updatedAt,
+    this.iV,
+    this.summary, // Added summary parameter in constructor
+  });
 
   SubCategoryModel.fromJson(Map<String, dynamic> json) {
     sId = json['_id'];
     userId = json['userId'];
     name = json['name'];
+    summary = List<String>.from(json['summary'] ?? []); // Parse summary as list of strings
     keywords = json['keywords'].cast<String>();
     if (json['styles'] != null) {
       styles = <Styles>[];
@@ -39,6 +43,7 @@ class SubCategoryModel {
     data['_id'] = sId;
     data['userId'] = userId;
     data['name'] = name;
+    data['summary'] = summary; // Include summary field in JSON
     data['keywords'] = keywords;
     if (styles != null) {
       data['styles'] = styles!.map((v) => v.toJson()).toList();

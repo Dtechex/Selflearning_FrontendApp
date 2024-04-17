@@ -9,8 +9,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import 'package:overlay_support/overlay_support.dart';
-import 'package:self_learning_app/features/add_Dailog/bloc/get_dailog_bloc/get_dailog_bloc.dart';
-import 'package:self_learning_app/features/add_promts/bloc/add_prompts_bloc.dart';
 import 'package:self_learning_app/features/category/bloc/category_bloc.dart';
 import 'package:self_learning_app/features/dailog_category/bloc/add_prompt_res_cubit.dart';
 import 'package:self_learning_app/features/dashboard/dashboard_screen.dart';
@@ -20,7 +18,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:self_learning_app/features/promt/bloc/promt_bloc.dart';
 import 'package:self_learning_app/features/quick_add/data/bloc/quick_add_bloc.dart';
 import 'package:self_learning_app/features/quick_import/bloc/quick_add_bloc.dart';
-import 'package:self_learning_app/features/quick_import/quick_add_import_screen.dart';
 import 'package:self_learning_app/features/registration/bloc/signup_bloc.dart';
 import 'package:self_learning_app/features/registration/data/repo/signup_repo.dart';
 import 'package:self_learning_app/features/resources/bloc/resources_bloc.dart';
@@ -29,17 +26,12 @@ import 'package:self_learning_app/features/subcategory/bloc/sub_cate_bloc.dart';
 import 'package:self_learning_app/features/subcategory/primaryflow/bloc/primary_bloc.dart';
 import 'package:self_learning_app/schedule/cubit/scheduleflow_cubit.dart';
 import 'package:self_learning_app/splashScreen/splash_screen.dart';
-import 'package:self_learning_app/testing.dart';
 import 'package:self_learning_app/utilities/colors.dart';
 import 'package:self_learning_app/utilities/shared_pref.dart';
-import 'package:self_learning_app/widgets/FirebaseApi.dart';
-import 'package:self_learning_app/widgets/localNotification.dart';
 import 'package:self_learning_app/widgets/pushnotification.dart';
 import 'package:self_learning_app/widgets/scheduleflowScreenwidget.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'features/add_Dailog/bloc/create_dailog_bloc/create_dailog_bloc.dart';
 import 'features/create_flow/bloc/create_flow_screen_bloc.dart';
-import 'features/dailog_category/dailog_cate_screen.dart';
 import 'features/dashboard/bloc/dashboard_bloc.dart';
 import 'features/login/bloc/login_bloc.dart';
 import 'features/maincatbottomSheet/bottomSheetCubit/main_bottom_sheet_cubit.dart';
@@ -52,7 +44,7 @@ import 'firebase_options.dart';
 @pragma("vm:entry-point")
 
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  await Firebase.initializeApp();
+
   print("Handling background message: ${message.messageId}");
 
   // Handle the initial message if present
@@ -90,14 +82,16 @@ Dio dio = Dio(baseOptions);
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
-  );
-  requestNotificationPermission();
+
+      options: DefaultFirebaseOptions.currentPlatform
+  );  requestNotificationPermission();
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
   String? token = await _firebaseMessaging.getToken();
 
   print("fcm token is ${token}  break here");
 
   FirebaseMessaging.onMessage.listen((RemoteMessage message){
+
      print("Recieved message : ${message.notification?.body}");
      ScheduleflowScreenWidget();
      showSimpleNotification(Text(message.notification?.title??""),
@@ -151,7 +145,7 @@ Future<void> requestNotificationPermission() async{
 
   NotificationSettings settings = await messaging.requestPermission(
     alert: true,
-    announcement: false,
+    announcement: true,
     badge: true,
     carPlay: true,
     criticalAlert: true,
@@ -243,17 +237,17 @@ class MyApp extends StatelessWidget {
 
 
 
-              /*FutureBuilder(
-                  future: SharedPref().getToken(),
-                  builder: (context, snapshot) {
-                    if (snapshot.hasData) {
-                      print(snapshot.data);
-                      return const DashBoardScreen();
-                    } else {
-                      return const LoginScreen();
-                    }
-                  },
-                ),*/
+              // FutureBuilder(
+              //     future: SharedPref().getToken(),
+              //     builder: (context, snapshot) {
+              //       if (snapshot.hasData) {
+              //         print(snapshot.data);
+              //         return const DashBoardScreen();
+              //       } else {
+              //         return const LoginScreen();
+              //       }
+              //     },
+              //   ),
             ),
           ),
         ));

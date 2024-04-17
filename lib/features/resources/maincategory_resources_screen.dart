@@ -27,6 +27,7 @@ import '../../widgets/pop_up_menu.dart';
 import 'package:http/http.dart' as http;
 import 'dart:io';
 
+import '../../widgets/popup_menu_widget.dart';
 import '../promt/promts_screen.dart';
 import '../subcate1.1/sub_category_1.1_screen.dart';
 import '../subcategory/bloc/sub_cate_bloc.dart';
@@ -108,9 +109,17 @@ class _MaincategoryResourcesListState extends State<MaincategoryResourcesList> {
           showDialog(
             context: context,
             builder: (BuildContext context) {
-              return AddResourceDialog(categoryName: widget.title,rootId: widget.rootId,);
+              return CustomDialog(rootId: widget.rootId, categoryName: widget.title,whichResources: 1,);
+              // AddResourceScreen(rootId: widget.categoryId!, whichResources: 1, categoryName: widget.categoryName!,); // Showing custom dialog
             },
-          );
+          ).then((value) {
+            if(value){
+              setState(() {
+                resourcesBloc.add(LoadResourcesEvent(rootId: widget.rootId, mediaType: widget.mediaType));
+
+              });
+            }
+          });
         }, child: Text("Add Resource")),
 
         body: SingleChildScrollView(
