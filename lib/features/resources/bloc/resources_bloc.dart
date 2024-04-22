@@ -19,7 +19,7 @@ class ResourcesBloc extends Bloc<ResourcesEvent, ResourcesState> {
     emit(ResourcesLoading());
     try {
       await ResourcesRepo.getResources(
-              rootId: event.rootId, mediaType: event.mediaType)
+              rootId: event.rootId, mediaType: event.mediaType, resQueary: event.resourcQueary)
           .then((value) {
         emit(ResourcesLoaded(allResourcesModel: value!));
         // print("Fetched Data ===>>> $value");

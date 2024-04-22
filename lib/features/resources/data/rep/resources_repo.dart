@@ -5,9 +5,9 @@ import 'package:http/http.dart';
 
 class ResourcesRepo {
   static Future<AllResourcesModel?> getResources(
-      {required String rootId, required String mediaType}) async {
+      {required String rootId, required String mediaType, String ?resQueary}) async {
     Response res = await Api().get(
-      endPoint: 'resource?rootId=$rootId&type=$mediaType',
+      endPoint: 'resource?rootId=$rootId&type=$mediaType&title=$resQueary',
     );
 
     if (res.statusCode == 200) {

@@ -22,6 +22,7 @@ import 'package:self_learning_app/features/registration/bloc/signup_bloc.dart';
 import 'package:self_learning_app/features/registration/data/repo/signup_repo.dart';
 import 'package:self_learning_app/features/resources/bloc/resources_bloc.dart';
 import 'package:self_learning_app/features/search_category/bloc/search_cat_bloc.dart';
+import 'package:self_learning_app/features/subcategory/SummaryBloc/summary_bloc.dart';
 import 'package:self_learning_app/features/subcategory/bloc/sub_cate_bloc.dart';
 import 'package:self_learning_app/features/subcategory/primaryflow/bloc/primary_bloc.dart';
 import 'package:self_learning_app/schedule/cubit/scheduleflow_cubit.dart';
@@ -203,6 +204,8 @@ class MyApp extends StatelessWidget {
           BlocProvider<AddPromptResCubit>(create: (context) => AddPromptResCubit()),
           BlocProvider<MainBottomSheetCubit>(create: (context) => MainBottomSheetCubit()),
           BlocProvider<ScheduleflowCubit>(create: (context) => ScheduleflowCubit()),
+          BlocProvider<SummaryBloc>(create: (context) => SummaryBloc()),
+
 
 
 

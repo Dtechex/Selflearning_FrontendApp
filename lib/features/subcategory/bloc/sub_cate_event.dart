@@ -10,6 +10,7 @@ class SubCategoryLoadEvent extends SubCategoryEvent{
 
 
 
+
 class SubCateChangeDropValueEvent extends SubCategoryEvent {
   final List<SubCategoryModel>? list;
   final String? subCateId;

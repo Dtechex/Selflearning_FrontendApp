@@ -76,3 +76,37 @@ class Styles {
     return data;
   }
 }
+class MainCategoryModel {
+  final String id;
+  final String userId;
+  final String name;
+  final List<String> keywords;
+  final List<Map<String, dynamic>> styles;
+  final DateTime createdAt;
+  final DateTime updatedAt;
+  final List<String> summary;
+
+  MainCategoryModel({
+    required this.id,
+    required this.userId,
+    required this.name,
+    required this.keywords,
+    required this.styles,
+    required this.createdAt,
+    required this.updatedAt,
+    required this.summary,
+  });
+
+  factory MainCategoryModel.fromJson(Map<String, dynamic> json) {
+    return MainCategoryModel(
+      id: json['_id'],
+      userId: json['userId'],
+      name: json['name'],
+      keywords: List<String>.from(json['keywords']),
+      styles: List<Map<String, dynamic>>.from(json['styles']),
+      createdAt: DateTime.parse(json['createdAt']),
+      updatedAt: DateTime.parse(json['updatedAt']),
+      summary: List<String>.from(json['summary']),
+    );
+  }
+}

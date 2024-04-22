@@ -16,6 +16,7 @@ import '../features/resources/maincategory_resources_screen.dart';
 import '../features/subcate1.1/sub_category_1.1_screen.dart';
 import '../features/subcate1.2/final_resources_screen.dart';
 import '../features/subcate1.2/sub_category_1.2_screen.dart';
+import '../features/subcategory/SummaryBloc/summary_bloc.dart';
 import '../features/subcategory/bloc/sub_cate_bloc.dart';
 import '../features/subcategory/bloc/sub_cate_event.dart';
 import '../features/subcategory/bloc/sub_cate_state.dart';
@@ -44,6 +45,8 @@ class _SubCategoryWidgetState extends State<SubCategoryWidget> with TickerProvid
 
   @override
   void initState() {
+    context.read<SummaryBloc>().add(
+        SummaryLoadedEvent(rootId: widget.rootId));
     context.read<SubCategoryBloc>().add(
         SubCategoryLoadEvent(rootId: widget.rootId));
     context.read<CreateFlowBloc>().add(LoadAllFlowEvent(catID: widget.rootId!));
@@ -57,6 +60,8 @@ class _SubCategoryWidgetState extends State<SubCategoryWidget> with TickerProvid
 
   }
   addCategory({required String summary}) async {
+    EasyLoading.show();
+
     print("_---rood id is ${widget.rootId}");
     final Dio _dio = Dio();
     var token = await SharedPref().getToken();
@@ -71,10 +76,11 @@ class _SubCategoryWidgetState extends State<SubCategoryWidget> with TickerProvid
       );
       print("main category update ${res.data}");
       if (res.statusCode == 200) {
+        EasyLoading.dismiss();
         summaryController.clear();
         context.showSnackBar(
             SnackBar(content: Text('Summary added successfully')));
-        context.read<CategoryBloc>().add(CategoryLoadEvent());
+        context.read<SummaryBloc>().add(SummaryLoadedEvent(rootId: widget.rootId));
         setState(() {
 
         });
@@ -89,7 +95,7 @@ class _SubCategoryWidgetState extends State<SubCategoryWidget> with TickerProvid
     super.dispose();
   }
 
-
+List<String> summary = [];
   Widget build(BuildContext context) {
     print("category id is ${widget.rootId}");
     return Scaffold(
@@ -114,6 +120,7 @@ class _SubCategoryWidgetState extends State<SubCategoryWidget> with TickerProvid
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               Expanded(
+
                 child: Container(
                   margin: EdgeInsets.symmetric(horizontal: 8 ,vertical: 5),
                   width: double.infinity,
@@ -168,6 +175,72 @@ class _SubCategoryWidgetState extends State<SubCategoryWidget> with TickerProvid
 
             ],
           ),
+          // SizedBox(
+          //   width: context.screenWidth,
+          //   height: context.screenHeight * 0.4,
+          //   child: ,
+          // ),
+         SizedBox(
+           height: 0.1,
+           child: BlocBuilder<SummaryBloc, SummaryState>(builder: (context, state){
+             if(state is SummaryLoading){
+               return SizedBox();
+               //   Center(
+               //   child: Container(
+               //     height: 50,
+               //     width: 50,
+               //     child: CircularProgressIndicator(),
+               //   ),
+               // );
+             }
+             if(state is SummaryLoadedState){
+               summary.clear();
+               for(var data in state.sumaryList[0].summary){
+                 summary.add(data);
+               }
+
+               return SizedBox();
+               //   CustomScrollView(
+               //
+               //   slivers: [
+               //     SliverList(
+               //       delegate: SliverChildBuilderDelegate(
+               //             (BuildContext context, int index) {
+               //           return Container(
+               //             padding: EdgeInsets.symmetric(horizontal: 5, vertical: 5),
+               //             margin: EdgeInsets.symmetric(vertical: 5, horizontal: 8),
+               //             decoration: BoxDecoration(
+               //               color: Colors.white70,
+               //               borderRadius: BorderRadius.circular(5),
+               //               border: Border.all(width: 0.2, color: Colors.black87),
+               //             ),
+               //             child: Text(
+               //               state.sumaryList[0].summary![index], // Use i instead of index
+               //               style: TextStyle(
+               //                 fontWeight: FontWeight.w100,
+               //                 color: Colors.black87,
+               //                 fontSize: 13,
+               //                 letterSpacing: 1,
+               //                 decorationThickness: 0.5,
+               //                 wordSpacing: 1,
+               //                 height: 1.2,
+               //               ),
+               //             ),
+               //           );
+               //         },
+               //         childCount: state.sumaryList[0].summary.length,
+               //       ),
+               //     ),
+               //
+               //   ],
+               // );
+
+             }
+
+             return Center(child: Text("Something wents wrong"),);
+
+           }),
+         ),
           Expanded(
             child: BlocBuilder<SubCategoryBloc, SubCategoryState>(
               builder: (context, state) {
@@ -197,7 +270,7 @@ class _SubCategoryWidgetState extends State<SubCategoryWidget> with TickerProvid
                                 border: Border.all(width: 0.2, color: Colors.black87),
                               ),
                               child: Text(
-                                state.cateList[0].summary![index], // Use i instead of index
+                                summary[index], // Use i instead of index
                                 style: TextStyle(
                                   fontWeight: FontWeight.w100,
                                   color: Colors.black87,
@@ -210,9 +283,10 @@ class _SubCategoryWidgetState extends State<SubCategoryWidget> with TickerProvid
                               ),
                             );
                           },
-                          childCount: state.cateList[0].summary!.length,
+                          childCount: summary.length,
                         ),
                       ),
+
                       SliverList(
                         delegate: SliverChildBuilderDelegate(
                               (BuildContext context, int index) {

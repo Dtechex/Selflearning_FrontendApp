@@ -61,7 +61,8 @@ class _MaincategoryResourcesListState extends State<MaincategoryResourcesList> {
 
   @override
   void initState() {
-    resourcesBloc.add(LoadResourcesEvent(rootId: widget.rootId, mediaType: widget.mediaType));
+    context.read<ResourcesBloc>().add(LoadResourcesEvent(rootId: widget.rootId, mediaType: widget.mediaType));
+
 
     super.initState();
   }
@@ -102,296 +103,293 @@ class _MaincategoryResourcesListState extends State<MaincategoryResourcesList> {
   Widget build(BuildContext context) {
     print("checking category id ${widget.rootId}");
 
-    return BlocProvider(
-      create: (context) => resourcesBloc,
-      child: Scaffold(
-        floatingActionButton: ElevatedButton(onPressed: (){
-          showDialog(
-            context: context,
-            builder: (BuildContext context) {
-              return CustomDialog(rootId: widget.rootId, categoryName: widget.title,whichResources: 1,);
-              // AddResourceScreen(rootId: widget.categoryId!, whichResources: 1, categoryName: widget.categoryName!,); // Showing custom dialog
-            },
-          ).then((value) {
-            if(value){
-              setState(() {
-                resourcesBloc.add(LoadResourcesEvent(rootId: widget.rootId, mediaType: widget.mediaType));
+    return Scaffold(
+      floatingActionButton: ElevatedButton(onPressed: (){
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return CustomDialog(rootId: widget.rootId, categoryName: widget.title,whichResources: 1,);
+            // AddResourceScreen(rootId: widget.categoryId!, whichResources: 1, categoryName: widget.categoryName!,); // Showing custom dialog
+          },
+        ).then((value) {
+          if(value){
+            setState(() {
+              resourcesBloc.add(LoadResourcesEvent(rootId: widget.rootId, mediaType: widget.mediaType));
 
-              });
-            }
-          });
-        }, child: Text("Add Resource")),
+            });
+          }
+        });
+      }, child: Text("Add Resource")),
 
-        body: SingleChildScrollView(
-          child: Column(
-            children: [
-              _resourcesVisible
-                  ? BlocConsumer<ResourcesBloc, ResourcesState>(
-                listener: (context, state) {
-                  if (state is ResourcesDelete) {
-                    context.showSnackBar(const SnackBar(
-                        duration: Duration(seconds: 2),
-                        content: Text('Ressource deleted successfully')));
-                    resourcesBloc.add(LoadResourcesEvent(rootId: widget.rootId, mediaType: widget.mediaType));
-                    //context.read<ResourcesBloc>().add(LoadResourcesEvent(rootId: widget.rootId, mediaType: ''));
-                  }
-                },
-                builder: (context, state) {
-                  if (state is ResourcesLoading) {
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            _resourcesVisible
+                ? BlocConsumer<ResourcesBloc, ResourcesState>(
+              listener: (context, state) {
+                if (state is ResourcesDelete) {
+                  context.showSnackBar(const SnackBar(
+                      duration: Duration(seconds: 2),
+                      content: Text('Ressource deleted successfully')));
+                  resourcesBloc.add(LoadResourcesEvent(rootId: widget.rootId, mediaType: widget.mediaType));
+                  //context.read<ResourcesBloc>().add(LoadResourcesEvent(rootId: widget.rootId, mediaType: ''));
+                }
+              },
+              builder: (context, state) {
+                if (state is ResourcesLoading) {
+                  return Container(
+                    height: MediaQuery.of(context).size.height * 0.9,
+
+                    child: const Center(
+                      child: CircularProgressIndicator(),
+                    ),
+                  );
+                }
+                if (state is ResourcesLoaded) {
+
+
+                  if (state.allResourcesModel.data!.record!.records!.isEmpty) {
                     return Container(
                       height: MediaQuery.of(context).size.height * 0.9,
-
                       child: const Center(
-                        child: CircularProgressIndicator(),
+                        child: Text('No Resources found.'),
                       ),
                     );
-                  }
-                  if (state is ResourcesLoaded) {
+                  } else {
 
-
-                    if (state.allResourcesModel.data!.record!.records!.isEmpty) {
-                      return Container(
-                        height: MediaQuery.of(context).size.height * 0.9,
-                        child: const Center(
-                          child: Text('No Resources found.'),
-                        ),
-                      );
-                    } else {
-
-                      return ListView.builder(
-                        shrinkWrap: true,
-                        physics: NeverScrollableScrollPhysics(),
-                        itemCount: state.allResourcesModel.data!.record!.records!.length,
-                        itemBuilder: (context, index) {
-                          final content = state.allResourcesModel.data!.record!.records![index].content.toString();
-                          final title = state.allResourcesModel.data!.record!.records![index].title;
-                          final sortedRecords = List.from(state.allResourcesModel.data!.record!.records!);
-                          sortedRecords.sort((a, b) => DateTime.parse(a.createdAt).compareTo(DateTime.parse(a.createdAt)));
-                          final rNumber = sortedRecords.indexOf(state.allResourcesModel.data!.record!.records![index]) + 1; // Get index of current record in sorted list and add 1 to make it R1, R2, ...
-
-                          return Card(
-                            elevation: 1,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12.0),
-                            ),
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 8.0),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  Expanded(
-                                    child: Container(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: Row(
-                                        mainAxisAlignment: MainAxisAlignment.start,
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          SizedBox(width: 8.0),
-                                          GestureDetector(
-                                            onTap: () {
-                                              print("popupmenuIcon dailogbox");
-                                              _showImageDialog(context, content, title.toString());
-                                            },
-                                            child: Container(
-                                              padding: const EdgeInsets.all(4.0),
-                                              decoration: BoxDecoration(
-                                                borderRadius: BorderRadius.circular(12.0),
-                                                color: const Color(0xFFF5F5F5),
-                                              ),
-                                              child: getFileType(content) == 'Photo'
-                                                  ? CachedNetworkImage(
-                                                imageUrl: 'https://selflearning.dtechex.com/public/image/$content',
-                                                fit: BoxFit.fitHeight,
-                                                height: 35,
-                                                width: 35,
-                                                progressIndicatorBuilder: (context, url, downloadProgress) => Center(
-                                                  child: CircularProgressIndicator(value: downloadProgress.progress),
-                                                ),
-                                                errorWidget: (context, url, error) => Icon(Icons.error),
-                                              )
-                                                  : getMediaType(content) == 'video'
-                                                  ? const Icon(Icons.video_camera_back_outlined, size: 35,)
-                                                  : getMediaType(content) == 'audio'
-                                                  ? const Icon(Icons.audiotrack, size: 35)
-                                                  : const Icon(Icons.text_format_sharp, size: 35),
-                                            ),
-                                          ),
-                                          Padding(
-                                            padding: const EdgeInsets.only(left: 8.0, top: 8.0),
-                                            child: Text("R$rNumber", // Use rNumber here
-                                                style: TextStyle(fontSize: 18.0, letterSpacing: 1, fontWeight: FontWeight.w500)
-                                            ),
-                                          ),
-                                          Padding(
-                                            padding: const EdgeInsets.only(left: 8.0, top: 8.0),
-                                            child: Text(
-                                              (title != null ? '${title.substring(0, 1).toUpperCase()}${title.substring(1)}' : 'Untitled'),
-                                              style: TextStyle(fontSize: 18.0, letterSpacing: 1, fontWeight: FontWeight.w500),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                  PopupMenuButton(
-                                    icon: Icon(Icons.more_vert,color: Colors.red,),
-                                    itemBuilder: (context) {
-                                      return [
-                                        const PopupMenuItem(
-                                            value: 'play',
-                                            child: InkWell(
-                                                child: Row(
-                                                  mainAxisAlignment: MainAxisAlignment.start,
-                                                  children: [
-                                                    Icon(Icons.update, color: primaryColor,),
-                                                    SizedBox(width: 8.0,),
-                                                    Text("Play prompts"),
-                                                  ],
-                                                ))
-                                        ),
-
-                                        const PopupMenuItem(
-                                            value: 'add',
-                                            child: InkWell(
-                                                child: Row(
-                                                  mainAxisAlignment: MainAxisAlignment.start,
-                                                  children: [
-                                                    Icon(Icons.update, color: primaryColor,),
-                                                    SizedBox(width: 8.0,),
-                                                    Text("Add prompts"),
-                                                  ],
-                                                ))
-                                        ),
-                                        const PopupMenuItem(
-                                            value: 'remove',
-                                            child: InkWell(
-                                                child: Row(
-                                                  mainAxisAlignment: MainAxisAlignment.start,
-                                                  children: [
-                                                    Icon(Icons.delete, color: primaryColor,),
-                                                    SizedBox(width: 8.0,),
-                                                    Text("Remove prompts"),
-                                                  ],
-                                                ))
-                                        ),
-                                      ];
-                                    },
-                                    onSelected: (String value) {
-                                      switch(value){
-                                        case 'play':
-                                          Navigator.push(context,
-                                              MaterialPageRoute(
-                                                builder: (context) {
-                                                  return PromtsScreen(
-                                                    content: state.allResourcesModel.data!.record!.records![index].content ?? state.allResourcesModel.data!.record!.records![index].title,
-                                                    mediaType: state.allResourcesModel.data!.record!.records![index].type!,
-                                                    promtId: state.allResourcesModel.data!.record!.records![index].sId!,
-                                                    fromType: Prompt.fromResource,
-                                                  );
-                                                },
-                                              ));
-                                          break;
-                                        case 'add':
-                                          context.push(AddPromptsScreen(
-                                            resourceId: state.allResourcesModel.data!.record!.records![index].sId.toString(),
-                                            categoryId: widget.rootId,
-                                          ));
-                                          break;
-                                        case 'remove':
-                                          resourcesBloc.add(
-                                              DeleteResourcesEvent(
-                                                  rootId: state.allResourcesModel.data!.record!.records![index].sId.toString()
-                                              )
-                                          );
-                                          break;
-                                      }
-                                    },
-                                  )
-                                ],
-                              ),
-                            ),
-                          );
-                        },
-                      );
-                    }
-                  }
-                  return const Text('something went wrong');
-                },
-              )
-                  : BlocBuilder<SubCategoryBloc, SubCategoryState>(
-                builder: (context, state) {
-                  if (state is SubCategoryLoading) {
-                    return Container(
-                        height: MediaQuery.of(context).size.height * 0.9,
-                        child: const Center(child: CircularProgressIndicator()));
-                  } else if (state is SubCategoryLoaded) {
-                    return state.cateList.isEmpty
-                        ? SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.9,
-                      child: const Center(
-                        child: Text(
-                          'No Subcategory added',
-                          style: TextStyle(
-                              fontSize: 19, fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                    )
-                        : ListView.builder(
-                      itemCount: state.cateList.length,
+                    return ListView.builder(
                       shrinkWrap: true,
                       physics: NeverScrollableScrollPhysics(),
+                      itemCount: state.allResourcesModel.data!.record!.records!.length,
                       itemBuilder: (context, index) {
-                        return GestureDetector(
-                          onTap: () async{
-                            //   await SharedPref().savesubcateId(state.cateList[index].sId!);
-                            Navigator.push(context, MaterialPageRoute(
-                              builder: (context) {
-                                return SubcategoryResourcesList(
-                                  //subCateTitle: state.cateList[index].name!,
-                                  rootId: state.cateList[index].sId!,
-                                  title: state.cateList[index].name!,
-                                  mediaType: '',
-                                  //color: widget.color,
-                                  //keyWords: state.cateList[index].keywords!,
-                                );
-                              },
-                            ));
-                          },
+                        final content = state.allResourcesModel.data!.record!.records![index].content.toString();
+                        final title = state.allResourcesModel.data!.record!.records![index].title;
+                        final sortedRecords = List.from(state.allResourcesModel.data!.record!.records!);
+                        sortedRecords.sort((a, b) => DateTime.parse(a.createdAt).compareTo(DateTime.parse(a.createdAt)));
+                        final rNumber = sortedRecords.indexOf(state.allResourcesModel.data!.record!.records![index]) + 1; // Get index of current record in sorted list and add 1 to make it R1, R2, ...
+
+                        return Card(
+                          elevation: 1,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12.0),
+                          ),
                           child: Padding(
-                              padding: const EdgeInsets.all(10),
-                              child: Container(
-                                decoration: BoxDecoration(
-                                    borderRadius:
-                                    BorderRadius.circular(10),
-                                    border: Border.all(
-                                        color: Color(int.parse(state
-                                            .cateList[index]
-                                            .styles![1]
-                                            .value!)),
-                                        width: 3),
-                                    color: Colors.transparent),
-                                padding: const EdgeInsets.only(left: 10),
-                                child: ListTile(
-                                    title: Text(
-                                      state.cateList[index].name.toString(),
-                                      style: const TextStyle(
-                                          color: primaryColor),
-                                    )),
-                              )),
+                            padding: const EdgeInsets.symmetric(vertical: 8.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Expanded(
+                                  child: Container(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.start,
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        SizedBox(width: 8.0),
+                                        GestureDetector(
+                                          onTap: () {
+                                            print("popupmenuIcon dailogbox");
+                                            _showImageDialog(context, content, title.toString());
+                                          },
+                                          child: Container(
+                                            padding: const EdgeInsets.all(4.0),
+                                            decoration: BoxDecoration(
+                                              borderRadius: BorderRadius.circular(12.0),
+                                              color: const Color(0xFFF5F5F5),
+                                            ),
+                                            child: getFileType(content) == 'Photo'
+                                                ? CachedNetworkImage(
+                                              imageUrl: 'https://selflearning.dtechex.com/public/image/$content',
+                                              fit: BoxFit.fitHeight,
+                                              height: 35,
+                                              width: 35,
+                                              progressIndicatorBuilder: (context, url, downloadProgress) => Center(
+                                                child: CircularProgressIndicator(value: downloadProgress.progress),
+                                              ),
+                                              errorWidget: (context, url, error) => Icon(Icons.error),
+                                            )
+                                                : getMediaType(content) == 'video'
+                                                ? const Icon(Icons.video_camera_back_outlined, size: 35,)
+                                                : getMediaType(content) == 'audio'
+                                                ? const Icon(Icons.audiotrack, size: 35)
+                                                : const Icon(Icons.text_format_sharp, size: 35),
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding: const EdgeInsets.only(left: 8.0, top: 8.0),
+                                          child: Text("R$rNumber", // Use rNumber here
+                                              style: TextStyle(fontSize: 18.0, letterSpacing: 1, fontWeight: FontWeight.w500)
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding: const EdgeInsets.only(left: 8.0, top: 8.0),
+                                          child: Text(
+                                            (title != null ? '${title.substring(0, 1).toUpperCase()}${title.substring(1)}' : 'Untitled'),
+                                            style: TextStyle(fontSize: 18.0, letterSpacing: 1, fontWeight: FontWeight.w500),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                                PopupMenuButton(
+                                  icon: Icon(Icons.more_vert,color: Colors.red,),
+                                  itemBuilder: (context) {
+                                    return [
+                                      const PopupMenuItem(
+                                          value: 'play',
+                                          child: InkWell(
+                                              child: Row(
+                                                mainAxisAlignment: MainAxisAlignment.start,
+                                                children: [
+                                                  Icon(Icons.update, color: primaryColor,),
+                                                  SizedBox(width: 8.0,),
+                                                  Text("Play prompts"),
+                                                ],
+                                              ))
+                                      ),
+
+                                      const PopupMenuItem(
+                                          value: 'add',
+                                          child: InkWell(
+                                              child: Row(
+                                                mainAxisAlignment: MainAxisAlignment.start,
+                                                children: [
+                                                  Icon(Icons.update, color: primaryColor,),
+                                                  SizedBox(width: 8.0,),
+                                                  Text("Add prompts"),
+                                                ],
+                                              ))
+                                      ),
+                                      const PopupMenuItem(
+                                          value: 'remove',
+                                          child: InkWell(
+                                              child: Row(
+                                                mainAxisAlignment: MainAxisAlignment.start,
+                                                children: [
+                                                  Icon(Icons.delete, color: primaryColor,),
+                                                  SizedBox(width: 8.0,),
+                                                  Text("Remove prompts"),
+                                                ],
+                                              ))
+                                      ),
+                                    ];
+                                  },
+                                  onSelected: (String value) {
+                                    switch(value){
+                                      case 'play':
+                                        Navigator.push(context,
+                                            MaterialPageRoute(
+                                              builder: (context) {
+                                                return PromtsScreen(
+                                                  content: state.allResourcesModel.data!.record!.records![index].content ?? state.allResourcesModel.data!.record!.records![index].title,
+                                                  mediaType: state.allResourcesModel.data!.record!.records![index].type!,
+                                                  promtId: state.allResourcesModel.data!.record!.records![index].sId!,
+                                                  fromType: Prompt.fromResource,
+                                                );
+                                              },
+                                            ));
+                                        break;
+                                      case 'add':
+                                        context.push(AddPromptsScreen(
+                                          resourceId: state.allResourcesModel.data!.record!.records![index].sId.toString(),
+                                          categoryId: widget.rootId,
+                                        ));
+                                        break;
+                                      case 'remove':
+                                        resourcesBloc.add(
+                                            DeleteResourcesEvent(
+                                                rootId: state.allResourcesModel.data!.record!.records![index].sId.toString()
+                                            )
+                                        );
+                                        break;
+                                    }
+                                  },
+                                )
+                              ],
+                            ),
+                          ),
                         );
                       },
                     );
                   }
-                  return const SizedBox(child: Text('Something went wrong'),);
-                },
-              ),
-              SizedBox(height: 120.0,),
-            ],
-          ),
-        )
-
+                }
+                return const Text('something went wrong');
+              },
+            )
+                : BlocBuilder<SubCategoryBloc, SubCategoryState>(
+              builder: (context, state) {
+                if (state is SubCategoryLoading) {
+                  return Container(
+                      height: MediaQuery.of(context).size.height * 0.9,
+                      child: const Center(child: CircularProgressIndicator()));
+                } else if (state is SubCategoryLoaded) {
+                  return state.cateList.isEmpty
+                      ? SizedBox(
+                    height: MediaQuery.of(context).size.height * 0.9,
+                    child: const Center(
+                      child: Text(
+                        'No Subcategory added',
+                        style: TextStyle(
+                            fontSize: 19, fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  )
+                      : ListView.builder(
+                    itemCount: state.cateList.length,
+                    shrinkWrap: true,
+                    physics: NeverScrollableScrollPhysics(),
+                    itemBuilder: (context, index) {
+                      return GestureDetector(
+                        onTap: () async{
+                          //   await SharedPref().savesubcateId(state.cateList[index].sId!);
+                          Navigator.push(context, MaterialPageRoute(
+                            builder: (context) {
+                              return SubcategoryResourcesList(
+                                //subCateTitle: state.cateList[index].name!,
+                                rootId: state.cateList[index].sId!,
+                                title: state.cateList[index].name!,
+                                mediaType: '',
+                                //color: widget.color,
+                                //keyWords: state.cateList[index].keywords!,
+                              );
+                            },
+                          ));
+                        },
+                        child: Padding(
+                            padding: const EdgeInsets.all(10),
+                            child: Container(
+                              decoration: BoxDecoration(
+                                  borderRadius:
+                                  BorderRadius.circular(10),
+                                  border: Border.all(
+                                      color: Color(int.parse(state
+                                          .cateList[index]
+                                          .styles![1]
+                                          .value!)),
+                                      width: 3),
+                                  color: Colors.transparent),
+                              padding: const EdgeInsets.only(left: 10),
+                              child: ListTile(
+                                  title: Text(
+                                    state.cateList[index].name.toString(),
+                                    style: const TextStyle(
+                                        color: primaryColor),
+                                  )),
+                            )),
+                      );
+                    },
+                  );
+                }
+                return const SizedBox(child: Text('Something went wrong'),);
+              },
+            ),
+            SizedBox(height: 120.0,),
+          ],
         ),
+      )
+
       );
   }
   Future<void> _showImageDialog(BuildContext context, String content, String title) async {

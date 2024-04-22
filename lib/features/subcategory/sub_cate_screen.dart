@@ -16,6 +16,7 @@ import 'package:self_learning_app/features/category/bloc/category_state.dart';
 import 'package:self_learning_app/features/create_flow/bloc/create_flow_screen_bloc.dart';
 import 'package:self_learning_app/features/dashboard/dashboard_screen.dart';
 import 'package:self_learning_app/features/flow_screen/start_flow_screen.dart';
+import 'package:self_learning_app/features/subcategory/SummaryBloc/summary_bloc.dart';
 import 'package:self_learning_app/features/subcategory/create_subcate_screen.dart';
 import 'package:self_learning_app/features/subcategory/primaryflow/data/repo/primaryflowRepo.dart';
 import 'package:self_learning_app/features/subcategory/primaryflow/primaryflow.dart';
@@ -63,7 +64,9 @@ class SubCategoryScreen extends StatefulWidget {
 class _SubCategoryScreenState extends State<SubCategoryScreen> {
   final TextEditingController _searchController = TextEditingController();
   final TextEditingController _flowSearchController = TextEditingController();
+  final TextEditingController _resourceSearchController = TextEditingController();
 
+  final ResourcesBloc resourcesBloc = ResourcesBloc();
 
 
 
@@ -337,9 +340,10 @@ class _SubCategoryScreenState extends State<SubCategoryScreen> {
               children: <Widget> [
                 Column(
                   children: [
+                    SizedBox(height: 5,),
                     SizedBox(
                       width: context.screenWidth,
-                      height: context.screenHeight * 0.08,
+                      height: context.screenHeight * 0.05,
                       child: BlocBuilder<SubCategoryBloc, SubCategoryState>(
                         builder: (context, state) {
                           if (state is SubCategoryLoading) {
@@ -419,9 +423,14 @@ class _SubCategoryScreenState extends State<SubCategoryScreen> {
                       child:             Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 10),
                           child: TextField(
-                            controller: _flowSearchController,
+                            controller: _resourceSearchController,
                             onChanged: (value) {
                               print("Text changed: $value");
+                              // context.read<ResourcesBloc>().add(
+                              //     LoadResourcesEvent(rootId: widget.rootId.toString(), mediaType: "",resourcQueary: value)
+                              // );
+
+
 
                             },
                             decoration: InputDecoration(

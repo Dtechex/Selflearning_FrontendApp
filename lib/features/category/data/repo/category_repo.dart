@@ -13,13 +13,13 @@ class CategoryRepo {
     dio.Response res;
     try {
       res = await dio.Dio().delete(
-        'https://selflearning.dtechex.com/web/category/${rootId}',
-        options: dio.Options(
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer $token'
-          },
-        )
+          'https://selflearning.dtechex.com/web/category/${rootId}',
+          options: dio.Options(
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer $token'
+            },
+          )
       );
 
       //print(res.body);
@@ -55,14 +55,17 @@ class CategoryRepo {
   static Future<List<SubCategoryModel>> getAllSubCategory(String? rootId) async {
     print('subcategory rootId $rootId');
     Response res = await Api().get(
-      endPoint: 'category/?rootId=$rootId',
+      endPoint: 'category/subCategory/?&categoryId=$rootId',
     );
+    //  endPoint: 'category/?rootId=$rootId&catId=$rootId',
+
+
     print(rootId);
     print(res.body);
     print('subcategory body');
     var data = await jsonDecode(res.body);
-    print("we can check summary${data} break");
-    List<dynamic> recordata = data['data']['record'];
+    print("we can check summary${data}----------- break2.0");
+    List<dynamic> recordata = data['subCategory']['record'];
     List<SubCategoryModel> recordList = [];
     if (recordata.isEmpty) {
       return recordList;
@@ -73,8 +76,33 @@ class CategoryRepo {
     }
     return recordList;
   }
+  static Future<List<MainCategoryModel>> getMainCategorySummary(String? rootId) async {
+    print('subcategory rootId $rootId');
+    Response res = await Api().get(
+      endPoint: 'category/subCategory/?&categoryId=$rootId',
+    );
+    //  endPoint: 'category/?rootId=$rootId&catId=$rootId',
 
-  //Search Category
+
+    print(rootId);
+    print(res.body);
+    print('subcategory body');
+    var data = await jsonDecode(res.body);
+    print("we can check summary${data}----------- break2.0");
+    List<dynamic> recordata = data['mainCategory']['record'];
+    List<MainCategoryModel> recordList = [];
+    if (recordata.isEmpty) {
+      return recordList;
+    } else {
+      for (var element in recordata) {
+        recordList.add(MainCategoryModel.fromJson(element));
+      }
+    }
+    return recordList;
+  }
+
+
+//Search Category
 
 
 }
