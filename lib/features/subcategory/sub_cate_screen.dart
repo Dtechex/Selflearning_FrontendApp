@@ -426,9 +426,9 @@ class _SubCategoryScreenState extends State<SubCategoryScreen> {
                             controller: _resourceSearchController,
                             onChanged: (value) {
                               print("Text changed: $value");
-                              // context.read<ResourcesBloc>().add(
-                              //     LoadResourcesEvent(rootId: widget.rootId.toString(), mediaType: "",resourcQueary: value)
-                              // );
+                              context.read<ResourcesBloc>().add(
+                                  LoadResourcesEvent(rootId: widget.rootId.toString(), mediaType: "",resourcQueary: value)
+                              );
 
 
 
