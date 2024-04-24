@@ -80,38 +80,44 @@ BaseOptions baseOptions = BaseOptions(
 );
 Dio dio = Dio(baseOptions);
 
-Future<void> main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
+  firebaseFun() async{
+   requestNotificationPermission();
 
-      options: DefaultFirebaseOptions.currentPlatform
-  );  requestNotificationPermission();
-  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
-  String? token = await _firebaseMessaging.getToken();
+   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
+   String? token = await _firebaseMessaging.getToken();
 
-  print("fcm token is ${token}  break here");
+   print("fcm token is ${token}  break here");
 
-  FirebaseMessaging.onMessage.listen((RemoteMessage message){
+   FirebaseMessaging.onMessage.listen((RemoteMessage message){
 
      print("Recieved message : ${message.notification?.body}");
      ScheduleflowScreenWidget();
      showSimpleNotification(Text(message.notification?.title??""),
-     subtitle: (Text(message.notification?.body??"")),
-       background: Colors.red.shade700,
-       duration: Duration(seconds: 2)
+         subtitle: (Text(message.notification?.body??"")),
+         background: Colors.red.shade700,
+         duration: Duration(seconds: 2)
      );
-  });
-  FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message){
-    print("Recieved message : ${message.notification?.body}");
-    showSimpleNotification(Text(message.notification?.title??""),
-        subtitle: (Text(message.notification?.body??"")),
-        background: Colors.red.shade700,
-        duration: Duration(seconds: 4)
-    );
-  });
+   });
+   FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message){
+     print("Recieved message : ${message.notification?.body}");
+     showSimpleNotification(Text(message.notification?.title??""),
+         subtitle: (Text(message.notification?.body??"")),
+         background: Colors.red.shade700,
+         duration: Duration(seconds: 4)
+     );
+   });
+   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
 
-  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+  }
+
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform
+  );
+   firebaseFun();
+
 
 
 
