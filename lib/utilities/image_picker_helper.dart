@@ -25,7 +25,7 @@ class ImagePickerHelper {
 
   static Future<String?> pickFile() async {
     FilePickerResult? result = await FilePicker.platform.pickFiles();
-
+         print("We press the audio section");
     if (result != null) {
       PlatformFile file = result.files.first;
       return file.path!;

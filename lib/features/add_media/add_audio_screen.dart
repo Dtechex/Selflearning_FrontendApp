@@ -249,6 +249,7 @@ class _AddAudioScreenState extends State<AddAudioScreen> {
                       const Spacer(flex: 1,),
                       ElevatedButton(
                           onPressed: () {
+                            print("audio file is here bro");
                             ImagePickerHelper.pickFile().then((value) {
                               if (value != null) {
                                 addMediaBloc.add(AudioPickEvent(audio: value));
@@ -265,39 +266,6 @@ class _AddAudioScreenState extends State<AddAudioScreen> {
                 ),
 
 
-/*
-                if(state.selectedFilepath!.isNotEmpty) Stack(
-                  children: [
-                    Container(
-                      decoration: BoxDecoration(
-                        color: Colors.grey,
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      height: context.screenHeight * 0.24,
-                      width: context.screenWidth,
-                      child: IconButton(
-                        icon: Icon(_isPlaying
-                            ? Icons.pause
-                            : Icons.play_arrow),
-                        onPressed: () {
-                          _togglePlayPause(state.selectedFilepath!);
-                        },
-                      ),
-                    ),
-                    Positioned(
-                      top: 10,
-                      right: 10,
-                      child: IconButton(
-                        icon: const Icon(Icons.delete),
-                        onPressed: () {
-                          audioPlayer.stop();
-                          addMediaBloc.add(RemoveMedia());
-                        },
-                      ),
-                    ),
-                  ],
-                ),
-*/
 
                 const SizedBox(
                   height: 30,
@@ -329,26 +297,6 @@ class _AddAudioScreenState extends State<AddAudioScreen> {
                 const SizedBox(
                   height: 30,
                 ),
-                // StreamBuilder<RecordingDisposition>(
-                //     stream: recorder.onProgress,
-                //     builder: (context, snapshot) {
-                //       final duration = snapshot.hasData
-                //           ? snapshot.data!.duration
-                //           : Duration.zero;
-                //       String twoDigits(int n) => n.toString().padLeft(2, '0');
-                //
-                //       final twoDigitMinutes = twoDigits(duration.inMinutes.remainder(60));
-                //       final twoDigitSeconds = twoDigits(duration.inSeconds.remainder(60));
-                //
-                //       return Text(
-                //         '$twoDigitMinutes:$twoDigitSeconds',
-                //         style: const TextStyle(
-                //           fontSize: 80,
-                //           fontWeight: FontWeight.bold,
-                //         ),
-                //       );
-                //
-                //     }),
 
                 ElevatedButton(
                   onPressed: () {
