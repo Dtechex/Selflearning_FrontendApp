@@ -1,6 +1,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 
 import '../schedule/cubit/scheduleflow_cubit.dart';
 import 'localNotification.dart';
@@ -19,10 +20,10 @@ class DateTimePickerDialog extends StatefulWidget {
 class _DateTimePickerDialogState extends State<DateTimePickerDialog> {
   DateTime? selectedDate;
   TimeOfDay? selectedTime;
+
   void alram({ DateTime? dateTime}) async {
     var newdate = dateTime?.toUtc();
     var localDateTime = newdate?.toLocal();
-
   }
 
 
@@ -35,10 +36,6 @@ class _DateTimePickerDialogState extends State<DateTimePickerDialog> {
 
   @override
   Widget build(BuildContext context) {
-    DateTime time = DateTime.parse("2024-04-09 12:50:00.000");
-    alram(dateTime: time);
-    print('we can check time $time');
-
     return AlertDialog(
       title: Row(
         children: [
@@ -52,15 +49,19 @@ class _DateTimePickerDialogState extends State<DateTimePickerDialog> {
         children: [
           Container(
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(6),
-              border: Border.all(
-                width: 1.5,
-                color: Colors.grey.shade200
-              )
+                borderRadius: BorderRadius.circular(6),
+                border: Border.all(
+                    width: 1.5,
+                    color: Colors.grey.shade200
+                )
             ),
             child: ListTile(
-              title: Text('Date',style: TextStyle(fontSize: 18,fontWeight: FontWeight.bold, color: Colors.black.withOpacity(0.8))),
-              subtitle: Text('${selectedDate?.year}-${selectedDate?.month}-${selectedDate?.day}',style: TextStyle(color: Colors.green),),
+              title: Text('Date', style: TextStyle(fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black.withOpacity(0.8))),
+              subtitle: Text(
+                '${selectedDate?.year}-${selectedDate?.month}-${selectedDate
+                    ?.day}', style: TextStyle(color: Colors.green),),
 
               onTap: _pickDate,
             ),
@@ -75,8 +76,11 @@ class _DateTimePickerDialogState extends State<DateTimePickerDialog> {
                 )
             ),
             child: ListTile(
-              title: Text('Time',style: TextStyle(fontSize: 18,fontWeight: FontWeight.bold, color: Colors.black.withOpacity(0.8))),
-              subtitle: Text('${selectedTime?.hour}:${selectedTime?.minute}',style: TextStyle(color: Colors.green)),
+              title: Text('Time', style: TextStyle(fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black.withOpacity(0.8))),
+              subtitle: Text('${selectedTime?.hour}:${selectedTime?.minute}',
+                  style: TextStyle(color: Colors.green)),
               onTap: _pickTime,
             ),
           ),
@@ -93,22 +97,30 @@ class _DateTimePickerDialogState extends State<DateTimePickerDialog> {
                 selectedTime!.hour,
                 selectedTime!.minute,
               );
-              print("scheduledDateTime---${scheduledDateTime}");
-              alram(dateTime: scheduledDateTime);
-              // NotificationService().scheduleNotification(
-              //     scheduledNotificationDateTime: scheduledDateTime,
-              //     timeZoneIdentifier: "Asia/Kolkata"
-              // );
 
-              context.read<ScheduleflowCubit>().addDateTime(
-                scheduledDateTime: scheduledDateTime,
-                flowId: widget.flowId.toString(),
-              );
-              Navigator.of(context).pop(true);
+              if (scheduledDateTime.isBefore(DateTime.now())) {
+                // If selected time is in the past
+                EasyLoading.showError("Past time can't be set");
+              } else {
+                // Notify user that past time can't be set
+                context.read<ScheduleflowCubit>().addDateTime(
+                  scheduledDateTime: scheduledDateTime,
+                  flowId: widget.flowId.toString(),
+                );
+                Navigator.of(context).pop(true);
+              }
             } else {
               // Handle case where date or time is not selected
             }
           },
+          style: ButtonStyle(
+            backgroundColor: MaterialStateProperty.resolveWith<Color>(
+                  (Set<MaterialState> states) {
+
+                return Colors.red;
+              },
+            ),
+          ),
           child: Text("Schedule flow"),
         ),
       ],
@@ -119,7 +131,7 @@ class _DateTimePickerDialogState extends State<DateTimePickerDialog> {
     final DateTime? pickedDate = await showDatePicker(
       context: context,
       initialDate: selectedDate!,
-      firstDate: DateTime.now(),
+      firstDate: DateTime.now(), // Set minimum date to today
       lastDate: DateTime.now().add(Duration(days: 365)),
     );
     if (pickedDate != null && pickedDate != selectedDate) {
@@ -135,9 +147,29 @@ class _DateTimePickerDialogState extends State<DateTimePickerDialog> {
       initialTime: selectedTime!,
     );
     if (pickedTime != null && pickedTime != selectedTime) {
-      setState(() {
-        selectedTime = pickedTime;
-      });
+      // Check if picked time is in the past
+      DateTime currentTime = DateTime.now();
+      DateTime pickedDateTime = DateTime(
+        selectedDate!.year,
+        selectedDate!.month,
+        selectedDate!.day,
+        pickedTime.hour,
+        pickedTime.minute,
+      );
+      if (pickedDateTime.isAfter(currentTime) ||
+          pickedDateTime.isAtSameMomentAs(currentTime)) {
+        setState(() {
+          selectedTime = pickedTime;
+        });
+      } else {
+        // Notify user that they cannot select past time
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+
+            content: Text("Cannot select past time"),
+          ),
+        );
+      }
     }
   }
 }
