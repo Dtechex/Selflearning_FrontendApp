@@ -1,6 +1,7 @@
 import 'package:blurrycontainer/blurrycontainer.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chewie/chewie.dart';
+import 'package:dio/dio.dart';
 import 'package:flick_video_player/flick_video_player.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -65,6 +66,7 @@ class _SubCategoryScreenState extends State<SubCategoryScreen> {
   final TextEditingController _searchController = TextEditingController();
   final TextEditingController _flowSearchController = TextEditingController();
   final TextEditingController _resourceSearchController = TextEditingController();
+  TextEditingController summaryController = TextEditingController();
 
   final ResourcesBloc resourcesBloc = ResourcesBloc();
 
@@ -73,6 +75,8 @@ class _SubCategoryScreenState extends State<SubCategoryScreen> {
   String? videoContent;
   @override
   void initState() {
+    context.read<SummaryBloc>().add(
+        SummaryLoadedEvent(rootId: widget.rootId));
 
     context.read<SubCategoryBloc>().add(
         SubCategoryLoadEvent(rootId: widget.rootId));
@@ -96,7 +100,38 @@ class _SubCategoryScreenState extends State<SubCategoryScreen> {
       fontSize: 20, fontWeight: FontWeight.bold);
   List<String> searchList = []; // Define searchList at the top of your widget
   List<String> resultList = []; // Results of the search
+  List<String> summary = [];
+  addCategory({required String summary}) async {
+    EasyLoading.show();
 
+    print("_---rood id is ${widget.rootId}");
+    final Dio _dio = Dio();
+    var token = await SharedPref().getToken();
+    Map<String, dynamic> headers = {
+      'Authorization': 'bearer' + ' ' + token.toString(),
+    };
+
+    var res = await _dio.patch(
+      'https://selflearning.dtechex.com/web/category/${widget.rootId}',
+      data: {"summary": summary},
+      options: Options(headers: headers),
+    );
+    print("main category update ${res.data}");
+    if (res.statusCode == 200) {
+      EasyLoading.dismiss();
+      summaryController.clear();
+      context.showSnackBar(
+          SnackBar(content: Text('Summary added successfully')));
+      context.read<SummaryBloc>().add(SummaryLoadedEvent(rootId: widget.rootId));
+      setState(() {
+
+      });
+    } else {
+      context.showSnackBar(
+          const SnackBar(content: Text('opps something went worng')));
+    }
+    print('data');
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -404,7 +439,15 @@ class _SubCategoryScreenState extends State<SubCategoryScreen> {
                       ),
                     ),
                     Expanded(
-                      child:SubCategoryWidget(color: widget.color,categoryName: widget.categoryName,rootId: widget.rootId,level: 1,)
+                      child: Column(
+                    children: [
+
+                  Expanded(
+                child: SubCategoryWidget(color: widget.color,categoryName: widget.categoryName,rootId: widget.rootId,level: 1,)
+
+                  ),
+              ],
+            ),
                     ),
                   ],
                 ),

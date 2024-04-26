@@ -682,7 +682,8 @@ class _AllCateScreenState extends State<AllCateScreen> {
 
                           borderRadius: BorderRadius.circular(10.0), //<-- SEE HERE
                         ),
-                        color: generateRandomColor(),
+                        color: currentColor,
+                        // generateRandomColor(),
                         //padding: const EdgeInsets.all(8),
                         // decoration: BoxDecoration(
                         //
@@ -699,7 +700,7 @@ class _AllCateScreenState extends State<AllCateScreen> {
                                   textAlign: TextAlign.center,
                                   overflow: TextOverflow.ellipsis,
                                   maxLines: 2,
-                                  style:  TextStyle(color: primaryColor, fontWeight: FontWeight.w500,letterSpacing: 1)),
+                                  style:  TextStyle(color: Colors.white, fontWeight: FontWeight.w500,letterSpacing: 1)),
                             ),
                             Align(
                               alignment: Alignment.topRight,

@@ -5,6 +5,7 @@ import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:self_learning_app/features/create_flow/bloc/create_flow_screen_bloc.dart';
 import 'package:self_learning_app/features/subcate1.2/final_resources_screen.dart';
+import 'package:self_learning_app/features/subcate1.2/search_category1.2/Subcategory1.2widget.dart';
 import 'package:self_learning_app/features/subcate1.2/search_category1.2/search_category_1.2.dart';
 import 'package:self_learning_app/utilities/extenstion.dart';
 import 'package:self_learning_app/widgets/add_resources_screen.dart';
@@ -17,6 +18,7 @@ import '../resources/subcategory2_resources_screen.dart';
 import '../resources/subcategory_resources_screen.dart';
 import '../search_subcategory/search_sub_cat.dart';
 import '../subcate1.1/update_subcate1.1_screen.dart';
+import '../subcategory/SummaryBloc/summary_bloc.dart';
 import '../subcategory/bloc/sub_cate_bloc.dart';
 import '../subcategory/bloc/sub_cate_state.dart';
 import '../subcategory/primaryflow/primaryflow.dart';
@@ -65,6 +67,8 @@ class _SubCategory2ScreenState extends State<SubCategory2Screen> {
 bool value = false;
   @override
   void initState() {
+    context.read<SummaryBloc>().add(
+        SummaryLoadedEvent(rootId: widget.rootId));
     context
         .read<SubCategory2Bloc>()
         .add(SubCategory2LoadEvent(rootId: widget.rootId));
@@ -352,8 +356,11 @@ bool value = false;
 
                       ),
                     ),
+
                     Expanded(
-                        child:SubCategoryWidget(color: widget.color,categoryName: widget.subCateTitle,rootId: widget.rootId,level: 3,)
+                        child: SubCategory2Widget(rootId: widget.rootId,color: widget.color, categoryName: widget.subCateTitle, level: 3),
+
+                      // SubCategoryWidget(color: widget.color,categoryName: widget.subCateTitle,rootId: widget.rootId,level: 3,)
                     ),
                   ],
                 ),

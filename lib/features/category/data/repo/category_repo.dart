@@ -39,6 +39,7 @@ class CategoryRepo {
     var data = await jsonDecode(res.body);
     print(data);
     List<dynamic> recordata = data['data']['record'];
+    print("we can ceck for subcategory data $recordata");
     List<CategoryModel> recordList = [];
     if (recordata.isEmpty) {
       return recordList;

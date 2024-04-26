@@ -264,6 +264,7 @@ class _AddResourceScreen2State extends State<AddResourceScreen2> {
     'Record Video',
     'Record Audio',
     'Enter Text',
+    'Add prompt'
   ];
 
   List<IconData> mediaIcons = [
@@ -271,6 +272,7 @@ class _AddResourceScreen2State extends State<AddResourceScreen2> {
     Icons.video_call_outlined,
     Icons.audio_file_outlined,
     Icons.text_increase,
+    Icons.folder
   ];
 
   Future<dynamic> getToken() async {
@@ -382,6 +384,12 @@ class _AddResourceScreen2State extends State<AddResourceScreen2> {
                                             },
                                           ));
                                         }
+                                        break;
+                                      case 4 :
+                                        {
+                                          Navigator.push(context, MaterialPageRoute(builder: (context)=>AddPromptsAddResourceScreen(categoryId: "1",resourceId: parentPromptId.toString(),)));
+
+                                        }
                                     }
                                   },
                                 ),
@@ -403,37 +411,37 @@ class _AddResourceScreen2State extends State<AddResourceScreen2> {
                 },
               ),
             ),
-          SizedBox(height: 10,),
-          Container(
-              padding: const EdgeInsets.only(top: 5, bottom: 5),
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  color: Colors.blue[50]),
-              width:double.infinity,
-              child: ListTile(
-                title: Text("Add Prompt"),
-                leading: Icon(Icons.file_copy),
-                trailing: (SizedBox(
-                  width: context.screenWidth / 3,
-
-                  child: Row(
-                    children: [
-                      SizedBox(
-                        width: context.screenWidth * 0.035,
-                      ),
-                      IconButton(onPressed: (){
-                        Navigator.push(context, MaterialPageRoute(builder: (context)=>AddPromptsAddResourceScreen(categoryId: "1",resourceId: parentPromptId.toString(),)));
-
-                      }, icon: Icon(Icons.add)),
-                    ],
-                  ),
-                )),
-              )
-
-          )
-            ,
-
-            SizedBox(height: 10,),
+          // SizedBox(height: 10,),
+          // Container(
+          //     padding: const EdgeInsets.only(top: 5, bottom: 5),
+          //     decoration: BoxDecoration(
+          //         borderRadius: BorderRadius.circular(10),
+          //         color: Colors.blue[50]),
+          //     width:double.infinity,
+          //     child: ListTile(
+          //       title: Text("Add Prompt"),
+          //       leading: Icon(Icons.file_copy),
+          //       trailing: (SizedBox(
+          //         width: context.screenWidth / 3,
+          //
+          //         child: Row(
+          //           children: [
+          //             SizedBox(
+          //               width: context.screenWidth * 0.035,
+          //             ),
+          //             IconButton(onPressed: (){
+          //               Navigator.push(context, MaterialPageRoute(builder: (context)=>AddPromptsAddResourceScreen(categoryId: "1",resourceId: parentPromptId.toString(),)));
+          //
+          //             }, icon: Icon(Icons.add)),
+          //           ],
+          //         ),
+          //       )),
+          //     )
+          //
+          // )
+          //   ,
+          //
+          //   SizedBox(height: 10,),
 
           ],
         ));

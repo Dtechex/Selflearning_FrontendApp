@@ -1,16 +1,16 @@
-import 'package:blurrycontainer/blurrycontainer.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:self_learning_app/features/create_flow/bloc/create_flow_screen_bloc.dart';
-import 'package:self_learning_app/features/resources/subcategory_resources_screen.dart';
-import 'package:self_learning_app/features/subcate1.2/bloc/sub_cate2_bloc.dart';
-import 'package:self_learning_app/features/subcategory/create_subcate_screen.dart';
+import 'package:self_learning_app/features/subcate1.1/subcategory1widget.dart';
 import 'package:self_learning_app/features/subcategory/update_subcategory.dart';
 import 'package:self_learning_app/utilities/extenstion.dart';
 
 import '../../utilities/colors.dart';
+import '../../utilities/shared_pref.dart';
 import '../../widgets/SubCategoryWidget.dart';
 import '../../widgets/add_resources_screen.dart';
 import '../create_flow/create_flow_screen.dart';
@@ -18,7 +18,9 @@ import '../create_flow/flow_screen.dart';
 import '../resources/maincategory_resources_screen.dart';
 import '../search_subcategory/search_sub_cat.dart';
 import '../subcate1.2/sub_category_1.2_screen.dart';
+import '../subcategory/SummaryBloc/summary_bloc.dart';
 import '../subcategory/bloc/sub_cate_bloc.dart';
+import '../subcategory/bloc/sub_cate_event.dart';
 import '../subcategory/bloc/sub_cate_state.dart';
 import '../subcategory/primaryflow/primaryflow.dart';
 import '../update_category/update_cate_screen.dart';
@@ -50,6 +52,7 @@ class _SubCategory1ScreenState extends State<SubCategory1Screen> {
   ];
   bool value = false;
   final TextEditingController _flowSearchController = TextEditingController();
+  TextEditingController summaryController = TextEditingController();
 
 
   List<IconData> mediaIcons = [
@@ -64,15 +67,53 @@ class _SubCategory1ScreenState extends State<SubCategory1Screen> {
 
   @override
   void initState() {
+    print("initstate is working");
+    context.read<SummaryBloc>().add(
+        SummaryLoadedEvent(rootId: widget.rootId));
     context.read<SubCategory1Bloc>().add(SubCategory1LoadEvent(rootId: widget.rootId));
     context.read<CreateFlowBloc>().add(LoadAllFlowEvent(catID: widget.rootId!));
 
     super.initState();
     _flowBloc.add(LoadAllFlowEvent(catID: widget.rootId));
   }
+  // final List<String> summary = [];
+
+
+  addCategory({required String summary}) async {
+    EasyLoading.show();
+
+    print("_---rood id is ${widget.rootId}");
+    final Dio _dio = Dio();
+    var token = await SharedPref().getToken();
+    Map<String, dynamic> headers = {
+      'Authorization': 'bearer' + ' ' + token.toString(),
+    };
+
+    var res = await _dio.patch(
+      'https://selflearning.dtechex.com/web/category/${widget.rootId}',
+      data: {"summary": summary},
+      options: Options(headers: headers),
+    );
+    print("main category update ${res.data}");
+    if (res.statusCode == 200) {
+      EasyLoading.dismiss();
+      summaryController.clear();
+      context.showSnackBar(
+          SnackBar(content: Text('Summary added successfully')));
+      context.read<SummaryBloc>().add(SummaryLoadedEvent(rootId: widget.rootId));
+      setState(() {
+
+      });
+    } else {
+      context.showSnackBar(
+          const SnackBar(content: Text('opps something went worng')));
+    }
+    print('data');
+  }
 
   @override
   Widget build(BuildContext context) {
+
     return DefaultTabController(
 
       length: 3,
@@ -80,14 +121,9 @@ class _SubCategory1ScreenState extends State<SubCategory1Screen> {
 
           appBar: AppBar(
             leading: IconButton(onPressed: (){
-              if(value==true){
                 Navigator.pop(context, true);
 
-              }
-              if(value == false){
-                Navigator.pop(context, false);
 
-              }
             }, icon: Icon(Icons.arrow_back),),
               title: Text(widget.subCateTitle),
               actions: [
@@ -264,12 +300,12 @@ class _SubCategory1ScreenState extends State<SubCategory1Screen> {
                       SizedBox(
                         width: context.screenWidth,
                         height: context.screenHeight * 0.08,
-                        child: BlocBuilder<SubCategoryBloc, SubCategoryState>(
+                        child: BlocBuilder<SubCategory1Bloc, SubCategory1State>(
                           builder: (context, state) {
                             if (state is SubCategoryLoading) {
                               return const Center(child: CircularProgressIndicator());
                             }
-                            else if (state is SubCategoryLoaded) {
+                            else if (state is SubCategory1Loaded) {
                               List<Map<String, dynamic>> searchList = state.cateList.map((
                                   item) {
                                 return {
@@ -324,7 +360,78 @@ class _SubCategory1ScreenState extends State<SubCategory1Screen> {
                         ),
                       ),
                       Expanded(
-                          child:SubCategoryWidget(color: widget.color,categoryName: widget.subCateTitle,rootId: widget.rootId,level: 2,)
+                          child: Column(
+                            children: [
+
+                              // SizedBox(
+                              //   height: 1,
+                              //   child: BlocBuilder<SummaryBloc, SummaryState>(builder: (context, state){
+                              //     if(state is SummaryLoading){
+                              //       return SizedBox();
+                              //       //   Center(
+                              //       //   child: Container(
+                              //       //     height: 50,
+                              //       //     width: 50,
+                              //       //     child: CircularProgressIndicator(),
+                              //       //   ),
+                              //       // );
+                              //     }
+                              //     if(state is SummaryLoadedState){
+                              //
+                              //
+                              //       return  CustomScrollView(
+                              //
+                              //         slivers: [
+                              //
+                              //
+                              //                                                    SliverList(
+                              //                                                       delegate
+                              //                                                           : SliverChildBuilderDelegate(
+                              //                                                             (BuildContext context, int index) {
+                              //                                                           return Container(
+                              //                                                             padding: EdgeInsets.symmetric(horizontal: 5, vertical: 5),
+                              //                                                             margin: EdgeInsets.symmetric(vertical: 5, horizontal: 8),
+                              //                                                             decoration: BoxDecoration(
+                              //                                                               color: Colors.white70,
+                              //                                                               borderRadius: BorderRadius.circular(5),
+                              //                                                               border: Border.all(width: 0.2, color: Colors.black87),
+                              //                                                             ),
+                              //                                                             child: Text(
+                              //                                                               state.sumaryList[0].summary[index], // Use i instead of index
+                              //                                                               style: TextStyle(
+                              //                                                                 fontWeight: FontWeight.w100,
+                              //                                                                 color: Colors.black87,
+                              //                                                                 fontSize: 13,
+                              //                                                                 letterSpacing: 1,
+                              //                                                                 decorationThickness: 0.5,
+                              //                                                                 wordSpacing: 1,
+                              //                                                                 height: 1.2,
+                              //                                                               ),
+                              //                                                             ),
+                              //                                                           );
+                              //                                                         },
+                              //                                                         childCount: state.sumaryList[0].summary.length,
+                              //                                                       ),
+                              //                                                     ),
+                              //
+                              //         ],
+                              //       );
+                              //
+                              //
+                              //
+                              //     }
+                              //
+                              //     return Center(child: Text("Something wents wrong"),);
+                              //
+                              //   }),
+                              // ),
+                              Expanded(
+                                child: SubCategory1Widget(color: widget.color,categoryName: widget.subCateTitle, level: 2,rootId: widget.rootId,)
+                              ),
+                            ],
+                          ),
+
+                        // SubCategoryWidget(color: widget.color,categoryName: widget.subCateTitle,rootId: widget.rootId,level: 2,)
                       ),
                     ],
                   ),

@@ -39,7 +39,9 @@ import 'features/maincatbottomSheet/bottomSheetCubit/main_bottom_sheet_cubit.dar
 import 'features/quick_add/PromptBloc/quick_prompt_bloc.dart';
 import 'features/search_subcategory/bloc/search_cat_bloc.dart';
 import 'features/subcate1.1/bloc/sub_cate1_bloc.dart';
+import 'features/subcate1.1/summary2bloc/summary2_bloc.dart';
 import 'features/subcate1.2/bloc/sub_cate2_bloc.dart';
+import 'features/subcate1.2/summary3bloc/summary3_bloc.dart';
 import 'firebase_options.dart';
 
 @pragma("vm:entry-point")
@@ -211,6 +213,11 @@ class MyApp extends StatelessWidget {
           BlocProvider<MainBottomSheetCubit>(create: (context) => MainBottomSheetCubit()),
           BlocProvider<ScheduleflowCubit>(create: (context) => ScheduleflowCubit()),
           BlocProvider<SummaryBloc>(create: (context) => SummaryBloc()),
+          BlocProvider<Summary2Bloc>(create: (context) => Summary2Bloc()),
+          BlocProvider<Summary3Bloc>(create: (context) => Summary3Bloc()),
+
+
+
 
 
 
