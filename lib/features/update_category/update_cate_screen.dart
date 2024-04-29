@@ -351,23 +351,23 @@ class _UpdateCateScreenState extends State<UpdateCateScreen> {
                 SizedBox(
                   height: 20,
                 ),
-                SizedBox(
-                  width: context.screenWidth * 0.35,
-                  height: context.screenHeight * 0.068,
-                  child: ElevatedButton(
-                      onPressed: () {
-                        if (categoryNameController.text.isEmpty ||
-                            categoryNameController == null) {
-                          context.showSnackBar(const SnackBar(
-                              content: Text('Category Name is Requried')));
-                        } else {
-                          deleteCategory();
-                        }
-                      },
-                      child: isLoading == true
-                          ? const CircularProgressIndicator()
-                          : const Text('Delete Category')),
-                )
+                // SizedBox(
+                //   width: context.screenWidth * 0.35,
+                //   height: context.screenHeight * 0.068,
+                //   child: ElevatedButton(
+                //       onPressed: () {
+                //         if (categoryNameController.text.isEmpty ||
+                //             categoryNameController == null) {
+                //           context.showSnackBar(const SnackBar(
+                //               content: Text('Category Name is Requried')));
+                //         } else {
+                //           deleteCategory();
+                //         }
+                //       },
+                //       child: isLoading == true
+                //           ? const CircularProgressIndicator()
+                //           : const Text('Delete Category')),
+                // )
               ],
             ),
           ),

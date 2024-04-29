@@ -109,6 +109,26 @@ class _FlowScreenState extends State<FlowScreen> {
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
+
+              Container(
+                padding: EdgeInsets.symmetric(vertical: 0, horizontal: 5),
+                decoration: BoxDecoration(
+                  color: Colors.grey.shade200,
+                  borderRadius: BorderRadius.circular(2),
+                  border: Border.all(width: 1.5, color: Colors.grey)
+                ),
+                child: TextField(
+                  controller: titleController,
+                  decoration: InputDecoration(
+                    hintText: 'Enter Flow name...',
+                    border: InputBorder.none
+
+                  ),
+
+                ),
+              ),
+              SizedBox(height: 5,),
+
               TextFieldTags(
                 textfieldTagsController: _controller,
                 initialTags: const ['tags'],
@@ -210,12 +230,6 @@ class _FlowScreenState extends State<FlowScreen> {
                 },
               ),
 
-              TextField(
-                controller: titleController,
-                decoration: InputDecoration(
-                  hintText: 'Enter Flow name...',
-                ),
-              ),
             ],
           ),
           actions: <Widget>[
