@@ -41,7 +41,7 @@ class MainCatBottomSheet extends StatefulWidget {
 
 class _MainCatBottomSheetState extends State<MainCatBottomSheet> {
   Color? pickedColor = Colors.green;
-  TextEditingController categoryNameController = TextEditingController();
+  TextEditingController categoryName1Controller = TextEditingController();
   final TextfieldTagsController _controller = TextfieldTagsController();
 
   bool? isLoading = false;
@@ -73,7 +73,7 @@ class _MainCatBottomSheetState extends State<MainCatBottomSheet> {
     );
   }
 
-  Future<int?> addCategory() async {
+  Future<int?> addCategory({required String catName}) async {
     isLoading = true;
     Map<String, dynamic> payload = {};
     List<String> keywords = _controller.getTags!;
@@ -82,7 +82,7 @@ class _MainCatBottomSheetState extends State<MainCatBottomSheet> {
       {"key": "background-color", "value": pickedColor!.value.toString()}
     ];
     payload.addAll({
-      "name": categoryNameController.text,
+      "name":catName ,
     });
     payload.addAll({"keywords": keywords});
     payload.addAll({"styles": styles});
@@ -134,6 +134,7 @@ class _MainCatBottomSheetState extends State<MainCatBottomSheet> {
     super.initState();
   }
   void _showDialog(BuildContext context) {
+    categoryName1Controller.clear();
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -172,7 +173,7 @@ class _MainCatBottomSheetState extends State<MainCatBottomSheet> {
                           inputFormatters: [
                             LengthLimitingTextInputFormatter(80),
                           ],
-                          controller: categoryNameController,
+                          controller: categoryName1Controller,
                           onChanged: (value) {},
                           decoration: InputDecoration(
                             hintText: 'Title',
@@ -185,7 +186,7 @@ class _MainCatBottomSheetState extends State<MainCatBottomSheet> {
                             //     ? 'Please ensure the email entered is valid'
                             //     : null,
                           ),
-                          keyboardType: TextInputType.emailAddress,
+                          keyboardType: TextInputType.text,
                           onFieldSubmitted: (value) {},
                           textInputAction: TextInputAction.next,
                         ))),
@@ -315,12 +316,12 @@ class _MainCatBottomSheetState extends State<MainCatBottomSheet> {
                   height: context.screenHeight * 0.068,
                   child: ElevatedButton(
                       onPressed: () {
-                        if (categoryNameController.text.isEmpty ||
-                            categoryNameController == null) {
+                        if (categoryName1Controller.text.isEmpty ||
+                            categoryName1Controller == null) {
                           context.showSnackBar(const SnackBar(
                               content: Text('Category Name is Requried')));
                         } else {
-                          addCategory();
+                          addCategory(catName: categoryName1Controller.text);
                         }
                       },
                       child: isLoading == true

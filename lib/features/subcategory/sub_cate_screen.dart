@@ -132,6 +132,17 @@ class _SubCategoryScreenState extends State<SubCategoryScreen> {
     }
     print('data');
   }
+  bool _validateTags(String value) {
+    // Check if there is more than one space character after a tag
+    if (value.contains("  ")) { // Two consecutive spaces
+      int index = value.lastIndexOf("  ");
+      // Check if the last two spaces are not at the end
+      if (index != value.length - 2) {
+        return false;
+      }
+    }
+    return true;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -507,21 +518,43 @@ class _SubCategoryScreenState extends State<SubCategoryScreen> {
                   borderRadius: BorderRadius.circular(10)
               ),
             child:
-            Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 10),
-                  child: TextField(
-                    controller: _flowSearchController,
-                    onChanged: (value) {
-                      print("Text changed: $value");
-                      context.read<CreateFlowBloc>().add(LoadAllFlowEvent(catID: widget.rootId!,keyword: value));
 
-                    },
-                    decoration: InputDecoration(
-                      border: InputBorder.none,
-                      hintText: 'Search flow...',
-                    ),
-                  )
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              child: TextField(
+                controller: _flowSearchController,
+                onChanged: (value) {
+                  print("Text changed: $value");
+                  bool isValid = _validateTags(value);
+                  if (!isValid) {
+                    // Show warning or handle invalid input
+                    print("Please enter the tag");
+                  } else {
+                    context.read<CreateFlowBloc>().add(LoadAllFlowEvent(catID: widget.rootId!, keyword: value));
+                  }
+                },
+                decoration: InputDecoration(
+                  border: InputBorder.none,
+                  hintText: 'Search flow...',
+                ),
+              ),
             ),
+
+            // Padding(
+            //       padding: const EdgeInsets.symmetric(horizontal: 10),
+            //       child: TextField(
+            //         controller: _flowSearchController,
+            //         onChanged: (value) {
+            //           print("Text changed: $value");
+            //           context.read<CreateFlowBloc>().add(LoadAllFlowEvent(catID: widget.rootId!,keyword: value));
+            //
+            //         },
+            //         decoration: InputDecoration(
+            //           border: InputBorder.none,
+            //           hintText: 'Search flow...',
+            //         ),
+            //       )
+            // ),
             ),
 
             Expanded(

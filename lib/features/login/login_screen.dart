@@ -221,7 +221,9 @@ class EmailInput extends StatelessWidget {
             child: Align(
               alignment: Alignment.centerLeft,
               child: TextFormField(
+/*
                 initialValue: state.email.value,
+*/
                 decoration: InputDecoration(
                   contentPadding: EdgeInsets.symmetric(vertical: 0.0, horizontal: 0.0),
                   hintText: 'david@gmail.com',
@@ -270,7 +272,9 @@ class PasswordInput extends StatelessWidget {
               alignment: Alignment.centerLeft,
               child: TextFormField(
                 obscureText: !state.isObsecure,
+/*
                 initialValue: state.password.value,
+*/
                 decoration: InputDecoration(
                   suffixIcon: IconButton(
                       onPressed: () {

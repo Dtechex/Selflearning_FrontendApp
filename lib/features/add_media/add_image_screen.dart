@@ -68,6 +68,7 @@ class _AddImageScreenState extends State<AddImageScreen> {
                 print('state.wichResources');
                 context.read<ResourcesBloc>().add(LoadResourcesEvent(rootId: widget.rootId, mediaType: ''));
                 context.read<AddPromptResCubit>()..getResPrompt(dailogId: widget.rootId);
+                Navigator.pop(context, true);
 
 
                 /*switch (state.wichResources) {

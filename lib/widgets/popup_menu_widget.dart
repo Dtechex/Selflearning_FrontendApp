@@ -190,7 +190,12 @@ class _CustomDialogState extends State<CustomDialog> {
                                             whichResources: widget.whichResources!,
                                           );
                                         },
-                                      ));
+                                      )).then((value) {
+                                        setState(() {
+                                          context.read<ResourcesBloc>().add(LoadResourcesEvent(rootId: widget.rootId!, mediaType: ''));
+
+                                        });
+                                      });
                                     }
                                     break;
                                   case 1:
