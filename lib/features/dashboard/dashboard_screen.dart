@@ -31,6 +31,8 @@ class DashBoardScreen extends StatelessWidget {
       child: BlocBuilder<DashboardBloc, int>(
         builder: (context, state) {
           return Scaffold(
+            backgroundColor: Colors.white70,
+
             appBar: AppBar(
 
               leading: Padding(
@@ -41,7 +43,7 @@ class DashBoardScreen extends StatelessWidget {
                   ),
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(8.0),
-                    child: Image.asset('assets/icon.png',),
+                    child: Image.asset('assets/savant.png',),
                   ),
                 ),
               ),

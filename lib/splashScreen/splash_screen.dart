@@ -68,7 +68,7 @@ class _SplashScreenState extends State<SplashScreen> {
             children: [
               FadeOutParticle(
                 disappear: true,
-                child: Text('Self Learning', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold,
+                child: Text('Savant', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold,
                   fontSize: 24
                 ),),
                 duration: Duration(seconds: 5),

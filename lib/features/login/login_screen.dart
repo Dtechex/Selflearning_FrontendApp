@@ -190,7 +190,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 color: Colors.white,
                                 borderRadius: BorderRadius.circular(20)),
                             child:  Center(
-                              child:Image.asset("assets/icon.png"),
+                              child:Image.asset("assets/savant.png"),
                             ))),
 
                   ],

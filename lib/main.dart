@@ -115,10 +115,10 @@ Dio dio = Dio(baseOptions);
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
+  /*await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform
   );
-   firebaseFun();
+   firebaseFun();*/
 
 
 
@@ -231,7 +231,7 @@ class MyApp extends StatelessWidget {
                 locale: DevicePreview.locale(context),
               builder: EasyLoading.init(),
                 debugShowCheckedModeBanner: false,
-                title: 'Self Learning',
+                title: 'Savant',
                 theme: ThemeData(
                   floatingActionButtonTheme: const FloatingActionButtonThemeData(
                       backgroundColor: primaryColor),

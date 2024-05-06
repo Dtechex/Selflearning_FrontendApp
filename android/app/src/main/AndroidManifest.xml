@@ -18,7 +18,7 @@
 
     <application
         android:usesCleartextTraffic="true"
-        android:label="self_learning_app"
+        android:label="Savant"
         android:name="${applicationName}"
         android:icon="@mipmap/launcher_icon"
         android:requestLegacyExternalStorage="true"
