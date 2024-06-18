@@ -6,25 +6,9 @@ import '../schedule/cubit/scheduleflow_cubit.dart';
 import '../schedule/scheduleFlowsbook/scheduleFlowsBook.dart';
 import 'dateTimePicker.dart';
 
-class ScheduleflowScreenWidget extends StatefulWidget {
-  const ScheduleflowScreenWidget({super.key});
-
-  @override
-  State<ScheduleflowScreenWidget> createState() =>
-      _ScheduleflowScreenWidgetState();
-}
 
 class _ScheduleflowScreenWidgetState extends State<ScheduleflowScreenWidget> {
-  DateTime? currentDate;
-  TimeOfDay? currentTime;
 
-  @override
-  void initState() {
-    super.initState();
-    currentDate = DateTime.now();
-    currentTime = TimeOfDay.now();
-    context.read<ScheduleflowCubit>().getFlow();
-  }
 
   Widget build(BuildContext context) {
     return Scaffold(

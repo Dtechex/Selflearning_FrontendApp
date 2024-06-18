@@ -24,7 +24,6 @@ class DashBoardScreen extends StatelessWidget {
     // DailogScreen(),
     Schedule(),
   ];
-
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
