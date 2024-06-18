@@ -31,7 +31,7 @@ class _LoginScreenState extends State<LoginScreen> {
               if (state.status.isSubmissionSuccess) {
                 ScaffoldMessenger.of(context).hideCurrentSnackBar();
                 Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) =>
-                    const DashBoardScreen()), (Route<dynamic> route) => false);
+                     DashBoardScreen(msgstatus: false,)), (Route<dynamic> route) => false);
               }
               if (state.status.isSubmissionInProgress) {
                 ScaffoldMessenger.of(context)

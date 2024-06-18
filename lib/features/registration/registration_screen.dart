@@ -1,3 +1,4 @@
+import 'package:blurrycontainer/blurrycontainer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:formz/formz.dart';
@@ -22,147 +23,95 @@ class SignUpScreen extends StatefulWidget {
 class _SignUpScreenState extends State<SignUpScreen> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return  Scaffold(
+      backgroundColor: primaryColor,
       //  appBar: AppBar(title: const Text('Login')),
-        body: SingleChildScrollView(
-          child: BlocListener<SignUpBloc, SignUpState>(
-              listener: (context, state) {
-                if (state.status.isSubmissionSuccess) {
-                  ScaffoldMessenger.of(context)
-                    ..hideCurrentSnackBar()
-                    ..showSnackBar(
-                      const SnackBar(content: Text('SignUp Successfully....')),
-                    );
-                  Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) =>
-                      const LoginScreen()), (Route<dynamic> route) => false);
-                }
-                if (state.status.isSubmissionInProgress) {
-                  ScaffoldMessenger.of(context)
-                    ..hideCurrentSnackBar()
-                    ..showSnackBar(
-                      const SnackBar(content: Text('Please wait....')),
-                    );
-                }
-                if (state.status.isSubmissionFailure) {
-                  ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                  showDialog<void>(
-                    context: context,
-                    builder: (_) => SuccessDialog(dailogText: state.statusText),
-                  );
-                }
-              },
-              child: Container(
-                color: primaryColor,
-                child: Stack(
-                  children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Container(
-                          color: primaryColor,
-                          height: context.screenHeight * 0.18,
-                        ),
-                        Container(
-                          padding: const EdgeInsets.only(left: 15, right: 15),
-                          decoration: const BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.only(
-                                  topRight: Radius.circular(20),
-                                  topLeft: Radius.circular(20))),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              SizedBox(
-                                height: context.screenHeight * 0.1,
-                              ),
-                              const Text(
-                                'Signup with Email ID',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 20,
-                                ),
-                              ),
-                              SizedBox(
-                                height: context.screenHeight * 0.02,
-                              ),
-                              const Text(
-                                'Please Sign up to continue using our app.',
-                                style: TextStyle(
-                                    color: Colors.black,
-                                    // height: 1.5,
-                                    fontSize: 15),
-                              ),
-                              SizedBox(
-                                height: context.screenHeight * 0.025,
-                              ),
-                              const NameInput(),
-                              SizedBox(
-                                height: context.screenHeight * 0.025,
-                              ),
-                              const EmailInput(),
-                              SizedBox(
-                                height: context.screenHeight * 0.025,
-                              ),
-                              const PasswordInput(),
-                              SizedBox(
-                                height: context.screenHeight * 0.025,
-                              ),
-                              const ConfirmPasswordInput(),
-                              SizedBox(
-                                height: context.screenHeight * 0.05,
-                              ),
-                              const SubmitButton(),
-                              SizedBox(
-                                height: context.screenHeight * 0.03,
-                              ),
-                              Row(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  const Text('Already have an Account?',style: TextStyle(
-                                      fontSize: 16
-                                  ),),
-                                  TextButton(
-                                      child: const Text('Sign In',style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 16
-                                      ),),
-                                      onPressed: () {
-                                        Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) =>
-                                            LoginScreen()), (Route<dynamic> route) => false);
-                                      }
-                                  ),
-                                ],
-                              ),
-                              SizedBox(
-                                height: context.screenHeight * 0.07,
-                              ),
-                            ],
-                          ),
-                        )
-                      ],
-                    ),
-                    Positioned(
-                        left: context.screenWidth / 2.75,
-                        top: context.screenHeight * 0.12,
-                        child: Container(
-                            height: context.screenHeight * 0.14,
-                            width: context.screenWidth / 3.5,
-                            decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(20)),
-                            child: const Center(
-                              child: Text('    Self \nLearning',
-                                  style: TextStyle(
-                                      fontSize: 20,
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.bold)),
-                            ))),
-                  ],
-                ),
-              )),
+        body: Stack(
+          children:
+         [
+           Column(
+             mainAxisAlignment: MainAxisAlignment.center,
+             children: [
+               Padding(
+                 padding: EdgeInsets.symmetric(horizontal: 8),
+                 child: BlurryContainer(
+                   padding: EdgeInsets.symmetric(horizontal: 8),
+
+                   blur: 5,
+                   color: Colors.grey.shade100.withOpacity(0.5),
+                   elevation: 10,
+                   width: double.infinity,
+                   child: Column(
+                     children: [
+                       SizedBox(height: 50,),
+                       Row(
+                         mainAxisAlignment: MainAxisAlignment.start,
+                         children: [
+                           Text("SignUp", style: TextStyle(color: Colors.indigoAccent,
+                           fontSize: 25,
+                             letterSpacing: 1,
+                             fontWeight: FontWeight.w500
+                           ),),
+                         ],
+                       ),
+                       SizedBox(height: 50,),
+                       const NameInput(),
+                       SizedBox(
+                         height: context.screenHeight * 0.025,
+                       ),
+                       const EmailInput(),
+                       SizedBox(
+                         height: context.screenHeight * 0.025,
+                       ),
+                       const PasswordInput(),
+                       SizedBox(
+                         height: context.screenHeight * 0.025,
+                       ),
+                       const ConfirmPasswordInput(),
+                       SizedBox(
+                         height: context.screenHeight * 0.05,
+                       ),
+                       const SubmitButton(),
+                       Text('Already have an Account?',style: TextStyle(
+                           fontSize: 16
+                       ),),
+                       TextButton(
+                           child: const Text('Sign In',style: TextStyle(
+                               fontWeight: FontWeight.bold,
+                               fontSize: 16
+                           ),),
+                           onPressed: () {
+                             Navigator.pop(context);
+
+                           }
+                       ),
+                     ],
+                   ),
+
+                 ),
+               ),
+
+             ],
+           ),
+           Positioned(
+             top: MediaQuery.of(context).size.height*0.14,
+             left: MediaQuery.of(context).size.width*0.3,
+             right: MediaQuery.of(context).size.width*0.3,
+             height: 100, // Height inside BlurryContainer
+             child: BlurryContainer(
+               elevation: 10,
+               blur: 6,
+               color: Colors.grey.shade100.withOpacity(0.5),
+               child: Center(
+                 child: Text(
+                   'Savant',
+                   style: TextStyle(fontSize: 24, color: primaryColor),
+                 ),
+               ),
+             ),
+           ),
+         ]
+
         ));
   }
 }
@@ -176,10 +125,12 @@ class NameInput extends StatelessWidget {
       builder: (context, state) {
         return Container(
             padding: const EdgeInsets.only(left: 10, right: 5),
-            height: context.screenHeight * 0.1,
+
             decoration: BoxDecoration(
-                color: Colors.grey.withOpacity(0.4),
-                borderRadius: BorderRadius.circular(20)),
+                color: Colors.grey.shade200,
+                borderRadius: BorderRadius.circular(5),
+                border: Border.all(width: 1, color: Colors.grey)
+            ),
             child: Align(
               alignment: Alignment.centerLeft,
               child: TextFormField(
@@ -189,8 +140,8 @@ class NameInput extends StatelessWidget {
                   border: InputBorder.none,
                   icon: Icon(
                     Icons.account_circle_outlined,
-                    size: context.screenWidth>1280?50:context.screenWidth * 0.08,
-                  ),
+                    color: primaryColor,
+                    size: context.screenWidth>1280?50:context.screenWidth * 0.06,                  ),
                   errorText: state.email.invalid
                       ? 'Please ensure the name entered is valid'
                       : null,
@@ -216,10 +167,11 @@ class EmailInput extends StatelessWidget {
       builder: (context, state) {
         return Container(
             padding: const EdgeInsets.only(left: 10, right: 5),
-            height: context.screenHeight * 0.1,
             decoration: BoxDecoration(
-                color: Colors.grey.withOpacity(0.4),
-                borderRadius: BorderRadius.circular(20)),
+                color: Colors.grey.shade200,
+                borderRadius: BorderRadius.circular(5),
+                border: Border.all(width: 1, color: Colors.grey)
+            ),
             child: Align(
               alignment: Alignment.centerLeft,
               child: TextFormField(
@@ -229,8 +181,8 @@ class EmailInput extends StatelessWidget {
                   border: InputBorder.none,
                   icon: Icon(
                     Icons.email,
-                    size: context.screenWidth>1280?50:context.screenWidth * 0.08,
-                  ),
+                    color: primaryColor,
+                    size: context.screenWidth>1280?50:context.screenWidth * 0.06,                  ),
                   errorText: state.email.invalid
                       ? 'Please ensure the email entered is valid'
                       : null,
@@ -260,10 +212,11 @@ class PasswordInput extends StatelessWidget {
         print(state.password);
         return Container(
             padding: const EdgeInsets.only(left: 10, right: 5),
-            height: context.screenHeight * 0.1,
             decoration: BoxDecoration(
-                color: Colors.grey.withOpacity(0.4),
-                borderRadius: BorderRadius.circular(20)),
+                color: Colors.grey.shade200,
+                borderRadius: BorderRadius.circular(5),
+              border: Border.all(width: 1, color: Colors.grey)
+            ),
             child: Align(
               alignment: Alignment.centerLeft,
               child: TextFormField(
@@ -281,8 +234,8 @@ class PasswordInput extends StatelessWidget {
                   border: InputBorder.none,
                   icon: Icon(
                     Icons.lock,
-                    size: context.screenWidth>1280?50:context.screenWidth * 0.08,
-                  ),
+                    color: primaryColor,
+                    size: context.screenWidth>1280?50:context.screenWidth * 0.06,                  ),
                   errorText: state.password.invalid
                       ? 'Please ensure password is valid'
                       : null,
@@ -313,10 +266,11 @@ class ConfirmPasswordInput extends StatelessWidget {
 
         return Container(
             padding: const EdgeInsets.only(left: 10, right: 5),
-            height: context.screenHeight * 0.1,
             decoration: BoxDecoration(
-                color: Colors.grey.withOpacity(0.4),
-                borderRadius: BorderRadius.circular(20)),
+                color: Colors.grey.shade100,
+                borderRadius: BorderRadius.circular(5),
+                border: Border.all(width: 1, color: Colors.grey)
+            ),
             child: Align(
               alignment: Alignment.centerLeft,
               child: TextFormField(
@@ -334,7 +288,8 @@ class ConfirmPasswordInput extends StatelessWidget {
                   border: InputBorder.none,
                   icon: Icon(
                     Icons.lock,
-                    size: context.screenWidth>1280?50:context.screenWidth * 0.08,
+                    color: primaryColor,
+                    size: context.screenWidth>1280?50:context.screenWidth * 0.06,
                   ),
                   errorText: state.password.invalid
                       ? 'password and confrim password must be same'
@@ -362,14 +317,14 @@ class SubmitButton extends StatelessWidget {
     return BlocBuilder<SignUpBloc, SignUpState>(
       buildWhen: (previous, current) => previous.status != current.status,
       builder: (context, state) {
-        return SizedBox(
-          height: context.screenHeight * 0.08,
-          width: context.screenWidth,
+        return Container(
+          width: double.infinity,
+          padding: EdgeInsets.symmetric(vertical: 10),
           child: ElevatedButton(
             style: ButtonStyle(
                 shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                     RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(18.0),
+                        borderRadius: BorderRadius.circular(10.0),
                         side: const BorderSide(color: Colors.grey)))),
             onPressed: () {
               if (state.password.invalid) {
@@ -382,7 +337,7 @@ class SubmitButton extends StatelessWidget {
             },
             child: const Text(
               'Sign Up',
-              style: TextStyle(fontSize: 22),
+              style: TextStyle(fontSize: 18),
             ),
           ),
         );

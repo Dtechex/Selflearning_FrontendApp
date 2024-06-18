@@ -10,8 +10,9 @@ class DateTimePickerDialog extends StatefulWidget {
   final DateTime initialDate;
   final TimeOfDay initialTime;
   final String ? flowId;
+  final String ? flowname;
 
-  DateTimePickerDialog({required this.initialDate, required this.initialTime, required this.flowId});
+  DateTimePickerDialog({required this.initialDate, required this.initialTime, required this.flowId, required this.flowname});
 
   @override
   _DateTimePickerDialogState createState() => _DateTimePickerDialogState();
@@ -104,6 +105,7 @@ class _DateTimePickerDialogState extends State<DateTimePickerDialog> {
               } else {
                 // Notify user that past time can't be set
                 context.read<ScheduleflowCubit>().addDateTime(
+                  flowName: widget.flowname.toString(),
                   scheduledDateTime: scheduledDateTime,
                   flowId: widget.flowId.toString(),
                 );

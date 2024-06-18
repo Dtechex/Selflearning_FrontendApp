@@ -1,12 +1,17 @@
 import 'dart:convert';
+import 'dart:developer';
 
+import 'package:dio/dio.dart';
 import 'package:http/http.dart' as http;
 import 'package:mime/mime.dart';
+import 'package:self_learning_app/utilities/constants.dart';
 import 'dart:io';
 import '../../../utilities/shared_pref.dart';
 import 'package:http_parser/http_parser.dart';
 
+
 class AddMediaRepo {
+
   static Future<String?> addQuickAddwithResources(
       {String? imagePath,
       required String title,
@@ -117,7 +122,6 @@ class AddMediaRepo {
       print(e);
     }
   }
-
   static Future<String?> addResources(
       {String? imagePath,
       required String resourceId,
@@ -126,10 +130,12 @@ class AddMediaRepo {
     print(resourceId);
     print('resource inside add reouse');
     print('add resources');
+    String endPoint = "resource";
+    String Url = DEVELOPMENT_BASE_URL+endPoint;
     final token = await SharedPref().getToken();
     var request = http.MultipartRequest(
       "POST",
-      Uri.parse('https://selflearning.dtechex.com/web/resource/'),
+      Uri.parse('$Url'),
     );
 
     request.headers['Authorization'] = 'Bearer $token';
@@ -156,8 +162,9 @@ class AddMediaRepo {
           request.fields['type'] = 'video';
         }
     }
+    print("mediaType $mediaType");
     print(imagePath!.isEmpty);
-    print('imagePath');
+    print('imagePath$imagePath');
 
     if (imagePath.isNotEmpty) {
       print('inside multitpart');
@@ -175,7 +182,30 @@ class AddMediaRepo {
     var streamedResponse = await request.send();
     var response = await http.Response.fromStream(streamedResponse);
 
-    print(response.body);
+    print("check response ${response.body}");
     return response.body;
   }
+  static Future<void> addResources({
+    String? imagePath,
+    required String resourceId,
+    String? title,
+    required int mediaType}) async {
+    var file = File(imagePath!);
+    print("file path ${file.path}");
+    var request = http.MultipartRequest('POST', Uri.parse('https://selflearning.dtechex.com/web/'));
+    request.files.add(await http.MultipartFile.fromPath('file', file.path));
+
+    http.StreamedResponse response = await request.send();
+
+    if (response.statusCode == 200) {
+      print(await response.stream.bytesToString());
+    }
+    else {
+      print(response.reasonPhrase);
+    }
+
 }
+
+}
+
+

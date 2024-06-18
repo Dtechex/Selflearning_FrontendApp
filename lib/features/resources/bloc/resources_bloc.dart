@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
+import 'package:http/http.dart';
 import 'package:meta/meta.dart';
 import 'package:self_learning_app/features/resources/data/rep/resources_repo.dart';
 import 'package:self_learning_app/features/subcategory/model/resources_model.dart';
@@ -31,15 +32,15 @@ class ResourcesBloc extends Bloc<ResourcesEvent, ResourcesState> {
 
   _onDeleteResourcesEvent(
       DeleteResourcesEvent event, Emitter<ResourcesState> emit) async {
-    emit(ResourcesLoading());
-    try {
-      await ResourcesRepo.deleteResource(rootId: event.rootId).then((value) {
-        emit(ResourcesDelete());
-      });
-    } catch (e) {
-      print(e);
-      print('erorrre');
-      emit(ResourcesError());
-    }
+     Response? res = await ResourcesRepo.deleteResource(rootId: event.rootId);
+        print("Resource delete successfully");
+        print("to check the status code ${res?.statusCode}");
+       if(res?.statusCode ==200){
+         emit(ResourcesDelete());
+
+       }
+       else{
+         emit(ResourcesError());
+       }
   }
 }

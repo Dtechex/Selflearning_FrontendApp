@@ -36,4 +36,7 @@ class CategoryColor extends CategoryState {
 
   CategoryColor({required this.cateBgColor});
 }
+class CategoryDeleteSuccess extends CategoryState{
+
+}
 

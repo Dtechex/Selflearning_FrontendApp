@@ -63,7 +63,7 @@ class MyFormBloc extends Bloc<MyFormEvent, MyFormState> {
           if (value == 201) {
             emit(state.copyWith(status: FormzStatus.submissionSuccess,));
           } else {
-            emit(state.copyWith(status: FormzStatus.submissionFailure,statusText: 'Invalid Credintal'));
+            emit(state.copyWith(status: FormzStatus.submissionFailure,statusText: 'Server Error'));
           }
         }).onError((error, stackTrace) {
           print(error);

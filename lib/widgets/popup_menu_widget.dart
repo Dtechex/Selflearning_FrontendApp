@@ -2,6 +2,7 @@ import 'package:blurrycontainer/blurrycontainer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:self_learning_app/utilities/extenstion.dart';
+import 'package:self_learning_app/widgets/resourceScreenWidget.dart';
 
 import '../features/add_media/add_audio_screen.dart';
 import '../features/add_media/add_image_screen.dart';
@@ -12,6 +13,7 @@ import '../features/create_flow/flow_screen.dart';
 import '../features/resources/bloc/resources_bloc.dart';
 import '../features/resources/maincategory_resources_screen.dart';
 import '../features/resources/resources_screen.dart';
+import 'SelectPrimaryFlowWidget.dart';
 import 'add_resources_screen.dart';
 
 class PopupMenuWidget extends StatefulWidget {
@@ -46,13 +48,15 @@ class _PopupMenuWidgetState extends State<PopupMenuWidget> {
             // Navigator.push(context, MaterialPageRoute(builder: (context) => AddResourceScreen(rootId: widget.categoryId!, whichResources: 1, categoryName: widget.categoryName!,)));
             break;
           case 'view_resource':
-            Navigator.push(context, MaterialPageRoute(builder: (context) => MaincategoryResourcesList(rootId: widget.categoryId!, title: widget.categoryName! ,mediaType: "",level: widget.level!,)));
+            Navigator.push(context, MaterialPageRoute(builder: (context) =>
+                resourceScreenWidget(rootId: widget.categoryId!, categoryName: widget.categoryName! ,level: widget.level!,)));
             break;
           case 'create_flow':
             Navigator.push(context, MaterialPageRoute(builder: (context) => CreateFlowScreen(rootId: widget.categoryId!,categoryName: widget.categoryName!,)));
             break;
           case 'set_primary_flow':
-            Navigator.push(context, MaterialPageRoute(builder: (context) => FlowScreen(rootId: widget.categoryId!,categoryname: widget.categoryId!,)));
+            Navigator.push(context, MaterialPageRoute(builder: (context) =>
+                SelectPrimaryFlow(categoryId: widget.categoryId!,CategoryName: widget.categoryId!,)));
             break;
           default:
           // Handle default case or do nothing

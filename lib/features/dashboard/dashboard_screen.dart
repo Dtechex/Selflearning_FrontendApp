@@ -1,18 +1,59 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:overlay_support/overlay_support.dart';
 import 'package:self_learning_app/features/login/login_screen.dart';
 import 'package:self_learning_app/schedule/schedule.dart';
+import 'package:self_learning_app/schedule/scheduleFlowsbook/scheduleFlowsBook.dart';
 import 'package:self_learning_app/utilities/colors.dart';
 import 'package:self_learning_app/utilities/extenstion.dart';
 import 'package:self_learning_app/utilities/shared_pref.dart';
+import '../../widgets/pushnotification.dart';
 import '../add_Dailog/dailog_screen.dart';
 import '../add_Dailog/newDialog.dart';
 import '../add_category/add_cate_screen.dart';
 import '../category/category_screen.dart';
 import 'bloc/dashboard_bloc.dart';
+@pragma("vm:entry-point")
 
-class DashBoardScreen extends StatelessWidget {
-  const DashBoardScreen({Key? key}) : super(key: key);
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+
+  print("Handling background message: ${message.messageId}");
+
+
+  // Do something with the notification
+}
+void _handleNotificationClick({required BuildContext context, bool checkmsg = false}) {
+  if (checkmsg==true) {
+    print("context is not null");
+    Navigator.push(context, MaterialPageRoute(builder: (context)=>ScheduleFlowBook()));
+
+    // await Navigator.of(FCMProvider._context!).push(...);
+
+  } else if(context == null) {
+    print("context is  null");
+    debugPrint('Context is null, cannot navigate');
+  }
+}
+
+Future<void> requestNotificationPermission() async{
+  FirebaseMessaging messaging = FirebaseMessaging.instance;
+
+  NotificationSettings settings = await messaging.requestPermission(
+    alert: true,
+    announcement: true,
+    badge: true,
+    carPlay: true,
+    criticalAlert: true,
+    provisional: true,
+    sound: true,
+  );
+
+  print('User granted permission: ${settings.authorizationStatus}');
+}
+class DashBoardScreen extends StatefulWidget {
+  bool msgstatus;
+   DashBoardScreen({required this.msgstatus}) ;
 
   static const TextStyle optionStyle =
       TextStyle(fontSize: 20, fontWeight: FontWeight.bold);
@@ -26,7 +67,42 @@ class DashBoardScreen extends StatelessWidget {
   ];
 
   @override
+  State<DashBoardScreen> createState() => _DashBoardScreenState();
+}
+
+class _DashBoardScreenState extends State<DashBoardScreen> {
+  @override
+
+  Future<void> requestNotificationPermission() async{
+    FirebaseMessaging messaging = FirebaseMessaging.instance;
+
+    NotificationSettings settings = await messaging.requestPermission(
+      alert: true,
+      announcement: true,
+      badge: true,
+      carPlay: true,
+      criticalAlert: true,
+      provisional: true,
+      sound: true,
+    );
+
+    print('User granted permission: ${settings.authorizationStatus}');
+  }
+  @override
+  void initState() {
+    super.initState();
+    if(widget.msgstatus==true){
+      Navigator.push(context, MaterialPageRoute(builder: (context)=>ScheduleFlowBook()));
+      widget.msgstatus = false;
+    }
+    else{
+      print("thanku");
+    }
+
+  }
+
   Widget build(BuildContext context) {
+
     return WillPopScope(
       child: BlocBuilder<DashboardBloc, int>(
         builder: (context, state) {
@@ -125,7 +201,7 @@ class DashBoardScreen extends StatelessWidget {
               ],
             ),
             body: Center(
-              child: _widgetOptions.elementAt(state),
+              child: DashBoardScreen._widgetOptions.elementAt(state),
             ),
           );
         },

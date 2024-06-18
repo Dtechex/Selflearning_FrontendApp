@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import '../../../utilities/base_client.dart';
+import '../../../utilities/constants.dart';
 import '../../../utilities/shared_pref.dart';
 import '../../subcategory/model/sub_cate_model.dart';
 
@@ -16,8 +17,11 @@ class MainBottomSheetRepo{
     Map<String, dynamic> headers = {
       'Authorization': 'bearer' + ' ' + token.toString(),
     };
+    String base = DEVELOPMENT_BASE_URL;
+    String endPoint = "resource/?rootId=$rootId";
+    var url = Uri.parse(base + endPoint);
     try{
-      Response res = await _dio.get("https://selflearning.dtechex.com/web/category/?rootId=$rootId",options: Options(headers: headers));
+      Response res = await _dio.get("$url",options: Options(headers: headers));
       print("9999-${res.data.toString()}");
 
       return res;

@@ -47,6 +47,7 @@ class _SubCategoryWidgetState extends State<SubCategoryWidget> with TickerProvid
     context.read<SummaryBloc>().add(
         SummaryLoadedEvent(rootId: widget.rootId));
     context.read<CreateFlowBloc>().add(LoadAllFlowEvent(catID: widget.rootId!));
+    context.read<SubCategoryBloc>().add(SubCategoryLoadEvent(rootId: widget.rootId));
     super.initState();
 
   }
@@ -82,8 +83,35 @@ class _SubCategoryWidgetState extends State<SubCategoryWidget> with TickerProvid
       print('data');
     }
 
-List<String> summary = [];
+    void updateSummary({required List<String> summaryList})async{
+      final Dio _dio = Dio();
+      var token = await SharedPref().getToken();
+      Map<String, dynamic> headers = {
+        'Authorization': 'bearer' + ' ' + token.toString(),
+      };
+
+       print("summary list in update summary $summaryList");
+      var res = await _dio.patch(
+        'https://selflearning.dtechex.com/web/category/update/summary/${widget.rootId}',
+        data: {"summary": summaryList},
+        options: Options(headers: headers),
+      );
+      print("status code known ${res.statusCode}");
+    if(res.statusCode ==200){
+      print("summary deleted successfully");
+      setState(() {
+        context.read<SummaryBloc>().add(
+            SummaryLoadedEvent(rootId: widget.rootId));
+        context.read<SubCategoryBloc>().add(SubCategoryLoadEvent(rootId: widget.rootId));
+
+      });
+    }
+
+    }
+
   Widget build(BuildContext context) {
+    List<String> summary = [];
+
     print("category id is ${widget.rootId}");
     return Scaffold(
       floatingActionButton: ElevatedButton(
@@ -188,7 +216,11 @@ List<String> summary = [];
                    delegate
                        : SliverChildBuilderDelegate(
                          (BuildContext context, int index) {
-                       return Container(
+                           List<String>? sumary =state.sumaryList[0].summary; // Use i instead of index
+                            for (var sum in sumary!){
+                              print("hello this is summary checking $sum");
+                            }
+                           return Container(
                          padding: EdgeInsets.symmetric(horizontal: 5, vertical: 5),
                          margin: EdgeInsets.symmetric(vertical: 5, horizontal: 8),
                          decoration: BoxDecoration(
@@ -196,17 +228,27 @@ List<String> summary = [];
                            borderRadius: BorderRadius.circular(5),
                            border: Border.all(width: 0.2, color: Colors.black87),
                          ),
-                         child: Text(
-                          state.sumaryList[0].summary[index], // Use i instead of index
-                           style: TextStyle(
-                             fontWeight: FontWeight.w100,
-                             color: Colors.black87,
-                             fontSize: 13,
-                             letterSpacing: 1,
-                             decorationThickness: 0.5,
-                             wordSpacing: 1,
-                             height: 1.2,
+                         child:
+                         ListTile(
+                           title: Text(
+                            state.sumaryList[0].summary[index], // Use i instead of index
+                             style: TextStyle(
+                               fontWeight: FontWeight.w100,
+                               color: Colors.black87,
+                               fontSize: 13,
+                               letterSpacing: 1,
+                               decorationThickness: 0.5,
+                               wordSpacing: 1,
+                               height: 1.2,
+                             ),
                            ),
+                           trailing: IconButton(onPressed: (){
+                            sumary.removeAt(index);
+                             for(var sum in sumary){
+                               print("now we can see the remaining summary and that ist $sum");
+                             }
+                            updateSummary(summaryList: sumary);
+                           },icon: Icon(Icons.delete),),
                          ),
                        );
                      },

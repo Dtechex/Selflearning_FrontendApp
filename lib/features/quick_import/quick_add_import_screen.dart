@@ -196,7 +196,7 @@ class _QuickAddImportScreenState extends State<QuickAddImportScreen> {
                       const SnackBar(content: Text("added succesfuuly")));
                   Navigator.pushAndRemoveUntil(context, MaterialPageRoute(
                     builder: (context) {
-                      return const DashBoardScreen();
+                      return  DashBoardScreen(msgstatus: false,);
                     },
                   ), (route) => false);
                 }

@@ -25,7 +25,7 @@ class AddPromptResCubit extends Cubit<AddPromptResState> {
       print("check for prompt res ${res!.data}");
       List<AddResourceListModel> getListRes_prompt = [];
       List<AddPromptListModel> getPromotList = [];
-      List<dynamic> resourcesList = res!.data['dialogList']['resourcesList'];
+      List<dynamic> resourcesList = res!.data['dialogList']?['resourcesList']??"";
 
       for (var resource in resourcesList) {
         getListRes_prompt.add(AddResourceListModel(

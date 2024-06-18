@@ -63,7 +63,8 @@ class AddMediaBloc extends Bloc<AddMediaEvent, AddMediaInitial> {
        if (value != null) {
          emit(state.copyWith(apiState: ApiState.submitted,wichResources: 1));
        }
-     });
+     }
+       );
    }
 
     } catch (e) {

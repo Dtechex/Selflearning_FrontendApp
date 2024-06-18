@@ -25,8 +25,9 @@ class CategoryBloc extends Bloc<CategoryEvent, CategoryState> {
         event.context.showSnackBar(SnackBar(content: Text('Something went wrong!')));
       }else{
         event.context.showSnackBar(SnackBar(content: Text('Category deleted Successfully')));
-        event.catList.removeAt(event.deleteIndex);
-        emit(CategoryLoaded(cateList: event.catList));
+        // event.catList.removeAt(event.deleteIndex);
+        // emit(CategoryLoaded(cateList: event.catList));
+        emit(CategoryDeleteSuccess());
       }
     });
 

@@ -29,17 +29,12 @@ class _ScheduleState extends State<Schedule> {
   void initState() {
     super.initState();
 
-    currentDate = DateTime.now();
-    currentTime = TimeOfDay.now();
-    context.read<ScheduleflowCubit>().getFlow();
   }
 
 
   Widget build(BuildContext context) {
     return 
       Scaffold(
-      
-
         body: Column(
           children: [
             Container(

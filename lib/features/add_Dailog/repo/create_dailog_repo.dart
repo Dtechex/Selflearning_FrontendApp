@@ -9,6 +9,8 @@ import 'package:self_learning_app/features/dailog_category/bloc/add_prompt_res_c
 import 'package:self_learning_app/features/dailog_category/dailog_cate_screen.dart';
 import 'package:self_learning_app/utilities/shared_pref.dart';
 
+import '../../../utilities/constants.dart';
+
 class DailogRepo{
   static Dio _dio = Dio();
 
@@ -70,12 +72,14 @@ class DailogRepo{
 
   static Future<Response?> getDailog() async{
     var token = await SharedPref().getToken();
+    String endpoints = "category/get-dialogs";
+    String baseUrl = DEVELOPMENT_BASE_URL + endpoints;
 
     Map<String, dynamic> headers = {
       'Authorization': 'bearer' + ' ' + token.toString(),
     };
     try{
-      Response res = await _dio.get("https://selflearning.dtechex.com/web/category/get-dialogs",  options: Options(headers: headers));
+      Response res = await _dio.get("$baseUrl",  options: Options(headers: headers));
       return res;
     }
     catch(e){

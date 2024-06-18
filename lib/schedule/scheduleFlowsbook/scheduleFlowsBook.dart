@@ -74,20 +74,6 @@ class _ScheduleFlowBookState extends State<ScheduleFlowBook> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      floatingActionButton: ElevatedButton(
-        onPressed: () {
-          // alram();
-          // print("Notification button pressed");
-          NotificationService().initNotification();
-          NotificationService().showNotification(
-            id: 0,
-            title: "schedule flow",
-            body: "adddd",
-            payLoad: "dddd",
-          );
-        },
-        child: Text("Testing Notification"),
-      ),
       backgroundColor: Colors.grey.shade50,
       appBar: AppBar(
         leading: IconButton(onPressed: (){

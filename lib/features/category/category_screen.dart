@@ -5,6 +5,7 @@ import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import 'package:blurrycontainer/blurrycontainer.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -24,6 +25,7 @@ import '../add_Dailog/bloc/get_dailog_bloc/get_dailog_bloc.dart';
 import '../add_Dailog/create_dailog_screen.dart';
 import '../add_Dailog/newDialog.dart';
 import '../add_category/add_cate_screen.dart';
+import '../add_category/data/model/add_cate_model.dart';
 import '../dailog_category/dailog_cate_screen.dart';
 import '../maincatbottomSheet/mainCategoryBottomSheet.dart';
 import '../maincatbottomSheet/treeViewBottomSheet.dart';
@@ -32,6 +34,7 @@ import '../search_category/bloc/search_cate_event.dart';
 import '../search_category/cate_search_delegate.dart';
 import '../subcategory/bloc/sub_cate_bloc.dart';
 import '../update_category/update_cate_screen.dart';
+
 
 class AllCateScreen extends StatefulWidget {
   const AllCateScreen({Key? key}) : super(key: key);
@@ -52,69 +55,6 @@ class _AllCateScreenState extends State<AllCateScreen> {
   bool isDeviceConnected = false;
   bool isAlertSet = false;
   bool isLoading = true;
-  void _showCustomDialog() {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        double dialogWidth = 0.5; // Set the desired width as a fraction of the screen width
-        double dailogHight = 0.3;
-        if (MediaQuery.of(context).size.width >= 600) {
-          // If the screen width is at least 600, consider it as a tablet
-          dialogWidth = 0.7; // Set the width to 50% for tablets
-           dailogHight = 0.3;
-        }
-        if(MediaQuery.of(context).size.width<=600){
-          dailogHight= 0.2;
-          dialogWidth = 0.5;
-
-        }
-        return Dialog(
-          child: Container(
-            width: MediaQuery.of(context).size.width * dialogWidth, // Set the dialog width based on the screen size
-            height: MediaQuery.of(context).size.height * dailogHight,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: <Widget>[
-                    IconButton(
-                      icon: Icon(Icons.close),
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
-                    ),
-                  ],
-                ),
-                ElevatedButton(
-                    onPressed: () {
-                      String token =  SharedPref.getUserToken();
-                      print("my token${token}");
-                        Navigator.push(context, MaterialPageRoute(builder: (context) {
-                        return AddResourceScreen2(resourceId: '',whichResources: 0,number: true,);
-                      },));                  // Add your resource handling logic here
-                    },
-                    child: Text("Add Resource"),
-                  ),
-                SizedBox(height: 20,),
-                ElevatedButton(
-                    onPressed: () {
-                      // Handle "Add Prompt" button click
-                      Navigator.push(context, MaterialPageRoute(builder: (context) {
-                        return AddResourceScreen2(resourceId: '',whichResources: 0,number: false,);
-                      },));
-
-                    },
-                    child: Text("Add Prompt"),
-                  ),
-                SizedBox(height: 20,)
-              ],
-            ),
-          ),
-        );
-      },
-    );
-  }
   static const List<Widget> _widgetOptions = <Widget>[
     AllCateScreen(),
     AddCateScreen(),
@@ -129,58 +69,6 @@ class _AllCateScreenState extends State<AllCateScreen> {
   ];
 
 
-  Future<void> _displayTextInputDialog(BuildContext context) async {
-    return showDialog(
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-            title: const Text('Create Quick Type'),
-            content: TextField(
-              controller: quickaddcontroller,
-              decoration: const InputDecoration(hintText: "Title"),
-            ),
-            actions: <Widget>[
-              MaterialButton(
-                color: Colors.green,
-                textColor: Colors.white,
-                child: BlocConsumer<QuickAddBloc, QuickAddState>(
-                  builder: (context, state) {
-                    if (state is QuickAddInitial) {
-                      return const Text('Add');
-                    } else if (state is QuickAddLoadingState) {
-                      return const CircularProgressIndicator();
-                    } else if (state is QuickAddLoadedState) {
-                      return const Text('Add');
-                    }
-                    return const Text('Add');
-                  },
-                  listener: (context, state) {
-                    if (state is QuickAddLoadedState) {
-                      ScaffoldMessenger.of(context)
-                        ..hideCurrentSnackBar()
-                        ..showSnackBar(
-                          const SnackBar(content: Text('Qick Type Added')),
-                        );
-                      quickaddcontroller.text='';
-                      Navigator.pop(context);
-
-                    } else if (state is QuickAddErrorState) {
-                      ScaffoldMessenger.of(context)
-                        ..hideCurrentSnackBar()
-                        ..showSnackBar(
-                          const SnackBar(content: Text('Oops something went wrong..')),
-                        );
-                    }
-                  },
-                ),
-                onPressed: () {
-                 // context.read<QuickAddBloc>().add(ButtonPressedEvent(title: quickaddcontroller.text));
-                },
-              )
-            ],
-          );
-        });
-  }
   Color lightenRandomColor(Color color, double factor) {
     assert(factor >= 0 && factor <= 1.0);
     final int red = (color.red + (255 - color.red) * factor).round();
@@ -241,584 +129,687 @@ class _AllCateScreenState extends State<AllCateScreen> {
         btnOkIcon: Icons.delete)
       ..show();
   }
+  AwesomeDialog showDeleteCategory({
+    required String CategoryName,
+    required String categoryId,
+    required int index,
+    required BuildContext context,
+  }) {
+    return AwesomeDialog(
+      context: context,
+      animType: AnimType.BOTTOMSLIDE,
+      dialogType: DialogType.QUESTION,
+      body: Center(
+        child: Text(
+          'Are you sure\nYou want to delete\n$CategoryName',
+          style: TextStyle(fontStyle: FontStyle.italic),
+        ),
+      ),
+      title: 'This is Ignored',
+      desc: 'This is also Ignored',
+      btnOkOnPress: () {
+        context.read<CategoryBloc>().add(CategoryDeleteEvent(
+          rootId: categoryId,
+          context: context,
+          catList: [],
+          deleteIndex: index,
+        ));
+      },
+      btnOkColor: Colors.red,
+      closeIcon: Icon(Icons.close),
+      btnCancelOnPress: () {},
+      btnOkText: "Delete",
+      btnOkIcon: Icons.delete,
+    )..show();
+  }
+  final FirebaseMessaging _fcm = FirebaseMessaging.instance;
+  TextEditingController _fcmTextController = TextEditingController();
+  void _showFCMTokenDialog(BuildContext context) {
+    String token = '';
+
+    _fcm.getToken().then((value) {
+      token = value ?? 'No FCM token found';
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('FCM Token'),
+            content: TextFormField(
+              controller: _fcmTextController..text = token,
+              readOnly: true,
+              decoration: InputDecoration(
+                hintText: 'FCM Token',
+              ),
+            ),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: Text('OK'),
+              ),
+            ],
+          );
+        },
+      );
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     print("Category Screen");
-    return Column(
-      children: [
-      const SizedBox(
-        height: 20,
-      ),
-
-      Row(
+    return Scaffold(
+      // floatingActionButton: FloatingActionButton(
+      //   onPressed: (){
+      //     _showFCMTokenDialog(context);
+      //   },
+      // ),
+      body: Column(
         children: [
-          Expanded(
-            child: SizedBox(
-                child: GestureDetector(
+        const SizedBox(
+          height: 20,
+        ),
 
-                  onTap: () async{
-                    await showSearch(
-                      context: context,
-                      delegate: CustomSearchDelegate(),
-                    );
-                  },
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: BlurryContainer(
-                      elevation: 1,
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(20),
-                      height:   context.screenHeight * 0.058,
+        Row(
+          children: [
+            Expanded(
+              child: SizedBox(
+                  child: GestureDetector(
 
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text('Search..',style: TextStyle(
-                              color: Colors.black
-                          ),),
-                          Icon(Icons.search)
-                        ],
+                    onTap: () async{
+                      await showSearch(
+                        context: context,
+                        delegate: CustomSearchDelegate(),
+                      );
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: BlurryContainer(
+                        elevation: 1,
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(20),
+                        height:   context.screenHeight * 0.058,
+
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text('Search..',style: TextStyle(
+                                color: Colors.black
+                            ),),
+                            Icon(Icons.search)
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                )
+                  )
+              ),
             ),
-          ),
-          Card(
-            elevation: 2,
-            shape: RoundedRectangleBorder(
+            Card(
+              elevation: 2,
+              shape: RoundedRectangleBorder(
 
-              borderRadius: BorderRadius.circular(8.0), //<-- SEE HERE
+                borderRadius: BorderRadius.circular(8.0), //<-- SEE HERE
+              ),
+              child: IconButton(
+                  onPressed: () {
+                    Navigator.push(context, MaterialPageRoute(builder: (context) {
+                      return AddResourceScreen2(resourceId: '',whichResources: 0,number: true,);
+                    },));
+                    // _showCustomDialog();
+
+                    //_displayTextInputDialog(context);
+                  },
+                  icon: const Icon(Icons.add)),
             ),
-            child: IconButton(
-                onPressed: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) {
-                    return AddResourceScreen2(resourceId: '',whichResources: 0,number: true,);
-                  },));
-                  // _showCustomDialog();
+          ],
+        ),
+        const SizedBox(
+          height: 10,
+        ),
+        Align(
+          alignment: Alignment.centerRight,
+          child: SizedBox(
+            height: context.screenHeight * 0.05,
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              itemCount: titles.length,
+              shrinkWrap: true,
+              itemBuilder: (context, index) {
+                return GestureDetector(
+                  onTap: (){
+                    setState(() {
+                      selectedIndex=index;
+                      if(index ==0){
+                        showCatOrDialog = false;
+                      }
+                      if(index == 1){
+                        showCatOrDialog = true;
+                     /*   Navigator.push(context, MaterialPageRoute(builder: (context) {
+                          return const NewDialog();
+                        },));*/
+                      }
+                      if(index==2) {
+                        Navigator.push(context, MaterialPageRoute(builder: (context) {
+                          return const QuickTypeScreen();
+                        },));
+                      }
+                      if(index == 3){
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => AddDailogScreen()));
 
-                  //_displayTextInputDialog(context);
-                },
-                icon: const Icon(Icons.add)),
-          ),
-        ],
-      ),
-      const SizedBox(
-        height: 10,
-      ),
-      Align(
-        alignment: Alignment.centerRight,
-        child: SizedBox(
-          height: context.screenHeight * 0.05,
-          child: ListView.builder(
-            scrollDirection: Axis.horizontal,
-            itemCount: titles.length,
-            shrinkWrap: true,
-            itemBuilder: (context, index) {
-              return GestureDetector(
-                onTap: (){
-                  setState(() {
-                    selectedIndex=index;
-                    if(index ==0){
-                      showCatOrDialog = false;
-                    }
-                    if(index == 1){
-                      showCatOrDialog = true;
-                   /*   Navigator.push(context, MaterialPageRoute(builder: (context) {
-                        return const NewDialog();
-                      },));*/
-                    }
-                    if(index==2) {
-                      Navigator.push(context, MaterialPageRoute(builder: (context) {
-                        return const QuickTypeScreen();
-                      },));
-                    }
-                    if(index == 3){
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => AddDailogScreen()));
-
-                    }
-                  });
-                },
-                child: Text('${titles[index]}    ',
-                    style: TextStyle(
-                        fontWeight: FontWeight.w500,
-                        color: index == selectedIndex
-                            ? primaryColor
-                            : Colors.grey)),
-              );
-            },
+                      }
+                    });
+                  },
+                  child: Text('${titles[index]}    ',
+                      style: TextStyle(
+                          fontWeight: FontWeight.w500,
+                          color: index == selectedIndex
+                              ? primaryColor
+                              : Colors.grey)),
+                );
+              },
+            ),
           ),
         ),
-      ),
-      showCatOrDialog?
-      BlocProvider(
-        create: (context) => GetDailogBloc()..add(HitGetDailogEvent()),
-        child: BlocListener<GetDailogBloc, GetDailogState>(
-          listener: (context, state) {
-            if (state is DailogDeleteSuccessfully) {
-              context.read<GetDailogBloc>().add(HitGetDailogEvent());
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  /// need to set following properties for best effect of awesome_snackbar_content
-                  elevation: 0,
-                  duration: Duration(seconds: 5),
-                  behavior: SnackBarBehavior.floating,
-                  backgroundColor: Colors.transparent,
-                  content: AwesomeSnackbarContent(
-                    title: state.dailogname,
-                    message: 'Successfully deleted!',
+        showCatOrDialog?
+        BlocProvider(
+          create: (context) => GetDailogBloc()..add(HitGetDailogEvent()),
+          child: BlocListener<GetDailogBloc, GetDailogState>(
+            listener: (context, state) {
+              if (state is DailogDeleteSuccessfully) {
+                context.read<GetDailogBloc>().add(HitGetDailogEvent());
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    /// need to set following properties for best effect of awesome_snackbar_content
+                    elevation: 0,
+                    duration: Duration(seconds: 5),
+                    behavior: SnackBarBehavior.floating,
+                    backgroundColor: Colors.transparent,
+                    content: AwesomeSnackbarContent(
+                      title: state.dailogname,
+                      message: 'Successfully deleted!',
 
-                    /// change contentType to ContentType.success, ContentType.warning, or ContentType.help for variants
-                    contentType: ContentType.success,
-                  ),
-                ),
-              );
-            }
-
-            // TODO: implement listener
-          },
-          child: BlocBuilder<GetDailogBloc,
-              GetDailogState>(
-            builder: (context, state) {
-              print(state);
-
-              print("Checking condion");
-              if (state is GetDailogLoadingState) {
-                print("Checking condion 2");
-
-                return Container(
-                  alignment: Alignment.center,
-
-                  width: double.infinity,
-                  height: MediaQuery.of(context).size.height*0.6,
-                  child: Container(
-                    width: 50,
-                    height: 50,
-                    child: CircularProgressIndicator(
-                        color: Colors.black),
+                      /// change contentType to ContentType.success, ContentType.warning, or ContentType.help for variants
+                      contentType: ContentType.success,
+                    ),
                   ),
                 );
               }
-              if (state is GetDailogSuccessState) {
-                if (state.dailogList!.length == 0) {
-                  print("Checking condion 3");
+
+              // TODO: implement listener
+            },
+            child: BlocBuilder<GetDailogBloc,
+                GetDailogState>(
+              builder: (context, state) {
+                print(state);
+
+                print("Checking condion");
+                if (state is GetDailogLoadingState) {
+                  print("Checking condion 2");
 
                   return Container(
-                      height: MediaQuery.of(context)
-                          .size
-                          .height *
-                          0.7,
-                      width: double.infinity,
-                      alignment: Alignment.center,
-                      child: Text(
-                        "Dailog is empty\nCreate Dailog",
-                        style: TextStyle(
-                            color: Colors.grey,
-                            fontWeight: FontWeight.bold,
-                            letterSpacing: 1),
-                      ));
-                } else {
-                  print("Checking condion 4");
+                    alignment: Alignment.center,
 
-                  return Expanded(
-                    child: CustomScrollView(
-                      slivers : [
-                        SliverToBoxAdapter(
-                          child: Container(
-                          width: double.infinity,
-                          height: MediaQuery.of(context)
-                              .size
-                              .height *
-                              0.8,
-                          child: GridView.builder(
-                            padding: EdgeInsets.symmetric(
-                                vertical: 4.0,
-                                horizontal: 2.0),
-                            gridDelegate:
-                            SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount:
-                              MediaQuery.of(context)
-                                  .size
-                                  .width <
-                                  600
-                                  ? 2
-                                  : MediaQuery.of(context)
-                                  .size
-                                  .width <
-                                  1200
-                                  ? 3
-                                  : 6,
-                              childAspectRatio: 3 / 2,
-                            ),
-                            itemCount:
-                            state.dailogList!.length,
-                            itemBuilder: (context, index) {
-                              double containerHeight =
-                              MediaQuery.of(context)
-                                  .size
-                                  .width <
-                                  600
-                                  ? 140.0
-                                  : MediaQuery.of(context)
-                                  .size
-                                  .width <
-                                  1200
-                                  ? 200.0
-                                  : 300.0;
-                              double containerWidth =
-                              MediaQuery.of(context)
-                                  .size
-                                  .width <
-                                  600
-                                  ? 150.0
-                                  : MediaQuery.of(context)
-                                  .size
-                                  .width <
-                                  1200
-                                  ? 300.0
-                                  : 300.0;
-                              return Container(
-                                margin: EdgeInsets.symmetric(
-                                    vertical: 10,
-                                    horizontal: 10),
-                                padding: EdgeInsets.zero,
-                                height: 200,
-                                width: 200,
-                                child: GestureDetector(
-                                  onTap: () {
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                DailogCategoryScreen(
-                                                  promptList:
-                                                  state
-                                                      .promptList!,
-                                                  resourceList:
-                                                  state
-                                                      .resourceList!,
-                                                  dailoId: state
-                                                      .dailogList![
-                                                  index]
-                                                      .dailogId,
-                                                )));
-                                  },
-                                  child: Card(
-                                      elevation: 2.0,
-                                      color:
-                                      generateRandomColor(),
-                                      child: Stack(
-                                        children: [
-                                          Center(
-                                            child: Text(state
-                                                .dailogList![
-                                            index]
-                                                .dailogName),
-                                          ),
-                                          Align(
-                                            alignment:
-                                            Alignment
-                                                .topRight,
-                                            child:
-                                            PopupMenuButton(
-                                              icon: Icon(
-                                                Icons
-                                                    .more_vert,
-                                                color: Colors
-                                                    .red,
-                                              ),
-                                              itemBuilder:
-                                                  (context) {
-                                                return [
-                                                  const PopupMenuItem(
-                                                      value:
-                                                      'update',
-                                                      child: InkWell(
-                                                          child: Row(
-                                                            mainAxisAlignment:
-                                                            MainAxisAlignment.start,
-                                                            children: [
-                                                              Icon(
-                                                                Icons.update,
-                                                                color: primaryColor,
-                                                              ),
-                                                              SizedBox(
-                                                                width: 8.0,
-                                                              ),
-                                                              Text("Update"),
-                                                            ],
-                                                          ))),
-                                                  const PopupMenuItem(
-                                                      value:
-                                                      'delete',
-                                                      child: InkWell(
-                                                          child: Row(
-                                                            mainAxisAlignment:
-                                                            MainAxisAlignment.start,
-                                                            children: [
-                                                              Icon(
-                                                                Icons.delete,
-                                                                color: primaryColor,
-                                                              ),
-                                                              SizedBox(
-                                                                width: 8.0,
-                                                              ),
-                                                              Text("Delete"),
-                                                            ],
-                                                          )))
-                                                ];
-                                              },
-                                              onSelected:
-                                                  (String
-                                              value) {
-                                                switch (
-                                                value) {
-                                                  case 'update':
-                                                  /*Navigator.push(context, MaterialPageRoute(
-                                                          builder: (context) {
-                                                            return UpdateCateScreen(
-                                                              rootId: state.cateList[index].sId,
-                                                              selectedColor: currentColor,
-                                                              categoryTitle: state.cateList[index].name,
-                                                              tags: state.cateList[index].keywords,
-                                                            );
-                                                          },
-                                                        ));*/
-                                                    break;
-                                                  case 'delete':
-                                                    showDeleteDailog(
-                                                        dailogName: state
-                                                            .dailogList![
-                                                        index]
-                                                            .dailogName,
-                                                        index:
-                                                        index,
-                                                        dailogId: state
-                                                            .dailogList![
-                                                        index]
-                                                            .dailogId,
-                                                        context:
-                                                        context);
-
-                                                    break;
-                                                }
-                                              },
-                                            ),
-                                          )
-                                        ],
-                                      )),
-                                ),
-                              );
-                            },
-                          ),
-                      ),
-                        ),
-
-                        SliverToBoxAdapter(
-                          child: SizedBox(height: 20,),
-                        )
-              ]
+                    width: double.infinity,
+                    height: MediaQuery.of(context).size.height*0.6,
+                    child: Container(
+                      width: 50,
+                      height: 50,
+                      child: CircularProgressIndicator(
+                          color: Colors.black),
                     ),
                   );
                 }
-              }
+                if (state is GetDailogSuccessState) {
+                  if (state.dailogList!.length == 0) {
+                    print("Checking condion 3");
 
-              if (state is GetDailogErrorState) {
-                print("Checking condion 5");
+                    return Container(
+                        height: MediaQuery.of(context)
+                            .size
+                            .height *
+                            0.7,
+                        width: double.infinity,
+                        alignment: Alignment.center,
+                        child: Text(
+                          "Dailog is empty\nCreate Dailog",
+                          style: TextStyle(
+                              color: Colors.grey,
+                              fontWeight: FontWeight.bold,
+                              letterSpacing: 1),
+                        ));
+                  } else {
+                    print("Checking condion 4");
+
+                    return Expanded(
+                      child: CustomScrollView(
+                        slivers : [
+                          SliverToBoxAdapter(
+                            child: Container(
+                            width: double.infinity,
+                            height: MediaQuery.of(context)
+                                .size
+                                .height *
+                                0.8,
+                            child: GridView.builder(
+                              padding: EdgeInsets.symmetric(
+                                  vertical: 4.0,
+                                  horizontal: 2.0),
+                              gridDelegate:
+                              SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount:
+                                MediaQuery.of(context)
+                                    .size
+                                    .width <
+                                    600
+                                    ? 2
+                                    : MediaQuery.of(context)
+                                    .size
+                                    .width <
+                                    1200
+                                    ? 3
+                                    : 6,
+                                childAspectRatio: 3 / 2,
+                              ),
+                              itemCount:
+                              state.dailogList!.length,
+                              itemBuilder: (context, index) {
+                                double containerHeight =
+                                MediaQuery.of(context)
+                                    .size
+                                    .width <
+                                    600
+                                    ? 140.0
+                                    : MediaQuery.of(context)
+                                    .size
+                                    .width <
+                                    1200
+                                    ? 200.0
+                                    : 300.0;
+                                double containerWidth =
+                                MediaQuery.of(context)
+                                    .size
+                                    .width <
+                                    600
+                                    ? 150.0
+                                    : MediaQuery.of(context)
+                                    .size
+                                    .width <
+                                    1200
+                                    ? 300.0
+                                    : 300.0;
+                                return Container(
+                                  margin: EdgeInsets.symmetric(
+                                      vertical: 10,
+                                      horizontal: 10),
+                                  padding: EdgeInsets.zero,
+                                  height: 200,
+                                  width: 200,
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  DailogCategoryScreen(
+                                                    promptList:
+                                                    state
+                                                        .promptList!,
+                                                    resourceList:
+                                                    state
+                                                        .resourceList!,
+                                                    dailoId: state
+                                                        .dailogList![
+                                                    index]
+                                                        .dailogId,
+                                                  )));
+                                    },
+                                    child: Card(
+                                        elevation: 2.0,
+                                        color:
+                                        generateRandomColor(),
+                                        child: Stack(
+                                          children: [
+                                            Center(
+                                              child: Text(state
+                                                  .dailogList![
+                                              index]
+                                                  .dailogName),
+                                            ),
+                                            Align(
+                                              alignment:
+                                              Alignment
+                                                  .topRight,
+                                              child:
+                                              PopupMenuButton(
+                                                icon: Icon(
+                                                  Icons
+                                                      .more_vert,
+                                                  color: Colors
+                                                      .red,
+                                                ),
+                                                itemBuilder:
+                                                    (context) {
+                                                  return [
+                                                    const PopupMenuItem(
+                                                        value:
+                                                        'update',
+                                                        child: InkWell(
+                                                            child: Row(
+                                                              mainAxisAlignment:
+                                                              MainAxisAlignment.start,
+                                                              children: [
+                                                                Icon(
+                                                                  Icons.update,
+                                                                  color: primaryColor,
+                                                                ),
+                                                                SizedBox(
+                                                                  width: 8.0,
+                                                                ),
+                                                                Text("Update"),
+                                                              ],
+                                                            ))),
+                                                    const PopupMenuItem(
+                                                        value:
+                                                        'delete',
+                                                        child: InkWell(
+                                                            child: Row(
+                                                              mainAxisAlignment:
+                                                              MainAxisAlignment.start,
+                                                              children: [
+                                                                Icon(
+                                                                  Icons.delete,
+                                                                  color: primaryColor,
+                                                                ),
+                                                                SizedBox(
+                                                                  width: 8.0,
+                                                                ),
+                                                                Text("Delete"),
+                                                              ],
+                                                            )))
+                                                  ];
+                                                },
+                                                onSelected:
+                                                    (String
+                                                value) {
+                                                  switch (
+                                                  value) {
+                                                    case 'update':
+                                                    /*Navigator.push(context, MaterialPageRoute(
+                                                            builder: (context) {
+                                                              return UpdateCateScreen(
+                                                                rootId: state.cateList[index].sId,
+                                                                selectedColor: currentColor,
+                                                                categoryTitle: state.cateList[index].name,
+                                                                tags: state.cateList[index].keywords,
+                                                              );
+                                                            },
+                                                          ));*/
+                                                      break;
+                                                    case 'delete':
+                                                      showDeleteDailog(
+                                                          dailogName: state
+                                                              .dailogList![
+                                                          index]
+                                                              .dailogName,
+                                                          index:
+                                                          index,
+                                                          dailogId: state
+                                                              .dailogList![
+                                                          index]
+                                                              .dailogId,
+                                                          context:
+                                                          context);
+
+                                                      break;
+                                                  }
+                                                },
+                                              ),
+                                            )
+                                          ],
+                                        )),
+                                  ),
+                                );
+                              },
+                            ),
+                        ),
+                          ),
+
+                          SliverToBoxAdapter(
+                            child: SizedBox(height: 20,),
+                          )
+                ]
+                      ),
+                    );
+                  }
+                }
+
+                if (state is GetDailogErrorState) {
+                  print("Checking condion 5");
+
+                  return Center(
+                    child: Text("Something went wrong"),
+                  );
+                }
+                print(state);
+                print("Checking condion 6");
 
                 return Center(
                   child: Text("Something went wrong"),
                 );
-              }
-              print(state);
-              print("Checking condion 6");
-
-              return Center(
-                child: Text("Something went wrong"),
-              );
-            },
+              },
+            ),
           ),
-        ),
-      ):
-      BlocBuilder<CategoryBloc, CategoryState>(
-        builder: (context, state) {
-          if (state is CategoryLoading) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          } else if (state is CategoryLoaded) {
-            if (state.cateList.isNotEmpty) {
-              return Expanded(
-                child: Container(
-                padding: const EdgeInsets.only(left: 20, right: 20),
-                child: GridView.builder(
-                  physics: ScrollPhysics(),
-                  shrinkWrap: true,
-                  // padding: EdgeInsets.all(15),
-                  itemCount: state.cateList.length,
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisSpacing: 20,
-                      mainAxisSpacing: 20,
-                      mainAxisExtent: context.screenHeight * 0.15,
-                      crossAxisCount: 2),
-                  itemBuilder: (context, index) {
-                    Color currentColor = primaryColor;
+        ):
+        BlocConsumer<CategoryBloc, CategoryState>(
+  listener: (context, state) {
+      if (state is CategoryDeleteSuccess){
+        context.read<CategoryBloc>().add(CategoryLoadEvent());
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            /// need to set following properties for best effect of awesome_snackbar_content
+            elevation: 0,
+            duration: Duration(seconds: 5),
+            behavior: SnackBarBehavior.floating,
+            backgroundColor: Colors.transparent,
+            content: AwesomeSnackbarContent(
+              title: "Category",
+              message: 'Successfully deleted!',
 
-                    if (state.cateList[index].styles!.isNotEmpty) {
-                      if (state.cateList[index].styles![1].value!.length != 10) {
-                        currentColor = primaryColor;
-                      } else {
-                        currentColor = Color(int.parse(
-                            state.cateList[index].styles![1].value!))??primaryColor;
+              /// change contentType to ContentType.success, ContentType.warning, or ContentType.help for variants
+              contentType: ContentType.success,
+            ),
+          ),
+        );
+      }
+  },
+  builder: (context, state) {
+      return BlocBuilder<CategoryBloc, CategoryState>(
+          builder: (context, state) {
+            if (state is CategoryLoading) {
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            } else if (state is CategoryLoaded) {
+              if (state.cateList.isNotEmpty) {
+                return Expanded(
+                  child: Container(
+                  padding: const EdgeInsets.only(left: 20, right: 20),
+                  child: GridView.builder(
+                    physics: ScrollPhysics(),
+                    shrinkWrap: true,
+                    // padding: EdgeInsets.all(15),
+                    itemCount: state.cateList.length,
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisSpacing: 20,
+                        mainAxisSpacing: 20,
+                        mainAxisExtent: context.screenHeight * 0.15,
+                        crossAxisCount: 2),
+                    itemBuilder: (context, index) {
+                      Color currentColor = primaryColor;
+
+                      if (state.cateList[index].styles!.isNotEmpty) {
+                        if (state.cateList[index].styles![1].value!.length != 10) {
+                          currentColor = primaryColor;
+                        } else {
+                          currentColor = Color(int.parse(
+                              state.cateList[index].styles![1].value!))??primaryColor;
+                        }
                       }
-                    }
 
-                    return GestureDetector(
-                      child: Card(
-                        shape: RoundedRectangleBorder(
+                      return GestureDetector(
+                        child: Card(
+                          shape: RoundedRectangleBorder(
 
-                          borderRadius: BorderRadius.circular(10.0), //<-- SEE HERE
-                        ),
-                        color: currentColor,
-                        // generateRandomColor(),
-                        //padding: const EdgeInsets.all(8),
-                        // decoration: BoxDecoration(
-                        //
-                        //   borderRadius: BorderRadius.circular(10),
-                        //   color: generateRandomColor(),
-                        //   border: Border.all(color: currentColor, width: 3),
-                        //
-                        // ),
-                        elevation: 2,
-                        child: Stack(
-                          children: [
-                            Center(
-                              child: Text(state.cateList[index].name.toString(),
-                                  textAlign: TextAlign.center,
-                                  overflow: TextOverflow.ellipsis,
-                                  maxLines: 2,
-                                  style:  TextStyle(color: Colors.white, fontWeight: FontWeight.w500,letterSpacing: 1)),
-                            ),
-                            Align(
-                              alignment: Alignment.topRight,
-                              child:
-                              PopupMenuButton(
-
-                                icon: Icon(Icons.more_vert,color: Colors.red,),
-                                itemBuilder: (context) {
-                                  return [
-
-                                    const PopupMenuItem(
-                                        value: 'update',
-                                        child: InkWell(
-                                            child: Row(
-                                              mainAxisAlignment: MainAxisAlignment.start,
-                                              children: [
-                                                Icon(Icons.update, color: primaryColor,),
-                                                SizedBox(width: 8.0,),
-                                                Text("Update"),
-                                              ],
-                                            ))
-                                    ),
-                                    const PopupMenuItem(
-                                        value: 'delete',
-                                        child: InkWell(
-                                            child: Row(
-                                              mainAxisAlignment: MainAxisAlignment.start,
-                                              children: [
-                                                Icon(Icons.delete, color: primaryColor,),
-                                                SizedBox(width: 8.0,),
-                                                Text("Delete"),
-                                              ],
-                                            ))
-                                    )
-                                  ];
-                                },
-                                onSelected: (String value) {
-                                  switch(value){
-                                    case 'update':
-                                      Navigator.push(context, MaterialPageRoute(
-                                        builder: (context) {
-                                          return UpdateCateScreen(
-                                            rootId: state.cateList[index].sId,
-                                            selectedColor: currentColor,
-                                            categoryTitle: state.cateList[index].name,
-                                            tags: state.cateList[index].keywords,
-                                          );
-                                        },
-                                      ));
-                                      break;
-                                    case 'delete':
-                                      context.read<CategoryBloc>().add(CategoryDeleteEvent(
-                                        rootId: state.cateList[index].sId??'',
-                                        context: context,
-                                        catList: state.cateList,
-                                        deleteIndex: index,
-                                      ));
-                                      break;
-                                  }
-                                },
+                            borderRadius: BorderRadius.circular(10.0), //<-- SEE HERE
+                          ),
+                          color: currentColor,
+                          // generateRandomColor(),
+                          //padding: const EdgeInsets.all(8),
+                          // decoration: BoxDecoration(
+                          //
+                          //   borderRadius: BorderRadius.circular(10),
+                          //   color: generateRandomColor(),
+                          //   border: Border.all(color: currentColor, width: 3),
+                          //
+                          // ),
+                          elevation: 2,
+                          child: Stack(
+                            children: [
+                              Center(
+                                child: Text(state.cateList[index].name.toString(),
+                                    textAlign: TextAlign.center,
+                                    overflow: TextOverflow.ellipsis,
+                                    maxLines: 2,
+                                    style:  TextStyle(color: Colors.white, fontWeight: FontWeight.w500,letterSpacing: 1)),
                               ),
-                            )
-                          ],
+                              Align(
+                                alignment: Alignment.topRight,
+                                child:
+                                PopupMenuButton(
+
+                                  icon: Icon(Icons.more_vert,color: Colors.red,),
+                                  itemBuilder: (context) {
+                                    return [
+
+                                      const PopupMenuItem(
+                                          value: 'update',
+                                          child: InkWell(
+                                              child: Row(
+                                                mainAxisAlignment: MainAxisAlignment.start,
+                                                children: [
+                                                  Icon(Icons.update, color: primaryColor,),
+                                                  SizedBox(width: 8.0,),
+                                                  Text("Update"),
+                                                ],
+                                              ))
+                                      ),
+                                      const PopupMenuItem(
+                                          value: 'delete',
+                                          child: InkWell(
+                                              child: Row(
+                                                mainAxisAlignment: MainAxisAlignment.start,
+                                                children: [
+                                                  Icon(Icons.delete, color: primaryColor,),
+                                                  SizedBox(width: 8.0,),
+                                                  Text("Delete"),
+                                                ],
+                                              ))
+                                      )
+                                    ];
+                                  },
+                                  onSelected: (String value) {
+                                    switch(value){
+                                      case 'update':
+                                        Navigator.push(context, MaterialPageRoute(
+                                          builder: (context) {
+                                            return UpdateCateScreen(
+                                              rootId: state.cateList[index].sId,
+                                              selectedColor: currentColor,
+                                              categoryTitle: state.cateList[index].name,
+                                              tags: state.cateList[index].keywords,
+                                            );
+                                          },
+                                        ));
+                                        break;
+                                      case 'delete':
+                                        showDeleteCategory(
+                                            CategoryName: state.cateList[index].name??'',
+                                            categoryId: state.cateList[index].sId??'',
+                                            index: index,
+                                            context: context);
+                                        // context.read<CategoryBloc>().add(CategoryDeleteEvent(
+                                        //   rootId: state.cateList[index].sId??'',
+                                        //   context: context,
+                                        //   catList: state.cateList,
+                                        //   deleteIndex: index,
+                                        // ));
+                                        break;
+                                    }
+                                  },
+                                ),
+                              )
+                            ],
+                          ),
                         ),
-                      ),
-                      onTap: () {
+                        onTap: () {
 
-                        showModalBottomSheet(
-                          context: context,
-                          isScrollControlled: true, // Set to true for a full-height bottom sheet
+                          showModalBottomSheet(
+                            context: context,
+                            isScrollControlled: true, // Set to true for a full-height bottom sheet
 
-                          builder: (BuildContext context) {
-                            return Container(
-                              height: MediaQuery.of(context).size.height*0.7,
-                              child: MainCatBottomSheet(categoryName: state.cateList[index].name.toString(),
-                              rootId: state.cateList[index].sId,
-                                color: Colors.red,
-                                tags: state.cateList[index].keywords,
-                              ),
-                            );
+                            builder: (BuildContext context) {
+                              return Container(
+                                height: MediaQuery.of(context).size.height*0.7,
+                                child: MainCatBottomSheet(categoryName: state.cateList[index].name.toString(),
+                                rootId: state.cateList[index].sId,
+                                  color: Colors.red,
+                                  tags: state.cateList[index].keywords,
+                                ),
+                              );
 
-                              // MainCatBottomSheet();
-                          },
-                        );
+                                // MainCatBottomSheet();
+                            },
+                          );
 
 /*
-                        Navigator.push(context, MaterialPageRoute(
-                          builder: (context) {
-                            return SubCategoryScreen(
-                              tags: state.cateList[index].keywords,
-                              color: Color(
-                                int.parse(
-                                    state.cateList[index].styles![1].value!),
-                              ),
-                              rootId: state.cateList[index].sId,
-                              categoryName: state.cateList[index].name,
-                            );
-                          },
-                        ));
+                          Navigator.push(context, MaterialPageRoute(
+                            builder: (context) {
+                              return SubCategoryScreen(
+                                tags: state.cateList[index].keywords,
+                                color: Color(
+                                  int.parse(
+                                      state.cateList[index].styles![1].value!),
+                                ),
+                                rootId: state.cateList[index].sId,
+                                categoryName: state.cateList[index].name,
+                              );
+                            },
+                          ));
 */
-                      },
-                      onLongPress: () {
+                        },
+                        onLongPress: () {
 
-                      },
-                    );
-                  },
-                ),
-              ),);
+                        },
+                      );
+                    },
+                  ),
+                ),);
+              } else {
+                return SizedBox(height: context.screenHeight/2,child: const Center(child: Text('No Categories Found')),);
+              }
             } else {
-              return SizedBox(height: context.screenHeight/2,child: const Center(child: Text('No Categories Found')),);
+              return const Center(
+                child: Text('Something went wrong'),
+              );
             }
-          } else {
-            return const Center(
-              child: Text('Something went wrong'),
-            );
-          }
-        },
-      )
-    ],);
+          },
+        );
+  },
+)
+      ],),
+    );
   }
 }

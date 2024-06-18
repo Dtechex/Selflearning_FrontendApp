@@ -12,6 +12,7 @@ import '../create_flow/create_flow_screen.dart';
 import '../create_flow/flow_screen.dart';
 import '../resources/subcategory_resources_screen.dart';
 import '../subcategory/primaryflow/primaryflow.dart';
+import 'CreateFlowWidget.dart';
 
 class FinalResourceScreen extends StatefulWidget {
   final String categoryName;
@@ -63,6 +64,8 @@ class _FinalResourceScreenState extends State<FinalResourceScreen> {
         ),
       ),
       appBar: AppBar(
+          title: Text(widget.categoryName),
+
           elevation: 0,
           automaticallyImplyLeading: true,
           actions: [
@@ -162,9 +165,9 @@ class _FinalResourceScreenState extends State<FinalResourceScreen> {
                   case 'startFlow':
                     Navigator.push(context, MaterialPageRoute(
                       builder: (context) {
-                        return FlowScreen(
-                          rootId: widget.rootId!,
-                          categoryname: widget.categoryName,
+                        return CreateStartFlow(
+                          CatId: widget.rootId!,
+                          CatName: widget.categoryName,
                         );
                       },
                     ));

@@ -63,7 +63,27 @@ class _AddPromptsToFlowScreenState extends State<AddPromptsToFlowScreen> {
 
   List<PromptListModel> promptList = [];
   StreamController<int> _counterStreamController = StreamController<int>();
-
+  void _showDialog() {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        Future.delayed(Duration(seconds: 3), () {
+          Navigator.of(context).pop(true);
+        });
+        return Dialog(
+          backgroundColor: Color(0xFFE0FBE2),
+          child: Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: Text(
+              'Select prompt to create flow',
+              style: TextStyle(fontSize: 18),
+            ),
+          ),
+        );
+      },
+    );
+  }
   @override
   void initState() {
     context.read<QuickImportBloc>().add(LoadQuickTypeEvent());
@@ -71,6 +91,8 @@ class _AddPromptsToFlowScreenState extends State<AddPromptsToFlowScreen> {
     promptList = widget.promptList;
     bloc.add(LoadMainCategoryData(catId: widget.rootId));
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _showDialog());
+
   }
 
   String ddvalue = '';

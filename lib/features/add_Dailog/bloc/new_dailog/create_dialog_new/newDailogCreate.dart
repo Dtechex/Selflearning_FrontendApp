@@ -195,7 +195,7 @@ class _NewAddDailogScreen extends State<NewAddDailogScreen> {
 
           // Automatically close the dialog after 5 seconds
           Future.delayed(Duration(seconds: 4), () {
-            Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>DashBoardScreen())); // Close the dialog
+            Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>DashBoardScreen(msgstatus: false,))); // Close the dialog
 
           });
 

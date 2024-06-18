@@ -26,9 +26,11 @@ import 'package:self_learning_app/features/subcategory/SummaryBloc/summary_bloc.
 import 'package:self_learning_app/features/subcategory/bloc/sub_cate_bloc.dart';
 import 'package:self_learning_app/features/subcategory/primaryflow/bloc/primary_bloc.dart';
 import 'package:self_learning_app/schedule/cubit/scheduleflow_cubit.dart';
+import 'package:self_learning_app/schedule/scheduleFlowsbook/scheduleFlowsBook.dart';
 import 'package:self_learning_app/splashScreen/splash_screen.dart';
 import 'package:self_learning_app/utilities/colors.dart';
 import 'package:self_learning_app/utilities/shared_pref.dart';
+import 'package:self_learning_app/widgets/localNotification.dart';
 import 'package:self_learning_app/widgets/pushnotification.dart';
 import 'package:self_learning_app/widgets/scheduleflowScreenwidget.dart';
 import 'features/add_Dailog/bloc/create_dailog_bloc/create_dailog_bloc.dart';
@@ -44,7 +46,7 @@ import 'features/subcate1.2/bloc/sub_cate2_bloc.dart';
 import 'features/subcate1.2/summary3bloc/summary3_bloc.dart';
 import 'firebase_options.dart';
 
-@pragma("vm:entry-point")
+// @pragma("vm:entry-point")
 
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 
@@ -83,6 +85,7 @@ BaseOptions baseOptions = BaseOptions(
 Dio dio = Dio(baseOptions);
 
   firebaseFun() async{
+    BuildContext? context;
    requestNotificationPermission();
 
    final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
@@ -92,8 +95,8 @@ Dio dio = Dio(baseOptions);
 
    FirebaseMessaging.onMessage.listen((RemoteMessage message){
 
+
      print("Recieved message : ${message.notification?.body}");
-     ScheduleflowScreenWidget();
      showSimpleNotification(Text(message.notification?.title??""),
          subtitle: (Text(message.notification?.body??"")),
          background: Colors.red.shade700,
@@ -102,6 +105,10 @@ Dio dio = Dio(baseOptions);
    });
    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message){
      print("Recieved message : ${message.notification?.body}");
+     Navigator.push(
+       context!,
+       MaterialPageRoute(builder: (context) => ScheduleFlowBook()),
+     );
      showSimpleNotification(Text(message.notification?.title??""),
          subtitle: (Text(message.notification?.body??"")),
          background: Colors.red.shade700,
@@ -113,12 +120,15 @@ Dio dio = Dio(baseOptions);
 
   }
 
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  /*await Firebase.initializeApp(
+  await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform
   );
-   firebaseFun();*/
+  // _messagingService
+  //     .init(context);
+  //  firebaseFun();
 
 
 
@@ -248,10 +258,16 @@ class MyApp extends StatelessWidget {
                       centerTitle: true, backgroundColor: primaryColor),
                   primarySwatch: Colors.blue,
                 ),
-                home:
-                SplashScreen()
+                // home:
+                // SplashScreen(),
+              initialRoute: "/",
 
-
+              routes: {
+            // When navigating to the "/" route, build the FirstScreen widget.
+            '/': (context) => SplashScreen(),
+            // When navigating to the "/second" route, build the SecondScreen widget.
+            '/second': (context) =>  ScheduleFlowBook(),
+            },
 
               // FutureBuilder(
               //     future: SharedPref().getToken(),

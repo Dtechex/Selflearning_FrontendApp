@@ -31,11 +31,7 @@ class StartFlowScreen extends StatefulWidget {
 
 class _StartFlowScreenState extends State<StartFlowScreen> {
   //final PromtBloc promtBloc = PromtBloc();
-  final PageController _pageController = PageController();
-  int _currentPage = 0;
-  int _promtModelLength = 0;
-  ChewieController? _chewieController;
-  bool _showResource = false;
+
 
   @override
   void initState() {
@@ -49,8 +45,7 @@ class _StartFlowScreenState extends State<StartFlowScreen> {
 
   @override
   void dispose() {
-    _pageController.dispose();
-    _chewieController?.dispose(); // Dispose the ChewieController
+    // Dispose the ChewieController
     super.dispose();
   }
 
@@ -61,14 +56,10 @@ class _StartFlowScreenState extends State<StartFlowScreen> {
       margin: EdgeInsets.symmetric(horizontal: 4),
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        color: index == _currentPage ? Colors.blue : Colors.grey,
       ),
     );
   }
 
-  bool isLastPage() {
-    return _currentPage == _promtModelLength - 1;
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -104,68 +95,10 @@ class _StartFlowScreenState extends State<StartFlowScreen> {
                   child: Text('No prompts found'),
                 );
               } else {
-                _promtModelLength = state.promtModel!.length;
                 return Column(
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    DragFlipper(
-                      /// Card 1 front
-                      front: FrontPageWidget(
-                        key: GlobalKey(),
-                        promtModel: state.promtModel!,
-                        index: _currentPage,
-                        h: h,
-                        w: w,
-                        onView2sidePressed : (){
-                          controller.flipLeft();
-                        },
-                        onNextButtonPressed: () {
-                          if (isLastPage()) {
-                            // Handle Finish button press
-                            Navigator.pop(context);
-                          } else {
-                            setState(() {
-                              _currentPage += 1;
-                            });
-                          }
-                        },
-                        onViewResourcePressed: () {
-                          //BlocProvider.of<PromtBloc>(context).add(ViewResourceEvent(showResource: true));
-                          controller.flipRight();
-                          setState(() {
-                            _showResource = true;
-                          });
-                        },
-                      ), //required
-                      ///card 2 back
-                      back: !_showResource? BackPageWidget(
-                        key: GlobalKey(),
-                        promtModel: state.promtModel!,
-                        index: _currentPage,
-                        onView1sidePressed: () {
-                          controller.flipLeft();
-                        },
-                        h: h,
-                        w: h,
-                      ) : BackPage2Widget(
-                        content: widget.content!,
-                        onView1sidePressed: () {
-                          controller.flipLeft();
-                          setState(() {
-                          _showResource = false;
-                        }); },
-                        mediaType: widget.mediaType!,
-                        h: h,
-                        w: w,
-                      ), //required
-                      controller: controller, //required
-                      height: context.screenHeight / 2,
-                      width: context.screenWidth,
-                      padding: EdgeInsets.all(10),
-                      margin: EdgeInsets.all(10),
-                      backgroundColor: Colors.white,
-                    ),
                   ],
                 );
               }

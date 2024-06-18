@@ -12,6 +12,7 @@ import 'package:self_learning_app/utilities/extenstion.dart';
 import 'package:textfield_tags/textfield_tags.dart';
 
 
+import '../../utilities/constants.dart';
 import '../../utilities/shared_pref.dart';
 import '../../widgets/popup_menu_widget.dart';
 import '../subcate1.1/bloc/sub_cate1_bloc.dart';
@@ -90,9 +91,14 @@ class _MainCatBottomSheetState extends State<MainCatBottomSheet> {
       "rootId": widget.rootId,
     });
     var token = await SharedPref().getToken();
+    String base = DEVELOPMENT_BASE_URL;
+    String endPoints = "category/create";
+    var url = Uri.parse(base + endPoints);
+
     try {
+
       var res = await http.post(
-        Uri.parse('https://selflearning.dtechex.com/web/category/create'),
+        Uri.parse("$url"),
         body: jsonEncode(payload),
         headers: {
           'Content-Type': 'application/json',

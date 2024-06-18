@@ -9,6 +9,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:self_learning_app/features/create_flow/bloc/create_flow_screen_bloc.dart';
 import 'package:self_learning_app/utilities/colors.dart';
+import 'package:self_learning_app/utilities/extenstion.dart';
+import 'package:textfield_tags/textfield_tags.dart';
 
 import '../add_promts/add_promts_screen.dart';
 import '../add_promts_to_flow/add_promts_to_flow_screen.dart';
@@ -26,6 +28,9 @@ class CreateFlowScreen extends StatefulWidget {
 }
 
 class _CreateFlowScreenState extends State<CreateFlowScreen> {
+
+
+
   @override
   void initState() {
     // TODO: implement initState
@@ -33,6 +38,7 @@ class _CreateFlowScreenState extends State<CreateFlowScreen> {
     final createflowbloc = BlocProvider.of<CreateFlowBloc>(context);
     createflowbloc.add(LoadAllFlowEvent(catID: widget.rootId));
   }
+
   @override
   Widget build(BuildContext context) {
     print("create flow root id ---${widget.rootId}");
@@ -180,6 +186,8 @@ class _CreateFlowScreenState extends State<CreateFlowScreen> {
 
 
   void _showDialog(BuildContext context) {
+    final TextfieldTagsController _controller = TextfieldTagsController();
+
     TextEditingController titleController = TextEditingController(text: '');
     showDialog(
       context: context,
@@ -195,6 +203,107 @@ class _CreateFlowScreenState extends State<CreateFlowScreen> {
                   hintText: 'Enter Flow name...',
                 ),
               ),
+              TextFieldTags(
+                textfieldTagsController: _controller,
+                initialTags: const ['tags'],
+                textSeparators: const [' ', ','],
+                letterCase: LetterCase.normal,
+                validator: (String tag) {
+                  if (tag == 'php') {
+                    return 'No, please just no';
+                  } else if (_controller!.getTags!.contains(tag)) {
+                    return 'you already entered that';
+                  }
+                  return null;
+                },
+                inputfieldBuilder:
+                    (context, tec, fn, error, onChanged, onSubmitted) {
+                  return ((context, sc, tags, onTagDelete) {
+                    return Padding(
+                      padding: const EdgeInsets.all(10.0),
+                      child: TextField(
+                        controller: tec,
+                        focusNode: fn,
+                        decoration: InputDecoration(
+                          isDense: true,
+                          border: const OutlineInputBorder(
+                            borderSide: BorderSide(
+                              color: Color.fromARGB(255, 74, 137, 92),
+                              width: 3.0,
+                            ),
+                          ),
+                          focusedBorder: const OutlineInputBorder(
+                            borderSide: BorderSide(
+                              color: Color.fromARGB(255, 74, 137, 92),
+                              width: 3.0,
+                            ),
+                          ),
+                          helperStyle: const TextStyle(
+                            color: Color.fromARGB(255, 74, 137, 92),
+                          ),
+                          hintText: _controller!.hasTags
+                              ? ''
+                              : "Enter tag...(Optional)",
+                          errorText: error,
+                          prefixIconConstraints: BoxConstraints(
+                              maxWidth: context.screenWidth * 0.74),
+                          prefixIcon: tags.isNotEmpty
+                              ? SingleChildScrollView(
+                            controller: sc,
+                            scrollDirection: Axis.horizontal,
+                            child: Row(
+                                children: tags.map((String tag) {
+                                  return Container(
+                                    decoration: const BoxDecoration(
+                                      borderRadius: BorderRadius.all(
+                                        Radius.circular(20.0),
+                                      ),
+                                      color:
+                                      Color.fromARGB(255, 74, 137, 92),
+                                    ),
+                                    margin: const EdgeInsets.symmetric(
+                                        horizontal: 5.0),
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 10.0, vertical: 5.0),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        InkWell(
+                                          child: Text(
+                                            '#$tag',
+                                            style: const TextStyle(
+                                                color: Colors.white),
+                                          ),
+                                          onTap: () {},
+                                        ),
+                                        const SizedBox(width: 4.0),
+                                        InkWell(
+                                          child: const Icon(
+                                            Icons.cancel,
+                                            size: 14.0,
+                                            color: Color.fromARGB(
+                                                255, 233, 233, 233),
+                                          ),
+                                          onTap: () {
+                                            onTagDelete(tag);
+                                          },
+                                        )
+                                      ],
+                                    ),
+                                  );
+                                }).toList()),
+                          )
+                              : null,
+                        ),
+                        onChanged: onChanged,
+                        onSubmitted: onSubmitted,
+                      ),
+                    );
+                  });
+                },
+              ),
+
             ],
           ),
           actions: <Widget>[
@@ -215,7 +324,7 @@ class _CreateFlowScreenState extends State<CreateFlowScreen> {
                     context,
                     MaterialPageRoute(
                       builder: (context) => AddPromptsToFlowScreen(
-                        keywords: [],
+                        keywords: _controller.getTags!,
                         title: titleController.text,
                         rootId: widget.rootId, promptList: [],),)).then((value) {
                           if(value != null && value == true){

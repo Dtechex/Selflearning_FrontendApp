@@ -112,7 +112,6 @@ class _ShowPromtsScreenState extends State<ShowPromtsScreen> {
                                 promptTitle: widget.flowList[index].promptName,
                               )));
                             }, icon: Icon(Icons.play_arrow, color: Colors.green,)),
-                            Icon(Icons.menu),
                           ],
                         ),
                         key: Key('$index'),

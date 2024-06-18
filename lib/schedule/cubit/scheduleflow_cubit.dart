@@ -60,7 +60,10 @@ class ScheduleflowCubit extends Cubit<ScheduleflowState> {
 
 
   addDateTime({    required DateTime? scheduledDateTime,
-    required String flowId}) async{
+    required String flowId,
+    required String flowName
+
+  }) async{
     emit(ScheduleFlowLoading());
     Response? response = await ScheduleRepo.addDateTime(scheduledDateTime: scheduledDateTime,flowId:flowId );
     if(response?.statusCode == 400){
@@ -68,7 +71,7 @@ class ScheduleflowCubit extends Cubit<ScheduleflowState> {
     }
 
     else{
-      EasyLoading.showSuccess("date will be added");
+      EasyLoading.showSuccess("$flowName Flow is scheduled");
     }
 
   }

@@ -1,3 +1,4 @@
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -11,6 +12,7 @@ import 'package:self_learning_app/features/quick_import/quick_add_import_screen.
 import 'package:self_learning_app/utilities/extenstion.dart';
 
 import '../add_Dailog/bloc/new_dailog/create_dialog_new/newDailogCreate.dart';
+import '../quick_import/repo/quick_add_repo.dart';
 import 'PromptBloc/quick_prompt_bloc.dart';
 
 class QuickTypeScreen extends StatefulWidget {
@@ -40,7 +42,67 @@ class _QuickTypeScreenState extends State<QuickTypeScreen> {
     context.read<QuickAddBloc>().add(LoadQuickTypeEvent());
     context.read<QuickPromptBloc>().add(QuickAddPromptEvent());
   }
+  AwesomeDialog updateResource({
+    required String sId,
+    required String resourceId,
+    required String mediaType,
+    required String resourceContent,
+    required String resourceTitle
 
+  }) {
+    TextEditingController updateResourceController = TextEditingController(text: resourceTitle);
+    print("sid--$sId");
+    print("rootId--$resourceId");
+    // 662f2b1ff151e91aba2bbd69
+    // 6515391d6b4ba0023446e1d3
+
+    return AwesomeDialog(
+        context: context,
+        animType: AnimType.BOTTOMSLIDE,
+        dialogType: DialogType.INFO_REVERSED,
+        body: Column(
+            children:[
+              Text("Update Resource", style: TextStyle(color: Colors.greenAccent, fontSize: 20, fontWeight: FontWeight.w500),),
+              SizedBox(height: 10,),
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 5, vertical: 2),
+                decoration: BoxDecoration(
+                    color: Colors.grey.shade100,
+                    borderRadius: BorderRadius.circular(2),
+                    border: Border.all(color: Colors.grey, width: 1.5)
+                ),
+                child: TextFormField(
+                  controller: updateResourceController,
+                  decoration: InputDecoration(
+                      border: InputBorder.none
+                  ),
+                ),
+              ),
+            ]
+
+        ),
+        title: 'This is Ignored',
+        desc: 'This is also Ignored',
+        btnOkOnPress: () async{
+          await  QuickImportRepo.updateResources(rootId: "6646c8d8f151e91aba2c456c",resourceId: "6515391d6b4ba0023446e1d3" ,
+              mediaType: mediaType, resourceTitle: updateResourceController.text,
+              resourceContent: resourceContent ).then((value) {
+            setState(() {
+              context.read<QuickAddBloc>().add(LoadQuickTypeEvent());
+
+              // context.read<ResourcesBloc>().add(LoadResourcesEvent(rootId: widget.rootId, mediaType: widget.mediaType));
+
+            });
+          });
+
+        },
+        btnOkColor: Colors.green.shade300,
+        closeIcon: Icon(Icons.close),
+        btnCancelOnPress: () {},
+        btnOkText: "Update",
+        btnOkIcon: Icons.update)
+      ..show();
+  }
   @override
   void dispose() {
     super.dispose();
@@ -64,7 +126,7 @@ class _QuickTypeScreenState extends State<QuickTypeScreen> {
                 onPressed: () {
                   Navigator.pushReplacement(context, MaterialPageRoute(
                     builder: (context) {
-                      return const DashBoardScreen();
+                      return  DashBoardScreen(msgstatus: false,);
                     },
                   ));
                 },
@@ -104,7 +166,9 @@ class _QuickTypeScreenState extends State<QuickTypeScreen> {
                                     .add(LoadQuickTypeEvent());
                               }),
                               children: [
+
                                 SlidableAction(
+
                                   onPressed: (context) {
                                     QuickAddRepo.deletequickAdd(
                                         id: list[index].sId!, context: context);
@@ -116,7 +180,9 @@ class _QuickTypeScreenState extends State<QuickTypeScreen> {
                                   foregroundColor: Colors.white,
                                   icon: Icons.delete,
                                   label: 'Delete',
+
                                 ),
+
                               ],
                             ),
                             child: Padding(
@@ -182,9 +248,17 @@ class _QuickTypeScreenState extends State<QuickTypeScreen> {
                                               icon: Icon(Icons.add),
                                             ),
                                             Column(
-                                              children: const [
-                                                Icon(Icons.arrow_right_alt),
-                                                Icon(Icons.delete),
+                                              mainAxisSize: MainAxisSize.min,
+                                              children:  [
+                                                Icon(Icons.arrow_forward_rounded),
+                                                Icon(Icons.delete)
+                                                // IconButton(onPressed: (){
+                                                //   updateResource(resourceTitle: list[index].title??"",
+                                                //       resourceContent: list[index].content??"",
+                                                //       mediaType:list[index].type??"" , resourceId: list[index].rootId??"",
+                                                //   sId: list[index].sId??""
+                                                //   );
+                                                // }, icon: Icon(Icons.update))
                                               ],
                                             ),
                                           ],

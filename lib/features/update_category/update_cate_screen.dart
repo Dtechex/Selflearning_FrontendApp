@@ -102,7 +102,7 @@ class _UpdateCateScreenState extends State<UpdateCateScreen> {
         context.read<CategoryBloc>().add(CategoryLoadEvent());
         Navigator.pushReplacement(context, MaterialPageRoute(
           builder: (context) {
-            return DashBoardScreen();
+            return DashBoardScreen(msgstatus: false,);
           },
         ));
       } else {
@@ -139,7 +139,7 @@ class _UpdateCateScreenState extends State<UpdateCateScreen> {
         context.read<CategoryBloc>().add(CategoryLoadEvent());
         Navigator.pushReplacement(context, MaterialPageRoute(
           builder: (context) {
-            return DashBoardScreen();
+            return DashBoardScreen(msgstatus: false,);
           },
         ));
       } else {

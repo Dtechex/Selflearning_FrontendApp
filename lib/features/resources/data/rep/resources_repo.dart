@@ -6,19 +6,23 @@ import 'package:http/http.dart';
 class ResourcesRepo {
   static Future<AllResourcesModel?> getResources(
       {required String rootId, required String mediaType, String ?resQueary}) async {
+    print("rootid - $rootId");
+    print("type = $mediaType");
+    print("title $resQueary");
     Response res = await Api().get(
-      endPoint: 'resource?rootId=$rootId&type=$mediaType&title=$resQueary',
+      endPoint: 'resource?rootId=$rootId&title=$resQueary',
     );
-
+    //&type=$mediaType&title=$resQueary
     if (res.statusCode == 200) {
       var data = await jsonDecode(res.body);
       print("Fetched Data ===>>> ${jsonDecode(res.body)}");
+      print("Break fetched Data");
       return AllResourcesModel.fromJson(data);
     }
     print(res.body);
   }
 
-  static Future<int?> deleteResource({
+  static Future<Response?> deleteResource({
     required String rootId,
   }) async {
     print('delete');
@@ -27,7 +31,7 @@ class ResourcesRepo {
     );
     print(res.body);
     print("res.body");
-    return res.statusCode;
+    return res;
   }
 
   static Future<AllResourcesModel?> addResources(
@@ -37,6 +41,7 @@ class ResourcesRepo {
     Response res = await Api().get(
       endPoint: 'resource',
     );
+    print("this is resource");
     if (res.statusCode == 200) {
       var data = await jsonDecode(res.body);
       return AllResourcesModel.fromJson(data);

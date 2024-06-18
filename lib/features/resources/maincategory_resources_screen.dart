@@ -1,8 +1,10 @@
 import 'dart:convert';
 
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:blurrycontainer/blurrycontainer.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chewie/chewie.dart';
+import 'package:dio/dio.dart';
 import 'package:flick_video_player/flick_video_player.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -19,6 +21,7 @@ import 'package:self_learning_app/features/subcategory/model/resources_model.dar
 import 'package:self_learning_app/utilities/extenstion.dart';
 import 'package:mime/mime.dart';
 import 'package:video_player/video_player.dart';
+import '../../utilities/base_client.dart';
 import '../../utilities/colors.dart';
 import '../../utilities/shared_pref.dart';
 import '../../widgets/add_resources_screen.dart';
@@ -29,9 +32,12 @@ import 'dart:io';
 
 import '../../widgets/popup_menu_widget.dart';
 import '../promt/promts_screen.dart';
+import '../quick_import/repo/quick_add_repo.dart';
 import '../subcate1.1/sub_category_1.1_screen.dart';
 import '../subcategory/bloc/sub_cate_bloc.dart';
 import '../subcategory/bloc/sub_cate_state.dart';
+import 'package:http/http.dart' as http;
+
 
 class MaincategoryResourcesList extends StatefulWidget {
   final String rootId;
@@ -48,7 +54,6 @@ class MaincategoryResourcesList extends StatefulWidget {
 }
 
 class _MaincategoryResourcesListState extends State<MaincategoryResourcesList> {
-  final ResourcesBloc resourcesBloc = ResourcesBloc();
   TextEditingController textEditingController = TextEditingController();
   bool _resourcesVisible = true;
   ChewieController? _chewieController;
@@ -97,13 +102,107 @@ class _MaincategoryResourcesListState extends State<MaincategoryResourcesList> {
       return data[''];
     } catch (e) {}
   }
+  void deleteResource({
+    required String rootId,
+  }) async {
+    print('delete');
+    http.Response res = await Api().delete(
+      endPoint: 'resource/$rootId',
+    );
+   if (res.statusCode==200){
+     context.read<ResourcesBloc>().add(LoadResourcesEvent(rootId: widget.rootId, mediaType: widget.mediaType));
+     setState(() {
 
+     });
+     context.showSnackBar(const SnackBar(
+         duration: Duration(seconds: 2),
+         content: Text('Ressource deleted successfully')));
+   }
+  }
+  AwesomeDialog showDeleteResource({
+    required String resourceName,
+    required String resourceId,
+  }) {
+    return AwesomeDialog(
+      context: context,
+      animType: AnimType.BOTTOMSLIDE,
+      dialogType: DialogType.QUESTION,
+      body: Center(
+        child: Text(
+          'Are you sure\nYou want to delete\n$resourceName',
+          style: TextStyle(fontStyle: FontStyle.italic),
+        ),
+      ),
+      title: 'This is Ignored',
+      desc: 'This is also Ignored',
+      btnOkOnPress: () {
+        deleteResource(rootId: resourceId);
+      },
+      btnOkColor: Colors.red,
+      closeIcon: Icon(Icons.close),
+      btnCancelOnPress: () {},
+      btnOkText: "Delete",
+      btnOkIcon: Icons.delete,
+    )..show();
+  }
+  AwesomeDialog updateResource({
+    required String resourceId,
+    required String mediaType,
+    required String resourceContent,
+    required String resourceTitle
 
+}) {
+    TextEditingController updateResourceController = TextEditingController(text: resourceTitle);
+
+    return AwesomeDialog(
+        context: context,
+        animType: AnimType.BOTTOMSLIDE,
+        dialogType: DialogType.INFO_REVERSED,
+        body: Column(
+          children:[
+            Text("Update Resource", style: TextStyle(color: Colors.greenAccent, fontSize: 20, fontWeight: FontWeight.w500),),
+            SizedBox(height: 10,),
+            Container(
+              padding: EdgeInsets.symmetric(horizontal: 5, vertical: 2),
+              decoration: BoxDecoration(
+                  color: Colors.grey.shade100,
+                  borderRadius: BorderRadius.circular(2),
+                  border: Border.all(color: Colors.grey, width: 1.5)
+              ),
+              child: TextFormField(
+                controller: updateResourceController,
+                decoration: InputDecoration(
+                    border: InputBorder.none
+                ),
+              ),
+            ),
+          ]
+
+        ),
+        title: 'This is Ignored',
+        desc: 'This is also Ignored',
+        btnOkOnPress: () async{
+       await  QuickImportRepo.updateResources(rootId: widget.rootId!,resourceId: resourceId ,
+              mediaType: mediaType, resourceTitle: updateResourceController.text,
+              resourceContent: resourceContent );
+         setState(() {
+           context.read<ResourcesBloc>().add(LoadResourcesEvent(rootId: widget.rootId, mediaType: widget.mediaType));
+
+         });
+        },
+        btnOkColor: Colors.green.shade300,
+        closeIcon: Icon(Icons.close),
+        btnCancelOnPress: () {},
+        btnOkText: "Update",
+        btnOkIcon: Icons.update)
+      ..show();
+  }
   @override
   Widget build(BuildContext context) {
     print("checking category id ${widget.rootId}");
 
     return Scaffold(
+
       floatingActionButton: ElevatedButton(onPressed: (){
         showDialog(
           context: context,
@@ -114,7 +213,7 @@ class _MaincategoryResourcesListState extends State<MaincategoryResourcesList> {
         ).then((value) {
           if(value){
             setState(() {
-              resourcesBloc.add(LoadResourcesEvent(rootId: widget.rootId, mediaType: widget.mediaType));
+              ResourcesBloc().add(LoadResourcesEvent(rootId: widget.rootId, mediaType: widget.mediaType));
 
             });
           }
@@ -124,14 +223,17 @@ class _MaincategoryResourcesListState extends State<MaincategoryResourcesList> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            _resourcesVisible
-                ? BlocConsumer<ResourcesBloc, ResourcesState>(
+                 BlocConsumer<ResourcesBloc, ResourcesState>(
               listener: (context, state) {
+                print("bloc consumer state");
+                if(state is ResourcesLoaded){
+                  print("resource loaded success from consumer");
+
+                }
                 if (state is ResourcesDelete) {
-                  context.showSnackBar(const SnackBar(
-                      duration: Duration(seconds: 2),
-                      content: Text('Ressource deleted successfully')));
-                  resourcesBloc.add(LoadResourcesEvent(rootId: widget.rootId, mediaType: widget.mediaType));
+                  print("resource deleted success from consumer");
+
+                  ResourcesBloc().add(LoadResourcesEvent(rootId: widget.rootId, mediaType: widget.mediaType));
                   //context.read<ResourcesBloc>().add(LoadResourcesEvent(rootId: widget.rootId, mediaType: ''));
                 }
               },
@@ -198,6 +300,7 @@ class _MaincategoryResourcesListState extends State<MaincategoryResourcesList> {
                                               borderRadius: BorderRadius.circular(12.0),
                                               color: const Color(0xFFF5F5F5),
                                             ),
+                                            // content
                                             child: getFileType(content) == 'Photo'
                                                 ? CachedNetworkImage(
                                               imageUrl: 'https://selflearning.dtechex.com/public/image/$content',
@@ -224,9 +327,12 @@ class _MaincategoryResourcesListState extends State<MaincategoryResourcesList> {
                                         ),
                                         Padding(
                                           padding: const EdgeInsets.only(left: 8.0, top: 8.0),
-                                          child: Text(
-                                            (title != null ? '${title.substring(0, 1).toUpperCase()}${title.substring(1)}' : 'Untitled'),
-                                            style: TextStyle(fontSize: 18.0, letterSpacing: 1, fontWeight: FontWeight.w500),
+                                          child: SizedBox(
+                                            width: MediaQuery.of(context).size.width * 0.5, // Adjust width according to your layout
+                                            child: Text(
+                                              (title != null ? '${title.substring(0, 1).toUpperCase()}${title.substring(1)}' : 'Untitled'),
+                                              style: TextStyle(fontSize: 18.0, letterSpacing: 1, fontWeight: FontWeight.w500),
+                                            ),
                                           ),
                                         ),
                                       ],
@@ -238,12 +344,24 @@ class _MaincategoryResourcesListState extends State<MaincategoryResourcesList> {
                                   itemBuilder: (context) {
                                     return [
                                       const PopupMenuItem(
-                                          value: 'play',
+                                          value: 'updateResource',
                                           child: InkWell(
                                               child: Row(
                                                 mainAxisAlignment: MainAxisAlignment.start,
                                                 children: [
                                                   Icon(Icons.update, color: primaryColor,),
+                                                  SizedBox(width: 8.0,),
+                                                  Text("Update resource"),
+                                                ],
+                                              ))
+                                      ),
+                                      const PopupMenuItem(
+                                          value: 'play',
+                                          child: InkWell(
+                                              child: Row(
+                                                mainAxisAlignment: MainAxisAlignment.start,
+                                                children: [
+                                                  Icon(Icons.play_arrow, color: primaryColor,),
                                                   SizedBox(width: 8.0,),
                                                   Text("Play prompts"),
                                                 ],
@@ -270,7 +388,7 @@ class _MaincategoryResourcesListState extends State<MaincategoryResourcesList> {
                                                 children: [
                                                   Icon(Icons.delete, color: primaryColor,),
                                                   SizedBox(width: 8.0,),
-                                                  Text("Remove prompts"),
+                                                  Text("Remove resource"),
                                                 ],
                                               ))
                                       ),
@@ -278,6 +396,20 @@ class _MaincategoryResourcesListState extends State<MaincategoryResourcesList> {
                                   },
                                   onSelected: (String value) {
                                     switch(value){
+                                      case 'updateResource':
+                                        updateResource(
+                                          resourceId: state.allResourcesModel.data!.record!.records![index].sId.toString(),
+                                          mediaType: state.allResourcesModel.data!.record!.records![index].type!,
+                                          resourceContent: state.allResourcesModel.data!.record!.records![index].content.toString(),
+                                          resourceTitle: state.allResourcesModel.data!.record!.records![index].title!
+                                        );
+/*
+                                         QuickImportRepo.updateResources(rootId: widget.rootId!,resourceId: state.allResourcesModel.data!.record!.records![index].sId.toString() ,
+                                             mediaType: state.allResourcesModel.data!.record!.records![index].type!, resourceTitle: "xyz",
+                                             resourceContent: state.allResourcesModel.data!.record!.records![index].content.toString() );
+*/
+
+                                        break;
                                       case 'play':
                                         Navigator.push(context,
                                             MaterialPageRoute(
@@ -298,11 +430,15 @@ class _MaincategoryResourcesListState extends State<MaincategoryResourcesList> {
                                         ));
                                         break;
                                       case 'remove':
-                                        resourcesBloc.add(
-                                            DeleteResourcesEvent(
-                                                rootId: state.allResourcesModel.data!.record!.records![index].sId.toString()
-                                            )
+                                        showDeleteResource(resourceId:state.allResourcesModel.data!.record!.records![index].sId.toString(),
+                                        resourceName: state.allResourcesModel.data!.record!.records![index].title.toString()
                                         );
+                                        // deleteResource(rootId:state.allResourcesModel.data!.record!.records![index].sId.toString() );
+                                        // ResourcesBloc().add(
+                                        //     DeleteResourcesEvent(
+                                        //         rootId:
+                                        //     )
+                                        // );
                                         break;
                                     }
                                   },
@@ -318,74 +454,6 @@ class _MaincategoryResourcesListState extends State<MaincategoryResourcesList> {
                 return const Text('something went wrong');
               },
             )
-                : BlocBuilder<SubCategoryBloc, SubCategoryState>(
-              builder: (context, state) {
-                if (state is SubCategoryLoading) {
-                  return Container(
-                      height: MediaQuery.of(context).size.height * 0.9,
-                      child: const Center(child: CircularProgressIndicator()));
-                } else if (state is SubCategoryLoaded) {
-                  return state.cateList.isEmpty
-                      ? SizedBox(
-                    height: MediaQuery.of(context).size.height * 0.9,
-                    child: const Center(
-                      child: Text(
-                        'No Subcategory added',
-                        style: TextStyle(
-                            fontSize: 19, fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                  )
-                      : ListView.builder(
-                    itemCount: state.cateList.length,
-                    shrinkWrap: true,
-                    physics: NeverScrollableScrollPhysics(),
-                    itemBuilder: (context, index) {
-                      return GestureDetector(
-                        onTap: () async{
-                          //   await SharedPref().savesubcateId(state.cateList[index].sId!);
-                          Navigator.push(context, MaterialPageRoute(
-                            builder: (context) {
-                              return SubcategoryResourcesList(
-                                //subCateTitle: state.cateList[index].name!,
-                                rootId: state.cateList[index].sId!,
-                                title: state.cateList[index].name!,
-                                mediaType: '',
-                                //color: widget.color,
-                                //keyWords: state.cateList[index].keywords!,
-                              );
-                            },
-                          ));
-                        },
-                        child: Padding(
-                            padding: const EdgeInsets.all(10),
-                            child: Container(
-                              decoration: BoxDecoration(
-                                  borderRadius:
-                                  BorderRadius.circular(10),
-                                  border: Border.all(
-                                      color: Color(int.parse(state
-                                          .cateList[index]
-                                          .styles![1]
-                                          .value!)),
-                                      width: 3),
-                                  color: Colors.transparent),
-                              padding: const EdgeInsets.only(left: 10),
-                              child: ListTile(
-                                  title: Text(
-                                    state.cateList[index].name.toString(),
-                                    style: const TextStyle(
-                                        color: primaryColor),
-                                  )),
-                            )),
-                      );
-                    },
-                  );
-                }
-                return const SizedBox(child: Text('Something went wrong'),);
-              },
-            ),
-            SizedBox(height: 120.0,),
           ],
         ),
       )

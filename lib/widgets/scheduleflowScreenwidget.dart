@@ -15,16 +15,7 @@ class ScheduleflowScreenWidget extends StatefulWidget {
 }
 
 class _ScheduleflowScreenWidgetState extends State<ScheduleflowScreenWidget> {
-  DateTime? currentDate;
-  TimeOfDay? currentTime;
 
-  @override
-  void initState() {
-    super.initState();
-    currentDate = DateTime.now();
-    currentTime = TimeOfDay.now();
-    context.read<ScheduleflowCubit>().getFlow();
-  }
 
   Widget build(BuildContext context) {
     return Scaffold(
@@ -87,16 +78,7 @@ class _ScheduleflowScreenWidgetState extends State<ScheduleflowScreenWidget> {
                                       trailing: IconButton(
                                         onPressed: () {
                                           print("we can see flow id ${state.flowList![index].id}");
-                                          showDialog(
-                                            context: context,
-                                            builder: (BuildContext context) {
-                                              return DateTimePickerDialog(
-                                                initialDate: currentDate!,
-                                                initialTime: currentTime!,
-                                                flowId:
-                                                    state.flowList![index].id,
-                                              );
-                                            },
+
                                           ).then((value) {
                                             setState(() {
                                               context

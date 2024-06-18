@@ -105,7 +105,7 @@ class _UpdateSubCate2ScreenState extends State<UpdateSubCate2Screen> {
             .add(SubCategory1LoadEvent(rootId: widget.rootId));
         Navigator.pushReplacement(context, MaterialPageRoute(
           builder: (context) {
-            return DashBoardScreen();
+            return DashBoardScreen(msgstatus: false,);
           },
         ));
       } else {
@@ -146,7 +146,7 @@ class _UpdateSubCate2ScreenState extends State<UpdateSubCate2Screen> {
             .add(SubCategory1LoadEvent(rootId: widget.rootId));
         Navigator.pushReplacement(context, MaterialPageRoute(
           builder: (context) {
-            return DashBoardScreen();
+            return DashBoardScreen(msgstatus: false,);
           },
         ));
       } else {
