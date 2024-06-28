@@ -75,7 +75,7 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 }
 
 BaseOptions baseOptions = BaseOptions(
-  baseUrl: 'https://selflearning.dtechex.com/',
+  baseUrl: 'https://backend.savant.app/',
   receiveTimeout: const Duration(seconds: 90),
   sendTimeout: const Duration(seconds: 90),
   connectTimeout: const Duration(seconds: 90),

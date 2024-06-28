@@ -14,7 +14,7 @@ class ScheduleRepo{
       dynamic check = Jwt.parseJwt(token.toString());
       print("to decode token $check");
       response = await Dio().get(
-          'https://selflearning.dtechex.com/web/flow?keyword=$queary',
+          'https://backend.savant.app/web/flow?keyword=$queary',
           options: Options(
               headers: {"Authorization": 'Bearer $token'}
           ));
@@ -39,7 +39,7 @@ class ScheduleRepo{
      dynamic check = Jwt.parseJwt(token.toString());
      print("to decode token $check");
      response = await Dio().put(
-         'https://selflearning.dtechex.com/web/flow/update/$flowId',
+         'https://backend.savant.app/web/flow/update/$flowId',
          data: {
            'scheduledDateTime': formattedDateTime,
 

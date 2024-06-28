@@ -61,7 +61,6 @@
 //   Widget build(BuildContext context) {
 //     var h = MediaQuery.of(context).size.height;
 //     var w = MediaQuery.of(context).size.width;
-//     print("https://selflearning.dtechex.com/public/${widget.mediaType}/${widget.content}");
 //     return BlocProvider(
 //       create: (context) => promtBloc,
 //       child: Scaffold(
@@ -147,7 +146,6 @@
 //                             ? Center(
 //                           child: CachedNetworkImage(
 //                             imageUrl:
-//                             "https://selflearning.dtechex.com/public/image/${widget.content}",
 //                             fit: BoxFit.fill,
 //                             height: h * 0.2,
 //                             width: w / 1.5,
@@ -163,12 +161,10 @@
 //                             : widget.mediaType == 'audio'
 //                             ? AudioPlayerPage(
 //                           audioUrl:
-//                           "https://selflearning.dtechex.com/public/${widget.mediaType}/${widget.content}",
 //                         )
 //                             : widget.mediaType == 'video'
 //                             ? Chewie(
 //                           controller: _createChewieController(
-//                             "https://selflearning.dtechex.com/public/${widget.mediaType}/${widget.content}",
 //                           ),
 //                         )
 //                             : Text(widget.content.toString()),

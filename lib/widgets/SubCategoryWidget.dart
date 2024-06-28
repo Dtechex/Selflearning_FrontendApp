@@ -62,7 +62,7 @@ class _SubCategoryWidgetState extends State<SubCategoryWidget> with TickerProvid
     };
 
       var res = await _dio.patch(
-            'https://selflearning.dtechex.com/web/category/${widget.rootId}',
+            'https://backend.savant.app/web/category/${widget.rootId}',
         data: {"summary": summary},
         options: Options(headers: headers),
       );
@@ -92,7 +92,7 @@ class _SubCategoryWidgetState extends State<SubCategoryWidget> with TickerProvid
 
        print("summary list in update summary $summaryList");
       var res = await _dio.patch(
-        'https://selflearning.dtechex.com/web/category/update/summary/${widget.rootId}',
+        'https://backend.savant.app/web/category/update/summary/${widget.rootId}',
         data: {"summary": summaryList},
         options: Options(headers: headers),
       );
@@ -117,6 +117,7 @@ class _SubCategoryWidgetState extends State<SubCategoryWidget> with TickerProvid
       floatingActionButton: ElevatedButton(
         child: Text("Create SubCategory"),
         onPressed: (){
+          print("onpressed button subcategory");
           Navigator.push(context, MaterialPageRoute(builder: (context)=>CreateSubCate1Screen(rootId: widget.rootId,
           subCatName: widget.categoryName,
           ))).then((value) {
