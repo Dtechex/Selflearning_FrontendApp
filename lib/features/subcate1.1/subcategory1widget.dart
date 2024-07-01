@@ -85,6 +85,32 @@ class _SubCategory1WidgetState extends State<SubCategory1Widget> {
   }
 
   List<String> summary = [];
+  void updateSummary({required List<String> summaryList})async{
+    final Dio _dio = Dio();
+    var token = await SharedPref().getToken();
+    Map<String, dynamic> headers = {
+      'Authorization': 'bearer' + ' ' + token.toString(),
+    };
+
+    print("summary list in update summary $summaryList");
+    var res = await _dio.patch(
+      'https://backend.savant.app/web/category/update/summary/${widget.rootId}',
+      data: {"summary": summaryList},
+      options: Options(headers: headers),
+    );
+    print("status code known ${res.statusCode}");
+    if(res.statusCode ==200){
+      print("summary deleted successfully");
+      setState(() {
+        context.read<Summary2Bloc>().add(
+            Summary2LoadedEvent(rootId: widget.rootId));
+        context.read<SubCategory1Bloc>().add(
+            SubCategory1LoadEvent(rootId: widget.rootId));
+      });
+    }
+
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -146,7 +172,7 @@ class _SubCategory1WidgetState extends State<SubCategory1Widget> {
                 ),
                 child: IconButton(
                   onPressed: (){
-                    if(summaryController.text.isNotEmpty) {
+                    if(summaryController.text.trim().isNotEmpty) {
                       addCategory(summary: summaryController.text);
                     }
                     else{
@@ -193,6 +219,10 @@ class _SubCategory1WidgetState extends State<SubCategory1Widget> {
                         delegate
                             : SliverChildBuilderDelegate(
                               (BuildContext context, int index) {
+                                List<String>? sumary =state.sumaryList[0].summary; // Use i instead of index
+                                for (var sum in sumary!){
+                                  print("hello this is summary checking $sum");
+                                }
                             return Container(
                               padding: EdgeInsets.symmetric(horizontal: 5, vertical: 5),
                               margin: EdgeInsets.symmetric(vertical: 5, horizontal: 8),
@@ -214,7 +244,15 @@ class _SubCategory1WidgetState extends State<SubCategory1Widget> {
                                     height: 1.2,
                                   ),
                                 ),
-                                trailing: IconButton(onPressed: (){}, 
+                                trailing: IconButton(onPressed: (){
+
+                                  sumary.removeAt(index);
+                                  for(var sum in sumary){
+                                    print("now we can see the remaining summary and that ist $sum");
+                                  }
+                                  updateSummary(summaryList: sumary);
+
+                                },
                                     icon: Icon(Icons.delete)
                                 ),
                                 

@@ -191,6 +191,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                               child: Text('Cancel')),
                           ElevatedButton(
                               onPressed: () async {
+                                print("hello logout");
                                 await SharedPref().sClear();
                                 await SharedPref().clear().then((value) {
                                   Navigator.pushAndRemoveUntil(context,
@@ -198,7 +199,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                         builder: (context) {
                                           return const LoginScreen();
                                         },
-                                      ), (route) => true);
+                                      ), (route) => false);
                                 });
                               },
                               child: Text('Logout')),

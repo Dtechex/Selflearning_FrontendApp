@@ -156,8 +156,13 @@ class _AddVideoScreenState extends State<AddVideoScreen> {
                                   leading: Icon(Icons.photo_library),
                                   title: Text('Photo Library'),
                                   onTap: () {
-                                    ImagePickerHelper.pickVideo(imageSource: ImageSource.gallery).then((value) {
+                                    ImagePickerHelper.pickVideo(imageSource: ImageSource.gallery).then((value) async {
                                       if (value != null) {
+                                        final file = File(state.selectedFilepath!);
+                                        final fileSize = await file.length();
+                                        if (fileSize > 5 * 1024 * 1024) { // 5 MB in bytes
+                                          EasyLoading.showInfo('Upload video should be less than 5 MB');
+                                        }
                                         addMediaBloc.add(VideoPickEvent(video: value.path));
                                         _initializeVideoPlayer(value.path);
                                       }
@@ -169,8 +174,13 @@ class _AddVideoScreenState extends State<AddVideoScreen> {
                                   leading: Icon(Icons.camera_alt),
                                   title: Text('Camera'),
                                   onTap: () {
-                                    ImagePickerHelper.pickVideo(imageSource: ImageSource.camera).then((value) {
+                                    ImagePickerHelper.pickVideo(imageSource: ImageSource.camera).then((value) async {
                                       if (value != null) {
+                                        final file = File(state.selectedFilepath!);
+                                        final fileSize = await file.length();
+                                        if (fileSize > 5 * 1024 * 1024) { // 5 MB in bytes
+                                          EasyLoading.showInfo('Upload video should be less than 5 MB');
+                                        }
                                         addMediaBloc.add(VideoPickEvent(video: value.path));
                                         _initializeVideoPlayer(value.path);
                                       }
@@ -209,11 +219,12 @@ class _AddVideoScreenState extends State<AddVideoScreen> {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(content: Text('Please attach a file'), duration: Duration(seconds: 1)),
                       );
-                    } else {
+                    }
+                    else {
                       final file = File(state.selectedFilepath!);
                       final fileSize = await file.length();
                       if (fileSize > 5 * 1024 * 1024) { // 5 MB in bytes
-                        EasyLoading.showInfo('Upload image should be less than 5 MB');
+                        EasyLoading.showInfo('Upload video should be less than 5 MB');
                       } else {
                         addMediaBloc.add(
                           SubmitButtonEvent(

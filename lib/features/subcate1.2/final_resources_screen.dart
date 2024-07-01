@@ -30,7 +30,7 @@ class FinalResourceScreen extends StatefulWidget {
 class _FinalResourceScreenState extends State<FinalResourceScreen> {
 
   CreateFlowBloc _flowBloc = CreateFlowBloc();
-
+  String ?title;
   @override
   void initState() {
     // TODO: implement initState
@@ -64,7 +64,7 @@ class _FinalResourceScreenState extends State<FinalResourceScreen> {
         ),
       ),
       appBar: AppBar(
-          title: Text(widget.categoryName),
+          title: Text(title?.isEmpty ?? true ? widget.categoryName : title!),
 
           elevation: 0,
           automaticallyImplyLeading: true,
@@ -155,9 +155,16 @@ class _FinalResourceScreenState extends State<FinalResourceScreen> {
                             return UpdateSubCate2Screen(
                               rootId: widget.rootId,
                               selectedColor: widget.color!,
-                              categoryTitle: widget.categoryName,
+                              categoryTitle: title?.isEmpty ?? true ? widget.categoryName : title!,
                               keyWords: widget.keyWords,);
-                          },));
+                          },)).then((value) {
+
+                      if (value != null && value is Map && value.containsKey('categoryName')) {
+                        setState(() {
+                          title = value['categoryName'];
+                        });
+                      }
+                    });
                     break;
                   case 'schedule':
 

@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -71,7 +72,7 @@ class _UpdateSubCate2ScreenState extends State<UpdateSubCate2Screen> {
   }
 
   Future<int?> addCategory() async {
-    isLoading = true;
+EasyLoading.show();
     List<String> keywords = ['test,test1'];
     List<Map<String, String>> styles = [
       {"key": "font-size", "value": "2rem"},
@@ -95,6 +96,8 @@ class _UpdateSubCate2ScreenState extends State<UpdateSubCate2Screen> {
         },
       );
       if (res.statusCode == 200) {
+        EasyLoading.dismiss();
+        EasyLoading.showSuccess("Category updated successfully");
         context.showSnackBar(
             SnackBar(content: Text('Subcategory update Successfully')));
         context
@@ -108,14 +111,20 @@ class _UpdateSubCate2ScreenState extends State<UpdateSubCate2Screen> {
         //     return DashBoardScreen(msgstatus: false,);
         //   },
         // ));
-        Navigator.pop(context, true);
-      } else {
+        Navigator.pop(context, {
+          'success': true,
+          'categoryName': categoryNameController.text,
+        });      } else {
+        EasyLoading.dismiss();
+        EasyLoading.showError("Somethings wents wrong");
         context.showSnackBar(
             const SnackBar(content: Text('opps something went worng')));
       }
       print(res.body);
       print('data');
     } on SocketException catch (e) {
+      EasyLoading.dismiss();
+      EasyLoading.showError(e.toString());
       context.showSnackBar(
           const SnackBar(content: Text('No internet Connection...')));
     } finally {
@@ -125,8 +134,7 @@ class _UpdateSubCate2ScreenState extends State<UpdateSubCate2Screen> {
   }
 
   Future<int?> deleteCategory() async {
-    isLoading = true;
-    var token = await SharedPref().getToken();
+EasyLoading.show();    var token = await SharedPref().getToken();
     try {
       var res = await http.delete(
         Uri.parse(
@@ -137,6 +145,7 @@ class _UpdateSubCate2ScreenState extends State<UpdateSubCate2Screen> {
         },
       );
       if (res.statusCode == 200) {
+        EasyLoading.dismiss();
         context.showSnackBar(
             SnackBar(content: Text('Subcategory deleted Successfully')));
         context
@@ -151,12 +160,16 @@ class _UpdateSubCate2ScreenState extends State<UpdateSubCate2Screen> {
           },
         ));
       } else {
+        EasyLoading.dismiss();
+        EasyLoading.showError("Somethings went wrong");
         context.showSnackBar(
             const SnackBar(content: Text('opps something went worng')));
       }
       print(res.body);
       print('data');
     } on SocketException catch (e) {
+      EasyLoading.dismiss();
+      EasyLoading.showError(e.toString());
       context.showSnackBar(
           const SnackBar(content: Text('No internet Connection')));
     } finally {

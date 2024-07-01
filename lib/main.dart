@@ -39,6 +39,7 @@ import 'features/dashboard/bloc/dashboard_bloc.dart';
 import 'features/login/bloc/login_bloc.dart';
 import 'features/maincatbottomSheet/bottomSheetCubit/main_bottom_sheet_cubit.dart';
 import 'features/quick_add/PromptBloc/quick_prompt_bloc.dart';
+import 'features/registration/cubit/registration_cubit.dart';
 import 'features/search_subcategory/bloc/search_cat_bloc.dart';
 import 'features/subcate1.1/bloc/sub_cate1_bloc.dart';
 import 'features/subcate1.1/summary2bloc/summary2_bloc.dart';
@@ -225,6 +226,9 @@ class MyApp extends StatelessWidget {
           BlocProvider<SummaryBloc>(create: (context) => SummaryBloc()),
           BlocProvider<Summary2Bloc>(create: (context) => Summary2Bloc()),
           BlocProvider<Summary3Bloc>(create: (context) => Summary3Bloc()),
+          BlocProvider<RegistrationCubit>(create: (context) => RegistrationCubit()),
+
+
 
 
 

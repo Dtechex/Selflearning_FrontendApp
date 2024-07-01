@@ -463,11 +463,11 @@ class _MaincategoryResourcesListState extends State<MaincategoryResourcesList> {
     FlickManager? _flickManager;
     final audioPlayer = AudioPlayer();
     _flickManager = FlickManager(
-      videoPlayerController: VideoPlayerController.network('https://backend.savant.app/web/public/video/$content'),
+      videoPlayerController: VideoPlayerController.network('https://backend.savant.app/public/video/$content'),
     );
-
+    print("content - $content");
     print("getfilecontent==>${getFileType(content)}");
- print("content$content");
+ print("content8888 $content");
     return showDialog<void>(
       context: context,
       builder: (BuildContext context) {

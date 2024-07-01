@@ -103,6 +103,41 @@ class _QuickTypeScreenState extends State<QuickTypeScreen> {
         btnOkIcon: Icons.update)
       ..show();
   }
+
+  AwesomeDialog showResource({
+    required String resId,
+    required BuildContext context,
+  }) {
+    return AwesomeDialog(
+      context: context,
+      animType: AnimType.BOTTOMSLIDE,
+      dialogType: DialogType.QUESTION,
+      body: Center(
+        child: Text(
+          'Are you sure\nYou want to delete resource',
+          style: TextStyle(fontStyle: FontStyle.italic),
+        ),
+      ),
+      title: 'This is Ignored',
+      desc: 'This is also Ignored',
+      btnOkOnPress: () {
+        QuickAddRepo.deletequickAdd(
+            id: resId, context: context);
+        context
+            .read<QuickAddBloc>()
+            .add(LoadQuickTypeEvent());
+        setState(() {
+
+        });
+      },
+      btnOkColor: Colors.red,
+      closeIcon: Icon(Icons.close),
+      btnCancelOnPress: () {},
+      btnOkText: "Delete",
+      btnOkIcon: Icons.delete,
+    )..show();
+  }
+
   @override
   void dispose() {
     super.dispose();
@@ -248,14 +283,7 @@ class _QuickTypeScreenState extends State<QuickTypeScreen> {
                                               icon: Icon(Icons.add),
                                             ),
                                             IconButton(onPressed: (){
-                                              QuickAddRepo.deletequickAdd(
-                                                  id: list[index].sId!, context: context);
-                                              context
-                                                  .read<QuickAddBloc>()
-                                                  .add(LoadQuickTypeEvent());
-                                              setState(() {
-
-                                              });
+                                             showResource(resId: list[index].sId!, context: context);
 
                                             }, icon: Icon(Icons.delete)),
                                           ],

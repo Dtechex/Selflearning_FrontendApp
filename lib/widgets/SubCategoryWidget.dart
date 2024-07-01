@@ -110,7 +110,7 @@ class _SubCategoryWidgetState extends State<SubCategoryWidget> with TickerProvid
     }
 
   Widget build(BuildContext context) {
-    List<String> summary = [];
+    // List<String> summary = [];
 
     print("category id is ${widget.rootId}");
     return Scaffold(
@@ -170,7 +170,7 @@ class _SubCategoryWidgetState extends State<SubCategoryWidget> with TickerProvid
                 ),
                 child: IconButton(
                   onPressed: (){
-                    if(summaryController.text.isNotEmpty) {
+                    if(summaryController.text.trim().isNotEmpty) {
                       addCategory(summary: summaryController.text);
                     }
                     else{
@@ -206,9 +206,7 @@ class _SubCategoryWidgetState extends State<SubCategoryWidget> with TickerProvid
                // );
              }
              if(state is SummaryLoadedState){
-               summary.clear();
                for(var data in state.sumaryList[0].summary){
-                 summary.add(data);
                }
 
                return CustomScrollView(
@@ -218,9 +216,7 @@ class _SubCategoryWidgetState extends State<SubCategoryWidget> with TickerProvid
                        : SliverChildBuilderDelegate(
                          (BuildContext context, int index) {
                            List<String>? sumary =state.sumaryList[0].summary; // Use i instead of index
-                            for (var sum in sumary!){
-                              print("hello this is summary checking $sum");
-                            }
+
                            return Container(
                          padding: EdgeInsets.symmetric(horizontal: 5, vertical: 5),
                          margin: EdgeInsets.symmetric(vertical: 5, horizontal: 8),
