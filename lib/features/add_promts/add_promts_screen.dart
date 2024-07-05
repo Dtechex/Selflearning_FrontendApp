@@ -369,9 +369,9 @@ class _AddPromptsScreenState extends State<AddPromptsScreen> {
                                                                         if(value != null) {
                                                                           final file = File(value.path);
                                                                           final fileSize = await file.length();
-                                                                          if (fileSize > 5 * 1024 * 1024) { // 5 MB in bytes
+                                                                          if (fileSize > 50 * 1024 * 1024 ) { // 5 MB in bytes
                                                                             EasyLoading.dismiss();
-                                                                            EasyLoading.showInfo('Upload Video should be less than 5 MB');
+                                                                            EasyLoading.showInfo('Upload Video should be less than 50 MB');
                                                                           }
                                                                           else{
 
@@ -394,9 +394,9 @@ class _AddPromptsScreenState extends State<AddPromptsScreen> {
                                                                         if(value != null) {
                                                                           final file = File(value.path);
                                                                           final fileSize = await file.length();
-                                                                          if (fileSize > 5 * 1024 * 1024) { // 5 MB in bytes
+                                                                          if (fileSize > 50 * 1024 * 1024 ) { // 5 MB in bytes
                                                                             EasyLoading.dismiss();
-                                                                            EasyLoading.showInfo('Upload Video should be less than 5 MB');
+                                                                            EasyLoading.showInfo('Upload Video should be less than 50 MB');
                                                                           }
                                                                           else{
 
@@ -725,15 +725,19 @@ class _AddPromptsScreenState extends State<AddPromptsScreen> {
                                                                         if(value != null) {
                                                                           final file = File(value.path);
                                                                           final fileSize = await file.length();
-                                                                          if (fileSize > 5 * 1024 * 1024) { // 5 MB in bytes
+                                                                          print("file size = ${fileSize}");
+                                                                          if (fileSize > 50 * 1024 * 1024) { // 5 MB in bytes
                                                                             EasyLoading.dismiss();
-                                                                            EasyLoading.showInfo('Upload Video should be less than 5 MB');
+                                                                            print("video is support");
+                                                                            EasyLoading.showInfo('Upload Video should be less than 50 MB');
                                                                           }
                                                                           else{
+
                                                                             addPromptsBloc.add(
                                                                                 PickResource(
                                                                                     mediaUrl: value!.path,
                                                                                     whichSide: 1));
+
                                                                           }
 
                                                                         }                                                                      });
@@ -748,9 +752,10 @@ class _AddPromptsScreenState extends State<AddPromptsScreen> {
                                                                         if(value != null) {
                                                                           final file = File(value.path);
                                                                           final fileSize = await file.length();
-                                                                          if (fileSize > 5 * 1024 * 1024) { // 5 MB in bytes
+                                                                          print("file size = ${fileSize}");
+                                                                          if (fileSize > 50 * 1024 * 1024) { // 5 MB in bytes
                                                                             EasyLoading.dismiss();
-                                                                            EasyLoading.showInfo('Upload Video should be less than 5 MB');
+                                                                            EasyLoading.showInfo('Upload Video should be less than 50 MB');
                                                                           }
                                                                           else{
                                                                             addPromptsBloc.add(

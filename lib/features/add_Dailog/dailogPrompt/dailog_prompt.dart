@@ -25,13 +25,14 @@ class SlideShowScreen2 extends StatefulWidget {
   String promptTitle;
   String side1contentTitle;
   String side2contentTitle;
+  String flowName;
 
 
 
 
    SlideShowScreen2({Key? key, required this.side1type, required this.side2type,
 
-   required this.promptTitle, required this.side1contentTitle, required this.side2contentTitle}) : super(key: key);
+   required this.promptTitle, required this.side1contentTitle, required this.side2contentTitle, required this.flowName}) : super(key: key);
 
   @override
   State<SlideShowScreen2> createState() => _SlideShowScreen2State();
@@ -78,7 +79,7 @@ class _SlideShowScreen2State extends State<SlideShowScreen2> {
     var h = MediaQuery.of(context).size.height;
     var w = MediaQuery.of(context).size.width;
     return Scaffold(
-      appBar: AppBar(title: const Text("primary flow")),
+      appBar: AppBar(title:  Text("${widget.flowName}")),
       body: Scaffold(
         body: Column(
           mainAxisAlignment: MainAxisAlignment.spaceAround,

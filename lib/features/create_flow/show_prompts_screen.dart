@@ -105,10 +105,11 @@ class _ShowPromtsScreenState extends State<ShowPromtsScreen> {
                           children: [
                             IconButton(onPressed: (){
                               Navigator.push(context, MaterialPageRoute(builder: (context)=>SlideShowScreen2(
-                                side1type: widget.flowList[index].side1Content,
-                                side2type: widget.flowList[index].side2Content,
-                                side2contentTitle: widget.flowList[index].side2Title,
-                                side1contentTitle: widget.flowList[index].side1Title,
+                                flowName: widget.flowName,
+                                side1type: widget.flowList[index].side1Type,
+                                side2type: widget.flowList[index].side2Type,
+                                side2contentTitle: widget.flowList[index].side1Content,
+                                side1contentTitle: widget.flowList[index].side2Content,
                                 promptTitle: widget.flowList[index].promptName,
                               )));
                             }, icon: Icon(Icons.play_arrow, color: Colors.green,)),

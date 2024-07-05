@@ -194,6 +194,7 @@ NewDialogDartCubit newDialogDartCubit = NewDialogDartCubit();
                                       return GestureDetector(
                                         onTap: (){
                                           Navigator.push(context, MaterialPageRoute(builder: (context)=>SlideShowScreen2(
+                                            flowName: "",
                                             side1type: state.promtModelList[index].side1Type.toString(),
                                             side2type: state.promtModelList[index].side2Type.toString(),
                                             promptTitle: state.promtModelList[index].promptname.toString(),

@@ -16,42 +16,54 @@ part 'add_prompt_res_state.dart';
 
 class AddPromptResCubit extends Cubit<AddPromptResState> {
   AddPromptResCubit() : super(AddPromptResInitial());
+
   getResPrompt({required String dailogId}) async {
     emit(AddPromptResLoading());
-    var res = await PromptResRepo.get_Res_Prompt(dailogId: dailogId);
+    try {
+      var res = await PromptResRepo.get_Res_Prompt(dailogId: dailogId);
 
-    print("getPromptRes Function is hit");
-    if (res!.statusCode == 200) {
-      print("check for prompt res ${res!.data}");
-      List<AddResourceListModel> getListRes_prompt = [];
-      List<AddPromptListModel> getPromotList = [];
-      List<dynamic> resourcesList = res!.data['dialogList']?['resourcesList']??"";
+      print("getPromptRes Function is hit");
 
-      for (var resource in resourcesList) {
-        getListRes_prompt.add(AddResourceListModel(
-          resourceId: resource['_id'],
-          resourceName: resource['title'],
-          resourceType: resource['type'],
-          resourceContent: '', resPromptList: [], // Empty string for resourceContent
+      if (res != null && res.statusCode == 200) {
+        print("check for prompt res ${res.data}");
+        List<AddResourceListModel> getListRes_prompt = [];
+        List<AddPromptListModel> getPromotList = [];
+
+        var dialogList = res.data['dialogList'];
+        if (dialogList != null) {
+          List<dynamic> resourcesList = dialogList['resourcesList'] ?? [];
+          for (var resource in resourcesList) {
+            getListRes_prompt.add(AddResourceListModel(
+              resourceId: resource['_id'] ?? '',
+              resourceName: resource['title'] ?? '',
+              resourceType: resource['type'] ?? '',
+              resourceContent: '',
+              resPromptList: [], // Empty string for resourceContent
+            ));
+          }
+
+          List<dynamic> promptList = dialogList['promptList'] ?? [];
+          for (var prompt in promptList) {
+            getPromotList.add(AddPromptListModel(
+              promptId: prompt['_id'] ?? '',
+              promptTitle: prompt['name'] ?? '',
+              promptSide1Content: prompt['side1']?['content'] ?? '',
+              promptSide2Content: prompt['side2']?['content'] ?? '',
+              parentPromptId: '1a',
+            ));
+          }
+        }
+
+        emit(GetResourcePromptDailog(
+          res_prompt_list: getListRes_prompt,
+          def_prompt_list: getPromotList,
         ));
+      } else {
+        emit(AddPromptResError( errorMessage: 'Failed to load data'));
       }
-
-      List<dynamic> promptList = res.data['dialogList']['promptList'];
-
-      for (var prompt in promptList) {
-        getPromotList.add(AddPromptListModel(
-          promptId: prompt['_id'],
-          promptTitle: prompt['name'],
-          promptSide1Content: prompt['side1']['content'],
-          promptSide2Content: prompt['side2']['content'],
-          parentPromptId: '1a',
-        ));
-      }
-
-      emit(GetResourcePromptDailog(
-        res_prompt_list: getListRes_prompt,
-        def_prompt_list: getPromotList,
-      ));
+    } catch (e) {
+      print("Error: $e");
+      emit(AddPromptResError(errorMessage: "${e.toString()}"));
     }
   }
 

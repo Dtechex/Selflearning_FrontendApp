@@ -24,7 +24,7 @@ class NewDialogDartCubit extends Cubit<NewDialogDartState> {
       };
 
       Response res = await _dio.get(
-        "http://15.207.55.147:8000/web/prompt/",
+        "https://backend.savant.app/web/prompt/",
         options: Options(headers: headers),
       );
       print("Quick prompt api ${res.data}");

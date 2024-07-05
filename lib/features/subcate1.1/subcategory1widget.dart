@@ -1,3 +1,4 @@
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -80,6 +81,32 @@ class _SubCategory1WidgetState extends State<SubCategory1Widget> {
     }
     print('data');
   }
+  AwesomeDialog showDeleteSummary({
+    required List<String> summaryList1,
+    required BuildContext context,
+  }) {
+    return AwesomeDialog(
+      context: context,
+      animType: AnimType.BOTTOMSLIDE,
+      dialogType: DialogType.QUESTION,
+      body: Center(
+        child: Text(
+          'Are you sure\nYou want to delete summary',
+          style: TextStyle(fontStyle: FontStyle.italic),
+        ),
+      ),
+      title: 'This is Ignored',
+      desc: 'This is also Ignored',
+      btnOkOnPress: () {
+        updateSummary(summaryList:summaryList1 );
+      },
+      btnOkColor: Colors.red,
+      closeIcon: Icon(Icons.close),
+      btnCancelOnPress: () {},
+      btnOkText: "Delete",
+      btnOkIcon: Icons.delete,
+    )..show();
+  }
   void dispose() {
     super.dispose();
   }
@@ -100,6 +127,7 @@ class _SubCategory1WidgetState extends State<SubCategory1Widget> {
     );
     print("status code known ${res.statusCode}");
     if(res.statusCode ==200){
+      EasyLoading.showSuccess("Summary deleted successfully");
       print("summary deleted successfully");
       setState(() {
         context.read<Summary2Bloc>().add(
@@ -250,7 +278,9 @@ class _SubCategory1WidgetState extends State<SubCategory1Widget> {
                                   for(var sum in sumary){
                                     print("now we can see the remaining summary and that ist $sum");
                                   }
-                                  updateSummary(summaryList: sumary);
+
+                                  // updateSummary(summaryList: sumary);
+                                  showDeleteSummary(summaryList1: sumary, context: context);
 
                                 },
                                     icon: Icon(Icons.delete)

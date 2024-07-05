@@ -1,3 +1,4 @@
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -51,6 +52,32 @@ class _SubCategoryWidgetState extends State<SubCategoryWidget> with TickerProvid
     super.initState();
 
   }
+  AwesomeDialog showDeleteSummary({
+    required List<String> summaryList1,
+    required BuildContext context,
+  }) {
+    return AwesomeDialog(
+      context: context,
+      animType: AnimType.BOTTOMSLIDE,
+      dialogType: DialogType.QUESTION,
+      body: Center(
+        child: Text(
+          'Are you sure\nYou want to delete summary',
+          style: TextStyle(fontStyle: FontStyle.italic),
+        ),
+      ),
+      title: 'This is Ignored',
+      desc: 'This is also Ignored',
+      btnOkOnPress: () {
+        updateSummary(summaryList:summaryList1 );
+      },
+      btnOkColor: Colors.red,
+      closeIcon: Icon(Icons.close),
+      btnCancelOnPress: () {},
+      btnOkText: "Delete",
+      btnOkIcon: Icons.delete,
+    )..show();
+  }
   addCategory({required String summary}) async {
     EasyLoading.show();
 
@@ -98,6 +125,7 @@ class _SubCategoryWidgetState extends State<SubCategoryWidget> with TickerProvid
       );
       print("status code known ${res.statusCode}");
     if(res.statusCode ==200){
+      EasyLoading.showSuccess("Summary deleted succesfully");
       print("summary deleted successfully");
       setState(() {
         context.read<SummaryBloc>().add(
@@ -244,7 +272,8 @@ class _SubCategoryWidgetState extends State<SubCategoryWidget> with TickerProvid
                              for(var sum in sumary){
                                print("now we can see the remaining summary and that ist $sum");
                              }
-                            updateSummary(summaryList: sumary);
+                             showDeleteSummary(summaryList1: sumary, context: context);
+                            // updateSummary(summaryList: sumary);
                            },icon: Icon(Icons.delete),),
                          ),
                        );

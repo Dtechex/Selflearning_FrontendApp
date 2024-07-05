@@ -79,14 +79,17 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           ),
                           hintText: 'Enter your name',
                           prefixIcon: Icon(Icons.person),
-                          contentPadding: EdgeInsets.symmetric(
-                              vertical: 12.0, horizontal: 10.0),
+                          contentPadding: EdgeInsets.symmetric(vertical: 12.0, horizontal: 10.0),
                         ),
                         validator: (value) {
                           if (value?.trim() == null || value!.trim().isEmpty) {
                             return 'Name is required';
                           } else if (value!.trim().length < 3) {
                             return 'Name must be at least 3 letters';
+                          } else if (!RegExp(r'^[a-zA-Z]').hasMatch(value!.trim())) {
+                            return 'Name must start with a letter';
+                          } else if (RegExp(r'^[\.\s]').hasMatch(value!.trim())) {
+                            return 'Name cannot start with a space or a dot';
                           }
                           return null;
                         },
@@ -104,15 +107,21 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           contentPadding: EdgeInsets.symmetric(
                               vertical: 12.0, horizontal: 10.0),
                         ),
-                          validator: (value) {
-                            final trimmedValue = value?.trim() ?? '';
-                            if (trimmedValue.isEmpty) {
-                              return 'Email is required';
-                            } else if (!RegExp(r'^[^@]+@[^@]+\.[^@]+$').hasMatch(trimmedValue)) {
-                              return 'Enter a valid email';
+                        validator: (value) {
+                          final trimmedValue = value?.trim() ?? '';
+                          if (trimmedValue.isEmpty) {
+                            return 'Email is required';
+                          } else if (!RegExp(r'^[^@]+@[^@]+\.[^@]+$').hasMatch(trimmedValue)) {
+                            return 'Enter a valid email';
+                          } else {
+                            final allowedDomains = ['gmail.com', 'yahoo.com', 'hotmail.com'];
+                            final domain = trimmedValue.split('@').last;
+                            if (!allowedDomains.contains(domain)) {
+                              return 'Invalid email domain. Allowed domains are: gmail.com, yahoo.com, hotmail.com';
                             }
-                            return null;
-                          },
+                          }
+                          return null;
+                        },
                       ),
                       SizedBox(height: 12.0),
                       TextFormField(
@@ -125,24 +134,25 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           ),
                           hintText: 'Enter your password',
                           prefixIcon: Icon(Icons.lock),
-                            suffixIcon: IconButton(
-                              icon: Icon(
-                                _isPasswordVisible ?  Icons.visibility_off : Icons.visibility,
-                              ),
-                              onPressed: () {
-                                setState(() {
-                                  _isPasswordVisible = !_isPasswordVisible;
-                                });
-                              },
+                          suffixIcon: IconButton(
+                            icon: Icon(
+                              _isPasswordVisible ? Icons.visibility_off : Icons.visibility,
                             ),
-                          contentPadding: EdgeInsets.symmetric(
-                              vertical: 12.0, horizontal: 10.0),
+                            onPressed: () {
+                              setState(() {
+                                _isPasswordVisible = !_isPasswordVisible;
+                              });
+                            },
+                          ),
+                          contentPadding: EdgeInsets.symmetric(vertical: 12.0, horizontal: 10.0),
                         ),
                         validator: (value) {
                           if (value == null || value.isEmpty) {
                             return 'Password is required';
                           } else if (value.length < 6) {
                             return 'Password must be at least 6 characters';
+                          } else if (!RegExp(r'[!@#$%^&*(),.?":{}|<>]').hasMatch(value)) {
+                            return 'Password must contain at least one special character';
                           }
                           return null;
                         },

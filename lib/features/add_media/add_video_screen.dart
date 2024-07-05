@@ -1,25 +1,14 @@
 import 'dart:io';
-
 import 'package:flick_video_player/flick_video_player.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:loader_overlay/loader_overlay.dart';
 import 'package:self_learning_app/features/add_media/bloc/add_media_bloc.dart';
-
 import 'package:self_learning_app/utilities/extenstion.dart';
 import 'package:self_learning_app/utilities/image_picker_helper.dart';
-import 'package:chewie/chewie.dart';
 import 'package:video_player/video_player.dart';
-
-import '../camera/camera_screen.dart';
-import '../promt/promts_screen.dart';
-import '../quick_add/data/bloc/quick_add_bloc.dart';
-import '../quick_add/quick_add_screen.dart';
-import '../resources/bloc/resources_bloc.dart';
-import '../resources/resources_screen.dart';
 
 class AddVideoScreen extends StatefulWidget {
   final String rootId;
@@ -36,9 +25,8 @@ final TextEditingController textEditingController = TextEditingController();
 
 class _AddVideoScreenState extends State<AddVideoScreen> {
   AddMediaBloc addMediaBloc = AddMediaBloc();
-  //ChewieController? _chewieController;
   FlickManager? _flickManager;
-  //bool _isPlaying = false;
+  String? _selectedFilepath;
 
   @override
   void initState() {
@@ -48,45 +36,30 @@ class _AddVideoScreenState extends State<AddVideoScreen> {
 
   @override
   void dispose() {
-    super.dispose();
+    _disposeFlickManager();
     addMediaBloc.close();
+    super.dispose();
+  }
+
+  void _disposeFlickManager() {
+    _flickManager?.flickVideoManager?.videoPlayerController?.dispose();
     _flickManager?.dispose();
-    //_chewieController?.dispose();
+    _flickManager = null;
   }
 
   Future<void> _initializeVideoPlayer(String videoPath) async {
-    if (_flickManager != null) {
-      await  Future.delayed(Duration(milliseconds: 100));
-      _flickManager!.dispose();
-    }
+    _disposeFlickManager();
 
-    //final videoPlayerController = VideoPlayerController.file(File(videoPath));
-    //await videoPlayerController.initialize();
+    final videoPlayerController = VideoPlayerController.file(File(videoPath));
+    await videoPlayerController.initialize();
 
-    _flickManager = FlickManager(
-      videoPlayerController:
-      VideoPlayerController.file(File(videoPath)),
-    );
-    /*_chewieController = ChewieController(
-      videoPlayerController: videoPlayerController,
-      autoPlay: true,
-      looping: true,
-      // Other ChewieController configurations...
-    );*/
-
-    /*setState(() {
-      _isPlaying = true;
-    });*/
-  }
-
-
-  /*void _togglePlayPause() {
     setState(() {
-      //_isPlaying ? _chewieController!.pause() : _chewieController!.play();
-      //_isPlaying ? _flickManager.p
-      _isPlaying = !_isPlaying;
+      _flickManager = FlickManager(
+        videoPlayerController: videoPlayerController,
+      );
+      _selectedFilepath = videoPath;
     });
-  }*/
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -98,17 +71,14 @@ class _AddVideoScreenState extends State<AddVideoScreen> {
           listener: (context, state) {
             if (state.apiState == ApiState.submitted) {
               EasyLoading.dismiss();
-              EasyLoading.showSuccess("Resource uploaded success");
-              // context.read<ResourcesBloc>().add(LoadResourcesEvent(rootId: widget.rootId, mediaType: ''));
-
+              EasyLoading.showSuccess("Resource uploaded successfully");
               Navigator.pop(context, true);
             } else if (state.apiState == ApiState.submitting) {
               EasyLoading.show();
-
               context.showSnackBar(const SnackBar(duration: Duration(seconds: 1), content: Text('Adding resources...')));
             } else if (state.apiState == ApiState.submitError) {
               EasyLoading.dismiss();
-              EasyLoading.showError("server Error");
+              EasyLoading.showError("Server Error");
               context.showSnackBar(const SnackBar(duration: Duration(seconds: 1), content: Text('Something went wrong.')));
             }
           },
@@ -142,7 +112,6 @@ class _AddVideoScreenState extends State<AddVideoScreen> {
                     ),
                   ),
                 ),
-
                 ElevatedButton(
                   onPressed: () {
                     showModalBottomSheet(
@@ -158,16 +127,26 @@ class _AddVideoScreenState extends State<AddVideoScreen> {
                                   onTap: () {
                                     ImagePickerHelper.pickVideo(imageSource: ImageSource.gallery).then((value) async {
                                       if (value != null) {
-                                        final file = File(state.selectedFilepath!);
-                                        final fileSize = await file.length();
-                                        if (fileSize > 5 * 1024 * 1024) { // 5 MB in bytes
-                                          EasyLoading.showInfo('Upload video should be less than 5 MB');
+                                        final filePath = value.path;
+                                        final file = File(filePath);
+                                        try {
+                                          final fileSize = await file.length();
+                                          if (fileSize > 50 * 1024 * 1024) { // 50 MB in bytes
+                                            EasyLoading.showInfo('Upload video should be less than 50 MB');
+                                          } else {
+                                            addMediaBloc.add(VideoPickEvent(video: filePath));
+                                            await _initializeVideoPlayer(filePath);
+                                          }
+                                        } catch (e) {
+                                          EasyLoading.showError('Error reading file: ${e.toString()}');
                                         }
-                                        addMediaBloc.add(VideoPickEvent(video: value.path));
-                                        _initializeVideoPlayer(value.path);
+                                      } else {
+                                        EasyLoading.showInfo('No video selected');
                                       }
+                                    }).catchError((e) {
+                                      EasyLoading.showError('Error picking video: ${e.toString()}');
                                     });
-                                    Navigator.of(context).pop();
+                                    Navigator.pop(context, true);
                                   },
                                 ),
                                 ListTile(
@@ -176,14 +155,24 @@ class _AddVideoScreenState extends State<AddVideoScreen> {
                                   onTap: () {
                                     ImagePickerHelper.pickVideo(imageSource: ImageSource.camera).then((value) async {
                                       if (value != null) {
-                                        final file = File(state.selectedFilepath!);
-                                        final fileSize = await file.length();
-                                        if (fileSize > 5 * 1024 * 1024) { // 5 MB in bytes
-                                          EasyLoading.showInfo('Upload video should be less than 5 MB');
+                                        final filePath = value.path;
+                                        final file = File(filePath);
+                                        try {
+                                          final fileSize = await file.length();
+                                          if (fileSize > 50 * 1024 * 1024) { // 50 MB in bytes
+                                            EasyLoading.showInfo('Upload video should be less than 50 MB');
+                                          } else {
+                                            addMediaBloc.add(VideoPickEvent(video: filePath));
+                                            await _initializeVideoPlayer(filePath);
+                                          }
+                                        } catch (e) {
+                                          EasyLoading.showError('Error reading file: ${e.toString()}');
                                         }
-                                        addMediaBloc.add(VideoPickEvent(video: value.path));
-                                        _initializeVideoPlayer(value.path);
+                                      } else {
+                                        EasyLoading.showInfo('No video selected');
                                       }
+                                    }).catchError((e) {
+                                      EasyLoading.showError('Error picking video: ${e.toString()}');
                                     });
                                     Navigator.of(context).pop();
                                   },
@@ -198,33 +187,31 @@ class _AddVideoScreenState extends State<AddVideoScreen> {
                   child: const Text('Choose File'),
                 ),
                 const Spacer(),
-
-                if(state.selectedFilepath!.isNotEmpty) Container(
-                  height: MediaQuery.of(context).size.height * 0.3,
-                  child: FlickVideoPlayer(
-                    flickVideoWithControls: FlickVideoWithControls(
-                      videoFit: BoxFit.fitHeight,
-                      controls: FlickPortraitControls(),
+                if (_flickManager != null)
+                  Container(
+                    height: MediaQuery.of(context).size.height * 0.3,
+                    child: FlickVideoPlayer(
+                      flickVideoWithControls: FlickVideoWithControls(
+                        videoFit: BoxFit.fitHeight,
+                        controls: FlickPortraitControls(),
+                      ),
+                      flickManager: _flickManager!,
                     ),
-                    flickManager: _flickManager!,
                   ),
-                ),
-
                 const SizedBox(
                   height: 30,
                 ),
                 ElevatedButton(
                   onPressed: () async {
-                    if (state.selectedFilepath!.isEmpty) {
+                    if (_selectedFilepath == null) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(content: Text('Please attach a file'), duration: Duration(seconds: 1)),
                       );
-                    }
-                    else {
-                      final file = File(state.selectedFilepath!);
+                    } else {
+                      final file = File(_selectedFilepath!);
                       final fileSize = await file.length();
-                      if (fileSize > 5 * 1024 * 1024) { // 5 MB in bytes
-                        EasyLoading.showInfo('Upload video should be less than 5 MB');
+                      if (fileSize > 50 * 1024 * 1024) { // 50 MB in bytes
+                        EasyLoading.showInfo('Upload video should be less than 50 MB');
                       } else {
                         addMediaBloc.add(
                           SubmitButtonEvent(
@@ -238,7 +225,8 @@ class _AddVideoScreenState extends State<AddVideoScreen> {
                     }
                   },
                   child: const Text('Upload Resource'),
-                ),                const Spacer(flex: 3,),
+                ),
+                const Spacer(flex: 3),
               ],
             );
           },

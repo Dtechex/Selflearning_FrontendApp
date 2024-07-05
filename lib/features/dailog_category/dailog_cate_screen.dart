@@ -852,6 +852,7 @@ void deletPrompt({required String promptId}) async{
                                                                 builder:
                                                                     (context) {
                                                                   return SlideShowScreen2(
+                                                                    flowName: "",
                                                                     side1type:
                                                                         "",
                                                                     promptTitle: state
@@ -1907,6 +1908,7 @@ class _BottomSheetforAddQuickPromptState
                                   context,
                                   MaterialPageRoute(
                                       builder: (context) => SlideShowScreen2(
+                                        flowName: "",
                                             side1type: state
                                                 .promtModelList[index].side1Type
                                                 .toString(),

@@ -17,7 +17,7 @@ static Future<Response?> get_Res_Prompt({required String dailogId})async{
     'Authorization': 'bearer' + ' ' + token.toString(),
   };
   try{
-    Response res = await _dio.get("http://15.207.55.147:8000/web/category/get-dialog-detail?dialogId=$dailogId",options: Options(headers: headers));
+    Response res = await _dio.get("https://backend.savant.app/web/category/get-dialog-detail?dialogId=$dailogId",options: Options(headers: headers));
     print("9999-${res.data.toString()}");
 
     return res;
@@ -37,7 +37,7 @@ static Future<Response?> get_Res_Prompt({required String dailogId})async{
       'Authorization': 'Bearer $token',
     };
    try{
-     Response res = await _dio.put("http://15.207.55.147:8000/web/",options: Options(headers: headers),
+     Response res = await _dio.put("https://backend.savant.app/web/",options: Options(headers: headers),
      data: {"resourceId":resourceId,
             "promptId":promptId
      }
@@ -58,7 +58,7 @@ static Future<Response?> get_Res_Prompt({required String dailogId})async{
       'Authorization': 'bearer' + ' ' + token.toString(),
     };
     try{
-      Response res = await _dio.get("http://15.207.55.147:8000/web/prompt?resourceId=$resourceId",options: Options(headers: headers));
+      Response res = await _dio.get("https://backend.savant.app/web/prompt?resourceId=$resourceId",options: Options(headers: headers));
       return res;
 
     }catch(e){
@@ -72,7 +72,7 @@ static Future<Response?> get_Res_Prompt({required String dailogId})async{
     Response res;
     try {
       res = await _dio.delete(
-          'http://15.207.55.147:8000/web/resource/${resourceId}',
+          'https://backend.savant.app/web/resource/${resourceId}',
           options: Options(
             headers: {
               'Content-Type': 'application/json',
@@ -100,7 +100,7 @@ static Future<Response?> get_Res_Prompt({required String dailogId})async{
     };
     try{
 
-      Response res = await _dio.patch("http://15.207.55.147:8000/web/prompt/update/$dialogId",options: Options(headers: headers),
+      Response res = await _dio.patch("https://backend.savant.app/web/prompt/update/$dialogId",options: Options(headers: headers),
           data: ({"promptIds":listpromtId,
             "categoryId":dialogId
           })
@@ -130,7 +130,7 @@ static Future<Response?> get_Res_Prompt({required String dailogId})async{
     };
     try{
 
-      Response res = await _dio.get("http://15.207.55.147:8000/web/category/get-resource-prompt-list/$dialogId",options: Options(headers: headers),
+      Response res = await _dio.get("https://backend.savant.app/web/category/get-resource-prompt-list/$dialogId",options: Options(headers: headers),
       );
 
       return res;
